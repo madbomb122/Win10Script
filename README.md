@@ -11,6 +11,7 @@ The script has added items with an easyer way to change settings
 ## Usage
 edit the file
 change setting you want (# will give what settings can be for that function)
+**If you're not sure what something does dont change it or do a google search**
 save the file
 right click on the file, 
 choose *Run with PowerShell*
@@ -18,10 +19,9 @@ confirm execution policy change.
 Make sure your account is a member of Administrators group as the script attempts to run with elevated privileges.
 
 ## FAQ
-
 **Q:** Can I run the script safely?  
 **A:** At the default settings Yes.. but may change settings back to the default or readd removed apps 
-**If you're not sure what the script does, do not attempt to run it!**
+
 
 **Q:** Can I run the script repeatedly?  
 **A:** Yes.
