@@ -13,7 +13,6 @@ edit the file
 change setting you want (# will give what settings can be for that function)
 **If you're not sure what something does dont change it or do a google search**
 save the file
-right click on the file, 
 choose *Run with PowerShell*
 confirm execution policy change. 
 Make sure your account is a member of Administrators group as the script attempts to run with elevated privileges.
