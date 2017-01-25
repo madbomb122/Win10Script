@@ -25,10 +25,10 @@ Make sure your account is a member of Administrators group as the script attempt
 **A:** Yes.
 
 **Q:** Did you test the script? <br />
-**A:** Yes, but nothing is 100% bug free
+**A:** Yes, but nothing is 100% bug free.
 
 **Q**: I've run the script and it did *BLAH*, how can I undo it? <br />
-**A:** Yes, Most things can easyly be undone.. Just go in the script and run it again with the deisred change.
+**A:** Yes, Most things can easily be undone.. Just go in the script and run it again with the deisred change.
 
 **Q:** The script messed up my computer. <br />
 **A:** The script is as is, any problems is not my fault.
@@ -40,4 +40,4 @@ Make sure your account is a member of Administrators group as the script attempt
 **A:** No Clue.
 
 **Q:** Can you add *BLAH* to the script? <br />
-**A:** Dunno
+**A:** Dunno.
