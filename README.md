@@ -3,7 +3,7 @@
 This is a PowerShell script for automation of routine tasks on installations of Windows 10. 
 This is by no means any complete set of settings.
 
-This script originaly created by https://github.com/Disassembler0/Win10-Initial-Setup-Script/
+This script originally created by https://github.com/Disassembler0/Win10-Initial-Setup-Script/
 
 This script is a Modded version of the 2.0 script.
 The script has added items with an easyer way to change settings
