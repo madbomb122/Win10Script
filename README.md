@@ -11,7 +11,7 @@ The script has added items with an easyer way to change settings
 ## Usage
 edit the file<br />
 change setting you want (# will give what settings can be for that function) <br />
-**Note:If you're not sure what something does dont change it or do a google search** <br />
+**Note: If you're not sure what something does dont change it or do a google search** <br />
 save the file <br />
 choose *Run with PowerShell* <br />
 confirm execution policy change. <br>
