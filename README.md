@@ -17,6 +17,8 @@ choose *Run with PowerShell* <br />
 confirm execution policy change. <br>
 Make sure your account is a member of Administrators group as the script attempts to run with elevated privileges. <br />
 
+ATM I removed the import of a parameter file.
+I May readd it later.
 ## FAQ
 **Q:** Can I run the script safely? <br />
 **A:** At the default settings, Yes.. but may change settings back to the default or readd removed apps 
