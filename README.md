@@ -19,7 +19,7 @@ Make sure your account is a member of Administrators group as the script attempt
 
 ## FAQ
 **Q:** Can I run the script safely? <br />
-**A:** At the default settings Yes.. but may change settings back to the default or readd removed apps 
+**A:** At the default settings, Yes.. but may change settings back to the default or readd removed apps 
 
 **Q:** Can I run the script repeatedly? <br />
 **A:** Yes.
