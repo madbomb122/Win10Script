@@ -9,13 +9,13 @@ This script is a Modded version of the 2.0 script.
 The script has added items with an easyer way to change settings
 
 ## Usage
-edit the file
-change setting you want (# will give what settings can be for that function)
-**If you're not sure what something does dont change it or do a google search**
-save the file
-choose *Run with PowerShell*
+edit the file 
+change setting you want (# will give what settings can be for that function) 
+**If you're not sure what something does dont change it or do a google search** 
+save the file 
+choose *Run with PowerShell* 
 confirm execution policy change. 
-Make sure your account is a member of Administrators group as the script attempts to run with elevated privileges.
+Make sure your account is a member of Administrators group as the script attempts to run with elevated privileges. 
 
 ## FAQ
 **Q:** Can I run the script safely?  
@@ -40,5 +40,5 @@ Make sure your account is a member of Administrators group as the script attempt
 **Q:** How long are you going to maintain the script?  
 **A:** No Clue.
 
-**Q:** Can you add *BLAH* to the script?
+**Q:** Can you add *BLAH* to the script? 
 **A:** If I feel like it
