@@ -1,6 +1,7 @@
 MIT License
 
 Copyright (c) 2017 Disassembler <disassembler@dasm.cz> -Original Script
+
 Copyright (c) 2017 Madbomb122 -Modded Script
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
