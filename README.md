@@ -25,7 +25,7 @@ Make sure your account is a member of Administrators group as the script attempt
 **A:** Yes.
 
 **Q:** Did you test the script? <br />
-**A:** Yes, but certin functions will give error (error wont give your computer any problems)
+**A:** Yes, but nothing is 100% bug free
 
 **Q**: I've run the script and it did *BLAH*, how can I undo it? <br />
 **A:** Yes, Most things can easyly be undone.. Just go in the script and run it again with the deisred change.
