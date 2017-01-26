@@ -227,7 +227,7 @@ If (!(Test-Path "HKCR:")) {
 # Windows Default
 ##########
 
-If($WinDefault-eq1){
+If($WinDefault -eq 1){
      $Telemetry = 1
      $WiFiSense = 1
      $SmartScreen = 1
