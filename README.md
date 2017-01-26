@@ -25,6 +25,7 @@ or <br />
 
 To import a file for the settings run <br />
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-v2.1-M.ps1 -Set example.txt` <br />
+**Note: For an example of the setting files is *example.txt*, but does not have what each item does like the script does** <br />
 
 ## FAQ
 **Q:** Can I run the script safely? <br />
