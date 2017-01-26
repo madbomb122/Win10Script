@@ -19,12 +19,12 @@ Make sure your account is a member of Administrators group as the script attempt
 
 ### Advanced usage
 The Following will run the script with resetting everything the script can change back to windows default (Other than reinstalling onedrive or apps) <br />
-`powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-v2.1-M.ps1 -Set WD` <br />
+`powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-v2.2-Mod.ps1 -Set WD` <br />
 or <br />
-`powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-v2.1-M.ps1 -Set WindowsDefault` <br />
+`powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-v2.2-Mod.ps11 -Set WindowsDefault` <br />
 
 To import a file for a setting or settings <br />
-`powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-v2.1-M.ps1 -Set example.txt` <br />
+`powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-v2.2-Mod.ps1 -Set example.txt` <br />
 **Note 1: For an example of the setting files look at '*example.txt*', but it doesn't have what each item can be set to like the script does.** <br />
 **Note 2:The apps to remove cant be imported ATM (dunno if it can with how i have things)**
 
