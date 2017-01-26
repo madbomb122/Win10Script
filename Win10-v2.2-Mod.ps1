@@ -319,7 +319,7 @@ If($WinDefault -eq 1){
      $Autoplay = 1
      $Autorun = 1
      $StickyKeyPrompt = 1
-     $NumblockOnStart = 1
+     $NumblockOnStart = 2
      $F8BootMenu = 1
      $OneDrive = 1
 #    $OneDriveInstall = 1
@@ -327,7 +327,7 @@ If($WinDefault -eq 1){
      $XboxDVR = 1
      $MediaPlayer = 1
      $WorkFolders = 1
-     $LinuxSubsystem = 1
+     $LinuxSubsystem = 2
 }
 
 
