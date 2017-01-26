@@ -11,13 +11,14 @@ The script has added items with an easyer way to change settings
 ## Usage
 edit the file<br />
 change setting you want (# will give what settings can be for that function) <br />
-**Note: If you're not sure what something does dont change it or do a google search** <br />
+**Note: If you're not sure what something does dont change it or do a web search** <br />
 save the file <br />
 choose *Run with PowerShell* <br />
 confirm execution policy change. <br>
 Make sure your account is a member of Administrators group as the script attempts to run with elevated privileges. <br />
 
-PS. I removed the import of a parameter file that was in the original Script, but I May readd it later.
+PS. I removed the import of a parameter file that was in the original Script, but I May re-add it later.
+
 ## FAQ
 **Q:** Can I run the script safely? <br />
 **A:** At the default settings, Yes.. but may change settings back to the default or readd removed apps 
