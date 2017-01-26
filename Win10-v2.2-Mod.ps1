@@ -12,8 +12,11 @@
 # Version: 2.1-Mod, 2017-01-26
 ##########
 
-# You can run the script with a -Set WD or -Set WindowsDefault to have run the Default Windows settings
+# You can run the script with a -Set WD or -Set WindowsDefault 
+# To use the default setting for windows (Other than reinstalling onedrive or apps) 
+
 # You can import settings from a file with -Set filename
+
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## !!!!!!!!!            DO NOT TOUCH NEXT LINE          !!!!!!!!!
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
