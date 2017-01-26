@@ -17,7 +17,13 @@ choose *Run with PowerShell* <br />
 confirm execution policy change. <br>
 Make sure your account is a member of Administrators group as the script attempts to run with elevated privileges. <br />
 
-PS. I removed the import of a parameter file that was in the original Script, but I May re-add it later.
+### Advanced usage
+The Following will run the script with resetting everything the script can change back to windows default (Other than reinstalling onedrive or apps) <br />
+`powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-v2.1-M.ps1 -WD` <br />
+or <br />
+`powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-v2.1-M.ps1 -WindowsDefault` <br />
+
+If I decide to re-add the ability to import settings from a file usage will be here.
 
 ## FAQ
 **Q:** Can I run the script safely? <br />
@@ -37,6 +43,9 @@ PS. I removed the import of a parameter file that was in the original Script, bu
 
 **Q:** Can I use the script or modify it for my / my company's needs? <br />
 **A:** Sure. Just don't forget to include copyright notice as per MIT license requirements. 
+
+**Q:** Can you add importing settings from a file? <br />
+**A:** Not sure if i will add this (was it the original script, but I removed it).
 
 **Q:** How long are you going to maintain the script? <br />
 **A:** No Clue.
