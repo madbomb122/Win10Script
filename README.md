@@ -29,14 +29,14 @@ PS. I removed the import of a parameter file that was in the original Script, bu
 **Q:** Did you test the script? <br />
 **A:** Yes, but nothing is 100% bug free.
 
-**Q**: I've run the script and it did *BLAH*, how can I undo it? <br />
+**Q**: I've run the script and it did *BLAH*, can I undo it? <br />
 **A:** Yes, Most things can easily be undone.. Just go in the script and run it again with the deisred change.
 
 **Q:** The script messed up my computer. <br />
 **A:** The script is as is, any problems is not my fault.
 
 **Q:** Can I use the script or modify it for my / my company's needs? <br />
-**A:** Sure, knock yourself out. Just don't forget to include copyright notice as per MIT license requirements. 
+**A:** Sure. Just don't forget to include copyright notice as per MIT license requirements. 
 
 **Q:** How long are you going to maintain the script? <br />
 **A:** No Clue.
