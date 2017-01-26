@@ -123,6 +123,9 @@ $MediaPlayer = 0           #0-Skip, 1-Installed*, 2-Uninstall
 $WorkFolders = 0           #0-Skip, 1-Installed*, 2-Uninstall
 $LinuxSubsystem = 0        #0-Skip, 1-Installed, 2-Uninstall* (Anniversary Update) - Applicable to RS1 or newer Only
 
+#Restart when done? (I recommend restarting when done)
+$Restart = 1        #0-Skip, 1-Enable
+
 ## $Bloatware NOTE:
 # List of $Bloatware is in $AppsList (List Bellow)
 #
@@ -1244,5 +1247,9 @@ If ($F8BootMenu -eq 1) {
 ##########
 # Auxiliary
 ##########
-Write-Host "Restarting..."
-Restart-Computer
+If ($Restart -eq 1) {
+     Write-Host "Restarting..."
+     Restart-Computer
+} Else {
+     Write-Host "Goodbye..."
+}
