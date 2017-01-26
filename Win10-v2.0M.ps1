@@ -66,6 +66,7 @@ $TaskbarIconSize = 1	   #1-Normal*, 2-Smaller
 $TaskbarGrouping = 2	   #1-Never, 2-Always*, 3-When Needed
 $TrayIcons = 2	 	   #1-Auto*, 2-Always Show	
 $SecondsInClock = 2	   #1-Show, 2-Hide*
+$LastActiveClick = 2	   #1-Enable, 2-Disable*
 
 #Explorer Items
 # Function  = Option       #Choices (*Windows Default)
@@ -569,7 +570,6 @@ If ($RemoteDesktop -eq 1) {
 }
 
 
-
 ##########
 # UI Tweaks
 ##########
@@ -797,8 +797,6 @@ If ($StickyKeyPrompt -eq 1) {
 	Set-ItemProperty -Path "HKCU:\Control Panel\Accessibility\StickyKeys" -Name "Flags" -Type String -Value "506"
 }
 
-
-
 # Taskbar Search button / box
 If ($TaskbarSearchBox -eq 1) {
 	Write-Host "Showing Taskbar Search box / button..."
@@ -848,12 +846,21 @@ If ($TrayIcons -eq 1) {
 }
 
 # Seconds in Taskbar Clock
-If ($TrayIcons -eq 1) {
+If ($SecondsInClock -eq 1) {
 	Write-Host "Showing Seconds in Taskbar Clock..."
 	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSecondsInSystemClock" -Type DWord -Value 1
-} ElseIf ($TrayIcons -eq 2) {
+} ElseIf ($SecondsInClock -eq 2) {
 	Write-Host "Hiding Seconds in Taskbar Clock..."
 	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSecondsInSystemClock" -Type DWord -Value 0
+}
+
+# Last Active Click
+If ($LastActiveClick -eq 1) {
+	Write-Host " Last Active Click..."
+	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LastActiveClick" -Type DWord -Value 1
+} ElseIf ($LastActiveClick -eq 2) {
+	Write-Host " Last Active Click..."
+	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LastActiveClick" -Type DWord -Value 0
 }
 
 # File extensions
