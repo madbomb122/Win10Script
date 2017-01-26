@@ -282,6 +282,7 @@ If($WinDefault -eq 1){
      $UpdateMSRT = 1
      $UpdateDriver = 1
      $RestartOnUpdate = 1
+     $CastToDevice = 1 
      $PreviousVersions = 1
      $IncludeinLibrary = 1
      $PinTo = 1
