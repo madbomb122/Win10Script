@@ -9,7 +9,7 @@
 # Modded Script Info
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script
-# Version: 2.1-Mod, 2017-01-26
+# Version: 2.2-Mod, 2017-01-26
 ##########
 
 # You can run the script with a -Set WD or -Set WindowsDefault 
@@ -239,6 +239,7 @@ If (!(Test-Path "HKCR:")) {
      New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null
 }
 
+# Import setting from file or sets to windows default
 If ($SettingImp -ne $null){
   If (Test-Path $SettingImp){
     # // File exists
