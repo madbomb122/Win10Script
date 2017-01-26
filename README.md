@@ -25,7 +25,8 @@ or <br />
 
 To import a file for a setting or settings <br />
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-v2.1-M.ps1 -Set example.txt` <br />
-**Note: For an example of the setting files look at '*example.txt*', but it doesn't have what each item can be set to like the script does** <br />
+**Note 1: For an example of the setting files look at '*example.txt*', but it doesn't have what each item can be set to like the script does.** <br />
+**Note 2:The apps to remove cant be imported ATM (dunno if it can with how i have things)**
 
 ## FAQ
 **Q:** Can I run the script safely? <br />
