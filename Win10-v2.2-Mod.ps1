@@ -293,7 +293,7 @@ If($WinDefault -eq 1){
      $TaskViewButton = 1
      $TaskbarIconSize = 1
      $TaskbarGrouping = 2
-     $TrayIcons = 2
+     $TrayIcons = 1
      $SecondsInClock = 2
      $LastActiveClick = 2
      $PidInTitleBar = 2
