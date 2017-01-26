@@ -1,2 +1,2 @@
 # To do
-- [ ] Re-add parameter file to script - Mabye
+- [X] Read/Import Settings from a file
