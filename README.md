@@ -23,7 +23,7 @@ The Following will run the script with resetting everything the script can chang
 or <br />
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-v2.1-M.ps1 -Set WindowsDefault` <br />
 
-To import a file for the settings run
+To import a file for the settings run <br />
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-v2.1-M.ps1 -Set example.txt` <br />
 
 ## FAQ
