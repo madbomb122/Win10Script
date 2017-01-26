@@ -5,8 +5,8 @@ This is by no means a complete set of settings. (There is ALOT that can be chang
 
 This script originally created by https://github.com/Disassembler0/Win10-Initial-Setup-Script/
 
-This script is a Modded version of the 2.0 script. <br />
-The script has added items with an easier way to change settings
+This script is a Modded version of the 2.0 script by Disaseembler0. <br />
+The script has added items with an easier way to change preferences.
 
 ## Usage
 edit the file<br />
