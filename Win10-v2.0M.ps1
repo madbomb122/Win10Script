@@ -18,62 +18,63 @@
 
 # Privacy Settings
 # Function  = Option       #Choices (*Windows Default)
-$Telemetry = 1		  	   #1-Enable*, 2-Disable
-$WiFiSense = 1			   #1-Enable*, 2-Disable
-$SmartScreen = 1		   #1-Enable*, 2-Disable
+$Telemetry = 1		   #1-Enable*, 2-Disable
+$WiFiSense = 1		   #1-Enable*, 2-Disable
+$SmartScreen = 1	   #1-Enable*, 2-Disable
 $StartMenuWebSearch = 1	   #1-Enable*, 2-Disable
 $StartSuggestions = 1	   #1-Enable*, 2-Disable
 $AppAutoDownload = 1	   #1-Enable*, 2-Disable
 $LocationTracking = 1	   #1-Enable*, 2-Disable
-$Feedback = 1			   #1-Enable*, 2-Disable
-$AdvertisingID = 1	       #1-Enable*, 2-Disable	
-$Cortana = 1			   #1-Enable*, 2-Disable
-$ErrorReporting = 1	       #1-Enable*, 2-Disable
+$Feedback = 1		   #1-Enable*, 2-Disable
+$AdvertisingID = 1	   #1-Enable*, 2-Disable	
+$Cortana = 1		   #1-Enable*, 2-Disable
+$ErrorReporting = 1	   #1-Enable*, 2-Disable
 $WinUpdateDownload = 1	   #1-P2P*, 2-Local Only, 3-Disable
-$AutoLoggerFile = 1	       #1-Enable*, 2-Disable,
+$AutoLoggerFile = 1	   #1-Enable*, 2-Disable,
 $DiagTrack = 1	     	   #1-Enable*, 2-Disable,
 $WAPPush = 1	     	   #1-Enable*, 2-Disable,
 
 # Service Tweaks
 # Function  = Option       #Choices (*Windows Default)
-$UAC = 2	     	 	   #1-Lower, 2-Normal*, 3-Higher
+$UAC = 2	     	   #1-Lower, 2-Normal*, 3-Higher
 $SharingMappedDrives = 2   #1-Enable, 2-Disable*
-$AdminShares = 1	       #1-Enable*, 2-Disable
+$AdminShares = 1	   #1-Enable*, 2-Disable
 $Firewall = 1	           #1-Enable*, 2-Disable
-$WinDefender = 1	       #1-Enable*, 2-Disable
+$WinDefender = 1	   #1-Enable*, 2-Disable
 $HomeGroups = 1	           #1-Enable*, 2-Disable
 $RemoteAssistance = 1	   #1-Enable*, 2-Disable
-$RemoteDesktop = 2	       #1-Enable, 2-Disable* (Remote Desktop w/o Network Level Authentication)
+$RemoteDesktop = 2	   #1-Enable, 2-Disable* (Remote Desktop w/o Network Level Authentication)
 $UpdateMSRT = 1	           #1-Enable*, 2-Disable (Malware Software Removal Tool)
-$UpdateDriver = 1	       #1-Enable*, 2-Disable
+$UpdateDriver = 1	   #1-Enable*, 2-Disable
 $RestartOnUpdate = 1	   #1-Enable*, 2-Disable
 
 #Context Menu Items
 # Function  = Option       #Choices (*Windows Default)
-$CastToDevice = 1	       #1-Enable*, 2-Disable
+$CastToDevice = 1	   #1-Enable*, 2-Disable
 $PreviousVersions = 1	   #1-Enable*, 2-Disable
 $IncludeinLibrary = 1	   #1-Enable*, 2-Disable
-$PinTo = 1	 			   #1-Enable*, 2-Disable
+$PinTo = 1	 	   #1-Enable*, 2-Disable
 $ShareWith = 1	           #1-Enable*, 2-Disable
-$SendTo = 1	               #1-Enable*, 2-Disable
+$SendTo = 1	           #1-Enable*, 2-Disable
 
 #Task Bar Items
 # Function  = Option       #Choices (*Windows Default)
 $VolumeControlBar = 1	   #1-Horizontal*, 2-Vertical
 $TaskbarSearchBox = 1	   #1-Show*, 2-Hide
-$TaskViewButton = 1	 	   #1-Show*, 2-Hide
+$TaskViewButton = 1	   #1-Show*, 2-Hide
 $TaskbarIconSize = 1	   #1-Normal*, 2-Smaller
 $TaskbarGrouping = 2	   #1-Never, 2-Always*, 3-When Needed
-$TrayIcons = 2	 	       #1-Auto*, 2-Always Show	
+$TrayIcons = 2	 	   #1-Auto*, 2-Always Show	
+$SecondsInClock = 2	   #1-Show, 2-Hide*
 
 #Explorer Items
 # Function  = Option       #Choices (*Windows Default)
-$PidInTitleBar = 2	 	   #1-Show, 2-Hide*
+$PidInTitleBar = 2	   #1-Show, 2-Hide*
 $AeroResize = 1	           #1-Enable*, 2-Disable
 $AeroShake = 1	           #1-Enable*, 2-Disable
 $KnownExtensions = 2	   #1-Show, 2-Hide*
-$HiddenFiles = 2	 	   #1-Show, 2-Hide*
-$SystemFiles = 2	 	   #1-Show, 2-Hide*
+$HiddenFiles = 2	   #1-Show, 2-Hide*
+$SystemFiles = 2	   #1-Show, 2-Hide*
 $ThisPCOnDesktop = 2	   #1-Show, 2-Hide*
 $ExplorerOpenLoc = 1       #1-Quick Access*, 2-ThisPC
 	
@@ -93,15 +94,15 @@ $PVOpenWithContext = 2	   #1-Enable, 2-Disable*
 
 #Misc items
 # Function  = Option       #Choices (*Windows Default)
-$CameraOnLock = 1	       #1-Enable*, 2-Disable
+$CameraOnLock = 1	   #1-Enable*, 2-Disable
 $LockScreen = 1	           #1-Enable*, 2-Disable (Pre-Anniversary Update)
-$LockScreenAlt = 1	       #1-Enable*, 2-Disable (Anniversary Update workaround) - Applicable to RS1 or newer
-$ActionCenter = 1	       #1-Enable*, 2-Disable
+$LockScreenAlt = 1	   #1-Enable*, 2-Disable (Anniversary Update workaround) - Applicable to RS1 or newer
+$ActionCenter = 1	   #1-Enable*, 2-Disable
 $Autoplay = 1	           #1-Enable*, 2-Disable
 $Autorun = 1	           #1-Enable*, 2-Disable
 $StickyKeyPrompt = 1	   #1-Enable*, 2-Disable
 $NumblockOnStart = 1	   #1-Enable, 2-Disable*
-$F8BootMenu = 1	  		   #1-Enable, 2-Disable*
+$F8BootMenu = 1	  	   #1-Enable, 2-Disable*
 
 # Remove unwanted applications
 # Function  = Option       #Choices (*Windows Default)
@@ -133,7 +134,7 @@ $LinuxSubsystem = 1        #1-Installed, 2-Uninstall* (Anniversary Update) - App
 # use # at begining of line to stop change for the item
 # Example is bellow (JustAnExample)
 $AppsList = @(
-#	"JustAnExample",
+#   'JustAnExample',				# Example (not a real app)
     '9E2F88E3.Twitter',                         # Twitter app
     'D52A8D61.FarmVille2CountryEscape',         # Farm Ville game
     'GAMELOFTSA.Asphalt8Airborne',              # Asphalt 8 game
@@ -162,11 +163,11 @@ $AppsList = @(
     'Microsoft.MicrosoftSudoku',                # 'Sudoku' game 
     'Microsoft.MinecraftUWP',                   # 'Minecraft' game   	
     'Microsoft.MovieMoments',                   
-#	'Microsoft.MicrosoftStickyNotes',           # 'Sticky Notes' app  
+#   'Microsoft.MicrosoftStickyNotes',           # 'Sticky Notes' app  
     'Microsoft.MicrosoftOfficeHub',             
     'Microsoft.Office.OneNote',                 # 'Onenote' app
     'Microsoft.Office.Sway',                    # 'Sway' app
-	'Microsoft.OneConnect',
+    'Microsoft.OneConnect',
     'Microsoft.People',                         # 'People' app
     'Microsoft.SkypeApp',                       # 'Get Skype' link
     'Microsoft.SkypeWiFi',                      
@@ -185,15 +186,15 @@ $AppsList = @(
     'Microsoft.ZuneVideo',                      # 'Groove Music' app
     'MicrosoftMahjong',                         # 'Mahjong' game
     'Windows.ContactSupport',                   
-	'Microsoft.MicrosoftSolitaireCollection',   # Solitaire collection
+    'Microsoft.MicrosoftSolitaireCollection',   # Solitaire collection
     'Microsoft.WindowsMaps',                    # 'Maps' app
     'Microsoft.WindowsSoundRecorder',           # 'Sound Recorder' app
     'Microsoft.windowscommunicationsapps',      # 'Calendar and Mail' app
-	'DummyItemToEndList_DoNotRemove'	        # Dummy Item for end of list, Dont put a #
+    'DummyItemToEndList_DoNotRemove'	        # Dummy Item for end of list, Dont put a #
 )
 
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-## !!!!!!!!!					CAUTION					!!!!!!!!!
+## !!!!!!!!!                   CAUTION                  !!!!!!!!!
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## Do not Edit past this point unless you know what you are doing
 
@@ -844,6 +845,15 @@ If ($TrayIcons -eq 1) {
 } ElseIf ($TrayIcons -eq 2) {
 	Write-Host "Hiding tray icons..."
 	Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "EnableAutoTray" -ErrorAction SilentlyContinue
+}
+
+# Seconds in Taskbar Clock
+If ($TrayIcons -eq 1) {
+	Write-Host "Showing Seconds in Taskbar Clock..."
+	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSecondsInSystemClock" -Type DWord -Value 1
+} ElseIf ($TrayIcons -eq 2) {
+	Write-Host "Hiding Seconds in Taskbar Clock..."
+	Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSecondsInSystemClock" -Type DWord -Value 0
 }
 
 # File extensions
