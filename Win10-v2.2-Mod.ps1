@@ -132,7 +132,7 @@ $WorkFolders = 0           #0-Skip, 1-Installed*, 2-Uninstall
 $LinuxSubsystem = 0        #0-Skip, 1-Installed, 2-Uninstall* (Anniversary Update) - Applicable to RS1 or newer Only
 
 #Restart when done? (I recommend restarting when done)
-$Restart = 1        #0-Skip, 1-Enable
+$Restart = 1               #0-Skip, 1-Enable
 
 ## $Bloatware NOTE:
 # List of $Bloatware is in $AppsList (List Bellow)
