@@ -42,4 +42,7 @@ PS. I removed the import of a parameter file that was in the original Script, bu
 **A:** No Clue.
 
 **Q:** Can you add *BLAH* to the script? <br />
-**A:** Mabye, Depends on what it is and how hard it would be to add.
+**A:** Mabye, Depends on what it is and how hard it would be to add. 
+
+**Q:** How do I request adding *BLAH* to the script? <br />
+**A:** Just post it as an Issue.
