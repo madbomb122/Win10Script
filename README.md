@@ -21,7 +21,7 @@ PS. I removed the import of a parameter file that was in the original Script, bu
 
 ## FAQ
 **Q:** Can I run the script safely? <br />
-**A:** At the default settings, Yes.. but may change settings back to the default or readd removed apps 
+**A:** The script is safe, some setting changes may compromise your computer
 
 **Q:** Can I run the script repeatedly? <br />
 **A:** Yes.
