@@ -9,112 +9,114 @@
 # Modded Script Info
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script
-# Version: 2.0-Mod, 2017-01-25
+# Version: 2.1-Mod, 2017-01-26
 ##########
 
 # Edit values (Option) to your preferance
 # Change to an Option not listed will Skip the Function
-# Default value is Windows Default
+
+# Windows Default for ALL Settings 
+# $OneDriveInstall, and $Bloatware Will be Skipped
+$WinDefault = 2            #1-Yes*, 2-No  (IF 1 is set then all settings after this wont matter)
 
 # Privacy Settings
 # Function  = Option       #Choices (*Windows Default)
-$Telemetry = 1             #1-Enable*, 2-Disable
-$WiFiSense = 1             #1-Enable*, 2-Disable
-$SmartScreen = 1           #1-Enable*, 2-Disable
-$StartMenuWebSearch = 1    #1-Enable*, 2-Disable
-$StartSuggestions = 1      #1-Enable*, 2-Disable
-$AppAutoDownload = 1       #1-Enable*, 2-Disable
-$LocationTracking = 1      #1-Enable*, 2-Disable
-$Feedback = 1              #1-Enable*, 2-Disable
-$AdvertisingID = 1         #1-Enable*, 2-Disable     
-$Cortana = 1               #1-Enable*, 2-Disable
-$ErrorReporting = 1        #1-Enable*, 2-Disable
-$WinUpdateDownload = 1     #1-P2P*, 2-Local Only, 3-Disable
-$AutoLoggerFile = 1        #1-Enable*, 2-Disable,
-$DiagTrack = 1             #1-Enable*, 2-Disable,
-$WAPPush = 1               #1-Enable*, 2-Disable,
+$Telemetry = 0             #0-Skip, 1-Enable*, 2-Disable
+$WiFiSense = 0             #0-Skip, 1-Enable*, 2-Disable
+$SmartScreen = 0           #0-Skip, 1-Enable*, 2-Disable
+$StartMenuWebSearch = 0    #0-Skip, 1-Enable*, 2-Disable
+$StartSuggestions = 0      #0-Skip, 1-Enable*, 2-Disable
+$AppAutoDownload = 0       #0-Skip, 1-Enable*, 2-Disable
+$LocationTracking = 0      #0-Skip, 1-Enable*, 2-Disable
+$Feedback = 0              #0-Skip, 1-Enable*, 2-Disable
+$AdvertisingID = 0         #0-Skip, 1-Enable*, 2-Disable     
+$Cortana = 0               #0-Skip, 1-Enable*, 2-Disable
+$ErrorReporting = 0        #0-Skip, 1-Enable*, 2-Disable
+$WinUpdateDownload = 0     #0-Skip, 1-P2P*, 2-Local Only, 3-Disable
+$AutoLoggerFile = 0        #0-Skip, 1-Enable*, 2-Disable,
+$DiagTrack = 0             #0-Skip, 1-Enable*, 2-Disable,
+$WAPPush = 0               #0-Skip, 1-Enable*, 2-Disable,
 
 # Service Tweaks
 # Function  = Option       #Choices (*Windows Default)
-$UAC = 2                   #1-Lower, 2-Normal*, 3-Higher
-$SharingMappedDrives = 2   #1-Enable, 2-Disable*
-$AdminShares = 1           #1-Enable*, 2-Disable
-$Firewall = 1              #1-Enable*, 2-Disable
-$WinDefender = 1           #1-Enable*, 2-Disable
-$HomeGroups = 1            #1-Enable*, 2-Disable
-$RemoteAssistance = 1      #1-Enable*, 2-Disable
-$RemoteDesktop = 2         #1-Enable, 2-Disable* (Remote Desktop w/o Network Level Authentication)
-$UpdateMSRT = 1            #1-Enable*, 2-Disable (Malware Software Removal Tool)
-$UpdateDriver = 1          #1-Enable*, 2-Disable
-$RestartOnUpdate = 1       #1-Enable*, 2-Disable
+$UAC = 0                   #0-Skip, 1-Lower, 2-Normal*, 3-Higher
+$SharingMappedDrives = 0   #0-Skip, 1-Enable, 2-Disable*
+$AdminShares = 0           #0-Skip, 1-Enable*, 2-Disable
+$Firewall = 0              #0-Skip, 1-Enable*, 2-Disable
+$WinDefender = 0           #0-Skip, 1-Enable*, 2-Disable
+$HomeGroups = 0            #0-Skip, 1-Enable*, 2-Disable
+$RemoteAssistance = 0      #0-Skip, 1-Enable*, 2-Disable
+$RemoteDesktop = 0         #0-Skip, 1-Enable, 2-Disable* (Remote Desktop w/o Network Level Authentication)
+$UpdateMSRT = 0            #0-Skip, 1-Enable*, 2-Disable (Malware Software Removal Tool)
+$UpdateDriver = 0          #0-Skip, 1-Enable*, 2-Disable
+$RestartOnUpdate = 0       #0-Skip, 1-Enable*, 2-Disable
 
 #Context Menu Items
 # Function  = Option       #Choices (*Windows Default)
-$CastToDevice = 1          #1-Enable*, 2-Disable
-$PreviousVersions = 1      #1-Enable*, 2-Disable
-$IncludeinLibrary = 1      #1-Enable*, 2-Disable
-$PinTo = 1                 #1-Enable*, 2-Disable
-$ShareWith = 1             #1-Enable*, 2-Disable
-$SendTo = 1                #1-Enable*, 2-Disable
+$CastToDevice = 0          #0-Skip, 1-Enable*, 2-Disable
+$PreviousVersions = 0      #0-Skip, 1-Enable*, 2-Disable
+$IncludeinLibrary = 0      #0-Skip, 1-Enable*, 2-Disable
+$PinTo = 0                 #0-Skip, 1-Enable*, 2-Disable
+$ShareWith = 0             #0-Skip, 1-Enable*, 2-Disable
+$SendTo = 0                #0-Skip, 1-Enable*, 2-Disable
 
 #Task Bar Items
 # Function  = Option       #Choices (*Windows Default)
-$VolumeControlBar = 1      #1-Horizontal*, 2-Vertical
-$TaskbarSearchBox = 1      #1-Show*, 2-Hide
-$TaskViewButton = 1        #1-Show*, 2-Hide
-$TaskbarIconSize = 1       #1-Normal*, 2-Smaller
-$TaskbarGrouping = 2       #1-Never, 2-Always*, 3-When Needed
-$TrayIcons = 2             #1-Auto*, 2-Always Show     
-$SecondsInClock = 2        #1-Show, 2-Hide*
-$LastActiveClick = 2       #1-Enable, 2-Disable*
+$VolumeControlBar = 0      #0-Skip, 1-Horizontal*, 2-Vertical
+$TaskbarSearchBox = 0      #0-Skip, 1-Show*, 2-Hide
+$TaskViewButton = 0        #0-Skip, 1-Show*, 2-Hide
+$TaskbarIconSize = 0       #0-Skip, 1-Normal*, 2-Smaller
+$TaskbarGrouping = 0       #0-Skip, 1-Never, 2-Always*, 3-When Needed
+$TrayIcons = 0             #0-Skip, 1-Auto*, 2-Always Show     
+$SecondsInClock = 0        #0-Skip, 1-Show, 2-Hide*
+$LastActiveClick = 0       #0-Skip, 1-Enable, 2-Disable*
 
 #Explorer Items
 # Function  = Option       #Choices (*Windows Default)
-$PidInTitleBar = 2         #1-Show, 2-Hide*
-$AeroResize = 1            #1-Enable*, 2-Disable
-$AeroShake = 1             #1-Enable*, 2-Disable
-$KnownExtensions = 2       #1-Show, 2-Hide*
-$HiddenFiles = 2           #1-Show, 2-Hide*
-$SystemFiles = 2           #1-Show, 2-Hide*
-$ThisPCOnDesktop = 2       #1-Show, 2-Hide*
-$ExplorerOpenLoc = 1       #1-Quick Access*, 2-ThisPC
+$PidInTitleBar = 0         #0-Skip, 1-Show, 2-Hide*
+$AeroResize = 0            #0-Skip, 1-Enable*, 2-Disable
+$AeroShake = 0             #0-Skip, 1-Enable*, 2-Disable
+$KnownExtensions = 0       #0-Skip, 1-Show, 2-Hide*
+$HiddenFiles = 0           #0-Skip, 1-Show, 2-Hide*
+$SystemFiles = 0           #0-Skip, 1-Show, 2-Hide*
+$ThisPCOnDesktop = 0       #0-Skip, 1-Show, 2-Hide*
+$ExplorerOpenLoc = 0       #0-Skip, 1-Quick Access*, 2-ThisPC
      
 #'This PC' items
 # Function  = Option       #Choices (*Windows Default)
-$DesktopIconInThisPC = 1   #1-Show*, 2-Hide
-$DocumentsIconInThisPC = 1 #1-Show*, 2-Hide
-$DownloadsIconInThisPC = 1 #1-Show*, 2-Hide
-$MusicIconInThisPC = 1     #1-Show*, 2-Hide
-$PicturesIconInThisPC = 1  #1-Show*, 2-Hide
-$VideosIconInThisPC = 1    #1-Show*, 2-Hide
+$DesktopIconInThisPC = 0   #0-Skip, 1-Show*, 2-Hide
+$DocumentsIconInThisPC = 0 #0-Skip, 1-Show*, 2-Hide
+$DownloadsIconInThisPC = 0 #0-Skip, 1-Show*, 2-Hide
+$MusicIconInThisPC = 0     #0-Skip, 1-Show*, 2-Hide
+$PicturesIconInThisPC = 0  #0-Skip, 1-Show*, 2-Hide
+$VideosIconInThisPC = 0    #0-Skip, 1-Show*, 2-Hide
 
 # Photo Viewer
 # Function  = Option       #Choices (*Windows Default)
-$PVFileAssociation = 2     #1-Enable, 2-Disable*
-$PVOpenWithContext = 2     #1-Enable, 2-Disable*
+$PVFileAssociation = 0     #0-Skip, 1-Enable, 2-Disable*
+$PVOpenWithContext = 0     #0-Skip, 1-Enable, 2-Disable*
 
 #Misc items
 # Function  = Option       #Choices (*Windows Default)
-$CameraOnLock = 1          #1-Enable*, 2-Disable
-$LockScreen = 1            #1-Enable*, 2-Disable (Pre-Anniversary Update)
-$LockScreenAlt = 1         #1-Enable*, 2-Disable (Anniversary Update workaround) - Applicable to RS1 or newer
-$ActionCenter = 1          #1-Enable*, 2-Disable
-$Autoplay = 1              #1-Enable*, 2-Disable
-$Autorun = 1               #1-Enable*, 2-Disable
-$StickyKeyPrompt = 1       #1-Enable*, 2-Disable
-$NumblockOnStart = 1       #1-Enable, 2-Disable*
-$F8BootMenu = 1            #1-Enable, 2-Disable*
+$CameraOnLock = 0          #0-Skip, 1-Enable*, 2-Disable
+$LockScreen = 0            #0-Skip, 1-Enable*, 2-Disable (Pre-Anniversary Update)
+$LockScreenAlt = 0         #0-Skip, 1-Enable*, 2-Disable (Anniversary Update workaround) - Applicable to RS1 or newer
+$ActionCenter = 0          #0-Skip, 1-Enable*, 2-Disable
+$Autoplay = 0              #0-Skip, 1-Enable*, 2-Disable
+$Autorun = 0               #0-Skip, 1-Enable*, 2-Disable
+$StickyKeyPrompt = 0       #0-Skip, 1-Enable*, 2-Disable
+$NumblockOnStart = 0       #0-Skip, 1-Enable, 2-Disable*
+$F8BootMenu = 0            #0-Skip, 1-Enable, 2-Disable*
 
 # Remove unwanted applications
 # Function  = Option       #Choices (*Windows Default)
-$OneDrive = 1              #1-Enable*, 2-Disable
-$OneDriveInstall = 1       #1-Installed*, 2-Uninstall
-$Bloatware = 1             #1-Installed*, 2- Hide, 3-Uninstall (!!Read Note Bellow)
-$XboxDVR = 1               #1-Enable*, 2-Disable
-$MediaPlayer = 1           #1-Installed*, 2-Uninstall
-$WorkFolders = 1           #1-Installed*, 2-Uninstall
-$LinuxSubsystem = 1        #1-Installed, 2-Uninstall* (Anniversary Update) - Applicable to RS1 or newer Only
-
+$OneDrive = 0              #0-Skip, 1-Enable*, 2-Disable
+$OneDriveInstall = 0       #0-Skip, 1-Installed*, 2-Uninstall
+$Bloatware = 0             #0-Skip, 1-Installed*, 2- Hide, 3-Uninstall (!!Read Note Bellow)
+$XboxDVR = 0               #0-Skip, 1-Enable*, 2-Disable
+$MediaPlayer = 0           #0-Skip, 1-Installed*, 2-Uninstall
+$WorkFolders = 0           #0-Skip, 1-Installed*, 2-Uninstall
+$LinuxSubsystem = 0        #0-Skip, 1-Installed, 2-Uninstall* (Anniversary Update) - Applicable to RS1 or newer Only
 
 ## $Bloatware NOTE:
 # List of $Bloatware is in $AppsList (List Bellow)
@@ -172,8 +174,8 @@ $AppsList = @(
     'Microsoft.People',                         # 'People' app
     'Microsoft.SkypeApp',                       # 'Get Skype' link
     'Microsoft.SkypeWiFi',                      
-    'Microsoft.Studios.Wordament',              
-    'Microsoft.Taptiles',                         
+    'Microsoft.Studios.Wordament',              # 'Wordament' game
+    'Microsoft.Taptiles',                       
 #   'Microsoft.Windows.Photos',                 # Photos app
 #   'Microsoft.WindowsAlarms',                  # 'Alarms and Clock' app
 #   'Microsoft.WindowsCalculator',              # 'Calculator' app
@@ -191,13 +193,17 @@ $AppsList = @(
     'Microsoft.WindowsMaps',                    # 'Maps' app
     'Microsoft.WindowsSoundRecorder',           # 'Sound Recorder' app
     'Microsoft.windowscommunicationsapps',      # 'Calendar and Mail' app
-    'DummyItemToEndList_DoNotRemove'             # Dummy Item for end of list, Dont put a #
+    'DummyItemToEndList_DoNotRemove'            # Dummy Item for end of list, Dont put a #
 )
 
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## !!!!!!!!!                   CAUTION                  !!!!!!!!!
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## Do not Edit past this point unless you know what you are doing
+
+##########
+# Needed Stuff
+##########
 
 # Ask for elevated permissions if required
 If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
@@ -215,6 +221,84 @@ $key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown,AllowCtrlC")
 # Define HKCR
 If (!(Test-Path "HKCR:")) {
      New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null
+}
+
+##########
+# Windows Default
+##########
+
+If($WinDefault-eq1){
+     $Telemetry = 1
+     $WiFiSense = 1
+     $SmartScreen = 1
+     $StartMenuWebSearch = 1
+     $StartSuggestions = 1
+     $AppAutoDownload = 1
+     $LocationTracking = 1
+     $Feedback = 1
+     $AdvertisingID = 1
+     $Cortana = 1
+     $ErrorReporting = 1
+     $WinUpdateDownload = 1
+     $AutoLoggerFile = 1
+     $DiagTrack = 1
+     $WAPPush = 1
+     $UAC = 2
+     $SharingMappedDrives = 2
+     $AdminShares = 1
+     $Firewall = 1
+     $WinDefender = 1
+     $HomeGroups = 1
+     $RemoteAssistance = 1
+     $RemoteDesktop = 2
+     $UpdateMSRT = 1
+     $UpdateDriver = 1
+     $RestartOnUpdate = 1
+     $PreviousVersions = 1
+     $IncludeinLibrary = 1
+     $PinTo = 1
+     $ShareWith = 1
+     $SendTo = 1
+     $VolumeControlBar = 1
+     $TaskbarSearchBox = 1
+     $TaskViewButton = 1
+     $TaskbarIconSize = 1
+     $TaskbarGrouping = 2
+     $TrayIcons = 2
+     $SecondsInClock = 2
+     $LastActiveClick = 2
+     $PidInTitleBar = 2
+     $AeroResize = 1
+     $AeroShake = 1
+     $KnownExtensions = 2
+     $HiddenFiles = 2
+     $SystemFiles = 2
+     $ThisPCOnDesktop = 2
+     $ExplorerOpenLoc = 1
+     $DesktopIconInThisPC = 1
+     $DocumentsIconInThisPC = 1
+     $DownloadsIconInThisPC = 1
+     $MusicIconInThisPC = 1
+     $PicturesIconInThisPC = 1
+     $VideosIconInThisPC = 1
+     $PVFileAssociation = 2
+     $PVOpenWithContext = 2
+     $CameraOnLock = 1
+     $LockScreen = 1
+     $LockScreenAlt = 1
+     $ActionCenter = 1
+     $Autoplay = 1
+     $Autorun = 1
+     $StickyKeyPrompt = 1
+     $NumblockOnStart = 1
+     $F8BootMenu = 1
+     $OneDrive = 1
+#    $OneDriveInstall = 1
+#    $Bloatware = 1
+     $XboxDVR = 1
+     $MediaPlayer = 1
+     $WorkFolders = 1
+     $LinuxSubsystem = 1
 }
 
 
