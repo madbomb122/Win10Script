@@ -12,6 +12,11 @@
 # Version: 2.1-Mod, 2017-01-26
 ##########
 
+# You can run the script with a -WD or -WindowsDefault to have run the Default Windows settings
+# DO NOT TOUCH NEXT LINE
+Param([alias("WD")] [switch] $WindowsDefault)
+
+## SAFE TO CHANGE VALUE BELLOW
 # Edit values (Option) to your preferance
 # Change to an Option not listed will Skip the Function
 
@@ -226,6 +231,9 @@ If (!(Test-Path "HKCR:")) {
 ##########
 # Windows Default
 ##########
+Switch ($WindowsDefault) {
+	"True" { $WinDefault = 1 }
+}
 
 If($WinDefault -eq 1){
      $Telemetry = 1
