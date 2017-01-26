@@ -46,3 +46,6 @@ PS. I removed the import of a parameter file that was in the original Script, bu
 
 **Q:** How do I request adding *BLAH* to the script? <br />
 **A:** Just post it as an Issue.
+
+**Q:** Are you planning to add *BLAH* to the script? <br />
+**A:** Check the todo list, anything i am planning to do or thinking of doing will be there.
