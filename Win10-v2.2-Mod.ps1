@@ -14,10 +14,14 @@
 
 # You can run the script with a -Set WD or -Set WindowsDefault to have run the Default Windows settings
 # You can import settings from a file with -Set filename
-# DO NOT TOUCH NEXT LINE
+## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+## !!!!!!!!!            DO NOT TOUCH NEXT LINE          !!!!!!!!!
+## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 Param([alias("Set")] [string] $SettingImp)
 
-## SAFE TO CHANGE VALUE BELLOW
+## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+## !!!!!!!!!          SAFE TO EDIT VALUES BELLOW        !!!!!!!!!
+## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # Edit values (Option) to your preferance
 # Change to an Option not listed will Skip the Function
 
