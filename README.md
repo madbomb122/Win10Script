@@ -1,12 +1,12 @@
 ## Description
 
-This is a PowerShell script for automation of routine tasks/setting on Windows 10. 
+This is a PowerShell script for automation of routine tasks/setting on Windows 10. <br /> 
 This is by no means a complete set of settings. (There is ALOT that can be changed/done)
 
 This script originally created by https://github.com/Disassembler0/Win10-Initial-Setup-Script/
 
-This script is a Modded version of the 2.0 script.
-The script has added items with an easyer way to change settings
+This script is a Modded version of the 2.0 script. <br />
+The script has added items with an easier way to change settings
 
 ## Usage
 edit the file<br />
