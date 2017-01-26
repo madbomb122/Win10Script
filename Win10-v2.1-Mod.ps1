@@ -12,9 +12,10 @@
 # Version: 2.1-Mod, 2017-01-26
 ##########
 
-# You can run the script with a -WD or -WindowsDefault to have run the Default Windows settings
+# You can run the script with a -Set WD or -Set WindowsDefault to have run the Default Windows settings
+# You can import settings from a file with -Set filename
 # DO NOT TOUCH NEXT LINE
-Param([alias("WD")] [switch] $WindowsDefault)
+Param([alias("Set")] [string] $SettingImp)
 
 ## SAFE TO CHANGE VALUE BELLOW
 # Edit values (Option) to your preferance
@@ -231,12 +232,21 @@ If (!(Test-Path "HKCR:")) {
      New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null
 }
 
+If ($SettingImp -ne $null){
+  If (Test-Path $SettingImp){
+    # // File exists
+     Get-Content $SettingImp | Foreach-Object{
+      $var = $_.Split("=")
+      New-Variable -Name $var[0] -Value $var[1]
+     }
+  } ElseIf ($SettingImp -eq "WD" -or $SettingImp -eq "WindowsDefault"){
+	 $WinDefault = 1
+  }
+}
+
 ##########
 # Windows Default
 ##########
-Switch ($WindowsDefault) {
-	"True" { $WinDefault = 1 }
-}
 
 If($WinDefault -eq 1){
      $Telemetry = 1
