@@ -23,6 +23,7 @@ The Following will run the script with resetting everything the script can chang
 or <br />
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-v2.2-Mod.ps11 -Set WindowsDefault` <br />
 
+**FILE IMPORT NOT WORKING ATM**
 To import a file for a setting or settings <br />
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-v2.2-Mod.ps1 -Set example.txt` <br />
 **Note 1: For an example of the setting files look at '*example.txt*', but it doesn't have what each item can be set to like the script does.** <br />
