@@ -7,6 +7,8 @@ Added ability to run windows default settings w/o editing file
 Change script so it does nothing by default
 Added item to have it run the windows default items
 
+Added the ability to show/hide the seconds for the clock on the taskbar
+
 -----------------------------------------------------------------------------------
 2.0-Mod (1-25-20017
 Made Script easier to pick what you want to run
@@ -20,9 +22,11 @@ Pin To
 Share With
 Send To
 
+Added ability to Remove the bloatware instead of just hiding it
 Added ability to change the Volume Control Bar to classic/new
 Added ability to show/hide Pid In Title Bar
-Added ability to disable/enable Aero Resize and Aero Shake
+Added ability to disable/enable Aero Resize, Aero Shake, and App Auto Download
+Added options for a few of the items that had more than once choice
 
 -----------------------------------------------------------------------------------
 2.0
