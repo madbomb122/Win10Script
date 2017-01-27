@@ -248,6 +248,11 @@ If (!(Test-Path "HKCR:")) {
      New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null
 }
 
+If ($SettingImp -eq "WD" -or $SettingImp -eq "WindowsDefault"){
+	 $WinDefault = 1
+ }
+<#
+#File Import not working atm
 If ($SettingImp -ne $null){
   If (Test-Path $SettingImp){
     # // File exists
@@ -258,7 +263,8 @@ If ($SettingImp -ne $null){
   } ElseIf ($SettingImp -eq "WD" -or $SettingImp -eq "WindowsDefault"){
 	 $WinDefault = 1
   }
-}
+} 
+#>
 
 ##########
 # Windows Default
