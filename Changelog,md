@@ -1,16 +1,17 @@
-2.2-Mod (1-26-20017
+2.2-Mod (1-26-20017)
 Added ability to run imported settings from a file
 Added ability to run windows default settings w/o editing file
 
 -----------------------------------------------------------------------------------
-2.1-Mod (1-25-20017
+2.1-Mod (1-25-20017)
 Change script so it does nothing by default
 Added item to have it run the windows default items
 
 Added the ability to show/hide the seconds for the clock on the taskbar
 
 -----------------------------------------------------------------------------------
-2.0-Mod (1-25-20017
+2.0-Mod (1-25-20017) -- (Started doing my changes)
+
 Made Script easier to pick what you want to run
 Script by default returned items to the default of windows (that the script is set to change)
 
@@ -29,6 +30,6 @@ Added ability to disable/enable Aero Resize, Aero Shake, and App Auto Download
 Added options for a few of the items that had more than once choice
 
 -----------------------------------------------------------------------------------
-2.0
-copy of the v2.0 Script by Disassembler0
+2.0 (1-08-2017)
+v2.0 Script by Disassembler0
 https://github.com/Disassembler0/Win10-Initial-Setup-Script/
