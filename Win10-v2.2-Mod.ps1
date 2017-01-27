@@ -19,12 +19,12 @@
 
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## !!!!!!!!!            DO NOT TOUCH NEXT LINE          !!!!!!!!!
-## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 Param([alias("Set")] [string] $SettingImp)
 
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## !!!!!!!!!          SAFE TO EDIT VALUES BELLOW        !!!!!!!!!
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 # Edit values (Option) to your preferance
 # Change to an Option not listed will Skip the Function
 
@@ -131,24 +131,31 @@ $MediaPlayer = 0           #0-Skip, 1-Installed*, 2-Uninstall
 $WorkFolders = 0           #0-Skip, 1-Installed*, 2-Uninstall
 $LinuxSubsystem = 0        #0-Skip, 1-Installed, 2-Uninstall* (Anniversary Update) - Applicable to RS1 or newer Only
 
+#Skips the Press any key to continue?
+$Automated = 1             #0-Skip, 1-Dont Skip 
+
 #Restart when done? (I recommend restarting when done)
-$Restart = 1               #0-Skip, 1-Enable
+$Restart = 1               #0-Dont Restart, 1-Restart
+
 
 ## $Bloatware NOTE:
-# List of $Bloatware is in $AppsList (List Bellow)
-#
-# Bloatware Uninstall will remove them to reinstall you can try to 
-# 1. Install some from Windows Store
-# 2. Restore the files using installation medium as follows
-# New-Item C:\Mnt -Type Directory | Out-Null
-# dism /Mount-Image /ImageFile:D:\sources\install.wim /index:1 /ReadOnly /MountDir:C:\Mnt
-# robocopy /S /SEC /R:0 "C:\Mnt\Program Files\WindowsApps" "C:\Program Files\WindowsApps"
-# dism /Unmount-Image /Discard /MountDir:C:\Mnt
-# Remove-Item -Path C:\Mnt -Recurse
+<# List of $Bloatware is in $AppsList (List Bellow)
 
-# To see list of all packages use the following in powershell
-# Get-AppxPackage -AllUsers | Select Name
-# Not all apps listed can be removed or hidden
+Bloatware Uninstall will remove them to reinstall you can try to 
+1. Install some from Windows Store
+2. Restore the files using installation medium as follows
+New-Item C:\Mnt -Type Directory | Out-Null
+dism /Mount-Image /ImageFile:D:\sources\install.wim /index:1 /ReadOnly /MountDir:C:\Mnt
+robocopy /S /SEC /R:0 "C:\Mnt\Program Files\WindowsApps" "C:\Program Files\WindowsApps"
+dism /Unmount-Image /Discard /MountDir:C:\Mnt
+Remove-Item -Path C:\Mnt -Recurse
+#>
+
+<# To see list of all packages use the command bellow in powershell
+Get-AppxPackage -AllUsers | Select Name
+# Not all apps listed can be removed or hidden 
+#>
+
 
 # use # at begining of line to stop change for the item
 # Example is bellow (JustAnExample)
@@ -229,17 +236,18 @@ If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
 
 # Asks to press a key before continuing
 # Doesnt work in PowerShell ISE
-Write-Host
-Write-Host "Press any key to continue..." -ForegroundColor Black -BackgroundColor White
-Write-Host "Close Window to Cancel..." -ForegroundColor Red -BackgroundColor Black
-$key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown,AllowCtrlC")
+If ($Automated -eq 1){
+     Write-Host "By Running this script you are agreeing to the Terms of Useage" -ForegroundColor Black -BackgroundColor White
+     Write-Host "Press any key to continue..." -ForegroundColor White -BackgroundColor Black
+     Write-Host "Close Window to Cancel..." -ForegroundColor Red -BackgroundColor Black
+     $key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown,AllowCtrlC")
+}
 
 # Define HKCR
 If (!(Test-Path "HKCR:")) {
      New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null
 }
 
-# Import setting from file or sets to windows default
 If ($SettingImp -ne $null){
   If (Test-Path $SettingImp){
     # // File exists
