@@ -70,4 +70,5 @@ XboxDVR=1
 MediaPlayer=1
 WorkFolders=1
 LinuxSubsystem=1
+Automated=1
 Restart=1
