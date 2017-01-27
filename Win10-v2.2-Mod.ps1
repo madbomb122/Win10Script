@@ -237,7 +237,7 @@ If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
 # Asks to press a key before continuing
 # Doesnt work in PowerShell ISE
 If ($Automated -eq 1){
-     Write-Host "By Running this script you are agreeing to the Terms of Useage" -ForegroundColor Black -BackgroundColor White
+     Write-Host "By Running this script you are agreeing to the Terms of Use" -ForegroundColor Black -BackgroundColor White
      Write-Host "Press any key to continue..." -ForegroundColor White -BackgroundColor Black
      Write-Host "Close Window to Cancel..." -ForegroundColor Red -BackgroundColor Black
      $key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown,AllowCtrlC")
