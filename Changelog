@@ -1,0 +1,30 @@
+2.2-Mod (1-26-20017
+Added ability to run imported settings from a file
+Added ability to run windows default settings w/o editing file
+
+-----------------------------------------------------------------------------------
+2.1-Mod (1-25-20017
+Change script so it does nothing by default
+Added item to have it run the windows default items
+
+-----------------------------------------------------------------------------------
+2.0-Mod (1-25-20017
+Made Script easier to pick what you want to run
+Script by default returned items to the default of windows (that the script is set to change)
+
+Added ability to remove/add the following Context menu items
+Cast To Device
+Previous Versions
+Include in Library
+Pin To
+Share With
+Send To
+
+Added ability to change the Volume Control Bar to classic/new
+Added ability to show/hide Pid In Title Bar
+Added ability to disable/enable Aero Resize and Aero Shake
+
+-----------------------------------------------------------------------------------
+2.0
+copy of the v2.0 Script by Disassembler0
+https://github.com/Disassembler0/Win10-Initial-Setup-Script/
