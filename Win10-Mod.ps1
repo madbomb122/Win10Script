@@ -9,7 +9,7 @@
 # Modded Script Info
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script
-# Version: 3.0-Mod, 2017-01-27
+# Version: 3.1-Mod, 2017-01-28
 ##########
 <#
     Win10 Initial Setup Script - Makes it easier to setup an existing or new install with moded setting
@@ -302,7 +302,20 @@ If ($Term_of_Use -eq 1){
      Write-Host "This program comes with ABSOLUTELY NO WARRANTY" -ForegroundColor Black -BackgroundColor White
      Write-Host "This is free software, and you are welcome to redistribute" -ForegroundColor Black -BackgroundColor White
      Write-Host "it under certain conditions. Read License file." -ForegroundColor Black -BackgroundColor White
-     $key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown,AllowCtrlC")
+     Write-Host ""
+     Write-Host "Do you Accept the Term of Use? (y/n)"	 
+     $KeyPress= $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+     $KeyPress=$KeyPress.Character
+}
+
+If($KeyPress -eq 'y' -or $Term_of_Use -ne 1) {
+     Write-Host "Running Script"
+} ElseIf($KeyPress -eq 'n'){
+     Write-Host "Exiting Script, Goodbye"
+     exit
+} Else{
+     Write-Host "Invalid Input, Goodbye"
+     exit	 
 }
 
 # Define HKCR
