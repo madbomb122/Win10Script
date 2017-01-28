@@ -9,7 +9,7 @@
 # Modded Script Info
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script
-# Version: 2.3-Mod, 2017-01-27
+# Version: 3.0-Mod, 2017-01-27
 ##########
 
 # You can run the script with a -Set WD or -Set WindowsDefault 
@@ -20,6 +20,7 @@
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## !!!!!!!!!            DO NOT TOUCH NEXT LINE          !!!!!!!!!
 Param([alias("Set")] [string] $SettingImp)
+
 
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## !!!!!!!!!          SAFE TO EDIT VALUES BELLOW        !!!!!!!!!
@@ -125,23 +126,14 @@ $F8BootMenu = 0            #0-Skip, 1-Enable, 2-Disable*
 # Function  = Option       #Choices (*Windows Default)
 $OneDrive = 0              #0-Skip, 1-Enable*, 2-Disable
 $OneDriveInstall = 0       #0-Skip, 1-Installed*, 2-Uninstall
-$Bloatware = 0             #0-Skip, 1-Installed*, 2- Hide, 3-Uninstall (!!Read Note Bellow)
 $XboxDVR = 0               #0-Skip, 1-Enable*, 2-Disable
 $MediaPlayer = 0           #0-Skip, 1-Installed*, 2-Uninstall
 $WorkFolders = 0           #0-Skip, 1-Installed*, 2-Uninstall
 $LinuxSubsystem = 0        #0-Skip, 1-Installed, 2-Uninstall* (Anniversary Update) - Applicable to RS1 or newer Only
 
-#Skips the Press any key to continue?
-$Automated = 1             #0-Skip, 1-Dont Skip 
+<# 
+App Uninstall will remove them to reinstall you can try to 
 
-#Restart when done? (I recommend restarting when done)
-$Restart = 1               #0-Dont Restart, 1-Restart
-
-
-## $Bloatware NOTE:
-<# List of $Bloatware is in $AppsList (List Bellow)
-
-Bloatware Uninstall will remove them to reinstall you can try to 
 1. Install some from Windows Store
 2. Restore the files using installation medium as follows
 New-Item C:\Mnt -Type Directory | Out-Null
@@ -151,83 +143,139 @@ dism /Unmount-Image /Discard /MountDir:C:\Mnt
 Remove-Item -Path C:\Mnt -Recurse
 #>
 
-<# To see list of all packages use the command bellow in powershell
-Get-AppxPackage -AllUsers | Select Name
-# Not all apps listed can be removed or hidden 
-#>
+# Apps 
+# Function  = Option       # 0-Skip, 1-Unhide, 2- Hide, 3-Uninstall (!!Read Note Above)
+$APP_3DBuilder=0           # '3DBuilder' app
+$APP_AdvertisingXaml=0     ## Removal may cause problem with some apps
+$APP_Appconnector=0        ## Not sure about this one
+$APP_Asphalt8Airborne=0    # 'Asphalt 8' game
+$APP_BingFinance=0         # 'Money' app - Financial news
+$APP_BingFoodAndDrink=0    # 'Food and Drink' app
+$APP_BingHealthFitness=0   # 'Health and Fitness' app
+$APP_BingNews=0            # 'Generic news' app
+$APP_BingSports=0          # 'Sports' app - Sports news
+$APP_BingTranslator=0      # 'Translator' app - Bing Translate
+$APP_BingTravel=0          # 'Travel' app
+$APP_BingWeather=0         # 'Weather' app
+$APP_BioEnrollment=0       ## Not sure about this one
+$APP_CandyCrushSoda=0      # 'Candy Crush' game 
+$APP_CloudExperience=0     # 'Cloud Experience' -May not be removable
+$APP_CommsPhone=0          # 'Phone' app
+$APP_Communications=0      # 'Calendar and Mail' app
+$APP_ConnectivityStore=0       
+$APP_ContactSupport=0      # May not be removable
+$APP_Facebook=0            # 'Facebook' app
+$APP_FarmVille=0           # 'Farm Ville' game
+$APP_FreshPaint=0          # 'Canvas' app
+$APP_Getstarted=0          # 'Get Started' link
+$APP_Messaging=0           # 'Messaging' app
+$APP_MicrosoftJackpot=0    # 'Jackpot' app
+$APP_MicrosoftJigsaw=0     # 'Jigsaw' game       
+$APP_MicrosoftMahjong=0    # 'Mahjong' game
+$APP_MicrosoftOfficeHub=0       
+$APP_MicrosoftSudoku=0     # 'Sudoku' game 
+$APP_MinecraftUWP=0        # 'Minecraft' game    
+$APP_MovieMoments=0          
+$APP_Netflix=0             # 'Netflix' app
+$APP_OfficeOneNote=0       # 'Onenote' app
+$APP_OfficeSway=0          # 'Sway' app
+$APP_OneConnect=0
+$APP_People=0              # 'People' app
+$APP_Photos=0              # Photos app
+$APP_SkypeApp=0            # 'Get Skype' link
+$APP_SkypeWiFi=0           
+$APP_SolitaireCollection=0 # Solitaire collection
+$APP_SoundRecorder=0       # 'Sound Recorder' app
+$APP_StickyNotes=0         # 'Sticky Notes' app 
+$APP_StudiosWordament=0    # 'Wordament' game
+$APP_Taptiles=0            
+$APP_Twitter=0             # 'Twitter' app
+$APP_WindowsAlarms=0       # 'Alarms and Clock' app
+$APP_WindowsCalculator=0   # 'Calculator' app
+$APP_WindowsCamera=0       # 'Camera' app
+$APP_WindowsFeedback=0     # 'Feedback' functionality
+$APP_WindowsFeedbackHub=0  # 'Feedback' functionality
+$APP_WindowsMaps=0         # 'Maps' app
+$APP_WindowsPhone=0        # 'Phone Companion' app
+$APP_WindowsStore=0        # Windows Store
+$APP_XboxApp=0             # 'Xbox' app 
+$APP_ZuneMusic=0           # 'Groove Music' app
+$APP_ZuneVideo=0           # 'Groove Music' app
 
+#Skips the Press any key to continue?
+$Automated = 1             #0-Skip, 1-Dont Skip 
 
-# use # at begining of line to stop change for the item
-# Example is bellow (JustAnExample)
-$AppsList = @(
-#   'JustAnExample',                            # Example (not a real app)
-    '9E2F88E3.Twitter',                         # 'Twitter' app
-    'D52A8D61.FarmVille2CountryEscape',         # 'Farm Ville' game
-    'GAMELOFTSA.Asphalt8Airborne',              # 'Asphalt 8' game
-    'king.com.CandyCrushSodaSaga',              # 'Candy Crush' game  
-    '4DF9E0F8.Netflix',                         # 'Netflix' app
-	'Facebook.Facebook',                        # 'Facebook' app
-#   'Microsoft.WindowsStore',                   # Windows Store
-    'Microsoft.3DBuilder',                      # '3DBuilder' app
-#   'Microsoft.Advertising.Xaml',               ## Removal may cause problem with some apps
-#   'Microsoft.Appconnector',                   ## Not sure about this one
-#   'Microsoft.BioEnrollment',                  ## Not sure about this one
-    'Microsoft.BingFinance',                    # 'Money' app - Financial news
-    'Microsoft.BingFoodAndDrink',               # 'Food and Drink' app
-    'Microsoft.BingHealthAndFitness',           # 'Health and Fitness' app
-    'Microsoft.BingNews',                       # 'Generic news' app
-    'Microsoft.BingSports',                     # 'Sports' app - Sports news
-    'Microsoft.BingTranslator',                 # 'Translator' app - Bing Translate
-    'Microsoft.BingTravel',                     # 'Travel' app
-#   'Microsoft.BingWeather',                    # 'Weather' app
-    'Microsoft.CommsPhone',                     # 'Phone' app
-    'Microsoft.ConnectivityStore',              
-    'Microsoft.FreshPaint',                     # 'Canvas' app
-    'Microsoft.Getstarted',                     # 'Get Started' link
-    'Microsoft.Messaging',                      # 'Messaging' app
-    'Microsoft.MicrosoftJackpot',               # 'Jackpot' app
-    'Microsoft.MicrosoftJigsaw',                # 'Jigsaw' game             
-    'Microsoft.MicrosoftSudoku',                # 'Sudoku' game 
-    'Microsoft.MinecraftUWP',                   # 'Minecraft' game        
-    'Microsoft.MovieMoments',                   
-#   'Microsoft.MicrosoftStickyNotes',           # 'Sticky Notes' app  
-    'Microsoft.MicrosoftOfficeHub',             
-    'Microsoft.Office.OneNote',                 # 'Onenote' app
-    'Microsoft.Office.Sway',                    # 'Sway' app
-    'Microsoft.OneConnect',
-    'Microsoft.People',                         # 'People' app
-    'Microsoft.SkypeApp',                       # 'Get Skype' link
-    'Microsoft.SkypeWiFi',                      
-    'Microsoft.Studios.Wordament',              # 'Wordament' game
-    'Microsoft.Taptiles',                       
-#   'Microsoft.Windows.Photos',                 # Photos app
-#   'Microsoft.WindowsAlarms',                  # 'Alarms and Clock' app
-#   'Microsoft.WindowsCalculator',              # 'Calculator' app
-#   'Microsoft.WindowsCamera',                  # 'Camera' app
-#   'Microsoft.Windows.CloudExperienceHost',    # 'Cloud Experience' -May not be removable
-    'Microsoft.WindowsFeedback',                # 'Feedback' functionality
-    'Microsoft.WindowsFeedbackHub',             # 'Feedback' functionality
-    'Microsoft.WindowsPhone',                   # 'Phone Companion' app
-    'Microsoft.XboxApp',                        # 'Xbox' app 
-    'Microsoft.ZuneMusic',                      # 'Groove Music' app
-    'Microsoft.ZuneVideo',                      # 'Groove Music' app
-    'MicrosoftMahjong',                         # 'Mahjong' game
-#   'Windows.ContactSupport',                   # May not be removable
-    'Microsoft.MicrosoftSolitaireCollection',   # Solitaire collection
-    'Microsoft.WindowsMaps',                    # 'Maps' app
-    'Microsoft.WindowsSoundRecorder',           # 'Sound Recorder' app
-    'Microsoft.windowscommunicationsapps',      # 'Calendar and Mail' app
-    'DummyItemToEndList_DoNotRemove'            # Dummy Item for end of list, Dont put a #
-)
+#Restart when done? (I recommend restarting when done)
+$Restart = 0               #0-Dont Restart, 1-Restart
 
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## !!!!!!!!!                   CAUTION                  !!!!!!!!!
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## Do not Edit past this point unless you know what you are doing
 
+
 ##########
 # Needed Stuff
 ##########
+
+$AppsList = @(
+    'Microsoft.3DBuilder',
+    'Microsoft.Advertising.Xaml',
+    'Microsoft.Appconnector',
+    'GAMELOFTSA.Asphalt8Airborne',
+    'Microsoft.BingFinance',
+    'Microsoft.BingFoodAndDrink',
+    'Microsoft.BingHealthAndFitness',
+    'Microsoft.BingNews',
+    'Microsoft.BingSports',
+    'Microsoft.BingTranslator',
+    'Microsoft.BingTravel',
+    'Microsoft.BingWeather',
+    'Microsoft.BioEnrollment',
+    'king.com.CandyCrushSodaSaga',
+    'Microsoft.Windows.CloudExperienceHost',
+    'Microsoft.CommsPhone',
+    'Microsoft.windowscommunicationsapps',
+    'Microsoft.ConnectivityStore',
+    'Windows.ContactSupport',
+    'Facebook.Facebook',
+    'D52A8D61.FarmVille2CountryEscape',
+    'Microsoft.FreshPaint',
+    'Microsoft.Getstarted',
+    'Microsoft.Messaging',
+    'Microsoft.MicrosoftJackpot',
+    'Microsoft.MicrosoftJigsaw',          
+    'MicrosoftMahjong',
+    'Microsoft.MicrosoftOfficeHub',
+    'Microsoft.MicrosoftSudoku',
+    'Microsoft.MinecraftUWP',   
+    'Microsoft.MovieMoments',
+    '4DF9E0F8.Netflix',
+    'Microsoft.Office.OneNote',
+    'Microsoft.Office.Sway',
+    'Microsoft.OneConnect',
+    'Microsoft.People',
+    'Microsoft.Windows.Photos',
+    'Microsoft.SkypeApp',
+    'Microsoft.SkypeWiFi',
+    'Microsoft.MicrosoftSolitaireCollection',
+    'Microsoft.WindowsSoundRecorder',
+    'Microsoft.MicrosoftStickyNotes',
+    'Microsoft.Studios.Wordament',
+    'Microsoft.Taptiles',
+    '9E2F88E3.Twitter',
+    'Microsoft.WindowsAlarms',
+    'Microsoft.WindowsCalculator',
+    'Microsoft.WindowsCamera',
+    'Microsoft.WindowsFeedback',
+    'Microsoft.WindowsFeedbackHub',
+    'Microsoft.WindowsMaps',
+    'Microsoft.WindowsPhone',
+    'Microsoft.WindowsStore',
+    'Microsoft.XboxApp',
+    'Microsoft.ZuneMusic',
+    'Microsoft.ZuneVideo'
+)
 
 # Ask for elevated permissions if required
 If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
@@ -256,11 +304,28 @@ If ($SettingImp -ne $null -and $SettingImp){
              $var = $_.Split("=")
              Set-Variable -Name $var[0] -Value $var[1]
          }
-	 $AppsList = $AppList -split "','"
-     } ElseIf ($SettingImp -eq "WD" -or $SettingImp -eq "WindowsDefault"){
-	 $WinDefault = 1
-     }
+	} ElseIf ($SettingImp -eq "WD" -or $SettingImp -eq "WindowsDefault"){
+	     $WinDefault = 1
+    }
 } 
+
+$APPProcess = Get-Variable -Name "APP_*" -ValueOnly
+$APPS_AppsInstall = @()
+$APPS_AppsHide = @()
+$APPS_AppsUninstall = @()
+
+$i=0
+ForEach ($AppV in $APPProcess) {
+   If($AppV -eq 1){
+       $APPS_AppsInstall+=$AppsList[$i]
+   } Elseif($AppV -eq 2){
+       $APPS_AppsHide+=$AppsList[$i]
+   } Elseif($AppV -eq 3){
+       $APPS_AppsUninstall+=$AppsList[$i]
+   }
+   $i++
+}
+
 
 ##########
 # Windows Default
@@ -334,7 +399,6 @@ If($WinDefault -eq 1){
      $F8BootMenu = 1
      $OneDrive = 1
 #    $OneDriveInstall = 1
-#    $Bloatware = 1
      $XboxDVR = 1
      $MediaPlayer = 1
      $WorkFolders = 1
@@ -1156,32 +1220,24 @@ If ($OneDriveInstall -eq 1) {
 }
 
 # Default Microsoft applications (Bloatware)
-If ($Bloatware -eq 1) {
-     Write-Host "Installing default Microsoft applications..."
-     ForEach ($App in $AppsList) {
-          Write-Host "Installing "$App "..."
-          Add-AppxPackage -DisableDevelopmentMode -Register "$($(Get-AppXPackage -AllUsers "$App").InstallLocation)\AppXManifest.xml"
-     }
-} ElseIf ($Bloatware -eq 2) {
-     Write-Host "Hiding default Microsoft applications..."
-     ForEach ($App in $AppsList) {
-          Write-Host "Hiding "$App "..."
-          Get-AppxPackage $App | Remove-AppxPackage
-     }
-} ElseIf ($Bloatware -eq 3) {
-     Write-Host "Uninstalling default Microsoft applications..."
-     ForEach ($App in $AppsList) {
-          Write-Host "Uninstalling "$App "..."
-          $PackageFullName = (Get-AppxPackage $App).PackageFullName
-          $ProPackageFullName = (Get-AppxProvisionedPackage -online | where {$_.Displayname -eq $App}).PackageName
+ForEach ($AppI in $APPS_AppsInstall) {
+     Write-Host "Installing "$AppI "..."
+     Add-AppxPackage -DisableDevelopmentMode -Register "$($(Get-AppXPackage -AllUsers "$AppI").InstallLocation)\AppXManifest.xml"
+}
+ForEach ($AppH in $APPS_AppsHide) {
+     Write-Host "Hiding "$AppH "..."
+     Get-AppxPackage $AppH | Remove-AppxPackage
+}
+ForEach ($AppU in $APPS_AppsUninstall) {
+     Write-Host "Uninstalling "$AppU "..."
+     $PackageFullName = (Get-AppxPackage $AppU).PackageFullName
+     $ProPackageFullName = (Get-AppxProvisionedPackage -online | where {$_.Displayname -eq $AppU}).PackageName
           
-          if ($PackageFullName) {
-               remove-AppxPackage -package $PackageFullName
-          }
-          
-          if ($ProPackageFullName) {
-               Remove-AppxProvisionedPackage -online -packagename $ProPackageFullName
-          }
+     If ($PackageFullName) {
+         Remove-AppxPackage -package $PackageFullName
+     }
+     if ($ProPackageFullName) {
+         Remove-AppxProvisionedPackage -online -packagename $ProPackageFullName
      }
 }
 
@@ -1271,7 +1327,6 @@ If ($F8BootMenu -eq 1) {
      Write-Host "Disabling F8 boot menu options..."
      bcdedit /set `{current`} bootmenupolicy Standard | Out-Null
 }
-
 
 ##########
 # Auxiliary
