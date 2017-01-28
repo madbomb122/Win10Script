@@ -11,6 +11,25 @@
 # Website: https://github.com/madbomb122/Win10Script
 # Version: 3.0-Mod, 2017-01-27
 ##########
+<#
+   <one line to give the program's name and a brief idea of what it does.>
+    Win10 Initial Setup Script - Makes it easier to setup an existing or new install with moded setting
+    Copyright (c) 2017 Disassembler <disassembler@dasm.cz> -Original Script
+    Copyright (c) 2017 Madbomb122 -Modded Script
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#>
 
 # You can run the script with a -Set WD or -Set WindowsDefault 
 # To use the default setting for windows (Other than reinstalling onedrive or apps) 
@@ -202,8 +221,8 @@ $APP_XboxApp=0             # 'Xbox' app
 $APP_ZuneMusic=0           # 'Groove Music' app
 $APP_ZuneVideo=0           # 'Groove Music' app
 
-#Skips the Press any key to continue?
-$Automated = 1             #0-Skip, 1-Dont Skip 
+#Skips Term_of_Use
+$Term_of_Use = 1           #1-See Term_of_Use, 2-Accept Term_of_Use, Anything else -Accept Term_of_Use
 
 #Restart when done? (I recommend restarting when done)
 $Restart = 0               #0-Dont Restart, 1-Restart
@@ -285,10 +304,10 @@ If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
 
 # Asks to press a key before continuing
 # Doesnt work in PowerShell ISE
-If ($Automated -eq 1){
-     Write-Host "By Running this script you are agreeing to the Terms of Use" -ForegroundColor Black -BackgroundColor White
-     Write-Host "Press any key to continue..." -ForegroundColor White -BackgroundColor Black
-     Write-Host "Close Window to Cancel..." -ForegroundColor Red -BackgroundColor Black
+If ($Term_of_Use -eq 1){
+     Write-Host "This program comes with ABSOLUTELY NO WARRANTY" -ForegroundColor Black -BackgroundColor White
+     Write-Host "This is free software, and you are welcome to redistribute" -ForegroundColor Black -BackgroundColor White
+     Write-Host "it under certain conditions. Read License file." -ForegroundColor Black -BackgroundColor White
      $key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown,AllowCtrlC")
 }
 
