@@ -4,6 +4,7 @@ Greatly Improved the ability to import app list from setting file
 Also changed it so you can Install, Hide or Uninstall for each app (instead of the whole thing)
 Changed the Initial Text that show when you start script
 Removed 3 Apps (since they cant be hidden or removed)
+Fixed an error for Removeing  Photo Viwer from 'open with menu' (if it already is removed)
 
 -----------------------------------------------------------------------------------
 2.3-Mod (1-27-20017)
