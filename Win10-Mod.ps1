@@ -127,7 +127,7 @@ $VideosIconInThisPC = 0    #0-Skip, 1-Show*, 2-Hide
 # Photo Viewer
 # Function  = Option       #Choices (* Indicates Windows Default)
 $PVFileAssociation = 0     #0-Skip, 1-Enable, 2-Disable*
-$PVOpenWithContext = 0     #0-Skip, 1-Enable, 2-Disable*
+$PVOpenWithMenu = 0        #0-Skip, 1-Enable, 2-Disable*
 
 #Misc items
 # Function  = Option       #Choices (* Indicates Windows Default)
@@ -413,7 +413,7 @@ If($WinDefault -eq 1){
      $PicturesIconInThisPC = 1
      $VideosIconInThisPC = 1
      $PVFileAssociation = 2
-     $PVOpenWithContext = 2
+     $PVOpenWithMenu = 2
      $CameraOnLock = 1
      $LockScreen = 1
      $LockScreenAlt = 1
@@ -1337,13 +1337,13 @@ If ($PVFileAssociation -eq 1) {
 }
 
 # Add Photo Viewer to "Open with..."
-If ($PVOpenWithContext -eq 1) {
-     Write-Host "Removing Photo Viewer from `"Open with...`""
+If ($PVOpenWithMenu -eq 1) {
+     Write-Host "Removing Photo Viewer from Open with Menu..."
      If (Test-Path "HKCR:\Applications\photoviewer.dll\shell\open") {
           Remove-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open" -Recurse
      }
-} ElseIf ($PVOpenWithContext -eq 2) {
-     Write-Host "Adding Photo Viewer to `"Open with...`""
+} ElseIf ($PVOpenWithMenu -eq 2) {
+     Write-Host "Adding Photo Viewer to Open with Menu..."
      New-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open\command" -Force | Out-Null
      New-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open\DropTarget" -Force | Out-Null
      Set-ItemProperty -Path "HKCR:\Applications\photoviewer.dll\shell\open" -Name "MuiVerb" -Type String -Value "@photoviewer.dll,-3043"
