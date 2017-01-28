@@ -1,8 +1,8 @@
 -----------------------------------------------------------------------------------
-2.2.1-Mod (1-27-20017)
+2.3-Mod (1-27-20017)
 Fixed a bug with imported settings from a file
+Added ability import app list from setting file
 Added Facebook to applist
-*Working on trying to import app list too
 
 -----------------------------------------------------------------------------------
 2.2-Mod (1-26-20017)
