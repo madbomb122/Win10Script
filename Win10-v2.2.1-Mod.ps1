@@ -160,17 +160,18 @@ Get-AppxPackage -AllUsers | Select Name
 # use # at begining of line to stop change for the item
 # Example is bellow (JustAnExample)
 $AppsList = @(
-#   'JustAnExample',                    # Example (not a real app)
-    '9E2F88E3.Twitter',                         # Twitter app
-    'D52A8D61.FarmVille2CountryEscape',         # Farm Ville game
-    'GAMELOFTSA.Asphalt8Airborne',              # Asphalt 8 game
-    'king.com.CandyCrushSodaSaga',              # Candy Crush game  
+#   'JustAnExample',                            # Example (not a real app)
+    '9E2F88E3.Twitter',                         # 'Twitter' app
+    'D52A8D61.FarmVille2CountryEscape',         # 'Farm Ville' game
+    'GAMELOFTSA.Asphalt8Airborne',              # 'Asphalt 8' game
+    'king.com.CandyCrushSodaSaga',              # 'Candy Crush' game  
     '4DF9E0F8.Netflix',                         # 'Netflix' app
+	'Facebook.Facebook',                        # 'Facebook' app
 #   'Microsoft.WindowsStore',                   # Windows Store
     'Microsoft.3DBuilder',                      # '3DBuilder' app
-#   'Microsoft.Advertising.Xaml',               # Removal may cause problem with some apps
-#   'Microsoft.Appconnector',                   # Not sure about this one
-#   'Microsoft.BioEnrollment',                  # Not sure about this one
+#   'Microsoft.Advertising.Xaml',               ## Removal may cause problem with some apps
+#   'Microsoft.Appconnector',                   ## Not sure about this one
+#   'Microsoft.BioEnrollment',                  ## Not sure about this one
     'Microsoft.BingFinance',                    # 'Money' app - Financial news
     'Microsoft.BingFoodAndDrink',               # 'Food and Drink' app
     'Microsoft.BingHealthAndFitness',           # 'Health and Fitness' app
@@ -203,7 +204,7 @@ $AppsList = @(
 #   'Microsoft.WindowsAlarms',                  # 'Alarms and Clock' app
 #   'Microsoft.WindowsCalculator',              # 'Calculator' app
 #   'Microsoft.WindowsCamera',                  # 'Camera' app
-    'Microsoft.Windows.CloudExperienceHost',    # 'Cloud Experience' sigh
+#   'Microsoft.Windows.CloudExperienceHost',    # 'Cloud Experience' -May not be removable
     'Microsoft.WindowsFeedback',                # 'Feedback' functionality
     'Microsoft.WindowsFeedbackHub',             # 'Feedback' functionality
     'Microsoft.WindowsPhone',                   # 'Phone Companion' app
@@ -211,7 +212,7 @@ $AppsList = @(
     'Microsoft.ZuneMusic',                      # 'Groove Music' app
     'Microsoft.ZuneVideo',                      # 'Groove Music' app
     'MicrosoftMahjong',                         # 'Mahjong' game
-    'Windows.ContactSupport',                   
+#   'Windows.ContactSupport',                   # May not be removable
     'Microsoft.MicrosoftSolitaireCollection',   # Solitaire collection
     'Microsoft.WindowsMaps',                    # 'Maps' app
     'Microsoft.WindowsSoundRecorder',           # 'Sound Recorder' app
@@ -798,7 +799,7 @@ If ($SendTo -eq 1) {
      Set-ItemProperty -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" -Name "(Default)" -Type String -Value "{7BA4C740-9E81-11CF-99D3-00AA004AE837}"
 } ElseIf ($SendTo -eq 2) {
      Write-Host "Disabling Send To Context item..."
-     Remove-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo"
+     Remove-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" -ErrorAction SilentlyContinue
 }
 
 # Aero Resize
