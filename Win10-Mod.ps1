@@ -1323,21 +1323,6 @@ If ($LinuxSubsystem -eq 1) {
 
 # Photo Viewer association for bmp, gif, jpg, png and tif
 If ($PVFileAssociation -eq 1) {
-     Write-Host "Unsetting Photo Viewer association for bmp, gif, jpg, png and tif..."
-     If (Test-Path "HKCR:\Paint.Picture\shell\open") {
-          Remove-Item -Path "HKCR:\Paint.Picture\shell\open" -Recurse
-     }
-     Remove-ItemProperty -Path "HKCR:\giffile\shell\open" -Name "MuiVerb" -ErrorAction SilentlyContinue
-     Set-ItemProperty -Path "HKCR:\giffile\shell\open" -Name "CommandId" -Type String -Value "IE.File"
-     Set-ItemProperty -Path "HKCR:\giffile\shell\open\command" -Name "(Default)" -Type String -Value "`"$env:SystemDrive\Program Files\Internet Explorer\iexplore.exe`" %1"
-     Set-ItemProperty -Path "HKCR:\giffile\shell\open\command" -Name "DelegateExecute" -Type String -Value "{17FE9752-0B5A-4665-84CD-569794602F5C}"
-     If (Test-Path "HKCR:\jpegfile\shell\open") { 
-          Remove-Item -Path "HKCR:\jpegfile\shell\open" -Recurse
-     }
-     If (Test-Path "HKCR:\jpegfile\shell\open") { 
-          Remove-Item -Path "HKCR:\pngfile\shell\open" -Recurse
-     }
-} ElseIf ($PVFileAssociation -eq 2) {
      Write-Host "Setting Photo Viewer association for bmp, gif, jpg, png and tif..."
      ForEach ($type in @("Paint.Picture", "giffile", "jpegfile", "pngfile")) {
           New-Item -Path $("HKCR:\$type\shell\open") -Force | Out-Null
@@ -1345,21 +1330,36 @@ If ($PVFileAssociation -eq 1) {
           Set-ItemProperty -Path $("HKCR:\$type\shell\open") -Name "MuiVerb" -Type ExpandString -Value "@%ProgramFiles%\Windows Photo Viewer\photoviewer.dll,-3043"
           Set-ItemProperty -Path $("HKCR:\$type\shell\open\command") -Name "(Default)" -Type ExpandString -Value "%SystemRoot%\System32\rundll32.exe `"%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll`", ImageView_Fullscreen %1"
      }
-}
+} ElseIf ($PVFileAssociation -eq 2) {
+     Write-Host "Unsetting Photo Viewer association for bmp, gif, jpg, png and tif..."
+     If (Test-Path "HKCR:\Paint.Picture\shell\open") {
+          Remove-Item -Path "HKCR:\Paint.Picture\shell\open" -Recurse
+	 }
+	 Remove-ItemProperty -Path "HKCR:\giffile\shell\open" -Name "MuiVerb" -ErrorAction SilentlyContinue
+     Set-ItemProperty -Path "HKCR:\giffile\shell\open" -Name "CommandId" -Type String -Value "IE.File"
+     Set-ItemProperty -Path "HKCR:\giffile\shell\open\command" -Name "(Default)" -Type String -Value "`"$env:SystemDrive\Program Files\Internet Explorer\iexplore.exe`" %1"
+     Set-ItemProperty -Path "HKCR:\giffile\shell\open\command" -Name "DelegateExecute" -Type String -Value "{17FE9752-0B5A-4665-84CD-569794602F5C}"
+     If (Test-Path "HKCR:\jpegfile\shell\open") { 
+          Remove-Item -Path "HKCR:\jpegfile\shell\open" -Recurse
+     }
+	 If (Test-Path "HKCR:\jpegfile\shell\open") { 
+          Remove-Item -Path "HKCR:\pngfile\shell\open" -Recurse
+	 }
+} 
 
 # Add Photo Viewer to "Open with..."
 If ($PVOpenWithMenu -eq 1) {
-     Write-Host "Removing Photo Viewer from Open with Menu..."
-     If (Test-Path "HKCR:\Applications\photoviewer.dll\shell\open") {
-          Remove-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open" -Recurse
-     }
-} ElseIf ($PVOpenWithMenu -eq 2) {
      Write-Host "Adding Photo Viewer to Open with Menu..."
      New-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open\command" -Force | Out-Null
      New-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open\DropTarget" -Force | Out-Null
      Set-ItemProperty -Path "HKCR:\Applications\photoviewer.dll\shell\open" -Name "MuiVerb" -Type String -Value "@photoviewer.dll,-3043"
      Set-ItemProperty -Path "HKCR:\Applications\photoviewer.dll\shell\open\command" -Name "(Default)" -Type ExpandString -Value "%SystemRoot%\System32\rundll32.exe `"%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll`", ImageView_Fullscreen %1"
      Set-ItemProperty -Path "HKCR:\Applications\photoviewer.dll\shell\open\DropTarget" -Name "Clsid" -Type String -Value "{FFE2A43C-56B9-4bf5-9A79-CC6D4285608A}"
+} ElseIf ($PVOpenWithMenu -eq 2) {
+     Write-Host "Removing Photo Viewer from Open with Menu..."
+     If (Test-Path "HKCR:\Applications\photoviewer.dll\shell\open") {
+          Remove-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open" -Recurse
+     }
 }
 
 # Enable F8 boot menu options
