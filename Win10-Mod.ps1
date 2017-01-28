@@ -9,7 +9,7 @@
 # Modded Script Info
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script
-# Version: 3.1-Mod, 2017-01-28
+# Version: 3.0-Mod, 2017-01-28
 ##########
 <#
     Win10 Initial Setup Script - Makes it easier to setup an existing or new install with moded setting
