@@ -9,7 +9,7 @@
 # Modded Script Info
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script
-# Version: 2.2-Mod, 2017-01-26
+# Version: 2.2.1-Mod, 2017-01-27
 ##########
 
 # You can run the script with a -Set WD or -Set WindowsDefault 
@@ -248,16 +248,16 @@ If (!(Test-Path "HKCR:")) {
      New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null
 }
 
-If ($SettingImp -ne $null){
-  If (Test-Path $SettingImp){
-    # // File exists
-     Get-Content $SettingImp | Foreach-Object{
-      $var = $_.Split("=")
-      Set-Variable -Name $var[0] -Value $var[1]
-     }
-  } ElseIf ($SettingImp -eq "WD" -or $SettingImp -eq "WindowsDefault"){
-	 $WinDefault = 1
-  }
+If ($SettingImp -ne $null -and $SettingImp){
+     If (Test-Path $SettingImp -PathType Leaf){
+         # // File exists
+         Get-Content $SettingImp | Foreach-Object{
+             $var = $_.Split("=")
+             Set-Variable -Name $var[0] -Value $var[1]
+         }
+	} ElseIf ($SettingImp -eq "WD" -or $SettingImp -eq "WindowsDefault"){
+	     $WinDefault = 1
+    }
 } 
 
 ##########
