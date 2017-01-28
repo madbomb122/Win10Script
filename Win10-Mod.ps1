@@ -308,48 +308,9 @@ If ($SettingImp -ne $null -and $SettingImp){
     }
 } 
 
-# Asks for input before continuing
-# Doesnt work in PowerShell ISE
-If ($Term_of_Use -eq 1){
-     Write-Host "This program comes with ABSOLUTELY NO WARRANTY" -ForegroundColor Black -BackgroundColor White
-     Write-Host "This is free software, and you are welcome to redistribute" -ForegroundColor Black -BackgroundColor White
-     Write-Host "it under certain conditions. Read License file." -ForegroundColor Black -BackgroundColor White
-     Write-Host ""
-     Write-Host "Do you Accept the Term of Use? (y/n)"	 
-     $KeyPress= $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-     $KeyPress=$KeyPress.Character
-}
-
-If($KeyPress -eq 'y' -or $Term_of_Use -ne 1) {
-     Write-Host "Running Script"
-} ElseIf($KeyPress -eq 'n'){
-     Write-Host "Exiting Script, Goodbye"
-     exit
-} Else{
-     Write-Host "Invalid Input, Goodbye"
-     exit	 
-}
-
 # Define HKCR
 If (!(Test-Path "HKCR:")) {
      New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null
-}
-
-$APPProcess = Get-Variable -Name "APP_*" -ValueOnly
-$APPS_AppsInstall = @()
-$APPS_AppsHide = @()
-$APPS_AppsUninstall = @()
-
-$i=0
-ForEach ($AppV in $APPProcess) {
-   If($AppV -eq 1){
-       $APPS_AppsInstall+=$AppsList[$i]
-   } Elseif($AppV -eq 2){
-       $APPS_AppsHide+=$AppsList[$i]
-   } Elseif($AppV -eq 3){
-       $APPS_AppsUninstall+=$AppsList[$i]
-   }
-   $i++
 }
 
 
@@ -429,6 +390,50 @@ If($WinDefault -eq 1){
      $MediaPlayer = 1
      $WorkFolders = 1
      $LinuxSubsystem = 2
+}
+
+
+##########
+# Script Start?
+##########
+
+# Asks for input before continuing
+# Doesnt work in PowerShell ISE
+If ($Term_of_Use -eq 1){
+     Write-Host "This program comes with ABSOLUTELY NO WARRANTY" -ForegroundColor Black -BackgroundColor White
+     Write-Host "This is free software, and you are welcome to redistribute" -ForegroundColor Black -BackgroundColor White
+     Write-Host "it under certain conditions. Read License file." -ForegroundColor Black -BackgroundColor White
+     Write-Host ""
+     Write-Host "Do you Accept the Term of Use? (y/n)"	 
+     $KeyPress= $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+     $KeyPress=$KeyPress.Character
+}
+
+If($KeyPress -eq 'y' -or $Term_of_Use -ne 1) {
+     Write-Host "Running Script"
+} ElseIf($KeyPress -eq 'n'){
+     Write-Host "Exiting Script, Goodbye"
+     exit
+} Else{
+     Write-Host "Invalid Input, Goodbye"
+     exit	 
+}
+
+$APPProcess = Get-Variable -Name "APP_*" -ValueOnly
+$APPS_AppsInstall = @()
+$APPS_AppsHide = @()
+$APPS_AppsUninstall = @()
+
+$i=0
+ForEach ($AppV in $APPProcess) {
+   If($AppV -eq 1){
+       $APPS_AppsInstall+=$AppsList[$i]
+   } Elseif($AppV -eq 2){
+       $APPS_AppsHide+=$AppsList[$i]
+   } Elseif($AppV -eq 3){
+       $APPS_AppsUninstall+=$AppsList[$i]
+   }
+   $i++
 }
 
 
