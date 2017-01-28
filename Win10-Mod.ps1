@@ -176,13 +176,10 @@ $APP_BingSports=0          # 'Sports' app - Sports news
 $APP_BingTranslator=0      # 'Translator' app - Bing Translate
 $APP_BingTravel=0          # 'Travel' app
 $APP_BingWeather=0         # 'Weather' app
-$APP_BioEnrollment=0       ## Not sure about this one
 $APP_CandyCrushSoda=0      # 'Candy Crush' game 
-$APP_CloudExperience=0     # 'Cloud Experience' -May not be removable
 $APP_CommsPhone=0          # 'Phone' app
 $APP_Communications=0      # 'Calendar and Mail' app
 $APP_ConnectivityStore=0       
-$APP_ContactSupport=0      # May not be removable
 $APP_Facebook=0            # 'Facebook' app
 $APP_FarmVille=0           # 'Farm Ville' game
 $APP_FreshPaint=0          # 'Canvas' app
@@ -250,13 +247,10 @@ $AppsList = @(
     'Microsoft.BingTranslator',
     'Microsoft.BingTravel',
     'Microsoft.BingWeather',
-    'Microsoft.BioEnrollment',
     'king.com.CandyCrushSodaSaga',
-    'Microsoft.Windows.CloudExperienceHost',
     'Microsoft.CommsPhone',
     'Microsoft.windowscommunicationsapps',
     'Microsoft.ConnectivityStore',
-    'Windows.ContactSupport',
     'Facebook.Facebook',
     'D52A8D61.FarmVille2CountryEscape',
     'Microsoft.FreshPaint',
