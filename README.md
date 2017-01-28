@@ -41,7 +41,7 @@ To import a file for a setting or settings <br />
 **A:** Yes, Most things can easily be undone.. Just go in the script and run it again with the deisred change.
 
 **Q:** The script messed up my computer. <br />
-**A:** The script is as is, any problems is not my fault.
+**A:** The script is as is, any problems you have/had is not my problem.
 
 **Q:** Can I use the script or modify it for my / my company's needs? <br />
 **A:** Sure. Just don't forget to include copyright notice as per the license requirements. 
