@@ -1324,13 +1324,19 @@ If ($LinuxSubsystem -eq 1) {
 # Photo Viewer association for bmp, gif, jpg, png and tif
 If ($PVFileAssociation -eq 1) {
      Write-Host "Unsetting Photo Viewer association for bmp, gif, jpg, png and tif..."
-     Remove-Item -Path "HKCR:\Paint.Picture\shell\open" -Recurse
+     If (Test-Path "HKCR:\Paint.Picture\shell\open") {
+          Remove-Item -Path "HKCR:\Paint.Picture\shell\open" -Recurse
+     }
      Remove-ItemProperty -Path "HKCR:\giffile\shell\open" -Name "MuiVerb" -ErrorAction SilentlyContinue
      Set-ItemProperty -Path "HKCR:\giffile\shell\open" -Name "CommandId" -Type String -Value "IE.File"
      Set-ItemProperty -Path "HKCR:\giffile\shell\open\command" -Name "(Default)" -Type String -Value "`"$env:SystemDrive\Program Files\Internet Explorer\iexplore.exe`" %1"
      Set-ItemProperty -Path "HKCR:\giffile\shell\open\command" -Name "DelegateExecute" -Type String -Value "{17FE9752-0B5A-4665-84CD-569794602F5C}"
-     Remove-Item -Path "HKCR:\jpegfile\shell\open" -Recurse
-     Remove-Item -Path "HKCR:\pngfile\shell\open" -Recurse
+     If (Test-Path "HKCR:\jpegfile\shell\open") { 
+          Remove-Item -Path "HKCR:\jpegfile\shell\open" -Recurse
+     }
+     If (Test-Path "HKCR:\jpegfile\shell\open") { 
+          Remove-Item -Path "HKCR:\pngfile\shell\open" -Recurse
+     }
 } ElseIf ($PVFileAssociation -eq 2) {
      Write-Host "Setting Photo Viewer association for bmp, gif, jpg, png and tif..."
      ForEach ($type in @("Paint.Picture", "giffile", "jpegfile", "pngfile")) {
