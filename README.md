@@ -29,13 +29,13 @@ To import a file for a setting or settings <br />
 
 ## FAQ
 **Q:** Can I run the script safely? <br />
-**A:** The script is safe, some setting changes may compromise your computer
+**A:** The script itself is safe, however some setting it can change may compromise your computer.
 
 **Q:** Can I run the script repeatedly? <br />
-**A:** Yes.
+**A:** Yes, with same or different settings.
 
 **Q:** Did you test the script? <br />
-**A:** Yes, but nothing is 100% bug free.
+**A:** Yes, but doesnt mean there isnt any bugs/errors.
 
 **Q**: I've run the script and it did *BLAH*, can I undo it? <br />
 **A:** Yes, Most things can easily be undone.. Just go in the script and run it again with the deisred change.
