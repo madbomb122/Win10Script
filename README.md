@@ -28,6 +28,9 @@ To import a file for a setting or settings <br />
 **Note 1: For an example of the setting files look at '*example.txt*', it has everything you can change but it doesn't have what each item can be set to like the script does.** <br />
 
 ## FAQ
+**Q:** The script file looks all messy in notepad, How do i view/change it? <br />
+**A:** Trying wordpad or what I recomment, Notepad++ https://notepad-plus-plus.org/
+
 **Q:** Can I run the script safely? <br />
 **A:** The script itself is safe, however some setting it can change may compromise your computer.
 
