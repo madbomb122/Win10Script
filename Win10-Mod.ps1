@@ -12,18 +12,21 @@
 # Version: 3.0-Mod, 2017-01-27
 ##########
 <#
-   <one line to give the program's name and a brief idea of what it does.>
     Win10 Initial Setup Script - Makes it easier to setup an existing or new install with moded setting
+    
     Copyright (c) 2017 Disassembler <disassembler@dasm.cz> -Original Script
     Copyright (c) 2017 Madbomb122 -Modded Script
+    
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
+    
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
+    
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #>
@@ -50,7 +53,7 @@ Param([alias("Set")] [string] $SettingImp)
 $WinDefault = 2            #1-Yes*, 2-No  (IF 1 is set then all settings after this wont matter)
 
 # Privacy Settings
-# Function  = Option       #Choices (*Windows Default)
+# Function  = Option       #Choices (* Indicates Windows Default)
 $Telemetry = 0             #0-Skip, 1-Enable*, 2-Disable
 $WiFiSense = 0             #0-Skip, 1-Enable*, 2-Disable
 $SmartScreen = 0           #0-Skip, 1-Enable*, 2-Disable
@@ -63,12 +66,12 @@ $AdvertisingID = 0         #0-Skip, 1-Enable*, 2-Disable
 $Cortana = 0               #0-Skip, 1-Enable*, 2-Disable
 $ErrorReporting = 0        #0-Skip, 1-Enable*, 2-Disable
 $WinUpdateDownload = 0     #0-Skip, 1-P2P*, 2-Local Only, 3-Disable
-$AutoLoggerFile = 0        #0-Skip, 1-Enable*, 2-Disable,
-$DiagTrack = 0             #0-Skip, 1-Enable*, 2-Disable,
-$WAPPush = 0               #0-Skip, 1-Enable*, 2-Disable,
+$AutoLoggerFile = 0        #0-Skip, 1-Enable*, 2-Disable
+$DiagTrack = 0             #0-Skip, 1-Enable*, 2-Disable
+$WAPPush = 0               #0-Skip, 1-Enable*, 2-Disable
 
 # Service Tweaks
-# Function  = Option       #Choices (*Windows Default)
+# Function  = Option       #Choices (* Indicates Windows Default)
 $UAC = 0                   #0-Skip, 1-Lower, 2-Normal*, 3-Higher
 $SharingMappedDrives = 0   #0-Skip, 1-Enable, 2-Disable*
 $AdminShares = 0           #0-Skip, 1-Enable*, 2-Disable
@@ -82,7 +85,7 @@ $UpdateDriver = 0          #0-Skip, 1-Enable*, 2-Disable
 $RestartOnUpdate = 0       #0-Skip, 1-Enable*, 2-Disable
 
 #Context Menu Items
-# Function  = Option       #Choices (*Windows Default)
+# Function  = Option       #Choices (* Indicates Windows Default)
 $CastToDevice = 0          #0-Skip, 1-Enable*, 2-Disable
 $PreviousVersions = 0      #0-Skip, 1-Enable*, 2-Disable
 $IncludeinLibrary = 0      #0-Skip, 1-Enable*, 2-Disable
@@ -91,7 +94,7 @@ $ShareWith = 0             #0-Skip, 1-Enable*, 2-Disable
 $SendTo = 0                #0-Skip, 1-Enable*, 2-Disable
 
 #Task Bar Items
-# Function  = Option       #Choices (*Windows Default)
+# Function  = Option       #Choices (* Indicates Windows Default)
 $VolumeControlBar = 0      #0-Skip, 1-Horizontal*, 2-Vertical
 $TaskbarSearchBox = 0      #0-Skip, 1-Show*, 2-Hide
 $TaskViewButton = 0        #0-Skip, 1-Show*, 2-Hide
@@ -102,7 +105,7 @@ $SecondsInClock = 0        #0-Skip, 1-Show, 2-Hide*
 $LastActiveClick = 0       #0-Skip, 1-Enable, 2-Disable*
 
 #Explorer Items
-# Function  = Option       #Choices (*Windows Default)
+# Function  = Option       #Choices (* Indicates Windows Default)
 $PidInTitleBar = 0         #0-Skip, 1-Show, 2-Hide*
 $AeroResize = 0            #0-Skip, 1-Enable*, 2-Disable
 $AeroShake = 0             #0-Skip, 1-Enable*, 2-Disable
@@ -113,7 +116,7 @@ $ThisPCOnDesktop = 0       #0-Skip, 1-Show, 2-Hide*
 $ExplorerOpenLoc = 0       #0-Skip, 1-Quick Access*, 2-ThisPC
      
 #'This PC' items
-# Function  = Option       #Choices (*Windows Default)
+# Function  = Option       #Choices (* Indicates Windows Default)
 $DesktopIconInThisPC = 0   #0-Skip, 1-Show*, 2-Hide
 $DocumentsIconInThisPC = 0 #0-Skip, 1-Show*, 2-Hide
 $DownloadsIconInThisPC = 0 #0-Skip, 1-Show*, 2-Hide
@@ -122,15 +125,15 @@ $PicturesIconInThisPC = 0  #0-Skip, 1-Show*, 2-Hide
 $VideosIconInThisPC = 0    #0-Skip, 1-Show*, 2-Hide
 
 # Photo Viewer
-# Function  = Option       #Choices (*Windows Default)
+# Function  = Option       #Choices (* Indicates Windows Default)
 $PVFileAssociation = 0     #0-Skip, 1-Enable, 2-Disable*
 $PVOpenWithContext = 0     #0-Skip, 1-Enable, 2-Disable*
 
 #Misc items
-# Function  = Option       #Choices (*Windows Default)
+# Function  = Option       #Choices (* Indicates Windows Default)
 $CameraOnLock = 0          #0-Skip, 1-Enable*, 2-Disable
 $LockScreen = 0            #0-Skip, 1-Enable*, 2-Disable (Pre-Anniversary Update)
-$LockScreenAlt = 0         #0-Skip, 1-Enable*, 2-Disable (Anniversary Update workaround) - Applicable to RS1 or newer
+$LockScreenAlt = 0         #0-Skip, 1-Enable*, 2-Disable (Anniversary Update workaround) 
 $ActionCenter = 0          #0-Skip, 1-Enable*, 2-Disable
 $Autoplay = 0              #0-Skip, 1-Enable*, 2-Disable
 $Autorun = 0               #0-Skip, 1-Enable*, 2-Disable
@@ -139,16 +142,16 @@ $NumblockOnStart = 0       #0-Skip, 1-Enable, 2-Disable*
 $F8BootMenu = 0            #0-Skip, 1-Enable, 2-Disable*
 
 # Remove unwanted applications
-# Function  = Option       #Choices (*Windows Default)
+# Function  = Option       #Choices (* Indicates Windows Default)
 $OneDrive = 0              #0-Skip, 1-Enable*, 2-Disable
 $OneDriveInstall = 0       #0-Skip, 1-Installed*, 2-Uninstall
 $XboxDVR = 0               #0-Skip, 1-Enable*, 2-Disable
 $MediaPlayer = 0           #0-Skip, 1-Installed*, 2-Uninstall
 $WorkFolders = 0           #0-Skip, 1-Installed*, 2-Uninstall
-$LinuxSubsystem = 0        #0-Skip, 1-Installed, 2-Uninstall* (Anniversary Update) - Applicable to RS1 or newer Only
+$LinuxSubsystem = 0        #0-Skip, 1-Installed, 2-Uninstall* (Anniversary Update)
 
 <# 
-App Uninstall will remove them to reinstall you can try to 
+App Uninstall will remove them to reinstall you can
 1. Install some from Windows Store
 2. Restore the files using installation medium as follows
 New-Item C:\Mnt -Type Directory | Out-Null
@@ -158,7 +161,8 @@ dism /Unmount-Image /Discard /MountDir:C:\Mnt
 Remove-Item -Path C:\Mnt -Recurse
 #>
 
-# Apps 
+# Apps
+# By Default Most of these are installed
 # Function  = Option       # 0-Skip, 1-Unhide, 2- Hide, 3-Uninstall (!!Read Note Above)
 $APP_3DBuilder=0           # '3DBuilder' app
 $APP_AdvertisingXaml=0     ## Removal may cause problem with some apps
