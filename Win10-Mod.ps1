@@ -1060,10 +1060,10 @@ If ($SecondsInClock -eq 1) {
 
 # Last Active Click
 If ($LastActiveClick -eq 1) {
-     Write-Host " Last Active Click..."
+     Write-Host "Last Active Click..."
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LastActiveClick" -Type DWord -Value 1
 } ElseIf ($LastActiveClick -eq 2) {
-     Write-Host " Last Active Click..."
+     Write-Host "Last Active Click..."
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LastActiveClick" -Type DWord -Value 0
 }
 
@@ -1246,6 +1246,8 @@ If ($OneDriveInstall -eq 1) {
 }
 
 # Default Microsoft applications (Bloatware)
+# Gets List of Packages
+# DISM /Online /Get-ProvisionedAppxPackages | Select-string Packagename
 ForEach ($AppI in $APPS_AppsInstall) {
      Write-Host "Installing "$AppI "..."
      Add-AppxPackage -DisableDevelopmentMode -Register "$($(Get-AppXPackage -AllUsers "$AppI").InstallLocation)\AppXManifest.xml"
@@ -1258,7 +1260,9 @@ ForEach ($AppU in $APPS_AppsUninstall) {
      Write-Host "Uninstalling "$AppU "..."
      $PackageFullName = (Get-AppxPackage $AppU).PackageFullName
      $ProPackageFullName = (Get-AppxProvisionedPackage -online | where {$_.Displayname -eq $AppU}).PackageName
-          
+     
+     # Alt removal
+     # DISM /Online /Remove-ProvisionedAppxPackage /PackageName:            
      If ($PackageFullName) {
          Remove-AppxPackage -package $PackageFullName
      }
@@ -1335,7 +1339,9 @@ If ($PVFileAssociation -eq 1) {
 # Add Photo Viewer to "Open with..."
 If ($PVOpenWithContext -eq 1) {
      Write-Host "Removing Photo Viewer from `"Open with...`""
-     Remove-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open" -Recurse
+     If (Test-Path "HKCR:\Applications\photoviewer.dll\shell\open") {
+          Remove-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open" -Recurse
+     }
 } ElseIf ($PVOpenWithContext -eq 2) {
      Write-Host "Adding Photo Viewer to `"Open with...`""
      New-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open\command" -Force | Out-Null
