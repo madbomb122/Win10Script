@@ -222,7 +222,7 @@ $APP_ZuneVideo=0           # 'Groove Music' app
 $Term_of_Use = 1           #1-See Term_of_Use, 2-Accept Term_of_Use, Anything else -Accept Term_of_Use
 
 #Restart when done? (I recommend restarting when done)
-$Restart = 0               #0-Dont Restart, 1-Restart
+$Restart = 1               #0-Dont Restart, 1-Restart
 
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## !!!!!!!!!                   CAUTION                  !!!!!!!!!
@@ -296,7 +296,19 @@ If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
      Exit
 }
 
-# Asks to press a key before continuing
+If ($SettingImp -ne $null -and $SettingImp){
+     If (Test-Path $SettingImp -PathType Leaf){
+         # // File exists
+         Get-Content $SettingImp | Foreach-Object{
+             $var = $_.Split("=")
+             Set-Variable -Name $var[0] -Value $var[1]
+         }
+	} ElseIf ($SettingImp -eq "WD" -or $SettingImp -eq "WindowsDefault"){
+	     $WinDefault = 1
+    }
+} 
+
+# Asks for input before continuing
 # Doesnt work in PowerShell ISE
 If ($Term_of_Use -eq 1){
      Write-Host "This program comes with ABSOLUTELY NO WARRANTY" -ForegroundColor Black -BackgroundColor White
@@ -322,18 +334,6 @@ If($KeyPress -eq 'y' -or $Term_of_Use -ne 1) {
 If (!(Test-Path "HKCR:")) {
      New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null
 }
-
-If ($SettingImp -ne $null -and $SettingImp){
-     If (Test-Path $SettingImp -PathType Leaf){
-         # // File exists
-         Get-Content $SettingImp | Foreach-Object{
-             $var = $_.Split("=")
-             Set-Variable -Name $var[0] -Value $var[1]
-         }
-	} ElseIf ($SettingImp -eq "WD" -or $SettingImp -eq "WindowsDefault"){
-	     $WinDefault = 1
-    }
-} 
 
 $APPProcess = Get-Variable -Name "APP_*" -ValueOnly
 $APPS_AppsInstall = @()
