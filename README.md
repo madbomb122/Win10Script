@@ -44,7 +44,7 @@ To import a file for a setting or settings <br />
 **A:** The script is as is, any problems is not my fault.
 
 **Q:** Can I use the script or modify it for my / my company's needs? <br />
-**A:** Sure. Just don't forget to include copyright notice as per MIT license requirements. 
+**A:** Sure. Just don't forget to include copyright notice as per the license requirements. 
 
 **Q:** How long are you going to maintain the script? <br />
 **A:** No Clue.
