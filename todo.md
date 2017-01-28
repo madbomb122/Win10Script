@@ -1,3 +1,4 @@
 # To do
 - [X] Read/Import Settings from a file
-- [ ] Import list of apps to remove (dunno if it can with my script setup)
+- [X] Import list of apps to Install/Hide/Uninstall (Only from list currently)
+- [ ] Ability to add app(s) of your own to Install/Hide/Uninstall
