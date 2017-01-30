@@ -1,4 +1,9 @@
 -----------------------------------------------------------------------------------
+3.1-Mod (1-29-20017)
+Ability to add Apps to Install, Hide or Uninstall, that the script doesnt list
+   ^This can ONLY be done in the script itself ATM
+
+-----------------------------------------------------------------------------------
 3.0-Mod (1-28-20017)
 Greatly Improved the ability to import app list from setting file
 Also changed it so you can Install, Hide or Uninstall for each app (instead of the whole thing)
