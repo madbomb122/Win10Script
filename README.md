@@ -31,7 +31,7 @@ To import a file for a setting or settings <br />
 
 ## FAQ
 **Q:** The script file looks all messy in notepad, How do i view/change it? <br />
-**A:** Trying wordpad or what I recomment, Notepad++ https://notepad-plus-plus.org/
+**A:** Try using wordpad or what I recommend, Notepad++ https://notepad-plus-plus.org/
 
 **Q:** Can I run the script safely? <br />
 **A:** The script itself is safe, however some setting it can change may compromise your computer.
