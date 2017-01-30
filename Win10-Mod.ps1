@@ -9,7 +9,7 @@
 # Modded Script Info
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script
-# Version: 3.0-Mod, 2017-01-28
+# Version: 3.1-Mod, 2017-01-29
 ##########
 <#
     Win10 Initial Setup Script - Makes it easier to setup an existing or new install with moded setting
@@ -218,6 +218,16 @@ $APP_XboxApp=0             # 'Xbox' app
 $APP_ZuneMusic=0           # 'Groove Music' app
 $APP_ZuneVideo=0           # 'Groove Music' app
 
+# Custom List of App to Install, Hide or Uninstall
+# I dunno if you can Install random apps with this script
+# Gets List of Packages Installed
+# DISM /Online /Get-ProvisionedAppxPackages | Select-string Packagename
+# Cant Import these ATM
+$APPS_AppsInstall = @()    # Apps to Install
+$APPS_AppsHide = @()       # Apps to Hide
+$APPS_AppsUninstall = @()  # Apps to Uninstall
+#$APPS_Example = @('Somecompany.Appname1','TerribleCompany.Appname2','SomeCrap.Appname3')
+
 #Skips Term_of_Use
 $Term_of_Use = 1           #1-See Term_of_Use, 2-Accept Term_of_Use, Anything else -Accept Term_of_Use
 
@@ -420,9 +430,6 @@ If($KeyPress -eq 'y' -or $Term_of_Use -ne 1) {
 }
 
 $APPProcess = Get-Variable -Name "APP_*" -ValueOnly
-$APPS_AppsInstall = @()
-$APPS_AppsHide = @()
-$APPS_AppsUninstall = @()
 
 $i=0
 ForEach ($AppV in $APPProcess) {
