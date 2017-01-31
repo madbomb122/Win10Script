@@ -1,4 +1,14 @@
 -----------------------------------------------------------------------------------
+3.2-Mod (?-?-20017) --In Testing
+Done:
+Renamed AeroResize to AeroSnap (Proper name of function)
+Renamed CameraOnLoc to CameraOnLockScreen (Gives better description of item)
+Adding Description to some items (May add more later)
+
+Working On/Testing:
+Ability to run Pre-defined setting (currently only -Set Set1)
+
+-----------------------------------------------------------------------------------
 3.1-Mod (1-29-20017)
 Ability to add Apps to Install, Hide or Uninstall, that the script doesnt list
    ^This can ONLY be done in the script itself ATM
