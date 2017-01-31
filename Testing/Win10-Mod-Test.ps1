@@ -94,17 +94,17 @@ $WAPPush = 0               #0-Skip, 1-Enable*, 2-Disable
 # Service Tweaks
 # Function  = Option       #Choices (* Indicates Windows Default)
 $UAC = 0                   #0-Skip, 1-Lower, 2-Normal*, 3-Higher
-$SharingMappedDrives = 0   #0-Skip, 1-Enable, 2-Disable*
+$SharingMappedDrives = 0   #0-Skip, 1-Enable, 2-Disable* --(Sharing mapped drives between users)
 $AdminShares = 0           #0-Skip, 1-Enable*, 2-Disable
 $Firewall = 0              #0-Skip, 1-Enable*, 2-Disable
 $WinDefender = 0           #0-Skip, 1-Enable*, 2-Disable
 $HomeGroups = 0            #0-Skip, 1-Enable*, 2-Disable
 $RemoteAssistance = 0      #0-Skip, 1-Enable*, 2-Disable
-$RemoteDesktop = 0         #0-Skip, 1-Enable, 2-Disable* (Remote Desktop w/o Network Level Authentication)
-$UpdateMSRT = 0            #0-Skip, 1-Enable*, 2-Disable (Malware Software Removal Tool)
-$UpdateDriver = 0          #0-Skip, 1-Enable*, 2-Disable
+$RemoteDesktop = 0         #0-Skip, 1-Enable, 2-Disable* --(Remote Desktop w/o Network Level Authentication)
+$UpdateMSRT = 0            #0-Skip, 1-Enable*, 2-Disable --(Malware Software Removal Tool)
+$UpdateDriver = 0          #0-Skip, 1-Enable*, 2-Disable --(Offering of drivers through Windows Update)
 $RestartOnUpdate = 0       #0-Skip, 1-Enable*, 2-Disable
-
+ 
 #Context Menu Items
 # Function  = Option       #Choices (* Indicates Windows Default)
 $CastToDevice = 0          #0-Skip, 1-Enable*, 2-Disable
@@ -123,19 +123,19 @@ $TaskbarIconSize = 0       #0-Skip, 1-Normal*, 2-Smaller
 $TaskbarGrouping = 0       #0-Skip, 1-Never, 2-Always*, 3-When Needed
 $TrayIcons = 0             #0-Skip, 1-Auto*, 2-Always Show     
 $SecondsInClock = 0        #0-Skip, 1-Show, 2-Hide*
-$LastActiveClick = 0       #0-Skip, 1-Enable, 2-Disable*
+$LastActiveClick = 0       #0-Skip, 1-Enable, 2-Disable* --(Makes Taskbar Buttons Open the Last Active Window)
 
 #Explorer Items
 # Function  = Option       #Choices (* Indicates Windows Default)
-$PidInTitleBar = 0         #0-Skip, 1-Show, 2-Hide*
-$AeroResize = 0            #0-Skip, 1-Enable*, 2-Disable
+$PidInTitleBar = 0         #0-Skip, 1-Show, 2-Hide* --(PID = Processor ID)
+$AeroSnap = 0              #0-Skip, 1-Enable*, 2-Disable --(Allows you to quickly resize the window you’re currently using)
 $AeroShake = 0             #0-Skip, 1-Enable*, 2-Disable
 $KnownExtensions = 0       #0-Skip, 1-Show, 2-Hide*
 $HiddenFiles = 0           #0-Skip, 1-Show, 2-Hide*
 $SystemFiles = 0           #0-Skip, 1-Show, 2-Hide*
 $ThisPCOnDesktop = 0       #0-Skip, 1-Show, 2-Hide*
-$ExplorerOpenLoc = 0       #0-Skip, 1-Quick Access*, 2-ThisPC
-     
+$ExplorerOpenLoc = 0       #0-Skip, 1-Quick Access*, 2-ThisPC --(What location it opened when you open an explorer window)
+
 #'This PC' items
 # Function  = Option       #Choices (* Indicates Windows Default)
 $DesktopIconInThisPC = 0   #0-Skip, 1-Show*, 2-Hide
@@ -152,7 +152,7 @@ $PVOpenWithMenu = 0        #0-Skip, 1-Enable, 2-Disable*
 
 #Misc items
 # Function  = Option       #Choices (* Indicates Windows Default)
-$CameraOnLock = 0          #0-Skip, 1-Enable*, 2-Disable
+$CameraOnLockScreen = 0    #0-Skip, 1-Enable*, 2-Disable
 $LockScreen = 0            #0-Skip, 1-Enable*, 2-Disable (Pre-Anniversary Update)
 $LockScreenAlt = 0         #0-Skip, 1-Enable*, 2-Disable (Anniversary Update workaround) 
 $ActionCenter = 0          #0-Skip, 1-Enable*, 2-Disable
@@ -325,6 +325,10 @@ $AppsList = @(
     'Microsoft.ZuneVideo'
 )
 
+##########
+# Script Start?
+##########
+
 # Ask for elevated permissions if required
 If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
      Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $args" -Verb RunAs
@@ -437,7 +441,7 @@ If($WinDefault -eq 1){
      $SecondsInClock = 2
      $LastActiveClick = 2
      $PidInTitleBar = 2
-     $AeroResize = 1
+     $AeroSnap = 1
      $AeroShake = 1
      $KnownExtensions = 2
      $HiddenFiles = 2
@@ -452,7 +456,7 @@ If($WinDefault -eq 1){
      $VideosIconInThisPC = 1
      $PVFileAssociation = 2
      $PVOpenWithMenu = 2
-     $CameraOnLock = 1
+     $CameraOnLockScreen = 1
      $LockScreen = 1
      $LockScreenAlt = 1
      $ActionCenter = 1
@@ -504,14 +508,14 @@ If($CustomSet -eq 1){
      $SendTo = 2
      $VolumeControlBar = 2
      $TaskbarSearchBox = 2
-     $TaskViewButton = 1
+     $TaskViewButton = 2
      $TaskbarIconSize = 1
      $TaskbarGrouping = 3
      $TrayIcons = 1
      $SecondsInClock = 2
      $LastActiveClick = 1
      $PidInTitleBar = 1
-     $AeroResize = 2
+     $AeroSnap = 2
      $AeroShake = 2
      $KnownExtensions = 1
      $HiddenFiles = 1
@@ -526,7 +530,7 @@ If($CustomSet -eq 1){
      $VideosIconInThisPC = 2
      $PVFileAssociation = 1
      $PVOpenWithMenu = 1
-     $CameraOnLock = 2
+     $CameraOnLockScreen = 2
      $LockScreen = 1
      $LockScreenAlt = 1
      $ActionCenter = 2
@@ -626,7 +630,7 @@ If ($WiFiSense -eq 1) {
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi\AllowAutoConnectToWiFiSenseHotspots" -Name "Value" -Type DWord -Value 0
 }
 
-# martScreen Filter
+# SmartScreen Filter
 If ($SmartScreen -eq 1) {
      Write-Host "Enabling SmartScreen Filter..."
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "SmartScreenEnabled" -Type String -Value "RequireAdmin"
@@ -960,13 +964,13 @@ If ($PidInTitleBar -eq 1) {
 }
 
 # Camera at Lockscreen
-If ($CameraOnLock -eq 1) {
+If ($CameraOnLockscreen -eq 1) {
      Write-Host "Enabling Camera at Lockscreen..."
      If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization")) {
           New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" | Out-Null
      }
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreenCamera" -Type DWord -Value 0
-} ElseIf ($CameraOnLock -eq 2) {
+} ElseIf ($CameraOnLockscreen -eq 2) {
      Write-Host "Disabling Camera at Lockscreen..."
      If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization")) {
           New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" | Out-Null
@@ -1058,12 +1062,12 @@ If ($SendTo -eq 1) {
 	 }
 }
 
-# Aero Resize
-If ($AeroResize -eq 1) {
-     Write-Host "Enabling Aero Resize..."
+# Aero Snap
+If ($AeroSnap -eq 1) {
+     Write-Host "Enabling Aero Snap..."
      Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "WindowArrangementActive" -Type DWord -Value 1
-} ElseIf ($AeroResize -eq 2) {
-     Write-Host "Disabling Aero Resize..."
+} ElseIf ($AeroSnap -eq 2) {
+     Write-Host "Disabling Aero Snap..."
      Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "WindowArrangementActive" -Type DWord -Value 0
 }
 
