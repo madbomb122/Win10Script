@@ -9,13 +9,12 @@
 # Modded Script Info
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script
-# Version: 3.1-Mod, 2017-01-29
+# Version: 3.2-Mod, 02-01-2017
+# Release Type: Stable
 ##########
 <#
-    Win10 Initial Setup Script - Makes it easier to setup an existing or new install with moded setting
-    
-    Copyright (c) 2017 Disassembler <disassembler@dasm.cz> -Original Script
-    Copyright (c) 2017 Madbomb122 -Modded Script
+    Copyright (c) 2017 Disassembler <disassembler@dasm.cz> -Original Version of Script
+    Copyright (c) 2017 Madbomb122 -Modded Version of Script
     
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,15 +30,36 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #>
 
-# You can run the script with a -Set WD or -Set WindowsDefault 
-# To use the default setting for windows (Other than reinstalling onedrive or apps) 
+<#
+----------------------------------------------------------------------------
+.DESCRIPTION
+    Makes it easier to setup an existing or new install with moded setting
 
-# You can import settings from a file with -Set filename
+.ADVANCED USAGE
+  To run the script with the Items in the script back to the Default 
+  for windows run the script with one of the 2 switches bellow:
+    -Set WD
+    -Set WindowsDefault 
+
+Example: Win10-Mod.ps1 -Set WD
+Example: Win10-Mod.ps1 -Set WindowsDefault
+
+  To run the script with imported Settings run the script with:	
+	-Set Filename
+
+Example: Win10-Mod.ps1 -Set File.txt
+Example: Win10-Mod.ps1 -Set Example
+
+Note: File has to be in the proper format or settings wont be imported
+
+----------------------------------------------------------------------------
+#>
 
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## !!!!!!!!!            DO NOT TOUCH NEXT LINE          !!!!!!!!!
 Param([alias("Set")] [string] $SettingImp)
 
+# --------------------------------------------------------------------------
 
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## !!!!!!!!!          SAFE TO EDIT VALUES BELLOW        !!!!!!!!!
@@ -49,8 +69,9 @@ Param([alias("Set")] [string] $SettingImp)
 # Change to an Option not listed will Skip the Function
 
 # Windows Default for ALL Settings 
-# $OneDriveInstall, and $Bloatware Will be Skipped
-$WinDefault = 2            #1-Yes*, 2-No  (IF 1 is set then all settings after this wont matter)
+# But $OneDriveInstall and All Under Apps Will run with your current settings
+$WinDefault = 2            #1-Yes*, 2-No 
+# IF 1 is set then Everything Other than $OneDriveInstall and All Under Apps will be ignored
 
 # Privacy Settings
 # Function  = Option       #Choices (* Indicates Windows Default)
@@ -64,6 +85,7 @@ $LocationTracking = 0      #0-Skip, 1-Enable*, 2-Disable
 $Feedback = 0              #0-Skip, 1-Enable*, 2-Disable
 $AdvertisingID = 0         #0-Skip, 1-Enable*, 2-Disable     
 $Cortana = 0               #0-Skip, 1-Enable*, 2-Disable
+$CortanaSearch = 0         #0-Skip, 1-Enable*, 2-Disable --(If you disable Cortana you can still search with this)
 $ErrorReporting = 0        #0-Skip, 1-Enable*, 2-Disable
 $WinUpdateDownload = 0     #0-Skip, 1-P2P*, 2-Local Only, 3-Disable
 $AutoLoggerFile = 0        #0-Skip, 1-Enable*, 2-Disable
@@ -73,17 +95,17 @@ $WAPPush = 0               #0-Skip, 1-Enable*, 2-Disable
 # Service Tweaks
 # Function  = Option       #Choices (* Indicates Windows Default)
 $UAC = 0                   #0-Skip, 1-Lower, 2-Normal*, 3-Higher
-$SharingMappedDrives = 0   #0-Skip, 1-Enable, 2-Disable*
+$SharingMappedDrives = 0   #0-Skip, 1-Enable, 2-Disable* --(Sharing mapped drives between users)
 $AdminShares = 0           #0-Skip, 1-Enable*, 2-Disable
 $Firewall = 0              #0-Skip, 1-Enable*, 2-Disable
 $WinDefender = 0           #0-Skip, 1-Enable*, 2-Disable
 $HomeGroups = 0            #0-Skip, 1-Enable*, 2-Disable
 $RemoteAssistance = 0      #0-Skip, 1-Enable*, 2-Disable
-$RemoteDesktop = 0         #0-Skip, 1-Enable, 2-Disable* (Remote Desktop w/o Network Level Authentication)
-$UpdateMSRT = 0            #0-Skip, 1-Enable*, 2-Disable (Malware Software Removal Tool)
-$UpdateDriver = 0          #0-Skip, 1-Enable*, 2-Disable
+$RemoteDesktop = 0         #0-Skip, 1-Enable, 2-Disable* --(Remote Desktop w/o Network Level Authentication)
+$UpdateMSRT = 0            #0-Skip, 1-Enable*, 2-Disable --(Malware Software Removal Tool)
+$UpdateDriver = 0          #0-Skip, 1-Enable*, 2-Disable --(Offering of drivers through Windows Update)
 $RestartOnUpdate = 0       #0-Skip, 1-Enable*, 2-Disable
-
+ 
 #Context Menu Items
 # Function  = Option       #Choices (* Indicates Windows Default)
 $CastToDevice = 0          #0-Skip, 1-Enable*, 2-Disable
@@ -95,26 +117,29 @@ $SendTo = 0                #0-Skip, 1-Enable*, 2-Disable
 
 #Task Bar Items
 # Function  = Option       #Choices (* Indicates Windows Default)
-$VolumeControlBar = 0      #0-Skip, 1-Horizontal*, 2-Vertical
+$BatteryUIBar = 0          #0-Skip, 1-New*, 2-Classic --(Classic is Win 7 version)
+$ClockUIBar = 0            #0-Skip, 1-New*, 2-Classic --(Classic is Win 7 version)
+$VolumeControlBar = 0      #0-Skip, 1-New(Horizontal)*, 2-Classic(Vertical) --(Classic is Win 7 version)
 $TaskbarSearchBox = 0      #0-Skip, 1-Show*, 2-Hide
 $TaskViewButton = 0        #0-Skip, 1-Show*, 2-Hide
 $TaskbarIconSize = 0       #0-Skip, 1-Normal*, 2-Smaller
 $TaskbarGrouping = 0       #0-Skip, 1-Never, 2-Always*, 3-When Needed
 $TrayIcons = 0             #0-Skip, 1-Auto*, 2-Always Show     
 $SecondsInClock = 0        #0-Skip, 1-Show, 2-Hide*
-$LastActiveClick = 0       #0-Skip, 1-Enable, 2-Disable*
+$LastActiveClick = 0       #0-Skip, 1-Enable, 2-Disable* --(Makes Taskbar Buttons Open the Last Active Window)
 
 #Explorer Items
 # Function  = Option       #Choices (* Indicates Windows Default)
-$PidInTitleBar = 0         #0-Skip, 1-Show, 2-Hide*
-$AeroResize = 0            #0-Skip, 1-Enable*, 2-Disable
+$MoreColorsTitle = 0       #0-Skip, 1-Enable, 2-Disable* --(Adds more Colors to pick from for the Title Colors)
+$PidInTitleBar = 0         #0-Skip, 1-Show, 2-Hide* --(PID = Processor ID)
+$AeroSnap = 0              #0-Skip, 1-Enable*, 2-Disable --(Allows you to quickly resize the window you’re currently using)
 $AeroShake = 0             #0-Skip, 1-Enable*, 2-Disable
 $KnownExtensions = 0       #0-Skip, 1-Show, 2-Hide*
 $HiddenFiles = 0           #0-Skip, 1-Show, 2-Hide*
 $SystemFiles = 0           #0-Skip, 1-Show, 2-Hide*
 $ThisPCOnDesktop = 0       #0-Skip, 1-Show, 2-Hide*
-$ExplorerOpenLoc = 0       #0-Skip, 1-Quick Access*, 2-ThisPC
-     
+$ExplorerOpenLoc = 0       #0-Skip, 1-Quick Access*, 2-ThisPC --(What location it opened when you open an explorer window)
+
 #'This PC' items
 # Function  = Option       #Choices (* Indicates Windows Default)
 $DesktopIconInThisPC = 0   #0-Skip, 1-Show*, 2-Hide
@@ -131,7 +156,7 @@ $PVOpenWithMenu = 0        #0-Skip, 1-Enable, 2-Disable*
 
 #Misc items
 # Function  = Option       #Choices (* Indicates Windows Default)
-$CameraOnLock = 0          #0-Skip, 1-Enable*, 2-Disable
+$CameraOnLockScreen = 0    #0-Skip, 1-Enable*, 2-Disable
 $LockScreen = 0            #0-Skip, 1-Enable*, 2-Disable (Pre-Anniversary Update)
 $LockScreenAlt = 0         #0-Skip, 1-Enable*, 2-Disable (Anniversary Update workaround) 
 $ActionCenter = 0          #0-Skip, 1-Enable*, 2-Disable
@@ -234,6 +259,8 @@ $Term_of_Use = 1           #1-See Term_of_Use, 2-Accept Term_of_Use, Anything el
 #Restart when done? (I recommend restarting when done)
 $Restart = 1               #0-Dont Restart, 1-Restart
 
+# --------------------------------------------------------------------------
+
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## !!!!!!!!!                   CAUTION                  !!!!!!!!!
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -243,6 +270,8 @@ $Restart = 1               #0-Dont Restart, 1-Restart
 ##########
 # Needed Stuff
 ##########
+
+$CustomSet = 0
 
 $AppsList = @(
     'Microsoft.3DBuilder',
@@ -300,6 +329,10 @@ $AppsList = @(
     'Microsoft.ZuneVideo'
 )
 
+##########
+# Script Start?
+##########
+
 # Ask for elevated permissions if required
 If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
      Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $args" -Verb RunAs
@@ -315,19 +348,61 @@ If ($SettingImp -ne $null -and $SettingImp){
          }
 	} ElseIf ($SettingImp -eq "WD" -or $SettingImp -eq "WindowsDefault"){
 	     $WinDefault = 1
+    } ElseIf ($SettingImp -eq "Set1"){
+	     $CustomSet = 1
     }
 } 
+
+# Asks for input before continuing
+# Doesnt work in PowerShell ISE
+If ($Term_of_Use -eq 1){
+     Write-Host "WARNING!!" -ForegroundColor Red -BackgroundColor Black
+     Write-Host "This version is currently being tested and May have problems." -ForegroundColor Yellow -BackgroundColor Black 
+     Write-Host ""
+     Write-Host "This program comes with ABSOLUTELY NO WARRANTY" -ForegroundColor Black -BackgroundColor White
+     Write-Host "This is free software, and you are welcome to redistribute" -ForegroundColor Black -BackgroundColor White
+     Write-Host "it under certain conditions. Read License file." -ForegroundColor Black -BackgroundColor White
+     Write-Host ""
+     Write-Host "Do you Accept the Term of Use? (y/n)"	 
+     $KeyPress= $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+     $KeyPress=$KeyPress.Character
+}
+
+If($KeyPress -eq 'y' -or $Term_of_Use -ne 1) {
+     Write-Host "Running Script"
+} ElseIf($KeyPress -eq 'n'){
+     Write-Host "Exiting Script, Goodbye"
+     exit
+} Else{
+     Write-Host "Invalid Input, Goodbye"
+     exit	 
+}
 
 # Define HKCR
 If (!(Test-Path "HKCR:")) {
      New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null
 }
 
+$APPProcess = Get-Variable -Name "APP_*" -ValueOnly
+
+$i=0
+ForEach ($AppV in $APPProcess) {
+   If($AppV -eq 1){
+       $APPS_AppsInstall+=$AppsList[$i]
+   } Elseif($AppV -eq 2){
+       $APPS_AppsHide+=$AppsList[$i]
+   } Elseif($AppV -eq 3){
+       $APPS_AppsUninstall+=$AppsList[$i]
+   }
+   $i++
+}
+
 
 ##########
-# Windows Default
+# Various Settings
 ##########
 
+# Windows Default Setting
 If($WinDefault -eq 1){
      $Telemetry = 1
      $WiFiSense = 1
@@ -339,6 +414,7 @@ If($WinDefault -eq 1){
      $Feedback = 1
      $AdvertisingID = 1
      $Cortana = 1
+	 $CortanaSearch = 1
      $ErrorReporting = 1
      $WinUpdateDownload = 1
      $AutoLoggerFile = 1
@@ -361,6 +437,8 @@ If($WinDefault -eq 1){
      $PinTo = 1
      $ShareWith = 1
      $SendTo = 1
+	 $BatteryUIBar = 1
+	 $ClockUIBar = 1
      $VolumeControlBar = 1
      $TaskbarSearchBox = 1
      $TaskViewButton = 1
@@ -369,8 +447,9 @@ If($WinDefault -eq 1){
      $TrayIcons = 1
      $SecondsInClock = 2
      $LastActiveClick = 2
+	 $MoreColorsTitle = 2
      $PidInTitleBar = 2
-     $AeroResize = 1
+     $AeroSnap = 1
      $AeroShake = 1
      $KnownExtensions = 2
      $HiddenFiles = 2
@@ -385,7 +464,7 @@ If($WinDefault -eq 1){
      $VideosIconInThisPC = 1
      $PVFileAssociation = 2
      $PVOpenWithMenu = 2
-     $CameraOnLock = 1
+     $CameraOnLockScreen = 1
      $LockScreen = 1
      $LockScreenAlt = 1
      $ActionCenter = 1
@@ -395,54 +474,142 @@ If($WinDefault -eq 1){
      $NumblockOnStart = 2
      $F8BootMenu = 1
      $OneDrive = 1
-#    $OneDriveInstall = 1
      $XboxDVR = 1
      $MediaPlayer = 1
      $WorkFolders = 1
      $LinuxSubsystem = 2
 }
 
-
-##########
-# Script Start?
-##########
-
-# Asks for input before continuing
-# Doesnt work in PowerShell ISE
-If ($Term_of_Use -eq 1){
-     Write-Host "This program comes with ABSOLUTELY NO WARRANTY" -ForegroundColor Black -BackgroundColor White
-     Write-Host "This is free software, and you are welcome to redistribute" -ForegroundColor Black -BackgroundColor White
-     Write-Host "it under certain conditions. Read License file." -ForegroundColor Black -BackgroundColor White
-     Write-Host ""
-     Write-Host "Do you Accept the Term of Use? (y/n)"	 
-     $KeyPress= $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-     $KeyPress=$KeyPress.Character
+# My Custom Setting
+If($CustomSet -eq 1){
+     $Telemetry = 2
+     $WiFiSense = 2
+     $SmartScreen = 0
+     $StartMenuWebSearch = 2
+     $StartSuggestions = 2
+     $AppAutoDownload = 2
+     $LocationTracking = 2
+     $Feedback = 2
+     $AdvertisingID = 2
+     $Cortana = 2
+	 $CortanaSearch = 1
+     $ErrorReporting = 1
+     $WinUpdateDownload = 2
+     $AutoLoggerFile = 1
+     $DiagTrack = 1
+     $WAPPush = 2
+     $UAC = 2
+     $SharingMappedDrives = 2
+     $AdminShares = 1
+     $Firewall = 1
+     $WinDefender = 2
+     $HomeGroups = 2
+     $RemoteAssistance = 2
+     $RemoteDesktop = 2
+     $UpdateMSRT = 2
+     $UpdateDriver = 1
+     $RestartOnUpdate = 2
+     $CastToDevice = 2
+     $PreviousVersions = 2
+     $IncludeinLibrary = 2
+     $PinTo = 2
+     $ShareWith = 2
+     $SendTo = 2
+	 $BatteryUIBar = 1
+	 $ClockUIBar = 1
+     $VolumeControlBar = 2
+     $TaskbarSearchBox = 2
+     $TaskViewButton = 2
+     $TaskbarIconSize = 1
+     $TaskbarGrouping = 3
+     $TrayIcons = 1
+     $SecondsInClock = 2
+     $LastActiveClick = 1
+	 $MoreColorsTitle = 1
+     $PidInTitleBar = 1
+     $AeroSnap = 2
+     $AeroShake = 2
+     $KnownExtensions = 1
+     $HiddenFiles = 1
+     $SystemFiles = 1
+     $ThisPCOnDesktop = 1
+     $ExplorerOpenLoc = 1
+     $DesktopIconInThisPC = 2
+     $DocumentsIconInThisPC = 2
+     $DownloadsIconInThisPC = 2
+     $MusicIconInThisPC = 2
+     $PicturesIconInThisPC = 2
+     $VideosIconInThisPC = 2
+     $PVFileAssociation = 1
+     $PVOpenWithMenu = 1
+     $CameraOnLockScreen = 2
+     $LockScreen = 1
+     $LockScreenAlt = 1
+     $ActionCenter = 2
+     $Autoplay = 2
+     $Autorun = 2
+     $StickyKeyPrompt = 2
+     $NumblockOnStart = 2
+     $F8BootMenu = 1
+     $OneDrive = 2
+     $XboxDVR = 2
+     $MediaPlayer = 1
+     $WorkFolders = 2
+     $LinuxSubsystem = 2
+     $APP_3DBuilder=3
+     $APP_AdvertisingXaml=0
+     $APP_Appconnector=0
+     $APP_Asphalt8Airborne=3
+     $APP_BingFinance=3
+     $APP_BingFoodAndDrink=3
+     $APP_BingHealthFitness=3
+     $APP_BingNews=3
+     $APP_BingSports=3
+     $APP_BingTranslator=3
+     $APP_BingTravel=3
+     $APP_BingWeather=0
+     $APP_CandyCrushSoda=3
+     $APP_CommsPhone=3
+     $APP_Communications=3
+     $APP_ConnectivityStore=0
+     $APP_Facebook=3
+     $APP_FarmVille=3
+     $APP_FreshPaint=0
+     $APP_Getstarted=3
+     $APP_Messaging=3
+     $APP_MicrosoftJackpot=3
+     $APP_MicrosoftJigsaw=3
+     $APP_MicrosoftMahjong=3
+     $APP_MicrosoftOfficeHub=3       
+     $APP_MicrosoftSudoku=0
+     $APP_MinecraftUWP=3
+     $APP_MovieMoments=3
+     $APP_Netflix=0
+     $APP_OfficeOneNote=3
+     $APP_OfficeSway=3
+     $APP_OneConnect=3
+     $APP_People=3
+     $APP_Photos=0
+     $APP_SkypeApp=3
+     $APP_SkypeWiFi=3
+     $APP_SolitaireCollection=3
+     $APP_SoundRecorder=3
+     $APP_StickyNotes=0
+     $APP_StudiosWordament=3
+     $APP_Taptiles=3
+     $APP_Twitter=3
+     $APP_WindowsAlarms=0
+     $APP_WindowsCalculator=0
+     $APP_WindowsCamera=3
+     $APP_WindowsFeedback=3
+     $APP_WindowsFeedbackHub=3
+     $APP_WindowsMaps=0
+     $APP_WindowsPhone=3
+     $APP_WindowsStore=0
+     $APP_XboxApp=0
+     $APP_ZuneMusic=3
+     $APP_ZuneVideo=3
 }
-
-If($KeyPress -eq 'y' -or $Term_of_Use -ne 1) {
-     Write-Host "Running Script"
-} ElseIf($KeyPress -eq 'n'){
-     Write-Host "Exiting Script, Goodbye"
-     exit
-} Else{
-     Write-Host "Invalid Input, Goodbye"
-     exit	 
-}
-
-$APPProcess = Get-Variable -Name "APP_*" -ValueOnly
-
-$i=0
-ForEach ($AppV in $APPProcess) {
-   If($AppV -eq 1){
-       $APPS_AppsInstall+=$AppsList[$i]
-   } Elseif($AppV -eq 2){
-       $APPS_AppsHide+=$AppsList[$i]
-   } Elseif($AppV -eq 3){
-       $APPS_AppsUninstall+=$AppsList[$i]
-   }
-   $i++
-}
-
 
 ##########
 # Privacy Settings
@@ -475,7 +642,7 @@ If ($WiFiSense -eq 1) {
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi\AllowAutoConnectToWiFiSenseHotspots" -Name "Value" -Type DWord -Value 0
 }
 
-# martScreen Filter
+# SmartScreen Filter
 If ($SmartScreen -eq 1) {
      Write-Host "Enabling SmartScreen Filter..."
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "SmartScreenEnabled" -Type String -Value "RequireAdmin"
@@ -567,7 +734,6 @@ If ($Cortana -eq 1) {
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization" -Name "RestrictImplicitTextCollection" -Type DWord -Value 0 -ErrorAction SilentlyContinue
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization" -Name "RestrictImplicitInkCollection" -Type DWord -Value 0 -ErrorAction SilentlyContinue
      Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization\TrainedDataStore" -Name "HarvestContacts" -ErrorAction SilentlyContinue
-     Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana" -ErrorAction SilentlyContinue
 } ElseIf ($Cortana -eq 2) {
      Write-Host "Disabling Cortana..."
      If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Personalization\Settings")) {
@@ -583,11 +749,20 @@ If ($Cortana -eq 1) {
           New-Item -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization\TrainedDataStore" -Force | Out-Null
      }
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization\TrainedDataStore" -Name "HarvestContacts" -Type DWord -Value 0
+}
+
+# Cortana Search
+If ($CortanaSearch -eq 1) {
+     Write-Host "Enabling Cortana Search..."
+     Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana" -ErrorAction SilentlyContinue
+} ElseIf ($CortanaSearch -eq 2) {
+     Write-Host "Disabling Cortana Search..."
      If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search")) {
           New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Force | Out-Null
      }
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana" -Type DWord -Value 0
 }
+
 
 # Error Reporting
 If ($ErrorReporting -eq 1) {
@@ -793,6 +968,27 @@ If ($RemoteDesktop -eq 1) {
 # UI Tweaks
 ##########
 
+# More Tile Colors
+If ($MoreColorsTitle -eq 1) {
+	 for($i=0; $i -ne 4; $i++) {
+         for($a=0; $a -ne 2; $a++) {
+	           If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\$i\Theme$a")) {
+	              New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\$i\Theme$a" | Out-Null
+	           } 
+	     }
+	 }
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\0\Theme0" -Name "Color" -Type DWord -Value 00918b73
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\0\Theme1" -Name "Color" -Type DWord -Value 00a68e5e
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\1\Theme0" -Name "Color" -Type DWord -Value 00a44817
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\1\Theme1" -Name "Color" -Type DWord -Value 00618a28
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\2\Theme0" -Name "Color" -Type DWord -Value 00bab4ab
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\2\Theme1" -Name "Color" -Type DWord -Value 00bab4ab
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\3\Theme0" -Name "Color" -Type DWord -Value 0085bd37
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\3\Theme1" -Name "Color" -Type DWord -Value 0085bd37
+} ElseIf ($MoreColorsTitle -eq 2) {
+     Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents" -Force -Recurse -ErrorAction SilentlyContinue
+}
+
 # Process ID on Title Bar
 If ($PidInTitleBar -eq 1) {
      Write-Host "Showing Process ID on Title Bar..."
@@ -809,13 +1005,13 @@ If ($PidInTitleBar -eq 1) {
 }
 
 # Camera at Lockscreen
-If ($CameraOnLock -eq 1) {
+If ($CameraOnLockscreen -eq 1) {
      Write-Host "Enabling Camera at Lockscreen..."
      If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization")) {
           New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" | Out-Null
      }
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreenCamera" -Type DWord -Value 0
-} ElseIf ($CameraOnLock -eq 2) {
+} ElseIf ($CameraOnLockscreen -eq 2) {
      Write-Host "Disabling Camera at Lockscreen..."
      If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization")) {
           New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" | Out-Null
@@ -897,20 +1093,22 @@ If ($ShareWith -eq 1) {
 If ($SendTo -eq 1) {
      Write-Host "Enabling Send To Context item..."
      If (!(Test-Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo")) {
-          New-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo"
-     }
-     Set-ItemProperty -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" -Name "(Default)" -Type String -Value "{7BA4C740-9E81-11CF-99D3-00AA004AE837}"
+           New-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo"
+	 }
+     Set-ItemProperty -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" -Name "(Default)" -Type String -Value "{7BA4C740-9E81-11CF-99D3-00AA004AE837}" -ErrorAction SilentlyContinue | Out-Null
 } ElseIf ($SendTo -eq 2) {
      Write-Host "Disabling Send To Context item..."
-     Remove-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" -ErrorAction SilentlyContinue
+	 If (Test-Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo") {
+           Remove-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" -ErrorAction SilentlyContinue
+	 }
 }
 
-# Aero Resize
-If ($AeroResize -eq 1) {
-     Write-Host "Enabling Aero Resize..."
+# Aero Snap
+If ($AeroSnap -eq 1) {
+     Write-Host "Enabling Aero Snap..."
      Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "WindowArrangementActive" -Type DWord -Value 1
-} ElseIf ($AeroResize -eq 2) {
-     Write-Host "Disabling Aero Resize..."
+} ElseIf ($AeroSnap -eq 2) {
+     Write-Host "Disabling Aero Snap..."
      Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "WindowArrangementActive" -Type DWord -Value 0
 }
 
@@ -926,6 +1124,30 @@ If ($AeroShake -eq 1) {
      Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" -Name "NoWindowMinimizingShortcuts" -Type DWord -Value 1
 }
 
+# Battery UI Bar
+If ($BatteryUIBar -eq 1) {
+     Write-Host "Enabling New Battery UI Bar..."
+     Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" -Name "UseWin32BatteryFlyout" -ErrorAction SilentlyContinue
+} ElseIf ($BatteryUIBar -eq 2) {
+     Write-Host "Enabling Old Battery UI Bar..."
+     If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell")) {
+          New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" | Out-Null
+     }
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" -Name "UseWin32BatteryFlyout" -Type DWord -Value 1
+}
+
+# Clock UI Bar
+If ($ClockUIBar -eq 1) {
+     Write-Host "Enabling New Clock UI Bar..."
+     Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" -Name "UseWin32TrayClockExperience" -ErrorAction SilentlyContinue
+} ElseIf ($ClockUIBar -eq 2) {
+     Write-Host "Enabling Old Clock UI Bar..."
+     If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell")) {
+          New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" | Out-Null
+     }
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" -Name "UseWin32TrayClockExperience" -Type DWord -Value 1
+}
+	 
 # Volume Control Bar
 If ($VolumeControlBar -eq 1) {
      Write-Host "Enabling New Volume Bar (Horizontal)..."
