@@ -1,5 +1,4 @@
 # To do
-- [X] Ability to add app(s) of your own to Install/Hide/Uninstall (In Script)
 - [X] Add Various Settings that can be ran with a switch like the -Set WD (Currently only -Set Set1) -My settings
 - [ ] Ability Import an app list of your own to Install/Hide/Uninstall from a File
 
