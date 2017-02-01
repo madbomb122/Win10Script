@@ -50,6 +50,7 @@ HiddenFiles=2
 SystemFiles=2
 ThisPCOnDesktop=2
 ExplorerOpenLoc=1
+RecentItemsFrequent=1
 DesktopIconInThisPC=1
 DocumentsIconInThisPC=1
 DownloadsIconInThisPC=1
