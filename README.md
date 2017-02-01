@@ -25,15 +25,13 @@ The Following will run the script with resetting everything the script can chang
 or <br />
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Mod.ps11 -Set WindowsDefault` <br />
 <br />
-<br />
 To import a file for a setting or settings <br />
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Mod.ps1 -Set example.txt` <br />
 **Note: For an example of the setting files look at '*example.txt*', it has everything you can change but it doesn't have what each item can be set to like the script does.** <br />
 <br />
-<br />
 To use the settings I use <br />
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Mod.ps1 -Set Set1` <br />
-**Note 1: Wont list the settings.** <br />
+**Note: Wont list the settings since there is alot of them.** <br />
 
 ## FAQ
 **Q:** The script file looks all messy in notepad, How do i view/change it? <br />
