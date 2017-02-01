@@ -1,8 +1,9 @@
 -----------------------------------------------------------------------------------
-3.2-Mod (2-1-2017) --In Testing
-Done:
-Renamed AeroResize to AeroSnap (Proper name of function)
-Renamed CameraOnLoc to CameraOnLockScreen (Gives better description of item)
+?-Mod (?-?-2017) -Testing
+Nothing here yet
+
+-----------------------------------------------------------------------------------
+3.2-Mod (2-1-2017)
 Adding Description to some items (May add more later)
 Ability to run Pre-defined setting (currently only -Set Set1)
 
@@ -11,6 +12,10 @@ Cortana Search (Can still search with cortana disabled)
 More Colors for Tiles
 Classic Clock UI (for the taskbar flyout)
 Classic Battery UI (for the taskbar flyout)
+
+Renamed 2 Items:
+AeroResize to AeroSnap (Proper name of function)
+CameraOnLoc to CameraOnLockScreen (Gives better description of item)
 
 -----------------------------------------------------------------------------------
 3.1-Mod (1-29-2017)
