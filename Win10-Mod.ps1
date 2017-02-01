@@ -139,6 +139,7 @@ $HiddenFiles = 0           #0-Skip, 1-Show, 2-Hide*
 $SystemFiles = 0           #0-Skip, 1-Show, 2-Hide*
 $ThisPCOnDesktop = 0       #0-Skip, 1-Show, 2-Hide*
 $ExplorerOpenLoc = 0       #0-Skip, 1-Quick Access*, 2-ThisPC --(What location it opened when you open an explorer window)
+$RecentItemsFrequent = 0   #0-Skip, 1-Enable*, 2-Disable
 
 #'This PC' items
 # Function  = Option       #Choices (* Indicates Windows Default)
@@ -245,16 +246,16 @@ $APP_ZuneVideo=0           # 'Groove Music' app
 
 # Custom List of App to Install, Hide or Uninstall
 # I dunno if you can Install random apps with this script
-# Gets List of Packages Installed
-# DISM /Online /Get-ProvisionedAppxPackages | Select-string Packagename
 # Cant Import these ATM
 $APPS_AppsInstall = @()    # Apps to Install
 $APPS_AppsHide = @()       # Apps to Hide
 $APPS_AppsUninstall = @()  # Apps to Uninstall
 #$APPS_Example = @('Somecompany.Appname1','TerribleCompany.Appname2','SomeCrap.Appname3')
+# To get list of Packages Installed
+# DISM /Online /Get-ProvisionedAppxPackages | Select-string Packagename
 
-#Skips Term_of_Use
-$Term_of_Use = 1           #1-See Term_of_Use, 2-Accept Term_of_Use, Anything else -Accept Term_of_Use
+#Skips Term of Use
+$Term_of_Use = 1           #1-See, Anything else = Accepts Term of Use
 
 #Restart when done? (I recommend restarting when done)
 $Restart = 1               #0-Dont Restart, 1-Restart
@@ -456,6 +457,7 @@ If($WinDefault -eq 1){
      $SystemFiles = 2
      $ThisPCOnDesktop = 2
      $ExplorerOpenLoc = 1
+	 $RecentItemsFrequent = 1
      $DesktopIconInThisPC = 1
      $DocumentsIconInThisPC = 1
      $DownloadsIconInThisPC = 1
@@ -534,6 +536,7 @@ If($CustomSet -eq 1){
      $SystemFiles = 1
      $ThisPCOnDesktop = 1
      $ExplorerOpenLoc = 1
+	 $RecentItemsFrequent = 2
      $DesktopIconInThisPC = 2
      $DocumentsIconInThisPC = 2
      $DownloadsIconInThisPC = 2
@@ -1326,6 +1329,15 @@ If ($SystemFiles -eq 1) {
 } ElseIf ($SystemFiles -eq 2) {
      Write-Host "Hiding System files..."
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSuperHidden" -Type DWord -Value 0
+}
+
+# Recent Items and Frequent Places
+If ($RecentItemsFrequent -eq 1) {
+     Write-Host "Enabling Recent Items and Frequent Places..."
+     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "Start_TrackDocs" -Type DWord -Value 1
+} ElseIf ($RecentItemsFrequent -eq 2) {
+     Write-Host "Disabling Recent Items and Frequent Places..."
+     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "Start_TrackDocs" -Type DWord -Value 0
 }
 
 # Change default Explorer view
