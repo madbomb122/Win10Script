@@ -29,6 +29,10 @@ To import a file for a setting or settings <br />
 
 **Note: The bat file provided can be used to run the script with a custom file, windows default or settings in the script (just edit the file and remove the 2 Colons '::' from the one you want to run.** <br />
 
+To use the settings I use <br />
+`powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Mod.ps1 -Set Set1` <br />
+**Note 1: Wont list the settings.** <br />
+
 ## FAQ
 **Q:** The script file looks all messy in notepad, How do i view/change it? <br />
 **A:** Try using wordpad or what I recommend, Notepad++ https://notepad-plus-plus.org/
