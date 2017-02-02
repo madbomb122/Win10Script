@@ -1,4 +1,21 @@
 -----------------------------------------------------------------------------------
+3.3-Mod (2-??-2017) --Testing
+ALL ITEMS need to be tested
+
+Ability to Create Restore Point Before running Script
+
+Added 9 New Items:
+Recent Files in Quick Access
+Frequent Folders in Quick Access
+Most Used App in Start Menu
+Power Menu on Lock Screen
+Hibernate Power Option
+Sleep Power Option
+Window Content While Dragging
+Check For Windows Update
+Ethernet as Metered Connection
+
+-----------------------------------------------------------------------------------
 3.2-Mod (2-1-2017)
 Adding Description to some items (May add more later)
 Ability to run Pre-defined setting (currently only -Set Set1)
@@ -8,7 +25,7 @@ Cortana Search (Can still search with cortana disabled)
 More Colors for Tiles
 Classic Clock UI (for the taskbar flyout)
 Classic Battery UI (for the taskbar flyout)
-Recent Items and Frequent Places
+Recent Items and Frequent Places (in start menu)
 
 Renamed 2 Items:
 AeroResize to AeroSnap (Proper name of function)
