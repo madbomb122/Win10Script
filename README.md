@@ -47,7 +47,7 @@ To use the settings I use <br />
 **A:** Yes, but doesnt mean there isnt any bugs/errors.
 
 **Q:**: I've run the script and it did *BLAH*, can I undo it? <br />
-**A1:** Yes, Most things can easily be undone.. Just go in the script and run it again with the deisred change.
+**A1:** Yes, Most things can easily be undone.. Just go in the script and run it again with the deisred change. <br />
 **A2:** Yes, you may beable to use system restore if you create a restore point
 
 **Q:** The script messed up my computer. <br />
