@@ -127,6 +127,8 @@ $TaskbarGrouping = 0       #0-Skip, 1-Never, 2-Always*, 3-When Needed
 $TrayIcons = 0             #0-Skip, 1-Auto*, 2-Always Show     
 $SecondsInClock = 0        #0-Skip, 1-Show, 2-Hide*
 $LastActiveClick = 0       #0-Skip, 1-Enable, 2-Disable* --(Makes Taskbar Buttons Open the Last Active Window)
+$TaskBarOnMultiDisplay = 0 #0-Skip, 1-Enable*, 2-Disable
+$TaskbarButtOnDisplay = 0  #0-Skip, 1-All, 2-where window is open, 3-Main and where window is open
 
 #Star Menu Items
 # Function  = Option       #Choices (* Indicates Windows Default)
@@ -148,7 +150,7 @@ $ThisPCOnDesktop = 0       #0-Skip, 1-Show, 2-Hide*
 $ExplorerOpenLoc = 0       #0-Skip, 1-Quick Access*, 2-ThisPC --(What location it opened when you open an explorer window)
 $RecentFileQikAcc = 0      #0-Skip, 1-Show/Add*, 2-Hide, 3-Remove --(Recent Files in Quick Access)
 $FrequentFoldersQikAcc = 0 #0-Skip, 1-Show*, 2-Hide --(Frequent Folders in Quick Access)
-$WinContentWhileDrag = 0   #0-Skip, 1-Show, 2-Hide
+$WinContentWhileDrag = 0   #0-Skip, 1-Show*, 2-Hide
 
 #'This PC' items
 # Function  = Option       #Choices (* Indicates Windows Default)
@@ -181,7 +183,7 @@ $EthernetMetered = 0       #0-Skip, 1-Enable, 2-Disable* --(Ethernet as Metered 
 $CameraOnLockScreen = 0    #0-Skip, 1-Enable*, 2-Disable
 $LockScreen = 0            #0-Skip, 1-Enable*, 2-Disable (Pre-Anniversary Update)
 $LockScreenAlt = 0         #0-Skip, 1-Enable*, 2-Disable (Anniversary Update workaround) 
-$PowerMenuLockScreen = 0   #0-Skip, 1-Show, 2-Hide
+$PowerMenuLockScreen = 0   #0-Skip, 1-Show*, 2-Hide
 $Hibernate = 0             #0-Skip, 1-Enable, 2-Disable --(Hibernate Power Option)
 $Sleep = 0                 #0-Skip, 1-Enable, 2-Disable --(Sleep Power Option)
 
@@ -438,6 +440,15 @@ If ($CreateRestorePoint -eq 1) {
 
 # Windows Default Setting
 If($WinDefault -eq 1){
+     $RecentFileQikAcc = 1
+     $FrequentFoldersQikAcc = 1
+     $MostUsedAppStartMenu = 1
+     $PowerMenuLockScreen = 1
+     $WinContentWhileDrag = 1
+     $CheckForWinUpdate = 1
+     $EthernetMetered = 2
+     $TaskBarOnMultiDisplay = 1
+     $TaskbarButtOnDisplay = 0
      $Telemetry = 1
      $WiFiSense = 1
      $SmartScreen = 1
@@ -517,6 +528,17 @@ If($WinDefault -eq 1){
 
 # My Custom Setting
 If($CustomSet -eq 1){
+     $RecentFileQikAcc = 2
+     $FrequentFoldersQikAcc = 2
+     $MostUsedAppStartMenu = 2
+     $PowerMenuLockScreen = 1
+     $Hibernate = 0
+     $Sleep = 2
+     $WinContentWhileDrag = 1
+     $CheckForWinUpdate = 2
+     $EthernetMetered = 2
+     $TaskBarOnMultiDisplay = 2
+     $TaskbarButtOnDisplay = 1
      $Telemetry = 2
      $WiFiSense = 2
      $SmartScreen = 0
@@ -1736,6 +1758,28 @@ If ($EthernetMetered -eq 1) {
      Write-Host "Disabling Ethernet as Metered Connection..."
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\NetworkList\DefaultMediaCost" -Name "Ethernet" -Type DWord -Value 1
 }
+
+# Taskbar on multiple displays
+If ($TaskBarOnMultiDisplay -eq 1) {
+     Write-Host "Showing Taskbar on multiple displays..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarEnabled" -Type DWord -Value 1
+} ElseIf ($TaskBarOnMultiDisplay -eq 2) {
+     Write-Host "Hiding Taskbar on multiple displays.."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarEnabled" -Type DWord -Value 0
+}
+
+# Taskbar on multiple displays
+If ($TaskbarButtOnDisplay -eq 1) {
+     Write-Host "Showing Taskbar buttons on all taskbars..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarMode" -Type DWord -Value 0
+} ElseIf ($TaskbarButtOnDisplay -eq 2) {
+     Write-Host "Showing Taskbar buttons on taskbar where window is open..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarMode" -Type DWord -Value 2
+} ElseIf ($TaskbarButtOnDisplay -eq 3) {
+     Write-Host "Showing Taskbar buttons on main taskbar and where window is open..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarMode" -Type DWord -Value 1
+}
+
 
 ##########
 # Auxiliary
