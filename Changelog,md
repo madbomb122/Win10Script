@@ -4,7 +4,7 @@ ALL ITEMS need to be tested
 
 Ability to Create Restore Point Before running Script
 
-Added 9 New Items:
+Added 9 New Setting Items:
 Recent Files in Quick Access
 Frequent Folders in Quick Access
 Most Used App in Start Menu
@@ -20,7 +20,7 @@ Ethernet as Metered Connection
 Adding Description to some items (May add more later)
 Ability to run Pre-defined setting (currently only -Set Set1)
 
-Added 5 New Items:
+Added 5 New Setting Items:
 Cortana Search (Can still search with cortana disabled)
 More Colors for Tiles
 Classic Clock UI (for the taskbar flyout)
@@ -61,7 +61,8 @@ Added a note when you run script and a way to skip it
 Change script so it does nothing by default
 Added item to have it run the windows default items
 
-Added the ability to show/hide the seconds for the clock on the taskbar
+Added 1 New Setting Items:
+show/hide the seconds for the clock on the taskbar
 
 -----------------------------------------------------------------------------------
 2.0-Mod (1-25-2017) -- (Started doing my changes)
@@ -69,7 +70,7 @@ Added the ability to show/hide the seconds for the clock on the taskbar
 Made Script easier to pick what you want to run
 Script by default returned items to the default of windows (that the script is set to change)
 
-Added ability to remove/add the following Context menu items
+Added 6 New Setting for Context Menu: (add/remove)
 Cast To Device
 Previous Versions
 Include in Library
