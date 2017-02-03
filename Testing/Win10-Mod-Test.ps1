@@ -9,7 +9,7 @@
 # Modded Script Info
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script
-# Version: 3.3-Mod, 02-??-2017
+# Version: 3.4-Mod, 02-02-2017
 # Release Type: Testing
 ##########
 <#
@@ -384,18 +384,20 @@ If ($Term_of_Use -eq 1){
      Write-Host "This is free software, and you are welcome to redistribute" -ForegroundColor Black -BackgroundColor White
      Write-Host "it under certain conditions. Read License file." -ForegroundColor Black -BackgroundColor White
      Write-Host ""
-     Write-Host "Do you Accept the Term of Use? (y/n)"	 
-     $KeyPress= $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-     $KeyPress=$KeyPress.Character
+     Write-Host "Do you Accept the Term of Use? (y/n)"	
+	 $KeyPress= $HOST.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+	 $KeyPress=$KeyPress.Character	 
+	 $HOST.UI.RawUI.Flushinputbuffer()
 }
 
 If($KeyPress -eq 'y' -or $Term_of_Use -ne 1) {
-     Write-Host "Running Script"
+     Write-Host "Running Script" -ForegroundColor Green -BackgroundColor Black 
+	 Write-Host ""
 } ElseIf($KeyPress -eq 'n'){
-     Write-Host "Exiting Script, Goodbye"
+     Write-Host "Exiting Script, Goodbye" -ForegroundColor Red -BackgroundColor Black 
      exit
 } Else{
-     Write-Host "Invalid Input, Goodbye"
+     Write-Host "Invalid Input, Goodbye" -ForegroundColor Red -BackgroundColor Black 
      exit	 
 }
 
@@ -1779,7 +1781,8 @@ If ($TaskbarButtOnDisplay -eq 1) {
 # Auxiliary
 ##########
 If ($Restart -eq 1) {
-     Write-Host "Restarting..."
+     Write-Host "Restarting in 10 Seconds..."
+	 Start-Sleep -s 10
      Restart-Computer
 } Else {
      Write-Host "Goodbye..."
