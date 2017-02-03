@@ -1766,7 +1766,7 @@ If ($TaskbarButtOnDisplay -eq 1) {
      Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarMode" -Type DWord -Value 1
 }
 
-# Remote Remote UAC Local Account Token Filter
+# Remote UAC Local Account Token Filter
 If ($RemoteUACAcctToken -eq 1) {
      Write-Host "Enabling Remote UAC Local Account Token Filter..."
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "LocalAccountTokenFilterPolicy" -Type DWord -Value 1
