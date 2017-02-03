@@ -78,6 +78,7 @@ StickyKeyPrompt=1
 NumblockOnStart=2
 F8BootMenu=1
 OneDrive=1
+OneDriveInstall=1
 XboxDVR=1
 MediaPlayer=1
 WorkFolders=1
