@@ -1767,14 +1767,13 @@ If ($TaskbarButtOnDisplay -eq 1) {
 }
 
 # Remote Remote UAC Local Account Token Filter
-If ($CheckForWinUpdate -eq 1) {
+If ($RemoteUACAcctToken -eq 1) {
      Write-Host "Enabling Remote UAC Local Account Token Filter..."
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "LocalAccountTokenFilterPolicy" -Type DWord -Value 1
-} ElseIf ($CheckForWinUpdate -eq 2) {
+} ElseIf ($RemoteUACAcctToken -eq 2) {
      Write-Host "Disabling  Remote UAC Local Account Token Filter..."
 	 Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "LocalAccountTokenFilterPolicy" -ErrorAction SilentlyContinue
 }
-
 
 
 ##########
