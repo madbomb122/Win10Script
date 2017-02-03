@@ -3,7 +3,7 @@
 
 Ability to Create Restore Point Before running Script
 
-Added 11 New Setting Items:
+Added 12 New Setting Items:
   Recent Files in Quick Access
   Frequent Folders in Quick Access
   Most Used App in Start Menu
@@ -14,6 +14,7 @@ Added 11 New Setting Items:
   Check For Windows Update
   Taskbar On Multi Display
   Taskbar Buttons On Multi Display
+  Remote UAC Local Account Token Filter
 
 -----------------------------------------------------------------------------------
 3.2-Mod (02-01-2017)
