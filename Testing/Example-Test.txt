@@ -1,4 +1,5 @@
 CreateRestorePoint=1
+WinUpdateType=3
 RecentFileQikAcc=1
 FrequentFoldersQikAcc=1
 MostUsedAppStartMenu=1
