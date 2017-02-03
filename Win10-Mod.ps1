@@ -9,7 +9,7 @@
 # Modded Script Info
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script
-# Version: 3.2-Mod, 02-01-2017
+# Version: 3.3-Mod, 02-02-2017
 # Release Type: Stable
 ##########
 <#
@@ -68,6 +68,9 @@ Param([alias("Set")] [string] $SettingImp)
 # Edit values (Option) to your preferance
 # Change to an Option not listed will Skip the Function
 
+# Can ONLY create 1 per 24 hours with this script (Will give error if it tries)
+$CreateRestorePoint = 0    #0-Skip, 1-Create --(Restore point before script runs)
+
 # Windows Default for ALL Settings 
 # But $OneDriveInstall and All Under Apps Will run with your current settings
 $WinDefault = 2            #1-Yes*, 2-No 
@@ -78,9 +81,6 @@ $WinDefault = 2            #1-Yes*, 2-No
 $Telemetry = 0             #0-Skip, 1-Enable*, 2-Disable
 $WiFiSense = 0             #0-Skip, 1-Enable*, 2-Disable
 $SmartScreen = 0           #0-Skip, 1-Enable*, 2-Disable
-$StartMenuWebSearch = 0    #0-Skip, 1-Enable*, 2-Disable
-$StartSuggestions = 0      #0-Skip, 1-Enable*, 2-Disable
-$AppAutoDownload = 0       #0-Skip, 1-Enable*, 2-Disable
 $LocationTracking = 0      #0-Skip, 1-Enable*, 2-Disable
 $Feedback = 0              #0-Skip, 1-Enable*, 2-Disable
 $AdvertisingID = 0         #0-Skip, 1-Enable*, 2-Disable     
@@ -127,10 +127,19 @@ $TaskbarGrouping = 0       #0-Skip, 1-Never, 2-Always*, 3-When Needed
 $TrayIcons = 0             #0-Skip, 1-Auto*, 2-Always Show     
 $SecondsInClock = 0        #0-Skip, 1-Show, 2-Hide*
 $LastActiveClick = 0       #0-Skip, 1-Enable, 2-Disable* --(Makes Taskbar Buttons Open the Last Active Window)
+$TaskBarOnMultiDisplay = 0 #0-Skip, 1-Enable*, 2-Disable
+$TaskbarButtOnDisplay = 0  #0-Skip, 1-All, 2-where window is open, 3-Main and where window is open
+
+#Star Menu Items
+# Function  = Option       #Choices (* Indicates Windows Default)
+$StartMenuWebSearch = 0    #0-Skip, 1-Enable*, 2-Disable
+$StartSuggestions = 0      #0-Skip, 1-Enable*, 2-Disable
+$MoreColorsTitle = 0       #0-Skip, 1-Enable, 2-Disable* --(Adds more Colors to pick from for the Title Colors)
+$MostUsedAppStartMenu = 0  #0-Skip, 1-Show*, 2-Hide
+$RecentItemsFrequent = 0   #0-Skip, 1-Enable*, 2-Disable --(In Start Menu)
 
 #Explorer Items
 # Function  = Option       #Choices (* Indicates Windows Default)
-$MoreColorsTitle = 0       #0-Skip, 1-Enable, 2-Disable* --(Adds more Colors to pick from for the Title Colors)
 $PidInTitleBar = 0         #0-Skip, 1-Show, 2-Hide* --(PID = Processor ID)
 $AeroSnap = 0              #0-Skip, 1-Enable*, 2-Disable --(Allows you to quickly resize the window you’re currently using)
 $AeroShake = 0             #0-Skip, 1-Enable*, 2-Disable
@@ -139,7 +148,9 @@ $HiddenFiles = 0           #0-Skip, 1-Show, 2-Hide*
 $SystemFiles = 0           #0-Skip, 1-Show, 2-Hide*
 $ThisPCOnDesktop = 0       #0-Skip, 1-Show, 2-Hide*
 $ExplorerOpenLoc = 0       #0-Skip, 1-Quick Access*, 2-ThisPC --(What location it opened when you open an explorer window)
-$RecentItemsFrequent = 0   #0-Skip, 1-Enable*, 2-Disable
+$RecentFileQikAcc = 0      #0-Skip, 1-Show/Add*, 2-Hide, 3-Remove --(Recent Files in Quick Access)
+$FrequentFoldersQikAcc = 0 #0-Skip, 1-Show*, 2-Hide --(Frequent Folders in Quick Access)
+$WinContentWhileDrag = 0   #0-Skip, 1-Show*, 2-Hide
 
 #'This PC' items
 # Function  = Option       #Choices (* Indicates Windows Default)
@@ -157,15 +168,24 @@ $PVOpenWithMenu = 0        #0-Skip, 1-Enable, 2-Disable*
 
 #Misc items
 # Function  = Option       #Choices (* Indicates Windows Default)
-$CameraOnLockScreen = 0    #0-Skip, 1-Enable*, 2-Disable
-$LockScreen = 0            #0-Skip, 1-Enable*, 2-Disable (Pre-Anniversary Update)
-$LockScreenAlt = 0         #0-Skip, 1-Enable*, 2-Disable (Anniversary Update workaround) 
+$AppAutoDownload = 0       #0-Skip, 1-Enable*, 2-Disable
 $ActionCenter = 0          #0-Skip, 1-Enable*, 2-Disable
 $Autoplay = 0              #0-Skip, 1-Enable*, 2-Disable
 $Autorun = 0               #0-Skip, 1-Enable*, 2-Disable
 $StickyKeyPrompt = 0       #0-Skip, 1-Enable*, 2-Disable
 $NumblockOnStart = 0       #0-Skip, 1-Enable, 2-Disable*
 $F8BootMenu = 0            #0-Skip, 1-Enable, 2-Disable*
+$CheckForWinUpdate = 0     #0-Skip, 1-Enable*, 2-Disable
+$EthernetMetered = 0       #0-Skip, 1-Enable, 2-Disable* --(Ethernet as Metered Connection)
+
+#Lock Screen
+# Function  = Option       #Choices (* Indicates Windows Default)
+$CameraOnLockScreen = 0    #0-Skip, 1-Enable*, 2-Disable
+$LockScreen = 0            #0-Skip, 1-Enable*, 2-Disable (Pre-Anniversary Update)
+$LockScreenAlt = 0         #0-Skip, 1-Enable*, 2-Disable (Anniversary Update workaround) 
+$PowerMenuLockScreen = 0   #0-Skip, 1-Show*, 2-Hide
+$HibernatePower = 1        #0-Skip, 1-Enable, 2-Disable --(Hibernate Power Option)
+$SleepPower = 1            #0-Skip, 1-Enable, 2-Disable --(Sleep Power Option)
 
 # Remove unwanted applications
 # Function  = Option       #Choices (* Indicates Windows Default)
@@ -357,25 +377,24 @@ If ($SettingImp -ne $null -and $SettingImp){
 # Asks for input before continuing
 # Doesnt work in PowerShell ISE
 If ($Term_of_Use -eq 1){
-     Write-Host "WARNING!!" -ForegroundColor Red -BackgroundColor Black
-     Write-Host "This version is currently being tested and May have problems." -ForegroundColor Yellow -BackgroundColor Black 
-     Write-Host ""
      Write-Host "This program comes with ABSOLUTELY NO WARRANTY" -ForegroundColor Black -BackgroundColor White
      Write-Host "This is free software, and you are welcome to redistribute" -ForegroundColor Black -BackgroundColor White
      Write-Host "it under certain conditions. Read License file." -ForegroundColor Black -BackgroundColor White
      Write-Host ""
-     Write-Host "Do you Accept the Term of Use? (y/n)"	 
-     $KeyPress= $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-     $KeyPress=$KeyPress.Character
+     Write-Host "Do you Accept the Term of Use? (y/n)"	
+	 $KeyPress= $HOST.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+	 $KeyPress=$KeyPress.Character	 
+	 $HOST.UI.RawUI.Flushinputbuffer()
 }
 
 If($KeyPress -eq 'y' -or $Term_of_Use -ne 1) {
-     Write-Host "Running Script"
+     Write-Host "Running Script" -ForegroundColor Green -BackgroundColor Black 
+	 Write-Host ""
 } ElseIf($KeyPress -eq 'n'){
-     Write-Host "Exiting Script, Goodbye"
+     Write-Host "Exiting Script, Goodbye" -ForegroundColor Red -BackgroundColor Black 
      exit
 } Else{
-     Write-Host "Invalid Input, Goodbye"
+     Write-Host "Invalid Input, Goodbye" -ForegroundColor Red -BackgroundColor Black 
      exit	 
 }
 
@@ -384,6 +403,16 @@ If (!(Test-Path "HKCR:")) {
      New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null
 }
 
+# Check OS bit type
+If ([Environment]::Is32BitProcess -eq $true){
+ $OSType=32
+} ElseIf ([Environment]::Is64BitProcess -eq $true){
+ $OSType=64
+} Else {
+ $OSType=0
+}
+
+# Sorts the apps to Install, Hide or Uninstall
 $APPProcess = Get-Variable -Name "APP_*" -ValueOnly
 
 $i=0
@@ -398,6 +427,11 @@ ForEach ($AppV in $APPProcess) {
    $i++
 }
 
+# Creates Restore Points
+If ($CreateRestorePoint -eq 1) {
+     Write-Host "Creating System Restore Point Named -Win10 Initial Setup Script..."
+     Checkpoint-Computer -Description "Win10 Initial Setup Script" | Out-Null
+}
 
 ##########
 # Various Settings
@@ -405,6 +439,15 @@ ForEach ($AppV in $APPProcess) {
 
 # Windows Default Setting
 If($WinDefault -eq 1){
+     $RecentFileQikAcc = 1
+     $FrequentFoldersQikAcc = 1
+     $MostUsedAppStartMenu = 1
+     $PowerMenuLockScreen = 1
+     $WinContentWhileDrag = 1
+     $CheckForWinUpdate = 1
+     $EthernetMetered = 2
+     $TaskBarOnMultiDisplay = 1
+     $TaskbarButtOnDisplay = 0
      $Telemetry = 1
      $WiFiSense = 1
      $SmartScreen = 1
@@ -484,6 +527,17 @@ If($WinDefault -eq 1){
 
 # My Custom Setting
 If($CustomSet -eq 1){
+     $RecentFileQikAcc = 2
+     $FrequentFoldersQikAcc = 2
+     $MostUsedAppStartMenu = 2
+     $PowerMenuLockScreen = 1
+     $HibernatePower = 0
+     $SleepPower = 2
+     $WinContentWhileDrag = 1
+     $CheckForWinUpdate = 2
+     $EthernetMetered = 2
+     $TaskBarOnMultiDisplay = 2
+     $TaskbarButtOnDisplay = 1
      $Telemetry = 2
      $WiFiSense = 2
      $SmartScreen = 0
@@ -1456,7 +1510,7 @@ If ($OneDrive -eq 1) {
 } ElseIf ($OneDrive -eq 2) {
      Write-Host "Disabling OneDrive..."
      If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive")) {
-          New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" | Out-Null
+         New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" | Out-Null
      }
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" -Name "DisableFileSyncNGSC" -Type DWord -Value 1
 }
@@ -1464,20 +1518,22 @@ If ($OneDrive -eq 1) {
 # OneDrive Install
 If ($OneDriveInstall -eq 1) {
      Write-Host "Installing OneDrive..."
-     $onedrive = "$env:SYSTEMROOT\SysWOW64\OneDriveSetup.exe"
-     If (!(Test-Path $onedrive)) {
-          $onedrive = "$env:SYSTEMROOT\System32\OneDriveSetup.exe"
+	 If($OSType -eq 64) {
+         $onedriveS = "$env:SYSTEMROOT\SysWOW64\OneDriveSetup.exe"
+	 } Else {
+         $onedriveS = "$env:SYSTEMROOT\System32\OneDriveSetup.exe"
      }
-     Start-Process $onedrive -NoNewWindow
+     Start-Process $onedriveS -NoNewWindow
 } ElseIf ($OneDriveInstall -eq 2) {
      Write-Host "Uninstalling OneDrive..."
      Stop-Process -Name OneDrive -ErrorAction SilentlyContinue
      Start-Sleep -s 3
-     $onedrive = "$env:SYSTEMROOT\SysWOW64\OneDriveSetup.exe"
-     If (!(Test-Path $onedrive)) {
-          $onedrive = "$env:SYSTEMROOT\System32\OneDriveSetup.exe"
+	 If($OSType -eq 64) {
+         $onedriveS = "$env:SYSTEMROOT\SysWOW64\OneDriveSetup.exe"
+	 } Else  {
+         $onedriveS = "$env:SYSTEMROOT\System32\OneDriveSetup.exe"
      }
-     Start-Process $onedrive "/uninstall" -NoNewWindow -Wait
+     Start-Process $onedriveS "/uninstall" -NoNewWindow -Wait | Out-Null
      Start-Sleep -s 3
      Stop-Process -Name explorer -ErrorAction SilentlyContinue
      Start-Sleep -s 3
@@ -1485,7 +1541,7 @@ If ($OneDriveInstall -eq 1) {
      Remove-Item "$env:LOCALAPPDATA\Microsoft\OneDrive" -Force -Recurse -ErrorAction SilentlyContinue
      Remove-Item "$env:PROGRAMDATA\Microsoft OneDrive" -Force -Recurse -ErrorAction SilentlyContinue
      If (Test-Path "$env:SYSTEMDRIVE\OneDriveTemp") {
-          Remove-Item "$env:SYSTEMDRIVE\OneDriveTemp" -Force -Recurse -ErrorAction SilentlyContinue
+         Remove-Item "$env:SYSTEMDRIVE\OneDriveTemp" -Force -Recurse -ErrorAction SilentlyContinue
      }
      Remove-Item -Path "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Recurse -ErrorAction SilentlyContinue
      Remove-Item -Path "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Recurse -ErrorAction SilentlyContinue
@@ -1611,6 +1667,112 @@ If ($F8BootMenu -eq 1) {
      Write-Host "Disabling F8 boot menu options..."
      bcdedit /set `{current`} bootmenupolicy Standard | Out-Null
 }
+
+# Recent Files in Quick Access
+If ($RecentFileQikAcc -eq 1) {
+     Write-Host "Showing Recent Files in Quick Access..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Type DWord -Value 1
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Name "(Default)" -Type String -Value "Recent Items Instance Folder"
+     If($OSType -eq 64) {
+         Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Name "(Default)" -Type String -Value "Recent Items Instance Folder"
+     }
+} ElseIf ($RecentFileQikAcc -eq 2) {
+     Write-Host "Hiding Recent Files in Quick Access..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Type DWord -Value 0
+} ElseIf ($RecentFileQikAcc -eq 3) {
+     Write-Host "Removeing Recent Files in Quick Access..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Type DWord -Value 0
+     Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Recurse -ErrorAction SilentlyContinue
+     Remove-Item -Path "HKLM:SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Recurse -ErrorAction SilentlyContinue
+}
+
+# Frequent folders in Quick_access
+If ($FrequentFoldersQikAcc -eq 1) {
+     Write-Host "Showing Frequent folders in Quick Access..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowFrequent" -Type DWord -Value 1
+} ElseIf ($FrequentFoldersQikAcc -eq 2) {
+     Write-Host "Hiding Frequent folders in Quick Access..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowFrequent" -Type DWord -Value 0
+}
+
+# Most used apps in Start menu
+If ($MostUsedAppStartMenu -eq 1) {
+     Write-Host "Showing Most used apps in Start Menu..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type DWord -Value 1
+} ElseIf ($MostUsedAppStartMenu -eq 2) {
+     Write-Host "Hiding Most used apps in Start Menu..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type DWord -Value 0
+}
+
+# Power Menu on Lock Screen
+If ($PowerMenuLockScreen -eq 1) {
+     Write-Host "Showing Power Menu on Lock Screen..."
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "shutdownwithoutlogon" -Type DWord -Value 1
+} ElseIf ($PowerMenuLockScreen -eq 2) {
+     Write-Host "Hiding Power Menu on Lock Screen..."
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "shutdownwithoutlogon" -Type DWord -Value 0
+}
+
+# Hibernate Option
+If ($HibernatePower -eq 1) {
+     Write-Host "Enabling Hibernate Option..."
+     Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power" -Name "HibernateEnabled" -Type DWord -Value 1
+} ElseIf ($HibernatePower -eq 2) {
+     Write-Host "Disabling Hibernate Option..."
+     Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power" -Name "HibernateEnabled" -Type DWord -Value 0
+}
+
+# Sleep Option
+If ($SleepPower -eq 1) {
+     Write-Host "Enabling Sleep Option..."
+	 If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings")) {
+          New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" | Out-Null
+     }
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" -Name "ShowSleepOption" -Type DWord -Value 1
+} ElseIf ($SleepPower -eq 2) {
+     Write-Host "Disabling Sleep Option..."
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" -Name "ShowSleepOption" -Type DWord -Value 0
+}
+
+# Window Content while Dragging
+If ($WinContentWhileDrag -eq 1) {
+     Write-Host "Showing Window Content while Dragging..."
+     Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "DragFullWindows" -Type DWord -Value 1
+} ElseIf ($WinContentWhileDrag -eq 2) {
+     Write-Host "Hiding Window Content while Dragging..."
+     Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "DragFullWindows" -Type DWord -Value 0
+}
+
+# Check for Windows Update
+If ($CheckForWinUpdate -eq 1) {
+     Write-Host "Enabling Check for Windows Update..."
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "SetDisableUXWUAccess" -Type DWord -Value 0
+} ElseIf ($CheckForWinUpdate -eq 2) {
+     Write-Host "Disabling Check for Windows Update..."
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "SetDisableUXWUAccess" -Type DWord -Value 1
+}
+
+# Taskbar on multiple displays
+If ($TaskBarOnMultiDisplay -eq 1) {
+     Write-Host "Showing Taskbar on multiple displays..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarEnabled" -Type DWord -Value 1
+} ElseIf ($TaskBarOnMultiDisplay -eq 2) {
+     Write-Host "Hiding Taskbar on multiple displays.."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarEnabled" -Type DWord -Value 0
+}
+
+# Taskbar on multiple displays
+If ($TaskbarButtOnDisplay -eq 1) {
+     Write-Host "Showing Taskbar buttons on all taskbars..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarMode" -Type DWord -Value 0
+} ElseIf ($TaskbarButtOnDisplay -eq 2) {
+     Write-Host "Showing Taskbar buttons on taskbar where window is open..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarMode" -Type DWord -Value 2
+} ElseIf ($TaskbarButtOnDisplay -eq 3) {
+     Write-Host "Showing Taskbar buttons on main taskbar and where window is open..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarMode" -Type DWord -Value 1
+}
+
 
 ##########
 # Auxiliary
