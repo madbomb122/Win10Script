@@ -47,14 +47,14 @@ To use the settings I use <br />
 **A:** Yes, but doesnt mean there isnt any bugs/errors.
 
 **Q:**: I've run the script and it did *BLAH*, can I undo it? <br />
-**A1:** Yes, Most things can easily be undone.. Just go in the script and run it again with the deisred change. <br />
-**A2:** Yes, you may beable to use system restore if you create a restore point
+**A1:** Yes, Most things can easily be undone by going in the script and run it again with the deisred change. <br />
+**A2:** You also may beable to use system restore if you created a restore point (can be done from script)
 
 **Q:** The script messed up my computer. <br />
 **A:** The script is as is, any problems you have/had is not my problem.
 
 **Q:** Can I use the script or modify it for my / my company's needs? <br />
-**A:** Sure. Just don't forget to include copyright notice as per the license requirements. 
+**A:** Sure. Just don't forget to include copyright notice as per the license requirements, and leave any Copyright in script too.
 
 **Q:** How long are you going to maintain the script? <br />
 **A:** No Clue.
