@@ -83,6 +83,7 @@ XboxDVR=1
 MediaPlayer=1
 WorkFolders=1
 LinuxSubsystem=2
+RemoteUACAcctToken=2
 Term_of_Use=1
 Restart=1
 APP_3DBuilder=0
