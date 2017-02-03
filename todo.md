@@ -1,7 +1,6 @@
 # To do
-- [X] Add Various Settings that can be ran with a switch like the -Set WD (Currently only -Set Set1) -My settings
+- [X] Ability to create restore point BEFORE script runs
 - [ ] Ability Import an app list of your own to Install/Hide/Uninstall from a File
-- [ ] Ability to create restore point BEFORE script runs -IN Testing Script
 - [ ] Better Sorting of all the function and Item List
 
 Planned at Later Date
