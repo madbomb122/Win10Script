@@ -1,6 +1,5 @@
 -----------------------------------------------------------------------------------
-3.3-Mod (2-??-2017) --Testing
-ALL ITEMS need to be tested
+3.3-Mod (02-02-2017)
 
 Ability to Create Restore Point Before running Script
 
@@ -17,7 +16,7 @@ Added 11 New Setting Items:
   Taskbar Buttons On Multi Display
 
 -----------------------------------------------------------------------------------
-3.2-Mod (2-1-2017)
+3.2-Mod (02-01-2017)
 
 Adding Description to some items (May add more later)
 Ability to run Pre-defined setting (currently only -Set Set1)
@@ -40,7 +39,7 @@ Ability to add Apps to Install, Hide or Uninstall, that the script doesnt list
    ^This can ONLY be done in the script itself ATM
 
 -----------------------------------------------------------------------------------
-3.0-Mod (1-28-2017)
+3.0-Mod (01-28-2017)
 
 Greatly Improved the ability to import app list from setting file
 Also changed it so you can Install, Hide or Uninstall for each app (instead of the whole thing)
@@ -49,21 +48,21 @@ Removed 3 Apps (since they cant be hidden or removed)
 Fixed a few errors for Photo Viewer Settings
 
 -----------------------------------------------------------------------------------
-2.3-Mod (1-27-2017)
+2.3-Mod (01-27-2017)
 
 Fixed a bug with imported settings from a file
 Added ability to import app list from setting file
 Added Facebook to applist
 
 -----------------------------------------------------------------------------------
-2.2-Mod (1-26-2017)
+2.2-Mod (01-26-2017)
 
 Added ability to run imported settings from a file
 Added ability to run windows default settings w/o editing file
 Added a note when you run script and a way to skip it
 
 -----------------------------------------------------------------------------------
-2.1-Mod (1-25-2017)
+2.1-Mod (01-25-2017)
 
 Change script so it does nothing by default
 Added item to have it run the windows default items
@@ -72,7 +71,7 @@ Added 1 New Setting Items:
   seconds for the clock on the taskbar
 
 -----------------------------------------------------------------------------------
-2.0-Mod (1-25-2017) -- (Started doing my changes)
+2.0-Mod (01-25-2017) -- (Started doing my changes)
 
 Made Script easier to pick what you want to run
 Script by default returned items to the default of windows (that the script is set to change)
@@ -96,7 +95,7 @@ Added options for a few of the items that had more than once choice
 Added ability to Remove the bloatware instead of just hiding it
 
 -----------------------------------------------------------------------------------
-2.0 (1-08-2017)
+2.0 (01-08-2017)
 
 v2.0 Script by Disassembler0
 https://github.com/Disassembler0/Win10-Initial-Setup-Script/
