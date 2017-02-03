@@ -1778,7 +1778,8 @@ If ($TaskbarButtOnDisplay -eq 1) {
 # Auxiliary
 ##########
 If ($Restart -eq 1) {
-     Write-Host "Restarting..."
+     Write-Host "Restarting in 10 Seconds..."
+	 Start-Sleep -s 10
      Restart-Computer
 } Else {
      Write-Host "Goodbye..."
