@@ -388,9 +388,6 @@ If ($SettingImp -ne $null -and $SettingImp){
 # Asks for input before continuing
 # Doesnt work in PowerShell ISE
 If ($Term_of_Use -eq 1){
-     Write-Host "WARNING!!" -ForegroundColor Red -BackgroundColor Black
-     Write-Host "This version is currently being tested and May have problems." -ForegroundColor Yellow -BackgroundColor Black 
-     Write-Host ""
      Write-Host "This program comes with ABSOLUTELY NO WARRANTY." -ForegroundColor Black -BackgroundColor White
      Write-Host "This is free software, and you are welcome to" -ForegroundColor Black -BackgroundColor White
      Write-Host "redistribute it under certain conditions." -ForegroundColor Black -BackgroundColor White
