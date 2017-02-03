@@ -6,6 +6,7 @@ NOTHING ATM
 -----------------------------------------------------------------------------------
 3.3-Mod (02-02-2017)
 
+Added Description to some items (May add more later)
 Ability to Create Restore Point Before running Script
 
 Added 12 New Setting Items:
@@ -24,7 +25,7 @@ Added 12 New Setting Items:
 -----------------------------------------------------------------------------------
 3.2-Mod (02-01-2017)
 
-Adding Description to some items (May add more later)
+Added Description to some items (May add more later)
 Ability to run Pre-defined setting (currently only -Set Set1)
 
 Added 5 New Setting Items:
