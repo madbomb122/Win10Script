@@ -5,7 +5,6 @@ MostUsedAppStartMenu=1
 PowerMenuLockScreen=1
 WinContentWhileDrag=1
 CheckForWinUpdate=1
-EthernetMetered=2
 TaskBarOnMultiDisplay=1
 TaskbarButtOnDisplay=0
 Telemetry=1
