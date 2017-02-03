@@ -9,7 +9,7 @@
 # Modded Script Info
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script
-# Version: 3.4-Mod, 02-??-2017
+# Version: 3.5-Mod, 02-??-2017
 # Release Type: Testing
 ##########
 <#
@@ -98,10 +98,17 @@ $AdvertisingID = 0         #0-Skip, 1-Enable*, 2-Disable
 $Cortana = 0               #0-Skip, 1-Enable*, 2-Disable
 $CortanaSearch = 0         #0-Skip, 1-Enable*, 2-Disable --(If you disable Cortana you can still search with this)
 $ErrorReporting = 0        #0-Skip, 1-Enable*, 2-Disable
-$WinUpdateDownload = 0     #0-Skip, 1-P2P*, 2-Local Only, 3-Disable
 $AutoLoggerFile = 0        #0-Skip, 1-Enable*, 2-Disable
 $DiagTrack = 0             #0-Skip, 1-Enable*, 2-Disable
 $WAPPush = 0               #0-Skip, 1-Enable*, 2-Disable --(type of text message that contains a direct link to a particular Web page)
+
+# Windows Update
+# Function  = Option       #Choices (* Indicates Windows Default)
+$WinUpdateType = 0         #0-Skip, 1-Notify, 2-Auto DL, 3-Auto DL+Install*, 4-Local admin chose --(May not work with Home version)
+$WinUpdateDownload = 0     #0-Skip, 1-P2P*, 2-Local Only, 3-Disable
+$UpdateMSRT = 0            #0-Skip, 1-Enable*, 2-Disable --(Malware Software Removal Tool)
+$UpdateDriver = 0          #0-Skip, 1-Enable*, 2-Disable --(Offering of drivers through Windows Update)
+$RestartOnUpdate = 0       #0-Skip, 1-Enable*, 2-Disable
 
 # Service Tweaks
 # Function  = Option       #Choices (* Indicates Windows Default)
@@ -113,9 +120,6 @@ $WinDefender = 0           #0-Skip, 1-Enable*, 2-Disable
 $HomeGroups = 0            #0-Skip, 1-Enable*, 2-Disable
 $RemoteAssistance = 0      #0-Skip, 1-Enable*, 2-Disable
 $RemoteDesktop = 0         #0-Skip, 1-Enable, 2-Disable* --(Remote Desktop w/o Network Level Authentication)
-$UpdateMSRT = 0            #0-Skip, 1-Enable*, 2-Disable --(Malware Software Removal Tool)
-$UpdateDriver = 0          #0-Skip, 1-Enable*, 2-Disable --(Offering of drivers through Windows Update)
-$RestartOnUpdate = 0       #0-Skip, 1-Enable*, 2-Disable
  
 #Context Menu Items
 # Function  = Option       #Choices (* Indicates Windows Default)
@@ -460,6 +464,7 @@ If ($CreateRestorePoint -eq 1) {
 
 # Windows Default Setting
 If($WinDefault -eq 1){
+     $WinUpdateType = 3
      $RecentFileQikAcc = 1
      $FrequentFoldersQikAcc = 1
      $MostUsedAppStartMenu = 1
@@ -548,6 +553,7 @@ If($WinDefault -eq 1){
 
 # My Custom Setting
 If($CustomSet -eq 1){
+     $WinUpdateType = 1
      $RecentFileQikAcc = 2
      $FrequentFoldersQikAcc = 2
      $MostUsedAppStartMenu = 2
@@ -1103,10 +1109,10 @@ If ($CastToDevice -eq 1) {
 # Previous Versions Context Menu
 If ($PreviousVersions -eq 1) {
      Write-Host "Enabling Previous Versions Context item..."
-     New-Item -Path "HKCR:\ApplicationsAllFilesystemObjects\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force | Out-Null
-     New-Item -Path "HKCR:\ApplicationsCLSID\{450D8FBA-AD25-11D0-98A8-0800361B1103}\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force | Out-Null
-     New-Item -Path "HKCR:\ApplicationsDirectory\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force | Out-Null
-     New-Item -Path "HKCR:\ApplicationsDrive\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force | Out-Null
+     Set-ItemProperty -Path "HKCR:\ApplicationsAllFilesystemObjects\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force | Out-Null
+     Set-ItemProperty -Path "HKCR:\ApplicationsCLSID\{450D8FBA-AD25-11D0-98A8-0800361B1103}\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force | Out-Null
+     Set-ItemProperty -Path "HKCR:\ApplicationsDirectory\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force | Out-Null
+     Set-ItemProperty -Path "HKCR:\ApplicationsDrive\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force | Out-Null
 } ElseIf ($PreviousVersions -eq 2) {
      Write-Host "Disabling Previous Versions Context item..."
      Remove-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Recurse -ErrorAction SilentlyContinue
@@ -1121,7 +1127,7 @@ If ($IncludeinLibrary -eq 1) {
      Set-ItemProperty -Path "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location" -Name "(Default)" -Type String -Value "{3dad6c5d-2167-4cae-9914-f99e41c12cfa}"
 } ElseIf ($IncludeinLibrary -eq 2) {
      Write-Host "Disabling Include in Library..."
-     Remove-ItemProperty -Path "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location" -Name "(Default)" -ErrorAction SilentlyContinue
+     Set-ItemProperty -Path "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location" -Name "(Default)" -Type String -Value ""
 }
 
 # Pin To Context Menu
@@ -1131,10 +1137,19 @@ If ($PinTo -eq 1) {
      Set-ItemProperty -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -Name "(Default)" -Type String -Value "Taskband Pin"
      New-Item -Path "HKCR:\*\shellex\ContextMenuHandlers\{a2a9545d-a0c2-42b4-9708-a0b2badd77c8}" -Force | Out-Null
      Set-ItemProperty -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\{a2a9545d-a0c2-42b4-9708-a0b2badd77c8}" -Name "(Default)" -Type String -Value "Start Menu Pin"
+	 Set-ItemProperty -Path "HKCR:\Folder\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value "{470C0EBD-5D73-4d58-9CED-E91E22E23282}"
+	 Set-ItemProperty -Path "HKCR:\exefile\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value "{470C0EBD-5D73-4d58-9CED-E91E22E23282}"
+	 Set-ItemProperty -Path "HKCR:\Microsoft.Website\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value "{470C0EBD-5D73-4d58-9CED-E91E22E23282}"
+	 Set-ItemProperty -Path "HKCR:\mscfile\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value "{470C0EBD-5D73-4d58-9CED-E91E22E23282}"
 } ElseIf ($PinTo -eq 2) {
      Write-Host "Disabling Pin To Context item..."
-     Remove-Item -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}"
-     Remove-Item -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\{a2a9545d-a0c2-42b4-9708-a0b2badd77c8}" 
+     Remove-Item -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -ErrorAction SilentlyContinue -Force
+     Remove-Item -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\{a2a9545d-a0c2-42b4-9708-a0b2badd77c8}" -ErrorAction SilentlyContinue -Force
+	 Set-ItemProperty -Path "HKCR:\Folder\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value ""
+	 Set-ItemProperty -Path "HKCR:\exefile\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value ""
+	 Set-ItemProperty -Path "HKCR:\Microsoft.Website\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value ""
+	 Set-ItemProperty -Path "HKCR:\mscfile\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value ""
+
 }
 
 # Share With Context Menu
@@ -1147,15 +1162,15 @@ If ($ShareWith -eq 1) {
      Set-ItemProperty -Path "HKCR:\Directory\Background\shellex\ContextMenuHandlers\Sharing" -Name "(Default)" -Type String -Value "{f81e9010-6ea4-11ce-a7ff-00aa003ca9f6}"
      Set-ItemProperty -Path "HKCR:\Drive\shellex\ContextMenuHandlers\Sharing" -Name "(Default)" -Type String -Value "{f81e9010-6ea4-11ce-a7ff-00aa003ca9f6}"
      Set-ItemProperty -Path "HKCR:\LibraryFolder\background\shellex\ContextMenuHandlers\Sharing" -Name "(Default)" -Type String -Value "{f81e9010-6ea4-11ce-a7ff-00aa003ca9f6}"
-} ElseIf ($ShareWith -eq 2) {
+}  ElseIf ($ShareWith -eq 2) {
      Write-Host "Disabling Share With..."
-     Remove-ItemProperty -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\Sharing" -Name "(Default)" -ErrorAction SilentlyContinue -Force
-     Remove-ItemProperty -Path "HKCR:\Directory\shellex\ContextMenuHandlers\Sharing" -Name "(Default)" -ErrorAction SilentlyContinue
-     Remove-ItemProperty -Path "HKCR:\Directory\shellex\CopyHookHandlers\Sharing" -Name "(Default)" -ErrorAction SilentlyContinue
-     Remove-ItemProperty -Path "HKCR:\Directory\shellex\PropertySheetHandlers\Sharing" -Name "(Default)" -ErrorAction SilentlyContinue
-     Remove-ItemProperty -Path "HKCR:\Directory\Background\shellex\ContextMenuHandlers\Sharing" -Name "(Default)" -ErrorAction SilentlyContinue
-     Remove-ItemProperty -Path "HKCR:\Drive\shellex\ContextMenuHandlers\Sharing" -Name "(Default)" -ErrorAction SilentlyContinue
-     Remove-ItemProperty -Path "HKCR:\LibraryFolder\background\shellex\ContextMenuHandlers\Sharing" -Name "(Default)" -ErrorAction SilentlyContinue
+     Set-ItemProperty -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\Sharing" -Name "(Default)" -Type String -Value "" 
+     Set-ItemProperty -Path "HKCR:\Directory\shellex\ContextMenuHandlers\Sharing" -Name "(Default)" -Type String -Value ""
+     Set-ItemProperty -Path "HKCR:\Directory\shellex\CopyHookHandlers\Sharing" -Name "(Default)" -Type String -Value ""
+     Set-ItemProperty -Path "HKCR:\Directory\shellex\PropertySheetHandlers\Sharing" -Name "(Default)" -Type String -Value ""
+     Set-ItemProperty -Path "HKCR:\Directory\Background\shellex\ContextMenuHandlers\Sharing" -Name "(Default)" -Type String -Value ""
+     Set-ItemProperty -Path "HKCR:\Drive\shellex\ContextMenuHandlers\Sharing" -Name "(Default)" -Type String -Value ""
+     Set-ItemProperty -Path "HKCR:\LibraryFolder\background\shellex\ContextMenuHandlers\Sharing" -Name "(Default)" -Type String -Value ""
 }
 
 # Send To Context Menu
@@ -1786,6 +1801,25 @@ If ($RemoteUACAcctToken -eq 1) {
 	 Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "LocalAccountTokenFilterPolicy" -ErrorAction SilentlyContinue
 }
 
+# Windows Update Check Type
+If ($WinUpdateType -ge 1 -and $WinUpdateType -le 4) {
+     If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU")) {
+         New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" | Out-Null
+     }
+	 If ($WinUpdateType -eq 1){
+	     Write-Host "Notify for windows update download and notify for install..."
+	     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 2
+	 } ElseIf ($WinUpdateType -eq 2){
+	     Write-Host "Auto Download for windows update download and notify for install..."
+	     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 3
+	 } ElseIf ($WinUpdateType -eq 3){
+	     Write-Host "Auto Download for windows update download and schedule for install..."
+	     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 4
+	 } ElseIf ($WinUpdateType -eq 4){
+	     Write-Host "Windows update allow local admin to choose setting..."
+	     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 5
+	 }
+}
 
 ##########
 # Auxiliary
