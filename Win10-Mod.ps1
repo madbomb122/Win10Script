@@ -35,6 +35,9 @@
 .DESCRIPTION
     Makes it easier to setup an existing or new install with moded setting
 
+.BASIC USAGE
+	Edit this file and change what settings you want changed
+	
 .ADVANCED USAGE
   To run the script with the Items in the script back to the Default 
   for windows run the script with one of the 2 switches bellow:
@@ -43,7 +46,7 @@
 
 Example: Win10-Mod.ps1 -Set WD
 Example: Win10-Mod.ps1 -Set WindowsDefault
-
+------
   To run the script with imported Settings run the script with:	
 	-Set Filename
 
@@ -51,7 +54,11 @@ Example: Win10-Mod.ps1 -Set File.txt
 Example: Win10-Mod.ps1 -Set Example
 
 Note: File has to be in the proper format or settings wont be imported
+------
+  To run the script with the settings i use:	
+	-Set Set1
 
+Example: Win10-Mod.ps1 -Set Set1
 ----------------------------------------------------------------------------
 #>
 
@@ -66,7 +73,9 @@ Param([alias("Set")] [string] $SettingImp)
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 # Edit values (Option) to your preferance
-# Change to an Option not listed will Skip the Function
+# Change to an Option not listed will Skip the Function/Setting
+
+# Note: If you're not sure what something does dont change it or do a web search 
 
 # Can ONLY create 1 per 24 hours with this script (Will give error if it tries)
 $CreateRestorePoint = 0    #0-Skip, 1-Create --(Restore point before script runs)
@@ -74,13 +83,15 @@ $CreateRestorePoint = 0    #0-Skip, 1-Create --(Restore point before script runs
 # Windows Default for ALL Settings 
 # But $OneDriveInstall and All Under Apps Will run with your current settings
 $WinDefault = 2            #1-Yes*, 2-No 
-# IF 1 is set then Everything Other than $OneDriveInstall and All Under Apps will be ignored
+# IF 1 is set then Everything Other than the following will use the Default Win Settings
+# $OneDriveInstall, ALL Apps, $Term_of_Use, and $Restart (These will use what you set)
+
 
 # Privacy Settings
 # Function  = Option       #Choices (* Indicates Windows Default)
 $Telemetry = 0             #0-Skip, 1-Enable*, 2-Disable
 $WiFiSense = 0             #0-Skip, 1-Enable*, 2-Disable
-$SmartScreen = 0           #0-Skip, 1-Enable*, 2-Disable
+$SmartScreen = 0           #0-Skip, 1-Enable*, 2-Disable --(phishing and malware filter for soe MS Apps/Prog)
 $LocationTracking = 0      #0-Skip, 1-Enable*, 2-Disable
 $Feedback = 0              #0-Skip, 1-Enable*, 2-Disable
 $AdvertisingID = 0         #0-Skip, 1-Enable*, 2-Disable     
@@ -90,13 +101,13 @@ $ErrorReporting = 0        #0-Skip, 1-Enable*, 2-Disable
 $WinUpdateDownload = 0     #0-Skip, 1-P2P*, 2-Local Only, 3-Disable
 $AutoLoggerFile = 0        #0-Skip, 1-Enable*, 2-Disable
 $DiagTrack = 0             #0-Skip, 1-Enable*, 2-Disable
-$WAPPush = 0               #0-Skip, 1-Enable*, 2-Disable
+$WAPPush = 0               #0-Skip, 1-Enable*, 2-Disable --(type of text message that contains a direct link to a particular Web page)
 
 # Service Tweaks
 # Function  = Option       #Choices (* Indicates Windows Default)
 $UAC = 0                   #0-Skip, 1-Lower, 2-Normal*, 3-Higher
 $SharingMappedDrives = 0   #0-Skip, 1-Enable, 2-Disable* --(Sharing mapped drives between users)
-$AdminShares = 0           #0-Skip, 1-Enable*, 2-Disable
+$AdminShares = 0           #0-Skip, 1-Enable*, 2-Disable --(Default admin shares for each drive)
 $Firewall = 0              #0-Skip, 1-Enable*, 2-Disable
 $WinDefender = 0           #0-Skip, 1-Enable*, 2-Disable
 $HomeGroups = 0            #0-Skip, 1-Enable*, 2-Disable
@@ -133,7 +144,7 @@ $TaskbarButtOnDisplay = 0  #0-Skip, 1-All, 2-where window is open, 3-Main and wh
 #Star Menu Items
 # Function  = Option       #Choices (* Indicates Windows Default)
 $StartMenuWebSearch = 0    #0-Skip, 1-Enable*, 2-Disable
-$StartSuggestions = 0      #0-Skip, 1-Enable*, 2-Disable
+$StartSuggestions = 0      #0-Skip, 1-Enable*, 2-Disable --(The Suggested Apps in Start Menu)
 $MoreColorsTitle = 0       #0-Skip, 1-Enable, 2-Disable* --(Adds more Colors to pick from for the Title Colors)
 $MostUsedAppStartMenu = 0  #0-Skip, 1-Show*, 2-Hide
 $RecentItemsFrequent = 0   #0-Skip, 1-Enable*, 2-Disable --(In Start Menu)
@@ -176,7 +187,6 @@ $StickyKeyPrompt = 0       #0-Skip, 1-Enable*, 2-Disable
 $NumblockOnStart = 0       #0-Skip, 1-Enable, 2-Disable*
 $F8BootMenu = 0            #0-Skip, 1-Enable, 2-Disable*
 $CheckForWinUpdate = 0     #0-Skip, 1-Enable*, 2-Disable
-$EthernetMetered = 0       #0-Skip, 1-Enable, 2-Disable* --(Ethernet as Metered Connection)
 $RemoteUACAcctToken = 0    #0-Skip, 1-Enable, 2-Disable*
 
 #Lock Screen
@@ -378,6 +388,9 @@ If ($SettingImp -ne $null -and $SettingImp){
 # Asks for input before continuing
 # Doesnt work in PowerShell ISE
 If ($Term_of_Use -eq 1){
+     Write-Host "WARNING!!" -ForegroundColor Red -BackgroundColor Black
+     Write-Host "This version is currently being tested and May have problems." -ForegroundColor Yellow -BackgroundColor Black 
+     Write-Host ""
      Write-Host "This program comes with ABSOLUTELY NO WARRANTY." -ForegroundColor Black -BackgroundColor White
      Write-Host "This is free software, and you are welcome to" -ForegroundColor Black -BackgroundColor White
      Write-Host "redistribute it under certain conditions." -ForegroundColor Black -BackgroundColor White
@@ -453,7 +466,6 @@ If($WinDefault -eq 1){
      $PowerMenuLockScreen = 1
      $WinContentWhileDrag = 1
      $CheckForWinUpdate = 1
-     $EthernetMetered = 2
      $TaskBarOnMultiDisplay = 1
      $TaskbarButtOnDisplay = 0
      $Telemetry = 1
@@ -544,7 +556,6 @@ If($CustomSet -eq 1){
      $SleepPower = 2
      $WinContentWhileDrag = 1
      $CheckForWinUpdate = 2
-     $EthernetMetered = 2
      $TaskBarOnMultiDisplay = 2
      $TaskbarButtOnDisplay = 1
      $Telemetry = 2
