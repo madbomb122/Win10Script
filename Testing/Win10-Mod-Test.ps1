@@ -184,8 +184,8 @@ $CameraOnLockScreen = 0    #0-Skip, 1-Enable*, 2-Disable
 $LockScreen = 0            #0-Skip, 1-Enable*, 2-Disable (Pre-Anniversary Update)
 $LockScreenAlt = 0         #0-Skip, 1-Enable*, 2-Disable (Anniversary Update workaround) 
 $PowerMenuLockScreen = 0   #0-Skip, 1-Show*, 2-Hide
-$Hibernate = 0             #0-Skip, 1-Enable, 2-Disable --(Hibernate Power Option)
-$Sleep = 0                 #0-Skip, 1-Enable, 2-Disable --(Sleep Power Option)
+$HibernatePower = 1        #0-Skip, 1-Enable, 2-Disable --(Hibernate Power Option)
+$SleepPower = 1            #0-Skip, 1-Enable, 2-Disable --(Sleep Power Option)
 
 # Remove unwanted applications
 # Function  = Option       #Choices (* Indicates Windows Default)
@@ -532,8 +532,8 @@ If($CustomSet -eq 1){
      $FrequentFoldersQikAcc = 2
      $MostUsedAppStartMenu = 2
      $PowerMenuLockScreen = 1
-     $Hibernate = 0
-     $Sleep = 2
+     $HibernatePower = 0
+     $SleepPower = 2
      $WinContentWhileDrag = 1
      $CheckForWinUpdate = 2
      $EthernetMetered = 2
@@ -1715,19 +1715,22 @@ If ($PowerMenuLockScreen -eq 1) {
 }
 
 # Hibernate Option
-If ($Hibernate -eq 1) {
+If ($HibernatePower -eq 1) {
      Write-Host "Enabling Hibernate Option..."
      Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power" -Name "HibernateEnabled" -Type DWord -Value 1
-} ElseIf ($Hibernate -eq 2) {
+} ElseIf ($HibernatePower -eq 2) {
      Write-Host "Disabling Hibernate Option..."
      Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power" -Name "HibernateEnabled" -Type DWord -Value 0
 }
 
 # Sleep Option
-If ($Hibernate -eq 1) {
+If ($SleepPower -eq 1) {
      Write-Host "Enabling Sleep Option..."
+	 If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings")) {
+          New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" | Out-Null
+     }
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" -Name "ShowSleepOption" -Type DWord -Value 1
-} ElseIf ($Hibernate -eq 2) {
+} ElseIf ($SleepPower -eq 2) {
      Write-Host "Disabling Sleep Option..."
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" -Name "ShowSleepOption" -Type DWord -Value 0
 }
@@ -1748,15 +1751,6 @@ If ($CheckForWinUpdate -eq 1) {
 } ElseIf ($CheckForWinUpdate -eq 2) {
      Write-Host "Disabling Check for Windows Update..."
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "SetDisableUXWUAccess" -Type DWord -Value 1
-}
-
-# Ethernet as Metered Connection
-If ($EthernetMetered -eq 1) {
-     Write-Host "Enabling Ethernet as Metered Connection..."
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\NetworkList\DefaultMediaCost" -Name "Ethernet" -Type DWord -Value 2
-} ElseIf ($EthernetMetered -eq 2) {
-     Write-Host "Disabling Ethernet as Metered Connection..."
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\NetworkList\DefaultMediaCost" -Name "Ethernet" -Type DWord -Value 1
 }
 
 # Taskbar on multiple displays
