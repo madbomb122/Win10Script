@@ -35,12 +35,13 @@ Added 12 New Setting Items:
 Added Description to some items (May add more later)
 Ability to run Pre-defined setting (currently only -Set Set1)
 
-Added 5 New Setting Items:
+Added 4 New Setting Items:
   Cortana Search (Can still search with cortana disabled)
-  More Colors for Tiles
   Classic Clock UI (for the taskbar flyout)
   Classic Battery UI (for the taskbar flyout)
   Recent Items and Frequent Places (in start menu)
+  
+Added More Colors for Tiles (But disabled till i figure problem out)
 
 Renamed 2 Items:
 AeroResize to AeroSnap (Proper name of function)
