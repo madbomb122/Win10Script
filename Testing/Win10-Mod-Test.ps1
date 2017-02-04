@@ -149,9 +149,10 @@ $TaskbarButtOnDisplay = 0  #0-Skip, 1-All, 2-where window is open, 3-Main and wh
 # Function  = Option       #Choices (* Indicates Windows Default)
 $StartMenuWebSearch = 0    #0-Skip, 1-Enable*, 2-Disable
 $StartSuggestions = 0      #0-Skip, 1-Enable*, 2-Disable --(The Suggested Apps in Start Menu)
-$MoreColorsTitle = 0       #0-Skip, 1-Enable, 2-Disable* --(Adds more Colors to pick from for the Title Colors)
 $MostUsedAppStartMenu = 0  #0-Skip, 1-Show*, 2-Hide
 $RecentItemsFrequent = 0   #0-Skip, 1-Enable*, 2-Disable --(In Start Menu)
+#Disabled Till Fixed
+#$MoreColorsTitle = 0       #0-Skip, 1-Enable, 2-Disable* --(Adds more Colors to pick from for the Title Colors)
 
 #Explorer Items
 # Function  = Option       #Choices (* Indicates Windows Default)
@@ -1053,24 +1054,34 @@ If ($RemoteDesktop -eq 1) {
 ##########
 
 # More Tile Colors
+If ($Disabled -eq 1) {
 If ($MoreColorsTitle -eq 1) {
+     Write-Host "Enabling More Tile Colors..."
+	 If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\")) {
+	    New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\" | Out-Null
+	 }
 	 for($i=0; $i -ne 4; $i++) {
+	 	 If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\$i\")) {
+		 	New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\$i\" | Out-Null
+	     }
          for($a=0; $a -ne 2; $a++) {
 	         If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\$i\Theme$a")) {
 	             New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\$i\Theme$a" | Out-Null
 	         } 
 	     }
 	 }
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\0\Theme0" -Name "Color" -Type DWord -Value 00918b73
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\0\Theme1" -Name "Color" -Type DWord -Value 00a68e5e
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\1\Theme0" -Name "Color" -Type DWord -Value 00a44817
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\1\Theme1" -Name "Color" -Type DWord -Value 00618a28
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\2\Theme0" -Name "Color" -Type DWord -Value 00bab4ab
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\2\Theme1" -Name "Color" -Type DWord -Value 00bab4ab
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\3\Theme0" -Name "Color" -Type DWord -Value 0085bd37
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\3\Theme1" -Name "Color" -Type DWord -Value 0085bd37
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\0\Theme0" -Name "Color" -Type DWord -Value "00918b73"
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\0\Theme1" -Name "Color" -Type DWord -Value "00a68e5e"
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\1\Theme0" -Name "Color" -Type DWord -Value "00a44817"
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\1\Theme1" -Name "Color" -Type DWord -Value "00618a28"
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\2\Theme0" -Name "Color" -Type DWord -Value "00bab4ab"
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\2\Theme1" -Name "Color" -Type DWord -Value "00bab4ab"
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\3\Theme0" -Name "Color" -Type DWord -Value "0085bd37"
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\3\Theme1" -Name "Color" -Type DWord -Value "0085bd37"
 } ElseIf ($MoreColorsTitle -eq 2) {
+     Write-Host "Disabling More Tile Colors..."
      Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents" -Force -Recurse -ErrorAction SilentlyContinue
+}
 }
 
 # Process ID on Title Bar
@@ -1415,9 +1426,15 @@ If ($SystemFiles -eq 1) {
 # Recent Items and Frequent Places
 If ($RecentItemsFrequent -eq 1) {
      Write-Host "Enabling Recent Items and Frequent Places..."
+	 If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu")) {
+         New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" | Out-Null
+     }
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "Start_TrackDocs" -Type DWord -Value 1
 } ElseIf ($RecentItemsFrequent -eq 2) {
      Write-Host "Disabling Recent Items and Frequent Places..."
+     If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu")) {
+         New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" | Out-Null
+     }
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "Start_TrackDocs" -Type DWord -Value 0
 }
 
