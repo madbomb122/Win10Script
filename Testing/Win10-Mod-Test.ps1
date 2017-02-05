@@ -82,10 +82,14 @@ Example: Win10-Mod.ps1 -Set Set1
 # Can ONLY create 1 per 24 hours with this script (Will give error if it tries)
 $CreateRestorePoint = 0    #0-Skip, 1-Create --(Restore point before script runs)
 
-#Skips Term of Use
+# Skips Term of Use
 $Term_of_Use = 1           #1-See, Anything else = Accepts Term of Use
 
-#Restart when done? (I recommend restarting when done)
+# Output Display
+$Verbros = 1               #0-Dont Show output, 1-Show output
+$ShowColor = 1             #0-Dont Show output Color, 1-Show output Colors
+
+# Restart when done? (I recommend restarting when done)
 $Restart = 1               #0-Dont Restart, 1-Restart
 
 # Windows Default for ALL Settings 
@@ -197,7 +201,7 @@ $LockScreenAlt = 0         #0-Skip, 1-Enable*, 2-Disable (Anniversary Update wor
 $PowerMenuLockScreen = 0   #0-Skip, 1-Show*, 2-Hide
 $CameraOnLockScreen = 0    #0-Skip, 1-Enable*, 2-Disable
 $HibernatePower = 1        #0-Skip, 1-Enable, 2-Disable --(Hibernate Power Option)
-$SleepPower = 1            #0-Skip, 1-Enable, 2-Disable --(Sleep Power Option)
+$SleepPower = 1            #0-Skip, 1-Enable*, 2-Disable --(Sleep Power Option)
 
 #Misc items
 # Function  = Option       #Choices (* Indicates Windows Default)
@@ -372,6 +376,25 @@ $AppsList = @(
     'Microsoft.ZuneVideo'
 )
 
+# predefined Color Array
+$colors = @("black",        #0
+            "blue",         #1
+			"cyan",         #2
+			"darkblue",     #3
+			"darkcyan",     #4
+			"darkgray",     #5
+			"darkgreen",    #6
+			"darkmagenta",  #7
+			"darkred",      #8
+			"darkyellow",   #9
+			"gray",         #10
+			"green",        #11
+			"magenta",      #12
+			"red",          #13
+			"white",        #14
+			"yellow"        #15
+)
+
 $CustomSet = 0
 
 ##########
@@ -455,21 +478,33 @@ $APPProcess = Get-Variable -Name "APP_*" -ValueOnly
 
 $i=0
 ForEach ($AppV in $APPProcess) {
-   If($AppV -eq 1){
-       $APPS_AppsInstall+=$AppsList[$i]
-   } Elseif($AppV -eq 2){
-       $APPS_AppsHide+=$AppsList[$i]
-   } Elseif($AppV -eq 3){
-       $APPS_AppsUninstall+=$AppsList[$i]
-   }
-   $i++
+     If($AppV -eq 1){
+         $APPS_AppsInstall+=$AppsList[$i]
+     } Elseif($AppV -eq 2){
+         $APPS_AppsHide+=$AppsList[$i]
+     } Elseif($AppV -eq 3){
+         $APPS_AppsUninstall+=$AppsList[$i]
+     }
+    $i++
+}
+
+# Function to Display or Not Display OUTPUT
+Function DisplayOut([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor){
+   If($Verbros -eq 1){
+     If($TxtColor -le 15 -and $ShowColor -eq 1){
+         Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor]
+	 } Else {
+         Write-Host $TxtToDisplay
+	 }
+   } 
 }
 
 # Creates Restore Points
 If ($CreateRestorePoint -eq 1) {
-     Write-Host "Creating System Restore Point Named -Win10 Initial Setup Script..."
+     DisplayOut "Creating System Restore Point Named -Win10 Initial Setup Script..." 15 1
      Checkpoint-Computer -Description "Win10 Initial Setup Script" | Out-Null
 }
+
 
 ##########
 # Script Start -End
@@ -720,17 +755,20 @@ If($CustomSet -eq 1){
 # Privacy Settings -Start
 ##########
 
-Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
-Write-Host "Privacy Settings" -ForegroundColor Yellow -BackgroundColor Black 
+DisplayOut ""
+DisplayOut "------------------------" 14 0
+DisplayOut "-   Privacy Settings   -" 15 0
+DisplayOut "------------------------" 14 0
+DisplayOut ""
 
 # Telemetry
 If ($Telemetry -eq 1) {
-     Write-Host "Enabling Telemetry..."
+     DisplayOut "Enabling Telemetry..." 11 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 3
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 3
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 3
 } ElseIf ($Telemetry -eq 2) {
-     Write-Host "Disabling Telemetry..."
+     DisplayOut "Disabling Telemetry..." 12 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0
@@ -747,11 +785,11 @@ If ($Telemetry -eq 1) {
 
 # Wi-Fi Sense
 If ($WiFiSense -eq 1) {
-     Write-Host "Enabling Wi-Fi Sense..."
+     DisplayOut "Enabling Wi-Fi Sense..." 11 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi\AllowWiFiHotSpotReporting" -Name "Value" -Type DWord -Value 1
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi\AllowAutoConnectToWiFiSenseHotspots" -Name "Value" -Type DWord -Value 1
 } ElseIf ($WiFiSense -eq 2) {
-     Write-Host "Disabling Wi-Fi Sense..."
+     DisplayOut "Disabling Wi-Fi Sense..." 12 0
      If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi\AllowWiFiHotSpotReporting")) {
          New-Item -Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi\AllowWiFiHotSpotReporting" -Force | Out-Null
      }
@@ -761,32 +799,32 @@ If ($WiFiSense -eq 1) {
 
 # SmartScreen Filter
 If ($SmartScreen -eq 1) {
-     Write-Host "Enabling SmartScreen Filter..."
+     DisplayOut "Enabling SmartScreen Filter..." 11 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "SmartScreenEnabled" -Type String -Value "RequireAdmin"
      Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppHost" -Name "EnableWebContentEvaluation" -ErrorAction SilentlyContinue
 } ElseIf ($SmartScreen -eq 2) {
-     Write-Host "Disabling SmartScreen Filter..."
+     DisplayOut "Disabling SmartScreen Filter..." 12 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "SmartScreenEnabled" -Type String -Value "Off"
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppHost" -Name "EnableWebContentEvaluation" -Type DWord -Value 0
 }
 
 # Location Tracking
 If ($LocationTracking -eq 1) {
-     Write-Host "Enabling Location Tracking..."
+     DisplayOut "Enabling Location Tracking..." 11 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Sensor\Overrides\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}" -Name "SensorPermissionState" -Type DWord -Value 1
      Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\lfsvc\Service\Configuration" -Name "Status" -Type DWord -Value 1
 } ElseIf ($LocationTracking -eq 2) {
-     Write-Host "Disabling Location Tracking..."
+     DisplayOut "Disabling Location Tracking..." 12 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Sensor\Overrides\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}" -Name "SensorPermissionState" -Type DWord -Value 0
      Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\lfsvc\Service\Configuration" -Name "Status" -Type DWord -Value 0
 }
 
 # Disable Feedback
 If ($LocationTracking -eq 1) {
-     Write-Host "Enabling Feedback..."
+     DisplayOut "Enabling Feedback..." 11 0
      Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Siuf\Rules" -Name "NumberOfSIUFInPeriod" -ErrorAction SilentlyContinue
 } ElseIf ($LocationTracking -eq 2) {
-     Write-Host "Disabling Feedback..."
+     DisplayOut "Disabling Feedback..." 12 0
      If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Siuf\Rules")) {
          New-Item -Path "HKCU:\SOFTWARE\Microsoft\Siuf\Rules" -Force | Out-Null
      }
@@ -795,10 +833,10 @@ If ($LocationTracking -eq 1) {
 
 # Disable Advertising ID
 If ($AdvertisingID -eq 1) {
-     Write-Host "Enabling Advertising ID..."
+     DisplayOut "Enabling Advertising ID..." 11 0
      Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo" -Name "Enabled" -ErrorAction SilentlyContinue
 } ElseIf ($AdvertisingID -eq 2) {
-     Write-Host "Disabling Advertising ID..."
+     DisplayOut "Disabling Advertising ID..." 12 0
      If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo")) {
          New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo" | Out-Null
      }
@@ -807,13 +845,13 @@ If ($AdvertisingID -eq 1) {
 
 # Cortana
 If ($Cortana -eq 1) {
-     Write-Host "Enabling Cortana..."
+     DisplayOut "Enabling Cortana..." 11 0
      Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Personalization\Settings" -Name "AcceptedPrivacyPolicy" -ErrorAction SilentlyContinue
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization" -Name "RestrictImplicitTextCollection" -Type DWord -Value 0 -ErrorAction SilentlyContinue
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization" -Name "RestrictImplicitInkCollection" -Type DWord -Value 0 -ErrorAction SilentlyContinue
      Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization\TrainedDataStore" -Name "HarvestContacts" -ErrorAction SilentlyContinue
 } ElseIf ($Cortana -eq 2) {
-     Write-Host "Disabling Cortana..."
+     DisplayOut "Disabling Cortana..." 12 0
      If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Personalization\Settings")) {
          New-Item -Path "HKCU:\SOFTWARE\Microsoft\Personalization\Settings" -Force | Out-Null
      }
@@ -831,10 +869,10 @@ If ($Cortana -eq 1) {
 
 # Cortana Search
 If ($CortanaSearch -eq 1) {
-     Write-Host "Enabling Cortana Search..."
+     DisplayOut "Enabling Cortana Search..." 11 0
      Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana" -ErrorAction SilentlyContinue
 } ElseIf ($CortanaSearch -eq 2) {
-     Write-Host "Disabling Cortana Search..."
+     DisplayOut "Disabling Cortana Search..." 12 0
      If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search")) {
           New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Force | Out-Null
      }
@@ -843,20 +881,20 @@ If ($CortanaSearch -eq 1) {
 
 # Error Reporting
 If ($ErrorReporting -eq 1) {
-     Write-Host "Enabling Error reporting..."
+     DisplayOut "Enabling Error reporting..." 11 0
      Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\Windows Error Reporting" -Name "Disabled" -ErrorAction SilentlyContinue
 } ElseIf ($ErrorReporting -eq 2) {
-     Write-Host "Disabling Error reporting..."
+     DisplayOut "Disabling Error reporting..." 12 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\Windows Error Reporting" -Name "Disabled" -Type DWord -Value 1
 }
 
 # AutoLogger file and restrict directory
 If ($AutoLoggerFile -eq 1) {
-     Write-Host "Unrestricting AutoLogger directory..."
+     DisplayOut "Unrestricting AutoLogger directory..." 11 0
      $autoLoggerDir = "$env:PROGRAMDATA\Microsoft\Diagnosis\ETLLogs\AutoLogger"
      icacls $autoLoggerDir /grant:r SYSTEM:`(OI`)`(CI`)F | Out-Null
 } ElseIf ($AutoLoggerFile -eq 2) {
-     Write-Host "Removing AutoLogger file and restricting directory..."
+     DisplayOut "Removing AutoLogger file and restricting directory..." 12 0
      $autoLoggerDir = "$env:PROGRAMDATA\Microsoft\Diagnosis\ETLLogs\AutoLogger"
      If (Test-Path "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl") {
          Remove-Item "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl"
@@ -866,34 +904,34 @@ If ($AutoLoggerFile -eq 1) {
 
 # Diagnostics Tracking Service
 If ($DiagTrack -eq 1) {
-     Write-Host "Enabling and starting Diagnostics Tracking Service..."
+     DisplayOut "Enabling and starting Diagnostics Tracking Service..." 11 0
      Set-Service "DiagTrack" -StartupType Automatic
      Start-Service "DiagTrack"
 } ElseIf ($DiagTrack -eq 2) {
-     Write-Host "Stopping and disabling Diagnostics Tracking Service..."
+     DisplayOut "Stopping and disabling Diagnostics Tracking Service..." 12 0
      Stop-Service "DiagTrack"
      Set-Service "DiagTrack" -StartupType Disabled
 }
 
 # WAP Push Service
 If ($WAPPush -eq 1) {
-     Write-Host "Enabling and starting WAP Push Service..."
+     DisplayOut "Enabling and starting WAP Push Service..." 11 0
      Set-Service "dmwappushservice" -StartupType Automatic
      Start-Service "dmwappushservice"
      Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\dmwappushservice" -Name "DelayedAutoStart" -Type DWord -Value 1
 } ElseIf ($WAPPush -eq 1) {
-     Write-Host "Stopping and disabling WAP Push Service..."
+     DisplayOut "Disabling WAP Push Service..." 12 0
      Stop-Service "dmwappushservice"
      Set-Service "dmwappushservice" -StartupType Disabled
 }
 
 # App Auto Download
 If ($AppAutoDownload -eq 1) {
-     Write-Host "Enable App Auto Download..."
+     DisplayOut "Enabling App Auto Download..." 11 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsStore\WindowsUpdate" -Name "AutoDownload" -Type DWord -Value 0
      Remove-ItemProperty  -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent" -Name "DisableWindowsConsumerFeatures"  -ErrorAction SilentlyContinue
 } ElseIf ($AppAutoDownload -eq 2) {
-     Write-Host "Disable App Auto Download..."
+     DisplayOut "Disabling App Auto Download..." 12 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsStore\WindowsUpdate" -Name "AutoDownload" -Type DWord -Value 2
      If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent")) {
          New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent" -Force | Out-Null
@@ -909,15 +947,18 @@ If ($AppAutoDownload -eq 1) {
 # Windows Update -Start
 ##########
 
-Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
-Write-Host "Windows Update Settings" -ForegroundColor Yellow -BackgroundColor Black 
+DisplayOut ""
+DisplayOut "-------------------------------" 14 0
+DisplayOut "-   Windows Update Settings   -" 15 0
+DisplayOut "-------------------------------" 14 0
+DisplayOut ""
 
 # Check for Windows Update
 If ($CheckForWinUpdate -eq 1) {
-     Write-Host "Enabling Check for Windows Update..."
+     DisplayOut "Enabling Check for Windows Update..." 11 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "SetDisableUXWUAccess" -Type DWord -Value 0
 } ElseIf ($CheckForWinUpdate -eq 2) {
-     Write-Host "Disabling Check for Windows Update..."
+     DisplayOut "Disabling Check for Windows Update..." 12 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "SetDisableUXWUAccess" -Type DWord -Value 1
 }
 
@@ -927,34 +968,34 @@ If ($WinUpdateType -ge 1 -and $WinUpdateType -le 4) {
          New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" | Out-Null
      }
 	 If ($WinUpdateType -eq 1){
-	     Write-Host "Notify for windows update download and notify for install..."
+	     DisplayOut "Notify for windows update download and notify for install..." 16 0
 	     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 2
 	 } ElseIf ($WinUpdateType -eq 2){
-	     Write-Host "Auto Download for windows update download and notify for install..."
+	     DisplayOut "Auto Download for windows update download and notify for install..." 16 0
 	     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 3
 	 } ElseIf ($WinUpdateType -eq 3){
-	     Write-Host "Auto Download for windows update download and schedule for install..."
+	     DisplayOut "Auto Download for windows update download and schedule for install..." 16 0
 	     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 4
 	 } ElseIf ($WinUpdateType -eq 4){
-	     Write-Host "Windows update allow local admin to choose setting..."
+	     DisplayOut "Windows update allow local admin to choose setting..." 16 0
 	     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 5
 	 }
 }
 
 # Windows Update P2P
 If ($WinUpdateDownload -eq 1) {
-     Write-Host "Unrestricting Windows Update P2P to internet..."
+     DisplayOut "Unrestricting Windows Update P2P to internet..." 16 0
      Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config" -Name "DODownloadMode" -ErrorAction SilentlyContinue
      Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization" -Name "SystemSettingsDownloadMode" -ErrorAction SilentlyContinue
 } ElseIf ($WinUpdateDownload -eq 2) {
-     Write-Host "Restricting Windows Update P2P only to local network..."
+     DisplayOut "Restricting Windows Update P2P only to local network..." 16 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config" -Name "DODownloadMode" -Type DWord -Value 1
      If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization")) {
          New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization" | Out-Null
      }
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization" -Name "SystemSettingsDownloadMode" -Type DWord -Value 3
 } ElseIf ($WinUpdateDownload -eq 3) {
-     Write-Host "Disabling Windows Update P2P..."
+     DisplayOut "Disabling Windows Update P2P..." 12 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config" -Name "DODownloadMode" -Type DWord -Value 0
      If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization")) {
          New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization" | Out-Null
@@ -970,70 +1011,73 @@ If ($WinUpdateDownload -eq 1) {
 # Service Tweaks -Start
 ##########
 
-Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
-Write-Host "Service Tweaks" -ForegroundColor Yellow -BackgroundColor Black 
+DisplayOut ""
+DisplayOut "----------------------" 14 0
+DisplayOut "-   Service Tweaks   -" 15 0
+DisplayOut "----------------------" 14 0
+DisplayOut ""
 
 # UAC level
 If ($UAC -eq 1) {
-     Write-Host "Lowering UAC level..."
+     DisplayOut "Lowering UAC level..." 16 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" -Type DWord -Value 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "PromptOnSecureDesktop" -Type DWord -Value 0
 } ElseIf ($UAC -eq 2) {
-     Write-Host "Normal UAC level..."
+     DisplayOut "Normal UAC level..." 16 0
      Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" -ErrorAction SilentlyContinue
      Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "PromptOnSecureDesktop" -ErrorAction SilentlyContinue
 } ElseIf ($UAC -eq 3) {
-     Write-Host "Raising UAC level..."
+     DisplayOut "Raising UAC level..." 16 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" -Type DWord -Value 5
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "PromptOnSecureDesktop" -Type DWord -Value 1
 }
 
 # Sharing mapped drives between users
 If ($SharingMappedDrives -eq 1) {
-     Write-Host "Enabling sharing mapped drives between users..."
+     DisplayOut "Enabling sharing mapped drives between users..." 11 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "EnableLinkedConnections" -Type DWord -Value 1
 } ElseIf ($SharingMappedDrives -eq 2) {
-     Write-Host "Disabling sharing mapped drives between users..."
+     DisplayOut "Disabling sharing mapped drives between users..." 12 0
      Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "EnableLinkedConnections" -ErrorAction SilentlyContinue
 }
 
 # Administrative shares
 If ($AdminShares -eq 1) {
-     Write-Host "Enabling implicit administrative shares..."
+     DisplayOut "Enabling implicit administrative shares..." 11 0
      Remove-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name "AutoShareWks" -ErrorAction SilentlyContinue
 } ElseIf ($AdminShares -eq 2) {
-     Write-Host "Disabling implicit administrative shares..."
+     DisplayOut "Disabling implicit administrative shares..." 12 0
      Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name "AutoShareWks" -Type DWord -Value 0
 }
 
 # Firewall
 If ($Firewall -eq 1) {
-     Write-Host "Enabling Firewall..."
+     DisplayOut "Enabling Firewall..." 11 0
      Set-NetFirewallProfile -Profile * -Enabled True
 } ElseIf ($Firewall -eq 2) {
-     Write-Host "Disabling Firewall..."
+     DisplayOut "Disabling Firewall..." 12 0
      Set-NetFirewallProfile -Profile * -Enabled False
 }
 
 # Windows Defender
 If ($WinDefender -eq 1) {
-     Write-Host "Enabling Windows Defender..."
+     DisplayOut "Enabling Windows Defender..." 11 0
      Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name "DisableAntiSpyware" -ErrorAction SilentlyContinue
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "WindowsDefender" -Type ExpandString -Value "`"%ProgramFiles%\Windows Defender\MSASCuiL.exe`""
 } ElseIf ($WinDefender -eq 2) {
-     Write-Host "Disabling Windows Defender..."
+     DisplayOut "Disabling Windows Defender..." 12 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name "DisableAntiSpyware" -Type DWord -Value 1
      Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "WindowsDefender" -ErrorAction SilentlyContinue
 }
 
 # Home Groups services
 If ($HomeGroups -eq 1) {
-     Write-Host "Starting and enabling Home Groups services..."
+     DisplayOut "Enabling  Home Groups services..." 11 0
      Set-Service "HomeGroupListener" -StartupType Manual
      Set-Service "HomeGroupProvider" -StartupType Manual
      Start-Service "HomeGroupProvider"
 } ElseIf ($HomeGroups -eq 2) {
-     Write-Host "Stopping and disabling Home Groups services..."
+      DisplayOut "Disabling Home Groups services..." 12 0
      Stop-Service "HomeGroupListener"
      Set-Service "HomeGroupListener" -StartupType Disabled
      Stop-Service "HomeGroupProvider"
@@ -1042,20 +1086,20 @@ If ($HomeGroups -eq 1) {
 
 # Remote Assistance
 If ($RemoteAssistance -eq 1) {
-     Write-Host "Enabling Remote Assistance..."
+     DisplayOut "Enabling Remote Assistance..." 11 0
      Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Remote Assistance" -Name "fAllowToGetHelp" -Type DWord -Value 1
 } ElseIf ($RemoteAssistance -eq 2) {
-     Write-Host "Disabling Remote Assistance..."
+     DisplayOut "Disabling Remote Assistance..." 12 0
      Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Remote Assistance" -Name "fAllowToGetHelp" -Type DWord -Value 0
 }
 
 # Enable Remote Desktop w/o Network Level Authentication
 If ($RemoteDesktop -eq 1) {
-     Write-Host "Enabling Remote Desktop w/o Network Level Authentication..."
+     DisplayOut "Enabling Remote Desktop w/o Network Level Authentication..." 11 0
      Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" -Type DWord -Value 0
      Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" -Name "UserAuthentication" -Type DWord -Value 0
 } ElseIf ($RemoteDesktop -eq 2) {
-     Write-Host "Disabling Remote Desktop..."
+     DisplayOut "Disabling Remote Desktop..." 12 0
      Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" -Type DWord -Value 1
      Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" -Name "UserAuthentication" -Type DWord -Value 1
 }
@@ -1068,15 +1112,18 @@ If ($RemoteDesktop -eq 1) {
 # Context Menu Items -Start
 ##########
 
-Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
-Write-Host "Context Menu Items" -ForegroundColor Yellow -BackgroundColor Black 
+DisplayOut ""
+DisplayOut "--------------------------" 14 0
+DisplayOut "-   Context Menu Items   -" 15 0
+DisplayOut "--------------------------" 14 0
+DisplayOut ""
 
 # Cast to Device Context
 If ($CastToDevice -eq 1) {
-     Write-Host "Enabling Cast to Device Context item..."
+     DisplayOut "Enabling Cast to Device Context item..." 11 0
      Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked" -Name "{7AD84985-87B4-4a16-BE58-8B72A5B390F7}" -ErrorAction SilentlyContinue
 } ElseIf ($CastToDevice -eq 2) {
-     Write-Host "Disabling Cast to Device Context item..."
+     DisplayOut "Disabling Cast to Device Context item..." 12 0
      If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked")) {
          New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked" | Out-Null
      }
@@ -1085,13 +1132,13 @@ If ($CastToDevice -eq 1) {
 
 # Previous Versions Context Menu
 If ($PreviousVersions -eq 1) {
-     Write-Host "Enabling Previous Versions Context item..."
+     DisplayOut "Enabling Previous Versions Context item..." 11 0
      Set-ItemProperty -Path "HKCR:\ApplicationsAllFilesystemObjects\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force | Out-Null
      Set-ItemProperty -Path "HKCR:\ApplicationsCLSID\{450D8FBA-AD25-11D0-98A8-0800361B1103}\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force | Out-Null
      Set-ItemProperty -Path "HKCR:\ApplicationsDirectory\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force | Out-Null
      Set-ItemProperty -Path "HKCR:\ApplicationsDrive\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force | Out-Null
 } ElseIf ($PreviousVersions -eq 2) {
-     Write-Host "Disabling Previous Versions Context item..."
+     DisplayOut "Disabling Previous Versions Context item..." 12 0
      Remove-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Recurse -ErrorAction SilentlyContinue
      Remove-Item -Path "HKCR:\CLSID\{450D8FBA-AD25-11D0-98A8-0800361B1103}\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Recurse -ErrorAction SilentlyContinue
      Remove-Item -Path "HKCR:\Directory\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Recurse -ErrorAction SilentlyContinue
@@ -1100,16 +1147,16 @@ If ($PreviousVersions -eq 1) {
 
 # Include in Library Context Menu
 If ($IncludeinLibrary -eq 1) {
-     Write-Host "Enabling Include in Library Context item..."
+     DisplayOut "Enabling Include in Library Context item..." 11 0
      Set-ItemProperty -Path "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location" -Name "(Default)" -Type String -Value "{3dad6c5d-2167-4cae-9914-f99e41c12cfa}"
 } ElseIf ($IncludeinLibrary -eq 2) {
-     Write-Host "Disabling Include in Library..."
+     DisplayOut "Disabling Include in Library..." 12 0
      Set-ItemProperty -Path "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location" -Name "(Default)" -Type String -Value ""
 }
 
 # Pin To Context Menu
 If ($PinTo -eq 1) {
-     Write-Host "Enabling Pin To Context item..."
+     DisplayOut "Enabling Pin To Context item..." 11 0
      New-Item -Path "HKCR:\*\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -Force | Out-Null
      Set-ItemProperty -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -Name "(Default)" -Type String -Value "Taskband Pin"
      New-Item -Path "HKCR:\*\shellex\ContextMenuHandlers\{a2a9545d-a0c2-42b4-9708-a0b2badd77c8}" -Force | Out-Null
@@ -1119,7 +1166,7 @@ If ($PinTo -eq 1) {
 	 Set-ItemProperty -Path "HKCR:\Microsoft.Website\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value "{470C0EBD-5D73-4d58-9CED-E91E22E23282}"
 	 Set-ItemProperty -Path "HKCR:\mscfile\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value "{470C0EBD-5D73-4d58-9CED-E91E22E23282}"
 } ElseIf ($PinTo -eq 2) {
-     Write-Host "Disabling Pin To Context item..."
+     DisplayOut "Disabling Pin To Context item..." 12 0
      Remove-Item -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -ErrorAction SilentlyContinue -Force
      Remove-Item -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\{a2a9545d-a0c2-42b4-9708-a0b2badd77c8}" -ErrorAction SilentlyContinue -Force
 	 Set-ItemProperty -Path "HKCR:\Folder\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value ""
@@ -1131,7 +1178,7 @@ If ($PinTo -eq 1) {
 
 # Share With Context Menu
 If ($ShareWith -eq 1) {
-     Write-Host "Enabling Share With Context item..."
+     DisplayOut "Enabling Share With Context item..." 11 0
      Set-ItemProperty -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\Sharing" -Name "(Default)" -Type String -Value "{f81e9010-6ea4-11ce-a7ff-00aa003ca9f6}" 
      Set-ItemProperty -Path "HKCR:\Directory\shellex\ContextMenuHandlers\Sharing" -Name "(Default)" -Type String -Value "{f81e9010-6ea4-11ce-a7ff-00aa003ca9f6}"
      Set-ItemProperty -Path "HKCR:\Directory\shellex\CopyHookHandlers\Sharing" -Name "(Default)" -Type String -Value "{40dd6e20-7c17-11ce-a804-00aa003ca9f6}"
@@ -1140,7 +1187,7 @@ If ($ShareWith -eq 1) {
      Set-ItemProperty -Path "HKCR:\Drive\shellex\ContextMenuHandlers\Sharing" -Name "(Default)" -Type String -Value "{f81e9010-6ea4-11ce-a7ff-00aa003ca9f6}"
      Set-ItemProperty -Path "HKCR:\LibraryFolder\background\shellex\ContextMenuHandlers\Sharing" -Name "(Default)" -Type String -Value "{f81e9010-6ea4-11ce-a7ff-00aa003ca9f6}"
 }  ElseIf ($ShareWith -eq 2) {
-     Write-Host "Disabling Share With..."
+     DisplayOut "Disabling Share With..." 12 0
      Set-ItemProperty -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\Sharing" -Name "(Default)" -Type String -Value "" 
      Set-ItemProperty -Path "HKCR:\Directory\shellex\ContextMenuHandlers\Sharing" -Name "(Default)" -Type String -Value ""
      Set-ItemProperty -Path "HKCR:\Directory\shellex\CopyHookHandlers\Sharing" -Name "(Default)" -Type String -Value ""
@@ -1152,13 +1199,13 @@ If ($ShareWith -eq 1) {
 
 # Send To Context Menu
 If ($SendTo -eq 1) {
-     Write-Host "Enabling Send To Context item..."
+     DisplayOut "Enabling Send To Context item..." 11 0
      If (!(Test-Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo")) {
            New-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo"
 	 }
      Set-ItemProperty -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" -Name "(Default)" -Type String -Value "{7BA4C740-9E81-11CF-99D3-00AA004AE837}" -ErrorAction SilentlyContinue | Out-Null
 } ElseIf ($SendTo -eq 2) {
-     Write-Host "Disabling Send To Context item..."
+     DisplayOut "Disabling Send To Context item..." 12 0
 	 If (Test-Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo") {
            Remove-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" -ErrorAction SilentlyContinue
 	 }
@@ -1172,15 +1219,18 @@ If ($SendTo -eq 1) {
 # Task Bar Items -Start
 ##########
 
-Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
-Write-Host "Task Bar Items" -ForegroundColor Yellow -BackgroundColor Black 
+DisplayOut ""
+DisplayOut "----------------------" 14 0
+DisplayOut "-   Task Bar Items   -" 15 0
+DisplayOut "----------------------" 14 0
+DisplayOut ""
 
 # Battery UI Bar
 If ($BatteryUIBar -eq 1) {
-     Write-Host "Enabling New Battery UI Bar..."
+     DisplayOut "Enabling New Battery UI Bar..." 16 0
      Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" -Name "UseWin32BatteryFlyout" -ErrorAction SilentlyContinue
 } ElseIf ($BatteryUIBar -eq 2) {
-     Write-Host "Enabling Old Battery UI Bar..."
+     DisplayOut "Enabling Old Battery UI Bar..." 16 0
      If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell")) {
          New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" | Out-Null
      }
@@ -1189,10 +1239,10 @@ If ($BatteryUIBar -eq 1) {
 
 # Clock UI Bar
 If ($ClockUIBar -eq 1) {
-     Write-Host "Enabling New Clock UI Bar..."
+     DisplayOut "Enabling New Clock UI Bar..." 16 0
      Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" -Name "UseWin32TrayClockExperience" -ErrorAction SilentlyContinue
 } ElseIf ($ClockUIBar -eq 2) {
-     Write-Host "Enabling Old Clock UI Bar..."
+     DisplayOut "Enabling Old Clock UI Bar..." 16 0
      If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell")) {
           New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" | Out-Null
      }
@@ -1201,10 +1251,10 @@ If ($ClockUIBar -eq 1) {
 	 
 # Volume Control Bar
 If ($VolumeControlBar -eq 1) {
-     Write-Host "Enabling New Volume Bar (Horizontal)..."
+     DisplayOut "Enabling New Volume Bar (Horizontal)..." 16 0
      Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\MTCUVC" -Name "EnableMtcUvc" -ErrorAction SilentlyContinue
 } ElseIf ($VolumeControlBar -eq 2) {
-     Write-Host "Enabling Classic Volume Bar (Vertical)..."
+     DisplayOut "Enabling Classic Volume Bar (Vertical)..." 16 0
      If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\MTCUVC")) {
           New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\MTCUVC" | Out-Null
      }
@@ -1213,88 +1263,88 @@ If ($VolumeControlBar -eq 1) {
 
 # Taskbar Search button / box
 If ($TaskbarSearchBox -eq 1) {
-     Write-Host "Showing Taskbar Search box / button..."
+     DisplayOut "Showing Taskbar Search box / button..." 11 0
      Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "SearchboxTaskbarMode" -ErrorAction SilentlyContinue
 } ElseIf ($TaskbarSearchBox -eq 2) {
-     Write-Host "Hiding Taskbar Search box / button..."
+     DisplayOut "Hiding Taskbar Search box / button..." 12 0
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "SearchboxTaskbarMode" -Type DWord -Value 0
 }
 
 # Task View button
 If ($TaskViewButton -eq 1) {
-     Write-Host "Showing Task View button..."
+     DisplayOut "Showing Task View button..." 11 0
      Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -ErrorAction SilentlyContinue
 } ElseIf ($TaskViewButton -eq 2) {
-     Write-Host "Hiding Task View button..."
+     DisplayOut "Hiding Task View button..." 12 0
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -Type DWord -Value 0
 }
 
 # Taskbar Icon Size
 If ($TaskbarIconSize -eq 1) {
-     Write-Host "Showing Normal icon size in taskbar..."
+     DisplayOut "Showing Normal icon size in taskbar..." 11 0
      Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarSmallIcons" -ErrorAction SilentlyContinue
 } ElseIf ($TaskbarIconSize -eq 2) {
-     Write-Host "Showing Smaller icons in taskbar..."
+     DisplayOut "Showing Smaller icons in taskbar..." 12 0
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarSmallIcons" -Type DWord -Value 1
 }
 
 # Taskbar Item Grouping
 If ($TaskbarGrouping -eq 1) {
-     Write-Host "Never Group Taskbar Items..."
+     DisplayOut "Never Group Taskbar Items..." 16 0
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarGlomLevel" -Type DWord -Value 2
 } ElseIf ($TaskbarGrouping -eq 2) {
-     Write-Host "Always Group Taskbar Items..."
+     DisplayOut "Always Group Taskbar Items..." 16 0
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarGlomLevel" -Type DWord -Value 0
 } ElseIf ($TaskbarGrouping -eq 3) {
-     Write-Host "When Needed Group Taskbar Items..."
+     DisplayOut "When Needed Group Taskbar Items..." 16 0
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarGlomLevel" -Type DWord -Value 1
 }
 
 # Tray icons
 If ($TrayIcons -eq 1) {
-     Write-Host "Showing all tray icons..."
+     DisplayOut "Showing all tray icons..." 11 0
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "EnableAutoTray" -Type DWord -Value 0
 } ElseIf ($TrayIcons -eq 2) {
-     Write-Host "Hiding tray icons..."
+     DisplayOut "Hiding tray icons..." 12 0
      Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "EnableAutoTray" -ErrorAction SilentlyContinue
 }
 
 # Seconds in Taskbar Clock
 If ($SecondsInClock -eq 1) {
-     Write-Host "Showing Seconds in Taskbar Clock..."
+     DisplayOut "Showing Seconds in Taskbar Clock..." 16 0
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSecondsInSystemClock" -Type DWord -Value 1
 } ElseIf ($SecondsInClock -eq 2) {
-     Write-Host "Hiding Seconds in Taskbar Clock..."
+     DisplayOut "Hiding Seconds in Taskbar Clock..." 16 0
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSecondsInSystemClock" -Type DWord -Value 0
 }
 
 # Last Active Click
 If ($LastActiveClick -eq 1) {
-     Write-Host "Last Active Click..."
+     DisplayOut "Enabling Last Active Click..." 11 0
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LastActiveClick" -Type DWord -Value 1
 } ElseIf ($LastActiveClick -eq 2) {
-     Write-Host "Last Active Click..."
+     DisplayOut "Disabling Last Active Click..." 12 0
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LastActiveClick" -Type DWord -Value 0
 }
 
 # Taskbar on multiple displays
 If ($TaskBarOnMultiDisplay -eq 1) {
-     Write-Host "Showing Taskbar on multiple displays..."
+     DisplayOut "Showing Taskbar on multiple displays..." 11 0
      Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarEnabled" -Type DWord -Value 1
 } ElseIf ($TaskBarOnMultiDisplay -eq 2) {
-     Write-Host "Hiding Taskbar on multiple displays.."
+     DisplayOut "Hiding Taskbar on multiple displays.." 12 0
      Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarEnabled" -Type DWord -Value 0
 }
 
 # Taskbar on multiple displays
 If ($TaskbarButtOnDisplay -eq 1) {
-     Write-Host "Showing Taskbar buttons on all taskbars..."
+     DisplayOut "Showing Taskbar buttons on all taskbars..." 16 0
      Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarMode" -Type DWord -Value 0
 } ElseIf ($TaskbarButtOnDisplay -eq 2) {
-     Write-Host "Showing Taskbar buttons on taskbar where window is open..."
+     DisplayOut "Showing Taskbar buttons on taskbar where window is open..." 16 0
      Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarMode" -Type DWord -Value 2
 } ElseIf ($TaskbarButtOnDisplay -eq 3) {
-     Write-Host "Showing Taskbar buttons on main taskbar and where window is open..."
+     DisplayOut "Showing Taskbar buttons on main taskbar and where window is open..." 16 0
      Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarMode" -Type DWord -Value 1
 }
 
@@ -1306,16 +1356,19 @@ If ($TaskbarButtOnDisplay -eq 1) {
 # Star Menu Items -Start
 ##########
 
-Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
-Write-Host "Star Menu Items" -ForegroundColor Yellow -BackgroundColor Black 
+DisplayOut ""
+DisplayOut "-----------------------" 14 0
+DisplayOut "-   Star Menu Items   -" 15 0
+DisplayOut "-----------------------" 14 0
+DisplayOut ""
 
 # Web Search in Start Menu
 If ($StartMenuWebSearch -eq 1) {
-     Write-Host "Enabling Bing Search in Start Menu..."
+     DisplayOut "Enabling Bing Search in Start Menu..." 11 0
      Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "BingSearchEnabled" -ErrorAction SilentlyContinue
      Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "DisableWebSearch" -ErrorAction SilentlyContinue
 } ElseIf ($StartMenuWebSearch -eq 2) {
-     Write-Host "Disabling Bing Search in Start Menu..."
+     DisplayOut "Disabling Bing Search in Start Menu..." 12 0
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "BingSearchEnabled" -Type DWord -Value 0
      If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search")) {
          New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Force | Out-Null
@@ -1325,33 +1378,33 @@ If ($StartMenuWebSearch -eq 1) {
 
 # Start Menu suggestions
 If ($StartSuggestions -eq 1) {
-     Write-Host "Enabling Start Menu suggestions..."
+     DisplayOut "Enabling Start Menu suggestions..." 11 0
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SystemPaneSuggestionsEnabled" -Type DWord -Value 1
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SilentInstalledAppsEnabled" -Type DWord -Value 1
 } ElseIf ($StartSuggestions -eq 2) {
-     Write-Host "Disabling Start Menu suggestions..."
+     DisplayOut "Disabling Start Menu suggestions..." 12 0
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SystemPaneSuggestionsEnabled" -Type DWord -Value 0
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SilentInstalledAppsEnabled" -Type DWord -Value 0
 }
 
 # Most used apps in Start menu
 If ($MostUsedAppStartMenu -eq 1) {
-     Write-Host "Showing Most used apps in Start Menu..."
+     DisplayOut "Showing Most used apps in Start Menu..." 11 0
      Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type DWord -Value 1
 } ElseIf ($MostUsedAppStartMenu -eq 2) {
-     Write-Host "Hiding Most used apps in Start Menu..."
+     DisplayOut "Hiding Most used apps in Start Menu..." 12 0
      Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type DWord -Value 0
 }
 
 # Recent Items and Frequent Places
 If ($RecentItemsFrequent -eq 1) {
-     Write-Host "Enabling Recent Items and Frequent Places..."
+     DisplayOut "Enabling Recent Items and Frequent Places..." 11 0
 	 If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu")) {
          New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" | Out-Null
      }
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "Start_TrackDocs" -Type DWord -Value 1
 } ElseIf ($RecentItemsFrequent -eq 2) {
-     Write-Host "Disabling Recent Items and Frequent Places..."
+     DisplayOut "Disabling Recent Items and Frequent Places..." 12 0
      If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu")) {
          New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" | Out-Null
      }
@@ -1366,33 +1419,36 @@ If ($RecentItemsFrequent -eq 1) {
 # Explorer Items -Start
 ##########
 
-Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
-Write-Host "Explorer Items" -ForegroundColor Yellow -BackgroundColor Black 
+DisplayOut ""
+DisplayOut "----------------------" 14 0
+DisplayOut "-   Explorer Items   -" 15 0
+DisplayOut "----------------------" 14 0
+DisplayOut ""
 
 # Process ID on Title Bar
 If ($PidInTitleBar -eq 1) {
-     Write-Host "Showing Process ID on Title Bar..."
+     DisplayOut "Showing Process ID on Title Bar..." 11 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowPidInTitle" -Type DWord -Value 1
 } ElseIf ($PidInTitleBar -eq 2) {
-     Write-Host "Hiding Process ID on Title Bar..."
+     DisplayOut "Hiding Process ID on Title Bar..." 12 0
      Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowPidInTitle" -ErrorAction SilentlyContinue
 }
 
 # Aero Snap
 If ($AeroSnap -eq 1) {
-     Write-Host "Enabling Aero Snap..."
+     DisplayOut "Enabling Aero Snap..." 11 0
      Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "WindowArrangementActive" -Type DWord -Value 1
 } ElseIf ($AeroSnap -eq 2) {
-     Write-Host "Disabling Aero Snap..."
+     DisplayOut "Disabling Aero Snap..." 12 0
      Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "WindowArrangementActive" -Type DWord -Value 0
 }
 
 # Aero Shake
 If ($AeroShake -eq 1) {
-     Write-Host "Enabling Aero Shake..."
+     DisplayOut "Enabling Aero Shake..." 11 0
      Remove-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" -Name "NoWindowMinimizingShortcuts" -ErrorAction SilentlyContinue
 } ElseIf ($AeroShake -eq 2) {
-     Write-Host "Disabling Aero Shake..."
+     DisplayOut "Disabling Aero Shake..." 12 0
      If (!(Test-Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer")) {
          New-Item -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" | Out-Null
      }
@@ -1401,67 +1457,67 @@ If ($AeroShake -eq 1) {
 
 # File extensions
 If ($KnownExtensions -eq 1) {
-     Write-Host "Showing known file extensions..."
+     DisplayOut "Showing known file extensions..." 11 0
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Type DWord -Value 0
 } ElseIf ($KnownExtensions -eq 2) {
-     Write-Host "Hiding known file extensions..."
+     DisplayOut "Hiding known file extensions..." 12 0
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Type DWord -Value 1
 }
 
 # Hidden files
 If ($HiddenFiles -eq 1) {
-     Write-Host "Showing hidden files..."
+     DisplayOut "Showing hidden files..." 11 0
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Hidden" -Type DWord -Value 1
 } ElseIf ($HiddenFiles -eq 2) {
-     Write-Host "Hiding hidden files..."
+     DisplayOut "Hiding hidden files..." 12 0
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Hidden" -Type DWord -Value 2
 }
 
 # System files
 If ($SystemFiles -eq 1) {
-     Write-Host "Showing System files..."
+     DisplayOut "Showing System files..." 11 0
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSuperHidden" -Type DWord -Value 1
 } ElseIf ($SystemFiles -eq 2) {
-     Write-Host "Hiding System files..."
+     DisplayOut "Hiding System files..." 12 0
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSuperHidden" -Type DWord -Value 0
 }
 
 # Show This PC shortcut on desktop
 If ($ThisPCOnDesktop -eq 1) {
-     Write-Host "Showing This PC shortcut on desktop..."
+     DisplayOut "Showing This PC shortcut on desktop..." 11 0
      If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu")) {
          New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" | Out-Null
      }
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type DWord -Value 0
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type DWord -Value 0
 } ElseIf ($ThisPCOnDesktop -eq 2) {
-     Write-Host "Hiding This PC shortcut from desktop..."
+     DisplayOut "Hiding This PC shortcut from desktop..." 12 0
      Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -ErrorAction SilentlyContinue
      Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -ErrorAction SilentlyContinue
 }
 
 # Change default Explorer view
 If ($ExplorerOpenLoc -eq 1) {
-     Write-Host "Changing default Explorer view to Quick Access..."
+     DisplayOut "Changing default Explorer view to Quick Access..." 16 0
      Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LaunchTo" -ErrorAction SilentlyContinue
 } ElseIf ($ExplorerOpenLoc -eq 2) {
-     Write-Host "Changing default Explorer view to This PC..."
+     DisplayOut "Changing default Explorer view to This PC..." 16 0
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LaunchTo" -Type DWord -Value 1
 }
 
 # Recent Files in Quick Access
 If ($RecentFileQikAcc -eq 1) {
-     Write-Host "Showing Recent Files in Quick Access..."
+     DisplayOut "Showing Recent Files in Quick Access..." 11 0
      Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Type DWord -Value 1
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Name "(Default)" -Type String -Value "Recent Items Instance Folder"
      If($OSType -eq 64) {
          Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Name "(Default)" -Type String -Value "Recent Items Instance Folder"
      }
 } ElseIf ($RecentFileQikAcc -eq 2) {
-     Write-Host "Hiding Recent Files in Quick Access..."
+     DisplayOut "Hiding Recent Files in Quick Access..." 12 0
      Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Type DWord -Value 0
 } ElseIf ($RecentFileQikAcc -eq 3) {
-     Write-Host "Removeing Recent Files in Quick Access..."
+     DisplayOut "Removeing Recent Files in Quick Access..." 15 0
      Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Type DWord -Value 0
      Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Recurse -ErrorAction SilentlyContinue
      Remove-Item -Path "HKLM:SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Recurse -ErrorAction SilentlyContinue
@@ -1469,37 +1525,37 @@ If ($RecentFileQikAcc -eq 1) {
 
 # Frequent folders in Quick_access
 If ($FrequentFoldersQikAcc -eq 1) {
-     Write-Host "Showing Frequent folders in Quick Access..."
+     DisplayOut "Showing Frequent folders in Quick Access..." 11 0
      Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowFrequent" -Type DWord -Value 1
 } ElseIf ($FrequentFoldersQikAcc -eq 2) {
-     Write-Host "Hiding Frequent folders in Quick Access..."
+     DisplayOut "Hiding Frequent folders in Quick Access..." 12 0
      Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowFrequent" -Type DWord -Value 0
 }
 
 # Window Content while Dragging
 If ($WinContentWhileDrag -eq 1) {
-     Write-Host "Showing Window Content while Dragging..."
+     DisplayOut "Showing Window Content while Dragging..." 11 0
      Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "DragFullWindows" -Type DWord -Value 1
 } ElseIf ($WinContentWhileDrag -eq 2) {
-     Write-Host "Hiding Window Content while Dragging..."
+     DisplayOut "Hiding Window Content while Dragging..." 12 0
      Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "DragFullWindows" -Type DWord -Value 0
 }
 
 # Autoplay
 If ($Autoplay -eq 1) {
-     Write-Host "Enabling Autoplay..."
+     DisplayOut "Enabling Autoplay..." 11 0
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers" -Name "DisableAutoplay" -Type DWord -Value 0
 } ElseIf ($Autoplay -eq 2) {
-     Write-Host "Disabling Autoplay..."
+     DisplayOut "Disabling Autoplay..." 12 0
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers" -Name "DisableAutoplay" -Type DWord -Value 1
 }
 
 # Autorun for all drives
 If ($Autorun -eq 1) {
-     Write-Host "Enabling Autorun for all drives..."
+     DisplayOut "Enabling Autorun for all drives..." 11 0
      Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun" -ErrorAction SilentlyContinue
 } ElseIf ($Autorun -eq 2) {
-     Write-Host "Disabling Autorun for all drives..."
+     DisplayOut "Disabling Autorun for all drives..." 12 0
      If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer")) {
          New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" | Out-Null
      }
@@ -1514,71 +1570,74 @@ If ($Autorun -eq 1) {
 # 'This PC' items -Start
 ##########
 
-Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
-Write-Host "'This PC' items" -ForegroundColor Yellow -BackgroundColor Black 
+DisplayOut ""
+DisplayOut "-----------------------" 14 0
+DisplayOut "-   'This PC' items   -" 15 0
+DisplayOut "-----------------------" 14 0
+DisplayOut ""
 
 # Desktop icon in This PC
 If ($DesktopIconInThisPC -eq 1) {
-     Write-Host "Showing Desktop icon in This PC..."
+     DisplayOut "Showing Desktop icon in This PC..." 11 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
 } ElseIf ($DesktopIconInThisPC -eq 2) {
-     Write-Host "Hiding Desktop icon from This PC..."
+     DisplayOut "Hiding Desktop icon from This PC..." 12 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
 }
 
 # Documents icon in This PC
 If ($DocumentsIconInThisPC -eq 1) {
-     Write-Host "Showing Documents icon in This PC..."
+     DisplayOut "Showing Documents icon in This PC..." 11 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{f42ee2d3-909f-4907-8871-4c22fc0bf756}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{f42ee2d3-909f-4907-8871-4c22fc0bf756}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
 }ElseIf ($DocumentsIconInThisPC -eq 2) {
-     Write-Host "Hiding Documents icon from This PC..."
+     DisplayOut "Hiding Documents icon from This PC..." 12 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{f42ee2d3-909f-4907-8871-4c22fc0bf756}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{f42ee2d3-909f-4907-8871-4c22fc0bf756}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
 }
 
 # Downloads icon from This PC
 If ($DownloadsIconInThisPC -eq 1) {
-     Write-Host "Showing Downloads icon in This PC..."
+     DisplayOut "Showing Downloads icon in This PC..." 11 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{7d83ee9b-2244-4e70-b1f5-5393042af1e4}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{7d83ee9b-2244-4e70-b1f5-5393042af1e4}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
 } ElseIf ($DownloadsIconInThisPC -eq 2) {
-     Write-Host "Hiding Downloads icon from This PC..."
+     DisplayOut "Hiding Downloads icon from This PC..." 12 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{7d83ee9b-2244-4e70-b1f5-5393042af1e4}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{7d83ee9b-2244-4e70-b1f5-5393042af1e4}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
 }
 
 # Music icon from This PC
 If ($MusicIconInThisPC -eq 1) {
-     Write-Host "Showing Music icon in This PC..."
+     DisplayOut "Showing Music icon in This PC..." 11 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{a0c69a99-21c8-4671-8703-7934162fcf1d}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{a0c69a99-21c8-4671-8703-7934162fcf1d}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
 } ElseIf ($MusicIconInThisPC -eq 2) {
-     Write-Host "Hiding Music icon from This PC..."
+     DisplayOut "Hiding Music icon from This PC..." 12 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{a0c69a99-21c8-4671-8703-7934162fcf1d}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{a0c69a99-21c8-4671-8703-7934162fcf1d}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
 }
 
 # Pictures icon from This PC
 If ($PicturesIconInThisPC -eq 1) {
-     Write-Host "Showing Pictures icon in This PC..."
+     DisplayOut "Showing Pictures icon in This PC..." 11 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{0ddd015d-b06c-45d5-8c4c-f59713854639}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{0ddd015d-b06c-45d5-8c4c-f59713854639}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
 } ElseIf ($PicturesIconInThisPC -eq 2) {
-     Write-Host "Hiding Pictures icon from This PC..."
+     DisplayOut "Hiding Pictures icon from This PC..." 12 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{0ddd015d-b06c-45d5-8c4c-f59713854639}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{0ddd015d-b06c-45d5-8c4c-f59713854639}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
 }
 
 # Hide Videos icon from This PC
 If ($VideosIconInThisPC -eq 1) {
-     Write-Host "Showing Videos icon in This PC..."
+     DisplayOut "Showing Videos icon in This PC..." 11 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{35286a68-3c57-41a1-bbb1-0eae73d76c95}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{35286a68-3c57-41a1-bbb1-0eae73d76c95}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
 } ElseIf ($VideosIconInThisPC -eq 2) {
-     Write-Host "Hiding Videos icon from This PC..."
+     DisplayOut "Hiding Videos icon from This PC..." 12 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{35286a68-3c57-41a1-bbb1-0eae73d76c95}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{35286a68-3c57-41a1-bbb1-0eae73d76c95}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
 }
@@ -1591,12 +1650,15 @@ If ($VideosIconInThisPC -eq 1) {
 # Photo Viewer Settings -Start
 ##########
 
-Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
-Write-Host "Photo Viewer Settings" -ForegroundColor Yellow -BackgroundColor Black 
+DisplayOut ""
+DisplayOut "-----------------------------" 14 0
+DisplayOut "-   Photo Viewer Settings   -" 15 0
+DisplayOut "-----------------------------" 14 0
+DisplayOut ""
 
 # Photo Viewer association for bmp, gif, jpg, png and tif
 If ($PVFileAssociation -eq 1) {
-     Write-Host "Setting Photo Viewer association for bmp, gif, jpg, png and tif..."
+     DisplayOut "Setting Photo Viewer association for bmp, gif, jpg, png and tif..." 11 0
      ForEach ($type in @("Paint.Picture", "giffile", "jpegfile", "pngfile")) {
          New-Item -Path $("HKCR:\$type\shell\open") -Force | Out-Null
          New-Item -Path $("HKCR:\$type\shell\open\command") | Out-Null
@@ -1604,7 +1666,7 @@ If ($PVFileAssociation -eq 1) {
          Set-ItemProperty -Path $("HKCR:\$type\shell\open\command") -Name "(Default)" -Type ExpandString -Value "%SystemRoot%\System32\rundll32.exe `"%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll`", ImageView_Fullscreen %1"
      }
 } ElseIf ($PVFileAssociation -eq 2) {
-     Write-Host "Unsetting Photo Viewer association for bmp, gif, jpg, png and tif..."
+     DisplayOut "Unsetting Photo Viewer association for bmp, gif, jpg, png and tif..." 12 0
      If (Test-Path "HKCR:\Paint.Picture\shell\open") {
          Remove-Item -Path "HKCR:\Paint.Picture\shell\open" -Recurse
 	 }
@@ -1622,14 +1684,14 @@ If ($PVFileAssociation -eq 1) {
 
 # Add Photo Viewer to "Open with..."
 If ($PVOpenWithMenu -eq 1) {
-     Write-Host "Adding Photo Viewer to Open with Menu..."
+     DisplayOut "Adding Photo Viewer to Open with Menu..." 11 0
      New-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open\command" -Force | Out-Null
      New-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open\DropTarget" -Force | Out-Null
      Set-ItemProperty -Path "HKCR:\Applications\photoviewer.dll\shell\open" -Name "MuiVerb" -Type String -Value "@photoviewer.dll,-3043"
      Set-ItemProperty -Path "HKCR:\Applications\photoviewer.dll\shell\open\command" -Name "(Default)" -Type ExpandString -Value "%SystemRoot%\System32\rundll32.exe `"%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll`", ImageView_Fullscreen %1"
      Set-ItemProperty -Path "HKCR:\Applications\photoviewer.dll\shell\open\DropTarget" -Name "Clsid" -Type String -Value "{FFE2A43C-56B9-4bf5-9A79-CC6D4285608A}"
 } ElseIf ($PVOpenWithMenu -eq 2) {
-     Write-Host "Removing Photo Viewer from Open with Menu..."
+     DisplayOut "Removing Photo Viewer from Open with Menu..." 12 0
      If (Test-Path "HKCR:\Applications\photoviewer.dll\shell\open") {
          Remove-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open" -Recurse
      }
@@ -1643,15 +1705,18 @@ If ($PVOpenWithMenu -eq 1) {
 # Lockscreen Items -Start
 ##########
 
-Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
-Write-Host "Lockscreen Items" -ForegroundColor Yellow -BackgroundColor Black 
+DisplayOut ""
+DisplayOut "------------------------" 14 0
+DisplayOut "-   Lockscreen Items   -" 15 0
+DisplayOut "------------------------" 14 0
+DisplayOut ""
 
 # Lock screen
 If ($LockScreen -eq 1) {
-     Write-Host "Enabling Lock screen..."
+     DisplayOut "Enabling Lock screen..." 11 0
      Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreen" -ErrorAction SilentlyContinue
 } ElseIf ($LockScreen -eq 2) {
-     Write-Host "Disabling Lock screen..."
+     DisplayOut "Disabling Lock screen..." 12 0
      If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization")) {
          New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" | Out-Null
      }
@@ -1660,10 +1725,10 @@ If ($LockScreen -eq 1) {
 
 # Lock screen (Anniversary Update workaround) - Applicable to RS1 or newer
 If ($LockScreenAlt -eq 1) {
-     Write-Host "Enabling Lock screen (removing scheduler workaround)..."
+     DisplayOut "Enabling Lock screen (removing scheduler workaround)..." 11 0
      Unregister-ScheduledTask -TaskName "Disable LockScreen" -Confirm:$false -ErrorAction SilentlyContinue
 } ElseIf ($LockScreenAlt -eq 2) {
-     Write-Host "Disabling Lock screen using scheduler workaround..."
+     DisplayOut "Disabling Lock screen using scheduler workaround..." 12 0
      $service = New-Object -com Schedule.Service
      $service.Connect()
      $task = $service.NewTask(0)
@@ -1679,19 +1744,19 @@ If ($LockScreenAlt -eq 1) {
 
 # Power Menu on Lock Screen
 If ($PowerMenuLockScreen -eq 1) {
-     Write-Host "Showing Power Menu on Lock Screen..."
+     DisplayOut "Showing Power Menu on Lock Screen..." 11 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "shutdownwithoutlogon" -Type DWord -Value 1
 } ElseIf ($PowerMenuLockScreen -eq 2) {
-     Write-Host "Hiding Power Menu on Lock Screen..."
+     DisplayOut "Hiding Power Menu on Lock Screen..." 12 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "shutdownwithoutlogon" -Type DWord -Value 0
 }
 
 # Camera at Lockscreen
 If ($CameraOnLockscreen -eq 1) {
-     Write-Host "Enabling Camera at Lockscreen..."
+     DisplayOut "Enabling Camera at Lockscreen..." 11 0
      Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreenCamera" -ErrorAction SilentlyContinue
 } ElseIf ($CameraOnLockscreen -eq 2) {
-     Write-Host "Disabling Camera at Lockscreen..."
+     DisplayOut "Disabling Camera at Lockscreen..." 12 0
      If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization")) {
          New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" | Out-Null
      }
@@ -1706,16 +1771,19 @@ If ($CameraOnLockscreen -eq 1) {
 # Misc Items -Start
 ##########
 
-Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
-Write-Host "Misc Items" -ForegroundColor Yellow -BackgroundColor Black 
+DisplayOut ""
+DisplayOut "------------------" 14 0
+DisplayOut "-   Misc Items   -" 15 0
+DisplayOut "------------------" 14 0
+DisplayOut ""
 
 # Action Center
 If ($ActionCenter -eq 1) {
-     Write-Host "Enabling Action Center..."
+     DisplayOut "Enabling Action Center..." 11 0
      Remove-ItemProperty -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter" -ErrorAction SilentlyContinue
      Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -ErrorAction SilentlyContinue
 } ElseIf ($ActionCenter -eq 2) {
-     Write-Host "Disabling Action Center..."
+     DisplayOut "Disabling Action Center..." 12 0
      If (!(Test-Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer")) {
          New-Item -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" | Out-Null
      }
@@ -1725,58 +1793,58 @@ If ($ActionCenter -eq 1) {
 
 # Sticky keys prompt
 If ($StickyKeyPrompt -eq 1) {
-     Write-Host "Enabling Sticky keys prompt..."
+     DisplayOut "Enabling Sticky keys prompt..." 11 0
      Set-ItemProperty -Path "HKCU:\Control Panel\Accessibility\StickyKeys" -Name "Flags" -Type String -Value "510"
 } ElseIf ($StickyKeyPrompt -eq 2) {
-     Write-Host "Disabling Sticky keys prompt..."
+     DisplayOut "Disabling Sticky keys prompt..." 12 0
      Set-ItemProperty -Path "HKCU:\Control Panel\Accessibility\StickyKeys" -Name "Flags" -Type String -Value "506"
 }
 
 # NumLock after startup
 If ($NumblockOnStart -eq 1) {
-     Write-Host "Enabling NumLock after startup..."
+     DisplayOut "Enabling NumLock after startup..." 11 0
      Set-ItemProperty -Path "HKU:\.DEFAULT\Control Panel\Keyboard" -Name "InitialKeyboardIndicators" -Type DWord -Value 2147483650
 } ElseIf ($NumblockOnStart -eq 2) {
-     Write-Host "Disabling NumLock after startup..."
+     DisplayOut "Disabling NumLock after startup..." 12 0
      Set-ItemProperty -Path "HKU:\.DEFAULT\Control Panel\Keyboard" -Name "InitialKeyboardIndicators" -Type DWord -Value 2147483648
 }
 
 # Enable F8 boot menu options
 If ($F8BootMenu -eq 1) {
-     Write-Host "Enabling F8 boot menu options..."
+     DisplayOut "Enabling F8 boot menu options..." 11 0
      bcdedit /set `{current`} bootmenupolicy Legacy | Out-Null
 } ElseIf ($F8BootMenu -eq 2) {
-     Write-Host "Disabling F8 boot menu options..."
+     DisplayOut "Disabling F8 boot menu options..." 12 0
      bcdedit /set `{current`} bootmenupolicy Standard | Out-Null
 }
 
 # Remote UAC Local Account Token Filter
 If ($RemoteUACAcctToken -eq 1) {
-     Write-Host "Enabling Remote UAC Local Account Token Filter..."
+     DisplayOut "Enabling Remote UAC Local Account Token Filter..." 11 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "LocalAccountTokenFilterPolicy" -Type DWord -Value 1
 } ElseIf ($RemoteUACAcctToken -eq 2) {
-     Write-Host "Disabling  Remote UAC Local Account Token Filter..."
+     DisplayOut "Disabling  Remote UAC Local Account Token Filter..." 12 0
 	 Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "LocalAccountTokenFilterPolicy" -ErrorAction SilentlyContinue
 }
 
 # Hibernate Option
 If ($HibernatePower -eq 1) {
-     Write-Host "Enabling Hibernate Option..."
+     DisplayOut "Enabling Hibernate Option..." 11 0
      Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power" -Name "HibernateEnabled" -Type DWord -Value 1
 } ElseIf ($HibernatePower -eq 2) {
-     Write-Host "Disabling Hibernate Option..."
+     DisplayOut "Disabling Hibernate Option..." 12 0
      Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power" -Name "HibernateEnabled" -Type DWord -Value 0
 }
 
 # Sleep Option
 If ($SleepPower -eq 1) {
-     Write-Host "Enabling Sleep Option..."
+     DisplayOut "Enabling Sleep Option..." 11 0
 	 If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings")) {
           New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" | Out-Null
      }
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" -Name "ShowSleepOption" -Type DWord -Value 1
 } ElseIf ($SleepPower -eq 2) {
-     Write-Host "Disabling Sleep Option..."
+     DisplayOut "Disabling Sleep Option..." 12 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" -Name "ShowSleepOption" -Type DWord -Value 0
 }
 
@@ -1788,15 +1856,18 @@ If ($SleepPower -eq 1) {
 # Application Items -Start
 ##########
 
-Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
-Write-Host "Application Items" -ForegroundColor Yellow -BackgroundColor Black 
+DisplayOut ""
+DisplayOut "-------------------------" 14 0
+DisplayOut "-   Application Items   -" 15 0
+DisplayOut "-------------------------" 14 0
+DisplayOut ""
 
 # OneDrive
 If ($OneDrive -eq 1) {
-     Write-Host "Enabling OneDrive..."
+     DisplayOut "Enabling OneDrive..." 11 0
      Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" -Name "DisableFileSyncNGSC" -ErrorAction SilentlyContinue
 } ElseIf ($OneDrive -eq 2) {
-     Write-Host "Disabling OneDrive..."
+     DisplayOut "Disabling OneDrive..." 12 0
      If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive")) {
          New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" | Out-Null
      }
@@ -1805,7 +1876,7 @@ If ($OneDrive -eq 1) {
 
 # OneDrive Install
 If ($OneDriveInstall -eq 1) {
-     Write-Host "Installing OneDrive..."
+     DisplayOut "Installing OneDrive..." 11 0
 	 If($OSType -eq 64) {
          $onedriveS = "$env:SYSTEMROOT\SysWOW64\OneDriveSetup.exe"
 	 } Else {
@@ -1813,7 +1884,7 @@ If ($OneDriveInstall -eq 1) {
      }
      Start-Process $onedriveS -NoNewWindow
 } ElseIf ($OneDriveInstall -eq 2) {
-     Write-Host "Uninstalling OneDrive..."
+     DisplayOut "Uninstalling OneDrive..." 15 0
      Stop-Process -Name OneDrive -ErrorAction SilentlyContinue
      Start-Sleep -s 3
 	 If($OSType -eq 64) {
@@ -1837,11 +1908,11 @@ If ($OneDriveInstall -eq 1) {
 
 # Xbox DVR
 If ($XboxDVR -eq 1) {
-     Write-Host "Enabling Xbox DVR..."
+     DisplayOut "Enabling Xbox DVR..." 11 0
      Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Type DWord -Value 1
      Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR" -Name "AllowGameDVR" -ErrorAction SilentlyContinue
 } ElseIf ($XboxDVR -eq 2) {
-     Write-Host "Disabling Xbox DVR..."
+     DisplayOut "Disabling Xbox DVR..." 12 0
      Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Type DWord -Value 0
      If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR")) {
          New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR" | Out-Null
@@ -1851,30 +1922,30 @@ If ($XboxDVR -eq 1) {
 
 # Windows Media Player
 If ($MediaPlayer -eq 1) {
-     Write-Host "Installing Windows Media Player..."
+     DisplayOut "Installing Windows Media Player..." 11 0
      dism /online /Enable-Feature /FeatureName:MediaPlayback /Quiet /NoRestart
 } ElseIf ($MediaPlayer -eq 2) {
-     Write-Host "Uninstalling Windows Media Player..."
+     DisplayOut "Uninstalling Windows Media Player..." 14 0
      dism /online /Disable-Feature /FeatureName:MediaPlayback /Quiet /NoRestart
 }
 
 # Work Folders Client
 If ($WorkFolders -eq 1) {
-     Write-Host "Installing Work Folders Client..."
+     DisplayOut "Installing Work Folders Client..." 11 0
      dism /online /Enable-Feature /FeatureName:WorkFolders-Client /Quiet /NoRestart
 } ElseIf ($WorkFolders -eq 2) {
-     Write-Host "Uninstalling Work Folders Client..."
+     DisplayOut "Uninstalling Work Folders Client..." 14 0
      dism /online /Disable-Feature /FeatureName:WorkFolders-Client /Quiet /NoRestart
 }
 
 # Install Linux Subsystem - Applicable to RS1 or newer
 If ($LinuxSubsystem -eq 1) {
-     Write-Host "Installing Linux Subsystem..."
+     DisplayOut "Installing Linux Subsystem..." 11 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" -Name "AllowDevelopmentWithoutDevLicense" -Type DWord -Value 1
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" -Name "AllowAllTrustedApps" -Type DWord -Value 1
      dism /online /Enable-Feature /FeatureName:Microsoft-Windows-Subsystem-Linux /Quiet /NoRestart
 } ElseIf ($LinuxSubsystem -eq 2) {
-     Write-Host "Uninstalling Linux Subsystem..."
+     DisplayOut "Uninstalling Linux Subsystem..." 14 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" -Name "AllowDevelopmentWithoutDevLicense" -Type DWord -Value 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" -Name "AllowAllTrustedApps" -Type DWord -Value 0
      dism /online /Disable-Feature /FeatureName:Microsoft-Windows-Subsystem-Linux /Quiet /NoRestart
@@ -1888,20 +1959,26 @@ If ($LinuxSubsystem -eq 1) {
 # Metro App Items -Start
 ##########
 
-Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
-Write-Host "Metro App Items" -ForegroundColor Yellow -BackgroundColor Black 
+DisplayOut ""
+DisplayOut "-----------------------" 14 0
+DisplayOut "-   Metro App Items   -" 15 0
+DisplayOut "-----------------------" 14 0
+DisplayOut ""
 
 # Default Microsoft applications (Bloatware)
 ForEach ($AppI in $APPS_AppsInstall) {
-     Write-Host "Installing "$AppI"..."
+     $APPIDisplay = "Installing "+$AppI+"..."
+     DisplayOut $APPIDisplay 11 0
      Add-AppxPackage -DisableDevelopmentMode -Register "$($(Get-AppXPackage -AllUsers "$AppI").InstallLocation)\AppXManifest.xml"
 }
 ForEach ($AppH in $APPS_AppsHide) {
-     Write-Host "Hiding "$AppH"..."
+     $APPHDisplay = "Installing "$AppH"..."
+     DisplayOut $APPHDisplay 12 0
      Get-AppxPackage $AppH | Remove-AppxPackage
 }
 ForEach ($AppU in $APPS_AppsUninstall) {
-     Write-Host "Uninstalling "$AppU"..."
+     $APPUDisplay = "Installing "+$AppU+"..."
+     DisplayOut $APPUDisplay 14 0
      $PackageFullName = (Get-AppxPackage $AppU).PackageFullName
      $ProPackageFullName = (Get-AppxProvisionedPackage -online | where {$_.Displayname -eq $AppU}).PackageName
      
@@ -1928,7 +2005,7 @@ ForEach ($AppU in $APPS_AppsUninstall) {
 # Set-ItemProperty : Cannot convert value "00918b73" to type "System.UInt32". Error: "Input string was not in a correctformat."
 If ($Disabled -eq 1) {
 If ($MoreColorsTitle -eq 1) {
-     Write-Host "Enabling More Tile Colors..."
+     DisplayOut "Enabling More Tile Colors..." 11 0
 	 If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\")) {
 	    New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\" | Out-Null
 	 }
@@ -1952,7 +2029,7 @@ If ($MoreColorsTitle -eq 1) {
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\3\Theme0" -Name "Color" -Type DWord -Value "0085bd37"
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\3\Theme1" -Name "Color" -Type DWord -Value "0085bd37"
 } ElseIf ($MoreColorsTitle -eq 2) {
-     Write-Host "Disabling More Tile Colors..."
+     DisplayOut "Disabling More Tile Colors..." 12 0
      Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents" -Force -Recurse -ErrorAction SilentlyContinue
 }
 }
