@@ -1,8 +1,11 @@
 -----------------------------------------------------------------------------------
 3.5-Mod (02-??-2017)
 
-Reordered some items
+Re-ordered some items
 Added Write output when at Each different category
+Added Color for Some outputs
+Ability to Disable Output
+Ability to Disable Color on output
 
 -----------------------------------------------------------------------------------
 3.4-Mod (02-03-2017)
