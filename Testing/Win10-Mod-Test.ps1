@@ -62,15 +62,17 @@ Example: Win10-Mod.ps1 -Set Set1
 ----------------------------------------------------------------------------
 #>
 
-## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-## !!!!!!!!!            DO NOT TOUCH NEXT LINE          !!!!!!!!!
-Param([alias("Set")] [string] $SettingImp)
+## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+## !!!!!!!!!             DO NOT TOUCH NEXT LINE             !!!!!!!!!
+<# !!!!!!!!!#> Param([alias("Set")] [string] $SettingImp) ##!!!!!!!!!
+## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 # --------------------------------------------------------------------------
 
-## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-## !!!!!!!!!          SAFE TO EDIT VALUES BELLOW        !!!!!!!!!
-## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+## !!!!!!!!!               SAFE TO EDIT VALUES              !!!!!!!!!
+## !!!!!!!!!                  -- START --                   !!!!!!!!!
+## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 # Edit values (Option) to your preferance
 # Change to an Option not listed will Skip the Function/Setting
@@ -80,12 +82,16 @@ Param([alias("Set")] [string] $SettingImp)
 # Can ONLY create 1 per 24 hours with this script (Will give error if it tries)
 $CreateRestorePoint = 0    #0-Skip, 1-Create --(Restore point before script runs)
 
+#Skips Term of Use
+$Term_of_Use = 1           #1-See, Anything else = Accepts Term of Use
+
+#Restart when done? (I recommend restarting when done)
+$Restart = 1               #0-Dont Restart, 1-Restart
+
 # Windows Default for ALL Settings 
-# But $OneDriveInstall and All Under Apps Will run with your current settings
 $WinDefault = 2            #1-Yes*, 2-No 
 # IF 1 is set then Everything Other than the following will use the Default Win Settings
-# $OneDriveInstall, ALL Apps, $Term_of_Use, and $Restart (These will use what you set)
-
+# ALL Values Above this one, All Metro Apps and $OneDriveInstall  (These will use what you set)
 
 # Privacy Settings
 # Function  = Option       #Choices (* Indicates Windows Default)
@@ -101,9 +107,11 @@ $ErrorReporting = 0        #0-Skip, 1-Enable*, 2-Disable
 $AutoLoggerFile = 0        #0-Skip, 1-Enable*, 2-Disable
 $DiagTrack = 0             #0-Skip, 1-Enable*, 2-Disable
 $WAPPush = 0               #0-Skip, 1-Enable*, 2-Disable --(type of text message that contains a direct link to a particular Web page)
+$AppAutoDownload = 0       #0-Skip, 1-Enable*, 2-Disable
 
 # Windows Update
 # Function  = Option       #Choices (* Indicates Windows Default)
+$CheckForWinUpdate = 0     #0-Skip, 1-Enable*, 2-Disable
 $WinUpdateType = 0         #0-Skip, 1-Notify, 2-Auto DL, 3-Auto DL+Install*, 4-Local admin chose --(May not work with Home version)
 $WinUpdateDownload = 0     #0-Skip, 1-P2P*, 2-Local Only, 3-Disable
 $UpdateMSRT = 0            #0-Skip, 1-Enable*, 2-Disable --(Malware Software Removal Tool)
@@ -151,11 +159,11 @@ $StartMenuWebSearch = 0    #0-Skip, 1-Enable*, 2-Disable
 $StartSuggestions = 0      #0-Skip, 1-Enable*, 2-Disable --(The Suggested Apps in Start Menu)
 $MostUsedAppStartMenu = 0  #0-Skip, 1-Show*, 2-Hide
 $RecentItemsFrequent = 0   #0-Skip, 1-Enable*, 2-Disable --(In Start Menu)
-#Disabled Till Fixed
-#$MoreColorsTitle = 0       #0-Skip, 1-Enable, 2-Disable* --(Adds more Colors to pick from for the Title Colors)
 
 #Explorer Items
 # Function  = Option       #Choices (* Indicates Windows Default)
+$Autoplay = 0              #0-Skip, 1-Enable*, 2-Disable
+$Autorun = 0               #0-Skip, 1-Enable*, 2-Disable
 $PidInTitleBar = 0         #0-Skip, 1-Show, 2-Hide* --(PID = Processor ID)
 $AeroSnap = 0              #0-Skip, 1-Enable*, 2-Disable --(Allows you to quickly resize the window you’re currently using)
 $AeroShake = 0             #0-Skip, 1-Enable*, 2-Disable
@@ -177,31 +185,27 @@ $MusicIconInThisPC = 0     #0-Skip, 1-Show*, 2-Hide
 $PicturesIconInThisPC = 0  #0-Skip, 1-Show*, 2-Hide
 $VideosIconInThisPC = 0    #0-Skip, 1-Show*, 2-Hide
 
-# Photo Viewer
+# Photo Viewer Settings
 # Function  = Option       #Choices (* Indicates Windows Default)
 $PVFileAssociation = 0     #0-Skip, 1-Enable, 2-Disable*
 $PVOpenWithMenu = 0        #0-Skip, 1-Enable, 2-Disable*
 
-#Misc items
-# Function  = Option       #Choices (* Indicates Windows Default)
-$AppAutoDownload = 0       #0-Skip, 1-Enable*, 2-Disable
-$ActionCenter = 0          #0-Skip, 1-Enable*, 2-Disable
-$Autoplay = 0              #0-Skip, 1-Enable*, 2-Disable
-$Autorun = 0               #0-Skip, 1-Enable*, 2-Disable
-$StickyKeyPrompt = 0       #0-Skip, 1-Enable*, 2-Disable
-$NumblockOnStart = 0       #0-Skip, 1-Enable, 2-Disable*
-$F8BootMenu = 0            #0-Skip, 1-Enable, 2-Disable*
-$CheckForWinUpdate = 0     #0-Skip, 1-Enable*, 2-Disable
-$RemoteUACAcctToken = 0    #0-Skip, 1-Enable, 2-Disable*
-
 #Lock Screen
 # Function  = Option       #Choices (* Indicates Windows Default)
-$CameraOnLockScreen = 0    #0-Skip, 1-Enable*, 2-Disable
 $LockScreen = 0            #0-Skip, 1-Enable*, 2-Disable (Pre-Anniversary Update)
 $LockScreenAlt = 0         #0-Skip, 1-Enable*, 2-Disable (Anniversary Update workaround) 
 $PowerMenuLockScreen = 0   #0-Skip, 1-Show*, 2-Hide
+$CameraOnLockScreen = 0    #0-Skip, 1-Enable*, 2-Disable
 $HibernatePower = 1        #0-Skip, 1-Enable, 2-Disable --(Hibernate Power Option)
 $SleepPower = 1            #0-Skip, 1-Enable, 2-Disable --(Sleep Power Option)
+
+#Misc items
+# Function  = Option       #Choices (* Indicates Windows Default)
+$ActionCenter = 0          #0-Skip, 1-Enable*, 2-Disable
+$StickyKeyPrompt = 0       #0-Skip, 1-Enable*, 2-Disable
+$NumblockOnStart = 0       #0-Skip, 1-Enable, 2-Disable*
+$F8BootMenu = 0            #0-Skip, 1-Enable, 2-Disable*
+$RemoteUACAcctToken = 0    #0-Skip, 1-Enable, 2-Disable*
 
 # Remove unwanted applications
 # Function  = Option       #Choices (* Indicates Windows Default)
@@ -211,6 +215,20 @@ $XboxDVR = 0               #0-Skip, 1-Enable*, 2-Disable
 $MediaPlayer = 0           #0-Skip, 1-Installed*, 2-Uninstall
 $WorkFolders = 0           #0-Skip, 1-Installed*, 2-Uninstall
 $LinuxSubsystem = 0        #0-Skip, 1-Installed, 2-Uninstall* (Anniversary Update)
+
+#Disabled Items (Till Fixed)
+#$MoreColorsTitle = 0       #0-Skip, 1-Enable, 2-Disable* --(Adds more Colors to pick from for the Title Colors)
+
+
+# Custom List of App to Install, Hide or Uninstall
+# I dunno if you can Install random apps with this script
+# Cant Import these ATM
+$APPS_AppsInstall = @()    # Apps to Install
+$APPS_AppsHide = @()       # Apps to Hide
+$APPS_AppsUninstall = @()  # Apps to Uninstall
+#$APPS_Example = @('Somecompany.Appname1','TerribleCompany.Appname2','SomeCrap.Appname3')
+# To get list of Packages Installed
+# DISM /Online /Get-ProvisionedAppxPackages | Select-string Packagename
 
 <# 
 App Uninstall will remove them to reinstall you can
@@ -223,7 +241,7 @@ dism /Unmount-Image /Discard /MountDir:C:\Mnt
 Remove-Item -Path C:\Mnt -Recurse
 #>
 
-# Apps
+# Metro Apps
 # By Default Most of these are installed
 # Function  = Option       # 0-Skip, 1-Unhide, 2- Hide, 3-Uninstall (!!Read Note Above)
 $APP_3DBuilder=0           # '3DBuilder' app
@@ -280,35 +298,23 @@ $APP_XboxApp=0             # 'Xbox' app
 $APP_ZuneMusic=0           # 'Groove Music' app
 $APP_ZuneVideo=0           # 'Groove Music' app
 
-# Custom List of App to Install, Hide or Uninstall
-# I dunno if you can Install random apps with this script
-# Cant Import these ATM
-$APPS_AppsInstall = @()    # Apps to Install
-$APPS_AppsHide = @()       # Apps to Hide
-$APPS_AppsUninstall = @()  # Apps to Uninstall
-#$APPS_Example = @('Somecompany.Appname1','TerribleCompany.Appname2','SomeCrap.Appname3')
-# To get list of Packages Installed
-# DISM /Online /Get-ProvisionedAppxPackages | Select-string Packagename
 
-#Skips Term of Use
-$Term_of_Use = 1           #1-See, Anything else = Accepts Term of Use
-
-#Restart when done? (I recommend restarting when done)
-$Restart = 1               #0-Dont Restart, 1-Restart
+## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+## !!!!!!!!!               SAFE TO EDIT VALUES              !!!!!!!!!
+## !!!!!!!!!                   -- END --                    !!!!!!!!!
+## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 # --------------------------------------------------------------------------
 
-## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-## !!!!!!!!!                   CAUTION                  !!!!!!!!!
-## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-## Do not Edit past this point unless you know what you are doing
+## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+## !!!!!!!!!                     CAUTION                    !!!!!!!!!
+## !!!!!!!!!          DO NOT EDIT PAST THIS POINT           !!!!!!!!!
+## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 ##########
-# Needed Stuff
+# Needed Variable -Start
 ##########
-
-$CustomSet = 0
 
 $AppsList = @(
     'Microsoft.3DBuilder',
@@ -366,8 +372,14 @@ $AppsList = @(
     'Microsoft.ZuneVideo'
 )
 
+$CustomSet = 0
+
 ##########
-# Script Start?
+# Needed Variable -End
+##########
+
+##########
+# Script Start -Start
 ##########
 
 # Ask for elevated permissions if required
@@ -460,7 +472,11 @@ If ($CreateRestorePoint -eq 1) {
 }
 
 ##########
-# Various Settings
+# Script Start -End
+##########
+
+##########
+# Pre-Made Settings -Start
 ##########
 
 # Windows Default Setting
@@ -697,8 +713,15 @@ If($CustomSet -eq 1){
 }
 
 ##########
-# Privacy Settings
+# Pre-Made Settings -End
 ##########
+
+##########
+# Privacy Settings -Start
+##########
+
+Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
+Write-Host "Privacy Settings" -ForegroundColor Yellow -BackgroundColor Black 
 
 # Telemetry
 If ($Telemetry -eq 1) {
@@ -711,6 +734,15 @@ If ($Telemetry -eq 1) {
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0
+
+	 #check these paths for telemetry
+<#
+"hkey_local_machine\software\microsoft\wcmsvc\wifinetworkmanager"
+"hkey_local_machine\software\microsoft\windows\currentversion\windowsupdate\auto update"
+"hkey_local_machine\software\microsoft\windows defender\spynet"
+"hkey_local_machine\software\policies\microsoft\windows\gwx"
+"hkey_local_machine\software\policies\microsoft\windows\skydrive"
+#>
 }
 
 # Wi-Fi Sense
@@ -736,45 +768,6 @@ If ($SmartScreen -eq 1) {
      Write-Host "Disabling SmartScreen Filter..."
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "SmartScreenEnabled" -Type String -Value "Off"
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppHost" -Name "EnableWebContentEvaluation" -Type DWord -Value 0
-}
-
-# Web Search in Start Menu
-If ($StartMenuWebSearch -eq 1) {
-     Write-Host "Enabling Bing Search in Start Menu..."
-     Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "BingSearchEnabled" -ErrorAction SilentlyContinue
-     Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "DisableWebSearch" -ErrorAction SilentlyContinue
-} ElseIf ($StartMenuWebSearch -eq 2) {
-     Write-Host "Disabling Bing Search in Start Menu..."
-     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "BingSearchEnabled" -Type DWord -Value 0
-     If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search")) {
-         New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Force | Out-Null
-     }
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "DisableWebSearch" -Type DWord -Value 1
-}
-
-# Start Menu suggestions
-If ($StartSuggestions -eq 1) {
-     Write-Host "Enabling Start Menu suggestions..."
-     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SystemPaneSuggestionsEnabled" -Type DWord -Value 1
-     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SilentInstalledAppsEnabled" -Type DWord -Value 1
-} ElseIf ($StartSuggestions -eq 2) {
-     Write-Host "Disabling Start Menu suggestions..."
-     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SystemPaneSuggestionsEnabled" -Type DWord -Value 0
-     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SilentInstalledAppsEnabled" -Type DWord -Value 0
-}
-
-# App Auto Download
-If ($AppAutoDownload -eq 1) {
-     Write-Host "Enable App Auto Download..."
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsStore\WindowsUpdate" -Name "AutoDownload" -Type DWord -Value 0
-     Remove-ItemProperty  -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent" -Name "DisableWindowsConsumerFeatures"  -ErrorAction SilentlyContinue
-} ElseIf ($AppAutoDownload -eq 2) {
-     Write-Host "Disable App Auto Download..."
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsStore\WindowsUpdate" -Name "AutoDownload" -Type DWord -Value 2
-     If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent")) {
-         New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent" -Force | Out-Null
-     }
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent" -Name "DisableWindowsConsumerFeatures" -Type DWord -Value 1
 }
 
 # Location Tracking
@@ -848,7 +841,6 @@ If ($CortanaSearch -eq 1) {
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana" -Type DWord -Value 0
 }
 
-
 # Error Reporting
 If ($ErrorReporting -eq 1) {
      Write-Host "Enabling Error reporting..."
@@ -856,27 +848,6 @@ If ($ErrorReporting -eq 1) {
 } ElseIf ($ErrorReporting -eq 2) {
      Write-Host "Disabling Error reporting..."
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\Windows Error Reporting" -Name "Disabled" -Type DWord -Value 1
-}
-
-# Windows Update P2P
-If ($WinUpdateDownload -eq 1) {
-     Write-Host "Unrestricting Windows Update P2P to internet..."
-     Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config" -Name "DODownloadMode" -ErrorAction SilentlyContinue
-     Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization" -Name "SystemSettingsDownloadMode" -ErrorAction SilentlyContinue
-} ElseIf ($WinUpdateDownload -eq 2) {
-     Write-Host "Restricting Windows Update P2P only to local network..."
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config" -Name "DODownloadMode" -Type DWord -Value 1
-     If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization")) {
-         New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization" | Out-Null
-     }
-     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization" -Name "SystemSettingsDownloadMode" -Type DWord -Value 3
-} ElseIf ($WinUpdateDownload -eq 3) {
-     Write-Host "Disabling Windows Update P2P..."
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config" -Name "DODownloadMode" -Type DWord -Value 0
-     If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization")) {
-         New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization" | Out-Null
-     }
-     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization" -Name "SystemSettingsDownloadMode" -Type DWord -Value 3
 }
 
 # AutoLogger file and restrict directory
@@ -916,10 +887,91 @@ If ($WAPPush -eq 1) {
      Set-Service "dmwappushservice" -StartupType Disabled
 }
 
+# App Auto Download
+If ($AppAutoDownload -eq 1) {
+     Write-Host "Enable App Auto Download..."
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsStore\WindowsUpdate" -Name "AutoDownload" -Type DWord -Value 0
+     Remove-ItemProperty  -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent" -Name "DisableWindowsConsumerFeatures"  -ErrorAction SilentlyContinue
+} ElseIf ($AppAutoDownload -eq 2) {
+     Write-Host "Disable App Auto Download..."
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsStore\WindowsUpdate" -Name "AutoDownload" -Type DWord -Value 2
+     If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent")) {
+         New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent" -Force | Out-Null
+     }
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent" -Name "DisableWindowsConsumerFeatures" -Type DWord -Value 1
+}
 
 ##########
-# Service Tweaks
+# Privacy Settings -End
 ##########
+
+##########
+# Windows Update -Start
+##########
+
+Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
+Write-Host "Windows Update Settings" -ForegroundColor Yellow -BackgroundColor Black 
+
+# Check for Windows Update
+If ($CheckForWinUpdate -eq 1) {
+     Write-Host "Enabling Check for Windows Update..."
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "SetDisableUXWUAccess" -Type DWord -Value 0
+} ElseIf ($CheckForWinUpdate -eq 2) {
+     Write-Host "Disabling Check for Windows Update..."
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "SetDisableUXWUAccess" -Type DWord -Value 1
+}
+
+# Windows Update Check Type
+If ($WinUpdateType -ge 1 -and $WinUpdateType -le 4) {
+     If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU")) {
+         New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" | Out-Null
+     }
+	 If ($WinUpdateType -eq 1){
+	     Write-Host "Notify for windows update download and notify for install..."
+	     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 2
+	 } ElseIf ($WinUpdateType -eq 2){
+	     Write-Host "Auto Download for windows update download and notify for install..."
+	     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 3
+	 } ElseIf ($WinUpdateType -eq 3){
+	     Write-Host "Auto Download for windows update download and schedule for install..."
+	     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 4
+	 } ElseIf ($WinUpdateType -eq 4){
+	     Write-Host "Windows update allow local admin to choose setting..."
+	     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 5
+	 }
+}
+
+# Windows Update P2P
+If ($WinUpdateDownload -eq 1) {
+     Write-Host "Unrestricting Windows Update P2P to internet..."
+     Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config" -Name "DODownloadMode" -ErrorAction SilentlyContinue
+     Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization" -Name "SystemSettingsDownloadMode" -ErrorAction SilentlyContinue
+} ElseIf ($WinUpdateDownload -eq 2) {
+     Write-Host "Restricting Windows Update P2P only to local network..."
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config" -Name "DODownloadMode" -Type DWord -Value 1
+     If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization")) {
+         New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization" | Out-Null
+     }
+     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization" -Name "SystemSettingsDownloadMode" -Type DWord -Value 3
+} ElseIf ($WinUpdateDownload -eq 3) {
+     Write-Host "Disabling Windows Update P2P..."
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config" -Name "DODownloadMode" -Type DWord -Value 0
+     If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization")) {
+         New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization" | Out-Null
+     }
+     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization" -Name "SystemSettingsDownloadMode" -Type DWord -Value 3
+}
+
+##########
+# Windows Update -End
+##########
+
+##########
+# Service Tweaks -Start
+##########
+
+Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
+Write-Host "Service Tweaks" -ForegroundColor Yellow -BackgroundColor Black 
 
 # UAC level
 If ($UAC -eq 1) {
@@ -974,46 +1026,6 @@ If ($WinDefender -eq 1) {
      Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "WindowsDefender" -ErrorAction SilentlyContinue
 }
 
-# Offering of Malicious Software Removal Tool through Windows Update
-If ($UpdateMSRT -eq 1) {
-     Write-Host "Enabling Malicious Software Removal Tool offering..."
-     Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\MRT" -Name "DontOfferThroughWUAU" -ErrorAction SilentlyContinue
-} ElseIf ($UpdateMSRT -eq 2) {
-     Write-Host "Disabling Malicious Software Removal Tool offering..."
-     If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\MRT")) {
-         New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\MRT" | Out-Null
-     }
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\MRT" -Name "DontOfferThroughWUAU" -Type DWord -Value 1
-}
-
-# Offering of drivers through Windows Update
-If ($UpdateDriver -eq 1) {
-     Write-Host "Enabling driver offering through Windows Update..."
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching" -Name "SearchOrderConfig" -Type DWord -Value 1
-     Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "ExcludeWUDriversInQualityUpdate" -ErrorAction SilentlyContinue
-} ElseIf ($UpdateDriver -eq 2) {
-     Write-Host "Disabling driver offering through Windows Update..."
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching" -Name "SearchOrderConfig" -Type DWord -Value 0
-     If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate")) {
-         New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" | Out-Null
-     }
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "ExcludeWUDriversInQualityUpdate" -Type DWord -Value 1
-}
-
-# Windows Update automatic restart
-If ($RestartOnUpdate -eq 1) {
-     Write-Host "Enabling Windows Update automatic restart..."
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings" -Name "UxOption" -Type DWord -Value 0
-     Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "NoAutoRebootWithLoggedOnUsers" -ErrorAction SilentlyContinue
-} ElseIf ($RestartOnUpdate -eq 2) {
-     Write-Host "Disabling Windows Update automatic restart..."
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings" -Name "UxOption" -Type DWord -Value 1
-     If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU")) {
-         New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Force | Out-Null
-     }
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "NoAutoRebootWithLoggedOnUsers" -Type DWord -Value 1
-}
-
 # Home Groups services
 If ($HomeGroups -eq 1) {
      Write-Host "Starting and enabling Home Groups services..."
@@ -1048,62 +1060,16 @@ If ($RemoteDesktop -eq 1) {
      Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" -Name "UserAuthentication" -Type DWord -Value 1
 }
 
+##########
+# Service Tweaks -End
+##########
 
 ##########
-# UI Tweaks
+# Context Menu Items -Start
 ##########
 
-# More Tile Colors
-If ($Disabled -eq 1) {
-If ($MoreColorsTitle -eq 1) {
-     Write-Host "Enabling More Tile Colors..."
-	 If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\")) {
-	    New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\" | Out-Null
-	 }
-	 for($i=0; $i -ne 4; $i++) {
-	 	 If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\$i\")) {
-		 	New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\$i\" | Out-Null
-	     }
-         for($a=0; $a -ne 2; $a++) {
-	         If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\$i\Theme$a")) {
-	             New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\$i\Theme$a" | Out-Null
-	         } 
-	     }
-	 }
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\0\Theme0" -Name "Color" -Type DWord -Value "00918b73"
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\0\Theme1" -Name "Color" -Type DWord -Value "00a68e5e"
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\1\Theme0" -Name "Color" -Type DWord -Value "00a44817"
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\1\Theme1" -Name "Color" -Type DWord -Value "00618a28"
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\2\Theme0" -Name "Color" -Type DWord -Value "00bab4ab"
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\2\Theme1" -Name "Color" -Type DWord -Value "00bab4ab"
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\3\Theme0" -Name "Color" -Type DWord -Value "0085bd37"
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\3\Theme1" -Name "Color" -Type DWord -Value "0085bd37"
-} ElseIf ($MoreColorsTitle -eq 2) {
-     Write-Host "Disabling More Tile Colors..."
-     Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents" -Force -Recurse -ErrorAction SilentlyContinue
-}
-}
-
-# Process ID on Title Bar
-If ($PidInTitleBar -eq 1) {
-     Write-Host "Showing Process ID on Title Bar..."
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowPidInTitle" -Type DWord -Value 1
-} ElseIf ($PidInTitleBar -eq 2) {
-     Write-Host "Hiding Process ID on Title Bar..."
-     Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowPidInTitle" -ErrorAction SilentlyContinue
-}
-
-# Camera at Lockscreen
-If ($CameraOnLockscreen -eq 1) {
-     Write-Host "Enabling Camera at Lockscreen..."
-     Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreenCamera" -ErrorAction SilentlyContinue
-} ElseIf ($CameraOnLockscreen -eq 2) {
-     Write-Host "Disabling Camera at Lockscreen..."
-     If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization")) {
-         New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" | Out-Null
-     }
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreenCamera" -Type DWord -Value 1
-}
+Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
+Write-Host "Context Menu Items" -ForegroundColor Yellow -BackgroundColor Black 
 
 # Cast to Device Context
 If ($CastToDevice -eq 1) {
@@ -1198,26 +1164,16 @@ If ($SendTo -eq 1) {
 	 }
 }
 
-# Aero Snap
-If ($AeroSnap -eq 1) {
-     Write-Host "Enabling Aero Snap..."
-     Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "WindowArrangementActive" -Type DWord -Value 1
-} ElseIf ($AeroSnap -eq 2) {
-     Write-Host "Disabling Aero Snap..."
-     Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "WindowArrangementActive" -Type DWord -Value 0
-}
+##########
+# Context Menu Items -End
+##########
 
-# Aero Shake
-If ($AeroShake -eq 1) {
-     Write-Host "Enabling Aero Shake..."
-     Remove-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" -Name "NoWindowMinimizingShortcuts" -ErrorAction SilentlyContinue
-} ElseIf ($AeroShake -eq 2) {
-     Write-Host "Disabling Aero Shake..."
-     If (!(Test-Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer")) {
-         New-Item -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" | Out-Null
-     }
-     Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" -Name "NoWindowMinimizingShortcuts" -Type DWord -Value 1
-}
+##########
+# Task Bar Items -Start
+##########
+
+Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
+Write-Host "Task Bar Items" -ForegroundColor Yellow -BackgroundColor Black 
 
 # Battery UI Bar
 If ($BatteryUIBar -eq 1) {
@@ -1253,81 +1209,6 @@ If ($VolumeControlBar -eq 1) {
           New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\MTCUVC" | Out-Null
      }
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\MTCUVC" -Name "EnableMtcUvc" -Type DWord -Value 0
-}
-
-# Action Center
-If ($ActionCenter -eq 1) {
-     Write-Host "Enabling Action Center..."
-     Remove-ItemProperty -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter" -ErrorAction SilentlyContinue
-     Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -ErrorAction SilentlyContinue
-} ElseIf ($ActionCenter -eq 2) {
-     Write-Host "Disabling Action Center..."
-     If (!(Test-Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer")) {
-         New-Item -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" | Out-Null
-     }
-     Set-ItemProperty -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter" -Type DWord -Value 1
-     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Type DWord -Value 0
-}
-
-# Lock screen
-If ($LockScreen -eq 1) {
-     Write-Host "Enabling Lock screen..."
-     Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreen" -ErrorAction SilentlyContinue
-} ElseIf ($LockScreen -eq 2) {
-     Write-Host "Disabling Lock screen..."
-     If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization")) {
-         New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" | Out-Null
-     }
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreen" -Type DWord -Value 1
-} 
-
-# Lock screen (Anniversary Update workaround) - Applicable to RS1 or newer
-If ($LockScreenAlt -eq 1) {
-     Write-Host "Enabling Lock screen (removing scheduler workaround)..."
-     Unregister-ScheduledTask -TaskName "Disable LockScreen" -Confirm:$false -ErrorAction SilentlyContinue
-} ElseIf ($LockScreenAlt -eq 2) {
-     Write-Host "Disabling Lock screen using scheduler workaround..."
-     $service = New-Object -com Schedule.Service
-     $service.Connect()
-     $task = $service.NewTask(0)
-     $task.Settings.DisallowStartIfOnBatteries = $false
-     $trigger = $task.Triggers.Create(9)
-     $trigger = $task.Triggers.Create(11)
-     $trigger.StateChange = 8
-     $action = $task.Actions.Create(0)
-     $action.Path = "reg.exe"
-     $action.Arguments = "add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI\SessionData /t REG_DWORD /v AllowLockScreen /d 0 /f"
-     $service.GetFolder("\").RegisterTaskDefinition("Disable LockScreen", $task, 6, "NT AUTHORITY\SYSTEM", $null, 4) | Out-Null
-}
-
-# Autoplay
-If ($Autoplay -eq 1) {
-     Write-Host "Enabling Autoplay..."
-     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers" -Name "DisableAutoplay" -Type DWord -Value 0
-} ElseIf ($Autoplay -eq 2) {
-     Write-Host "Disabling Autoplay..."
-     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers" -Name "DisableAutoplay" -Type DWord -Value 1
-}
-
-# Autorun for all drives
-If ($Autorun -eq 1) {
-     Write-Host "Enabling Autorun for all drives..."
-     Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun" -ErrorAction SilentlyContinue
-} ElseIf ($Autorun -eq 2) {
-     Write-Host "Disabling Autorun for all drives..."
-     If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer")) {
-         New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" | Out-Null
-     }
-     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun" -Type DWord -Value 255
-}
-
-# Sticky keys prompt
-If ($StickyKeyPrompt -eq 1) {
-     Write-Host "Enabling Sticky keys prompt..."
-     Set-ItemProperty -Path "HKCU:\Control Panel\Accessibility\StickyKeys" -Name "Flags" -Type String -Value "510"
-} ElseIf ($StickyKeyPrompt -eq 2) {
-     Write-Host "Disabling Sticky keys prompt..."
-     Set-ItemProperty -Path "HKCU:\Control Panel\Accessibility\StickyKeys" -Name "Flags" -Type String -Value "506"
 }
 
 # Taskbar Search button / box
@@ -1396,6 +1277,128 @@ If ($LastActiveClick -eq 1) {
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LastActiveClick" -Type DWord -Value 0
 }
 
+# Taskbar on multiple displays
+If ($TaskBarOnMultiDisplay -eq 1) {
+     Write-Host "Showing Taskbar on multiple displays..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarEnabled" -Type DWord -Value 1
+} ElseIf ($TaskBarOnMultiDisplay -eq 2) {
+     Write-Host "Hiding Taskbar on multiple displays.."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarEnabled" -Type DWord -Value 0
+}
+
+# Taskbar on multiple displays
+If ($TaskbarButtOnDisplay -eq 1) {
+     Write-Host "Showing Taskbar buttons on all taskbars..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarMode" -Type DWord -Value 0
+} ElseIf ($TaskbarButtOnDisplay -eq 2) {
+     Write-Host "Showing Taskbar buttons on taskbar where window is open..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarMode" -Type DWord -Value 2
+} ElseIf ($TaskbarButtOnDisplay -eq 3) {
+     Write-Host "Showing Taskbar buttons on main taskbar and where window is open..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarMode" -Type DWord -Value 1
+}
+
+##########
+# Task Bar Items -End
+##########
+
+##########
+# Star Menu Items -Start
+##########
+
+Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
+Write-Host "Star Menu Items" -ForegroundColor Yellow -BackgroundColor Black 
+
+# Web Search in Start Menu
+If ($StartMenuWebSearch -eq 1) {
+     Write-Host "Enabling Bing Search in Start Menu..."
+     Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "BingSearchEnabled" -ErrorAction SilentlyContinue
+     Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "DisableWebSearch" -ErrorAction SilentlyContinue
+} ElseIf ($StartMenuWebSearch -eq 2) {
+     Write-Host "Disabling Bing Search in Start Menu..."
+     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "BingSearchEnabled" -Type DWord -Value 0
+     If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search")) {
+         New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Force | Out-Null
+     }
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "DisableWebSearch" -Type DWord -Value 1
+}
+
+# Start Menu suggestions
+If ($StartSuggestions -eq 1) {
+     Write-Host "Enabling Start Menu suggestions..."
+     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SystemPaneSuggestionsEnabled" -Type DWord -Value 1
+     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SilentInstalledAppsEnabled" -Type DWord -Value 1
+} ElseIf ($StartSuggestions -eq 2) {
+     Write-Host "Disabling Start Menu suggestions..."
+     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SystemPaneSuggestionsEnabled" -Type DWord -Value 0
+     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SilentInstalledAppsEnabled" -Type DWord -Value 0
+}
+
+# Most used apps in Start menu
+If ($MostUsedAppStartMenu -eq 1) {
+     Write-Host "Showing Most used apps in Start Menu..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type DWord -Value 1
+} ElseIf ($MostUsedAppStartMenu -eq 2) {
+     Write-Host "Hiding Most used apps in Start Menu..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type DWord -Value 0
+}
+
+# Recent Items and Frequent Places
+If ($RecentItemsFrequent -eq 1) {
+     Write-Host "Enabling Recent Items and Frequent Places..."
+	 If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu")) {
+         New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" | Out-Null
+     }
+     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "Start_TrackDocs" -Type DWord -Value 1
+} ElseIf ($RecentItemsFrequent -eq 2) {
+     Write-Host "Disabling Recent Items and Frequent Places..."
+     If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu")) {
+         New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" | Out-Null
+     }
+     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "Start_TrackDocs" -Type DWord -Value 0
+}
+
+##########
+# Star Menu Items -End
+##########
+
+##########
+# Explorer Items -Start
+##########
+
+Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
+Write-Host "Explorer Items" -ForegroundColor Yellow -BackgroundColor Black 
+
+# Process ID on Title Bar
+If ($PidInTitleBar -eq 1) {
+     Write-Host "Showing Process ID on Title Bar..."
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowPidInTitle" -Type DWord -Value 1
+} ElseIf ($PidInTitleBar -eq 2) {
+     Write-Host "Hiding Process ID on Title Bar..."
+     Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowPidInTitle" -ErrorAction SilentlyContinue
+}
+
+# Aero Snap
+If ($AeroSnap -eq 1) {
+     Write-Host "Enabling Aero Snap..."
+     Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "WindowArrangementActive" -Type DWord -Value 1
+} ElseIf ($AeroSnap -eq 2) {
+     Write-Host "Disabling Aero Snap..."
+     Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "WindowArrangementActive" -Type DWord -Value 0
+}
+
+# Aero Shake
+If ($AeroShake -eq 1) {
+     Write-Host "Enabling Aero Shake..."
+     Remove-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" -Name "NoWindowMinimizingShortcuts" -ErrorAction SilentlyContinue
+} ElseIf ($AeroShake -eq 2) {
+     Write-Host "Disabling Aero Shake..."
+     If (!(Test-Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer")) {
+         New-Item -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" | Out-Null
+     }
+     Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" -Name "NoWindowMinimizingShortcuts" -Type DWord -Value 1
+}
+
 # File extensions
 If ($KnownExtensions -eq 1) {
      Write-Host "Showing known file extensions..."
@@ -1423,30 +1426,6 @@ If ($SystemFiles -eq 1) {
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSuperHidden" -Type DWord -Value 0
 }
 
-# Recent Items and Frequent Places
-If ($RecentItemsFrequent -eq 1) {
-     Write-Host "Enabling Recent Items and Frequent Places..."
-	 If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu")) {
-         New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" | Out-Null
-     }
-     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "Start_TrackDocs" -Type DWord -Value 1
-} ElseIf ($RecentItemsFrequent -eq 2) {
-     Write-Host "Disabling Recent Items and Frequent Places..."
-     If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu")) {
-         New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" | Out-Null
-     }
-     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "Start_TrackDocs" -Type DWord -Value 0
-}
-
-# Change default Explorer view
-If ($ExplorerOpenLoc -eq 1) {
-     Write-Host "Changing default Explorer view to Quick Access..."
-     Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LaunchTo" -ErrorAction SilentlyContinue
-} ElseIf ($ExplorerOpenLoc -eq 2) {
-     Write-Host "Changing default Explorer view to This PC..."
-     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LaunchTo" -Type DWord -Value 1
-}
-
 # Show This PC shortcut on desktop
 If ($ThisPCOnDesktop -eq 1) {
      Write-Host "Showing This PC shortcut on desktop..."
@@ -1460,6 +1439,83 @@ If ($ThisPCOnDesktop -eq 1) {
      Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -ErrorAction SilentlyContinue
      Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -ErrorAction SilentlyContinue
 }
+
+# Change default Explorer view
+If ($ExplorerOpenLoc -eq 1) {
+     Write-Host "Changing default Explorer view to Quick Access..."
+     Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LaunchTo" -ErrorAction SilentlyContinue
+} ElseIf ($ExplorerOpenLoc -eq 2) {
+     Write-Host "Changing default Explorer view to This PC..."
+     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LaunchTo" -Type DWord -Value 1
+}
+
+# Recent Files in Quick Access
+If ($RecentFileQikAcc -eq 1) {
+     Write-Host "Showing Recent Files in Quick Access..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Type DWord -Value 1
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Name "(Default)" -Type String -Value "Recent Items Instance Folder"
+     If($OSType -eq 64) {
+         Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Name "(Default)" -Type String -Value "Recent Items Instance Folder"
+     }
+} ElseIf ($RecentFileQikAcc -eq 2) {
+     Write-Host "Hiding Recent Files in Quick Access..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Type DWord -Value 0
+} ElseIf ($RecentFileQikAcc -eq 3) {
+     Write-Host "Removeing Recent Files in Quick Access..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Type DWord -Value 0
+     Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Recurse -ErrorAction SilentlyContinue
+     Remove-Item -Path "HKLM:SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Recurse -ErrorAction SilentlyContinue
+}
+
+# Frequent folders in Quick_access
+If ($FrequentFoldersQikAcc -eq 1) {
+     Write-Host "Showing Frequent folders in Quick Access..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowFrequent" -Type DWord -Value 1
+} ElseIf ($FrequentFoldersQikAcc -eq 2) {
+     Write-Host "Hiding Frequent folders in Quick Access..."
+     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowFrequent" -Type DWord -Value 0
+}
+
+# Window Content while Dragging
+If ($WinContentWhileDrag -eq 1) {
+     Write-Host "Showing Window Content while Dragging..."
+     Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "DragFullWindows" -Type DWord -Value 1
+} ElseIf ($WinContentWhileDrag -eq 2) {
+     Write-Host "Hiding Window Content while Dragging..."
+     Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "DragFullWindows" -Type DWord -Value 0
+}
+
+# Autoplay
+If ($Autoplay -eq 1) {
+     Write-Host "Enabling Autoplay..."
+     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers" -Name "DisableAutoplay" -Type DWord -Value 0
+} ElseIf ($Autoplay -eq 2) {
+     Write-Host "Disabling Autoplay..."
+     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers" -Name "DisableAutoplay" -Type DWord -Value 1
+}
+
+# Autorun for all drives
+If ($Autorun -eq 1) {
+     Write-Host "Enabling Autorun for all drives..."
+     Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun" -ErrorAction SilentlyContinue
+} ElseIf ($Autorun -eq 2) {
+     Write-Host "Disabling Autorun for all drives..."
+     If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer")) {
+         New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" | Out-Null
+     }
+     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun" -Type DWord -Value 255
+}
+
+##########
+# Explorer Items -End
+##########
+
+##########
+# 'This PC' items -Start
+##########
+
+Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
+Write-Host "'This PC' items" -ForegroundColor Yellow -BackgroundColor Black 
 
 # Desktop icon in This PC
 If ($DesktopIconInThisPC -eq 1) {
@@ -1527,6 +1583,155 @@ If ($VideosIconInThisPC -eq 1) {
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{35286a68-3c57-41a1-bbb1-0eae73d76c95}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
 }
 
+##########
+# 'This PC' items -End
+##########
+
+##########
+# Photo Viewer Settings -Start
+##########
+
+Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
+Write-Host "Photo Viewer Settings" -ForegroundColor Yellow -BackgroundColor Black 
+
+# Photo Viewer association for bmp, gif, jpg, png and tif
+If ($PVFileAssociation -eq 1) {
+     Write-Host "Setting Photo Viewer association for bmp, gif, jpg, png and tif..."
+     ForEach ($type in @("Paint.Picture", "giffile", "jpegfile", "pngfile")) {
+         New-Item -Path $("HKCR:\$type\shell\open") -Force | Out-Null
+         New-Item -Path $("HKCR:\$type\shell\open\command") | Out-Null
+         Set-ItemProperty -Path $("HKCR:\$type\shell\open") -Name "MuiVerb" -Type ExpandString -Value "@%ProgramFiles%\Windows Photo Viewer\photoviewer.dll,-3043"
+         Set-ItemProperty -Path $("HKCR:\$type\shell\open\command") -Name "(Default)" -Type ExpandString -Value "%SystemRoot%\System32\rundll32.exe `"%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll`", ImageView_Fullscreen %1"
+     }
+} ElseIf ($PVFileAssociation -eq 2) {
+     Write-Host "Unsetting Photo Viewer association for bmp, gif, jpg, png and tif..."
+     If (Test-Path "HKCR:\Paint.Picture\shell\open") {
+         Remove-Item -Path "HKCR:\Paint.Picture\shell\open" -Recurse
+	 }
+	 Remove-ItemProperty -Path "HKCR:\giffile\shell\open" -Name "MuiVerb" -ErrorAction SilentlyContinue
+     Set-ItemProperty -Path "HKCR:\giffile\shell\open" -Name "CommandId" -Type String -Value "IE.File"
+     Set-ItemProperty -Path "HKCR:\giffile\shell\open\command" -Name "(Default)" -Type String -Value "`"$env:SystemDrive\Program Files\Internet Explorer\iexplore.exe`" %1"
+     Set-ItemProperty -Path "HKCR:\giffile\shell\open\command" -Name "DelegateExecute" -Type String -Value "{17FE9752-0B5A-4665-84CD-569794602F5C}"
+     If (Test-Path "HKCR:\jpegfile\shell\open") { 
+         Remove-Item -Path "HKCR:\jpegfile\shell\open" -Recurse
+     }
+	 If (Test-Path "HKCR:\jpegfile\shell\open") { 
+         Remove-Item -Path "HKCR:\pngfile\shell\open" -Recurse
+	 }
+} 
+
+# Add Photo Viewer to "Open with..."
+If ($PVOpenWithMenu -eq 1) {
+     Write-Host "Adding Photo Viewer to Open with Menu..."
+     New-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open\command" -Force | Out-Null
+     New-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open\DropTarget" -Force | Out-Null
+     Set-ItemProperty -Path "HKCR:\Applications\photoviewer.dll\shell\open" -Name "MuiVerb" -Type String -Value "@photoviewer.dll,-3043"
+     Set-ItemProperty -Path "HKCR:\Applications\photoviewer.dll\shell\open\command" -Name "(Default)" -Type ExpandString -Value "%SystemRoot%\System32\rundll32.exe `"%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll`", ImageView_Fullscreen %1"
+     Set-ItemProperty -Path "HKCR:\Applications\photoviewer.dll\shell\open\DropTarget" -Name "Clsid" -Type String -Value "{FFE2A43C-56B9-4bf5-9A79-CC6D4285608A}"
+} ElseIf ($PVOpenWithMenu -eq 2) {
+     Write-Host "Removing Photo Viewer from Open with Menu..."
+     If (Test-Path "HKCR:\Applications\photoviewer.dll\shell\open") {
+         Remove-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open" -Recurse
+     }
+}
+
+##########
+# Photo Viewer Settings -End
+##########
+
+##########
+# Lockscreen Items -Start
+##########
+
+Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
+Write-Host "Lockscreen Items" -ForegroundColor Yellow -BackgroundColor Black 
+
+# Lock screen
+If ($LockScreen -eq 1) {
+     Write-Host "Enabling Lock screen..."
+     Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreen" -ErrorAction SilentlyContinue
+} ElseIf ($LockScreen -eq 2) {
+     Write-Host "Disabling Lock screen..."
+     If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization")) {
+         New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" | Out-Null
+     }
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreen" -Type DWord -Value 1
+} 
+
+# Lock screen (Anniversary Update workaround) - Applicable to RS1 or newer
+If ($LockScreenAlt -eq 1) {
+     Write-Host "Enabling Lock screen (removing scheduler workaround)..."
+     Unregister-ScheduledTask -TaskName "Disable LockScreen" -Confirm:$false -ErrorAction SilentlyContinue
+} ElseIf ($LockScreenAlt -eq 2) {
+     Write-Host "Disabling Lock screen using scheduler workaround..."
+     $service = New-Object -com Schedule.Service
+     $service.Connect()
+     $task = $service.NewTask(0)
+     $task.Settings.DisallowStartIfOnBatteries = $false
+     $trigger = $task.Triggers.Create(9)
+     $trigger = $task.Triggers.Create(11)
+     $trigger.StateChange = 8
+     $action = $task.Actions.Create(0)
+     $action.Path = "reg.exe"
+     $action.Arguments = "add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI\SessionData /t REG_DWORD /v AllowLockScreen /d 0 /f"
+     $service.GetFolder("\").RegisterTaskDefinition("Disable LockScreen", $task, 6, "NT AUTHORITY\SYSTEM", $null, 4) | Out-Null
+}
+
+# Power Menu on Lock Screen
+If ($PowerMenuLockScreen -eq 1) {
+     Write-Host "Showing Power Menu on Lock Screen..."
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "shutdownwithoutlogon" -Type DWord -Value 1
+} ElseIf ($PowerMenuLockScreen -eq 2) {
+     Write-Host "Hiding Power Menu on Lock Screen..."
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "shutdownwithoutlogon" -Type DWord -Value 0
+}
+
+# Camera at Lockscreen
+If ($CameraOnLockscreen -eq 1) {
+     Write-Host "Enabling Camera at Lockscreen..."
+     Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreenCamera" -ErrorAction SilentlyContinue
+} ElseIf ($CameraOnLockscreen -eq 2) {
+     Write-Host "Disabling Camera at Lockscreen..."
+     If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization")) {
+         New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" | Out-Null
+     }
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreenCamera" -Type DWord -Value 1
+}
+
+##########
+# Lockscreen Items -End
+##########
+
+##########
+# Misc Items -Start
+##########
+
+Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
+Write-Host "Misc Items" -ForegroundColor Yellow -BackgroundColor Black 
+
+# Action Center
+If ($ActionCenter -eq 1) {
+     Write-Host "Enabling Action Center..."
+     Remove-ItemProperty -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter" -ErrorAction SilentlyContinue
+     Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -ErrorAction SilentlyContinue
+} ElseIf ($ActionCenter -eq 2) {
+     Write-Host "Disabling Action Center..."
+     If (!(Test-Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer")) {
+         New-Item -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" | Out-Null
+     }
+     Set-ItemProperty -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter" -Type DWord -Value 1
+     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Type DWord -Value 0
+}
+
+# Sticky keys prompt
+If ($StickyKeyPrompt -eq 1) {
+     Write-Host "Enabling Sticky keys prompt..."
+     Set-ItemProperty -Path "HKCU:\Control Panel\Accessibility\StickyKeys" -Name "Flags" -Type String -Value "510"
+} ElseIf ($StickyKeyPrompt -eq 2) {
+     Write-Host "Disabling Sticky keys prompt..."
+     Set-ItemProperty -Path "HKCU:\Control Panel\Accessibility\StickyKeys" -Name "Flags" -Type String -Value "506"
+}
+
 # NumLock after startup
 If ($NumblockOnStart -eq 1) {
      Write-Host "Enabling NumLock after startup..."
@@ -1536,10 +1741,55 @@ If ($NumblockOnStart -eq 1) {
      Set-ItemProperty -Path "HKU:\.DEFAULT\Control Panel\Keyboard" -Name "InitialKeyboardIndicators" -Type DWord -Value 2147483648
 }
 
+# Enable F8 boot menu options
+If ($F8BootMenu -eq 1) {
+     Write-Host "Enabling F8 boot menu options..."
+     bcdedit /set `{current`} bootmenupolicy Legacy | Out-Null
+} ElseIf ($F8BootMenu -eq 2) {
+     Write-Host "Disabling F8 boot menu options..."
+     bcdedit /set `{current`} bootmenupolicy Standard | Out-Null
+}
+
+# Remote UAC Local Account Token Filter
+If ($RemoteUACAcctToken -eq 1) {
+     Write-Host "Enabling Remote UAC Local Account Token Filter..."
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "LocalAccountTokenFilterPolicy" -Type DWord -Value 1
+} ElseIf ($RemoteUACAcctToken -eq 2) {
+     Write-Host "Disabling  Remote UAC Local Account Token Filter..."
+	 Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "LocalAccountTokenFilterPolicy" -ErrorAction SilentlyContinue
+}
+
+# Hibernate Option
+If ($HibernatePower -eq 1) {
+     Write-Host "Enabling Hibernate Option..."
+     Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power" -Name "HibernateEnabled" -Type DWord -Value 1
+} ElseIf ($HibernatePower -eq 2) {
+     Write-Host "Disabling Hibernate Option..."
+     Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power" -Name "HibernateEnabled" -Type DWord -Value 0
+}
+
+# Sleep Option
+If ($SleepPower -eq 1) {
+     Write-Host "Enabling Sleep Option..."
+	 If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings")) {
+          New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" | Out-Null
+     }
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" -Name "ShowSleepOption" -Type DWord -Value 1
+} ElseIf ($SleepPower -eq 2) {
+     Write-Host "Disabling Sleep Option..."
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" -Name "ShowSleepOption" -Type DWord -Value 0
+}
 
 ##########
-# Remove unwanted applications
+# Misc Items -End
 ##########
+
+##########
+# Application Items -Start
+##########
+
+Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
+Write-Host "Application Items" -ForegroundColor Yellow -BackgroundColor Black 
 
 # OneDrive
 If ($OneDrive -eq 1) {
@@ -1583,30 +1833,6 @@ If ($OneDriveInstall -eq 1) {
      }
      Remove-Item -Path "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Recurse -ErrorAction SilentlyContinue
      Remove-Item -Path "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Recurse -ErrorAction SilentlyContinue
-}
-
-# Default Microsoft applications (Bloatware)
-ForEach ($AppI in $APPS_AppsInstall) {
-     Write-Host "Installing "$AppI"..."
-     Add-AppxPackage -DisableDevelopmentMode -Register "$($(Get-AppXPackage -AllUsers "$AppI").InstallLocation)\AppXManifest.xml"
-}
-ForEach ($AppH in $APPS_AppsHide) {
-     Write-Host "Hiding "$AppH"..."
-     Get-AppxPackage $AppH | Remove-AppxPackage
-}
-ForEach ($AppU in $APPS_AppsUninstall) {
-     Write-Host "Uninstalling "$AppU"..."
-     $PackageFullName = (Get-AppxPackage $AppU).PackageFullName
-     $ProPackageFullName = (Get-AppxProvisionedPackage -online | where {$_.Displayname -eq $AppU}).PackageName
-     
-     # Alt removal
-     # DISM /Online /Remove-ProvisionedAppxPackage /PackageName:            
-     If ($PackageFullName) {
-         Remove-AppxPackage -package $PackageFullName
-     }
-     If ($ProPackageFullName) {
-         Remove-AppxProvisionedPackage -online -packagename $ProPackageFullName
-     }
 }
 
 # Xbox DVR
@@ -1654,192 +1880,99 @@ If ($LinuxSubsystem -eq 1) {
      dism /online /Disable-Feature /FeatureName:Microsoft-Windows-Subsystem-Linux /Quiet /NoRestart
 }
 
-# Photo Viewer association for bmp, gif, jpg, png and tif
-If ($PVFileAssociation -eq 1) {
-     Write-Host "Setting Photo Viewer association for bmp, gif, jpg, png and tif..."
-     ForEach ($type in @("Paint.Picture", "giffile", "jpegfile", "pngfile")) {
-         New-Item -Path $("HKCR:\$type\shell\open") -Force | Out-Null
-         New-Item -Path $("HKCR:\$type\shell\open\command") | Out-Null
-         Set-ItemProperty -Path $("HKCR:\$type\shell\open") -Name "MuiVerb" -Type ExpandString -Value "@%ProgramFiles%\Windows Photo Viewer\photoviewer.dll,-3043"
-         Set-ItemProperty -Path $("HKCR:\$type\shell\open\command") -Name "(Default)" -Type ExpandString -Value "%SystemRoot%\System32\rundll32.exe `"%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll`", ImageView_Fullscreen %1"
+##########
+# Application Items -end
+##########
+
+##########
+# Metro App Items -Start
+##########
+
+Write-Host "-----------------------" -ForegroundColor White -BackgroundColor Black 
+Write-Host "Metro App Items" -ForegroundColor Yellow -BackgroundColor Black 
+
+# Default Microsoft applications (Bloatware)
+ForEach ($AppI in $APPS_AppsInstall) {
+     Write-Host "Installing "$AppI"..."
+     Add-AppxPackage -DisableDevelopmentMode -Register "$($(Get-AppXPackage -AllUsers "$AppI").InstallLocation)\AppXManifest.xml"
+}
+ForEach ($AppH in $APPS_AppsHide) {
+     Write-Host "Hiding "$AppH"..."
+     Get-AppxPackage $AppH | Remove-AppxPackage
+}
+ForEach ($AppU in $APPS_AppsUninstall) {
+     Write-Host "Uninstalling "$AppU"..."
+     $PackageFullName = (Get-AppxPackage $AppU).PackageFullName
+     $ProPackageFullName = (Get-AppxProvisionedPackage -online | where {$_.Displayname -eq $AppU}).PackageName
+     
+     # Alt removal
+     # DISM /Online /Remove-ProvisionedAppxPackage /PackageName:            
+     If ($PackageFullName) {
+         Remove-AppxPackage -package $PackageFullName
      }
-} ElseIf ($PVFileAssociation -eq 2) {
-     Write-Host "Unsetting Photo Viewer association for bmp, gif, jpg, png and tif..."
-     If (Test-Path "HKCR:\Paint.Picture\shell\open") {
-         Remove-Item -Path "HKCR:\Paint.Picture\shell\open" -Recurse
-	 }
-	 Remove-ItemProperty -Path "HKCR:\giffile\shell\open" -Name "MuiVerb" -ErrorAction SilentlyContinue
-     Set-ItemProperty -Path "HKCR:\giffile\shell\open" -Name "CommandId" -Type String -Value "IE.File"
-     Set-ItemProperty -Path "HKCR:\giffile\shell\open\command" -Name "(Default)" -Type String -Value "`"$env:SystemDrive\Program Files\Internet Explorer\iexplore.exe`" %1"
-     Set-ItemProperty -Path "HKCR:\giffile\shell\open\command" -Name "DelegateExecute" -Type String -Value "{17FE9752-0B5A-4665-84CD-569794602F5C}"
-     If (Test-Path "HKCR:\jpegfile\shell\open") { 
-         Remove-Item -Path "HKCR:\jpegfile\shell\open" -Recurse
+     If ($ProPackageFullName) {
+         Remove-AppxProvisionedPackage -online -packagename $ProPackageFullName
      }
-	 If (Test-Path "HKCR:\jpegfile\shell\open") { 
-         Remove-Item -Path "HKCR:\pngfile\shell\open" -Recurse
-	 }
-} 
-
-# Add Photo Viewer to "Open with..."
-If ($PVOpenWithMenu -eq 1) {
-     Write-Host "Adding Photo Viewer to Open with Menu..."
-     New-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open\command" -Force | Out-Null
-     New-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open\DropTarget" -Force | Out-Null
-     Set-ItemProperty -Path "HKCR:\Applications\photoviewer.dll\shell\open" -Name "MuiVerb" -Type String -Value "@photoviewer.dll,-3043"
-     Set-ItemProperty -Path "HKCR:\Applications\photoviewer.dll\shell\open\command" -Name "(Default)" -Type ExpandString -Value "%SystemRoot%\System32\rundll32.exe `"%ProgramFiles%\Windows Photo Viewer\PhotoViewer.dll`", ImageView_Fullscreen %1"
-     Set-ItemProperty -Path "HKCR:\Applications\photoviewer.dll\shell\open\DropTarget" -Name "Clsid" -Type String -Value "{FFE2A43C-56B9-4bf5-9A79-CC6D4285608A}"
-} ElseIf ($PVOpenWithMenu -eq 2) {
-     Write-Host "Removing Photo Viewer from Open with Menu..."
-     If (Test-Path "HKCR:\Applications\photoviewer.dll\shell\open") {
-         Remove-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open" -Recurse
-     }
-}
-
-# Enable F8 boot menu options
-If ($F8BootMenu -eq 1) {
-     Write-Host "Enabling F8 boot menu options..."
-     bcdedit /set `{current`} bootmenupolicy Legacy | Out-Null
-} ElseIf ($F8BootMenu -eq 2) {
-     Write-Host "Disabling F8 boot menu options..."
-     bcdedit /set `{current`} bootmenupolicy Standard | Out-Null
-}
-
-# Recent Files in Quick Access
-If ($RecentFileQikAcc -eq 1) {
-     Write-Host "Showing Recent Files in Quick Access..."
-     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Type DWord -Value 1
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Name "(Default)" -Type String -Value "Recent Items Instance Folder"
-     If($OSType -eq 64) {
-         Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Name "(Default)" -Type String -Value "Recent Items Instance Folder"
-     }
-} ElseIf ($RecentFileQikAcc -eq 2) {
-     Write-Host "Hiding Recent Files in Quick Access..."
-     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Type DWord -Value 0
-} ElseIf ($RecentFileQikAcc -eq 3) {
-     Write-Host "Removeing Recent Files in Quick Access..."
-     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Type DWord -Value 0
-     Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Recurse -ErrorAction SilentlyContinue
-     Remove-Item -Path "HKLM:SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Recurse -ErrorAction SilentlyContinue
-}
-
-# Frequent folders in Quick_access
-If ($FrequentFoldersQikAcc -eq 1) {
-     Write-Host "Showing Frequent folders in Quick Access..."
-     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowFrequent" -Type DWord -Value 1
-} ElseIf ($FrequentFoldersQikAcc -eq 2) {
-     Write-Host "Hiding Frequent folders in Quick Access..."
-     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowFrequent" -Type DWord -Value 0
-}
-
-# Most used apps in Start menu
-If ($MostUsedAppStartMenu -eq 1) {
-     Write-Host "Showing Most used apps in Start Menu..."
-     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type DWord -Value 1
-} ElseIf ($MostUsedAppStartMenu -eq 2) {
-     Write-Host "Hiding Most used apps in Start Menu..."
-     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type DWord -Value 0
-}
-
-# Power Menu on Lock Screen
-If ($PowerMenuLockScreen -eq 1) {
-     Write-Host "Showing Power Menu on Lock Screen..."
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "shutdownwithoutlogon" -Type DWord -Value 1
-} ElseIf ($PowerMenuLockScreen -eq 2) {
-     Write-Host "Hiding Power Menu on Lock Screen..."
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "shutdownwithoutlogon" -Type DWord -Value 0
-}
-
-# Hibernate Option
-If ($HibernatePower -eq 1) {
-     Write-Host "Enabling Hibernate Option..."
-     Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power" -Name "HibernateEnabled" -Type DWord -Value 1
-} ElseIf ($HibernatePower -eq 2) {
-     Write-Host "Disabling Hibernate Option..."
-     Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power" -Name "HibernateEnabled" -Type DWord -Value 0
-}
-
-# Sleep Option
-If ($SleepPower -eq 1) {
-     Write-Host "Enabling Sleep Option..."
-	 If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings")) {
-          New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" | Out-Null
-     }
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" -Name "ShowSleepOption" -Type DWord -Value 1
-} ElseIf ($SleepPower -eq 2) {
-     Write-Host "Disabling Sleep Option..."
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" -Name "ShowSleepOption" -Type DWord -Value 0
-}
-
-# Window Content while Dragging
-If ($WinContentWhileDrag -eq 1) {
-     Write-Host "Showing Window Content while Dragging..."
-     Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "DragFullWindows" -Type DWord -Value 1
-} ElseIf ($WinContentWhileDrag -eq 2) {
-     Write-Host "Hiding Window Content while Dragging..."
-     Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "DragFullWindows" -Type DWord -Value 0
-}
-
-# Check for Windows Update
-If ($CheckForWinUpdate -eq 1) {
-     Write-Host "Enabling Check for Windows Update..."
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "SetDisableUXWUAccess" -Type DWord -Value 0
-} ElseIf ($CheckForWinUpdate -eq 2) {
-     Write-Host "Disabling Check for Windows Update..."
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "SetDisableUXWUAccess" -Type DWord -Value 1
-}
-
-# Taskbar on multiple displays
-If ($TaskBarOnMultiDisplay -eq 1) {
-     Write-Host "Showing Taskbar on multiple displays..."
-     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarEnabled" -Type DWord -Value 1
-} ElseIf ($TaskBarOnMultiDisplay -eq 2) {
-     Write-Host "Hiding Taskbar on multiple displays.."
-     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarEnabled" -Type DWord -Value 0
-}
-
-# Taskbar on multiple displays
-If ($TaskbarButtOnDisplay -eq 1) {
-     Write-Host "Showing Taskbar buttons on all taskbars..."
-     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarMode" -Type DWord -Value 0
-} ElseIf ($TaskbarButtOnDisplay -eq 2) {
-     Write-Host "Showing Taskbar buttons on taskbar where window is open..."
-     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarMode" -Type DWord -Value 2
-} ElseIf ($TaskbarButtOnDisplay -eq 3) {
-     Write-Host "Showing Taskbar buttons on main taskbar and where window is open..."
-     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarMode" -Type DWord -Value 1
-}
-
-# Remote UAC Local Account Token Filter
-If ($RemoteUACAcctToken -eq 1) {
-     Write-Host "Enabling Remote UAC Local Account Token Filter..."
-     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "LocalAccountTokenFilterPolicy" -Type DWord -Value 1
-} ElseIf ($RemoteUACAcctToken -eq 2) {
-     Write-Host "Disabling  Remote UAC Local Account Token Filter..."
-	 Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "LocalAccountTokenFilterPolicy" -ErrorAction SilentlyContinue
-}
-
-# Windows Update Check Type
-If ($WinUpdateType -ge 1 -and $WinUpdateType -le 4) {
-     If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU")) {
-         New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" | Out-Null
-     }
-	 If ($WinUpdateType -eq 1){
-	     Write-Host "Notify for windows update download and notify for install..."
-	     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 2
-	 } ElseIf ($WinUpdateType -eq 2){
-	     Write-Host "Auto Download for windows update download and notify for install..."
-	     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 3
-	 } ElseIf ($WinUpdateType -eq 3){
-	     Write-Host "Auto Download for windows update download and schedule for install..."
-	     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 4
-	 } ElseIf ($WinUpdateType -eq 4){
-	     Write-Host "Windows update allow local admin to choose setting..."
-	     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 5
-	 }
 }
 
 ##########
-# Auxiliary
+# Metro App Items -End
+##########
+
+##########
+# Disabled Items -Start
+##########
+
+# More Tile Colors
+# Error of:
+# Set-ItemProperty : Cannot convert value "00918b73" to type "System.UInt32". Error: "Input string was not in a correctformat."
+If ($Disabled -eq 1) {
+If ($MoreColorsTitle -eq 1) {
+     Write-Host "Enabling More Tile Colors..."
+	 If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\")) {
+	    New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\" | Out-Null
+	 }
+	 for($i=0; $i -ne 4; $i++) {
+	 	 If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\$i\")) {
+		 	New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\$i\" | Out-Null
+	     }
+         for($a=0; $a -ne 2; $a++) {
+	         If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\$i\Theme$a")) {
+	             New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\$i\Theme$a" | Out-Null
+	         } 
+	     }
+	 }
+	 New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\0\Theme0"
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\0\Theme0" -Name "Color" -Type DWord -Value "00918b73"
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\0\Theme1" -Name "Color" -Type DWord -Value "00a68e5e"
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\1\Theme0" -Name "Color" -Type DWord -Value "00a44817"
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\1\Theme1" -Name "Color" -Type DWord -Value "00618a28"
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\2\Theme0" -Name "Color" -Type DWord -Value "00bab4ab"
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\2\Theme1" -Name "Color" -Type DWord -Value "00bab4ab"
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\3\Theme0" -Name "Color" -Type DWord -Value "0085bd37"
+     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\3\Theme1" -Name "Color" -Type DWord -Value "0085bd37"
+} ElseIf ($MoreColorsTitle -eq 2) {
+     Write-Host "Disabling More Tile Colors..."
+     Remove-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents" -Force -Recurse -ErrorAction SilentlyContinue
+}
+}
+
+##########
+# Disabled Items -End
+##########
+
+##########
+# In Testing Items -Start
+##########
+
+
+
+##########
+# In Testing Items -End
+##########
+
+##########
+# End Script -Start
 ##########
 If ($Restart -eq 1) {
      Write-Host "Restarting in 10 Seconds..."
@@ -1848,3 +1981,7 @@ If ($Restart -eq 1) {
 } Else {
      Write-Host "Goodbye..."
 }
+
+##########
+# End Script -End
+##########
