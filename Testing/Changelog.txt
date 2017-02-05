@@ -1,10 +1,12 @@
 -----------------------------------------------------------------------------------
 3.5-Mod (02-??-2017)
 
---NOTHING ATM--
+Reordered some items
+Added Write output when at Each different category
 
 -----------------------------------------------------------------------------------
 3.4-Mod (02-03-2017)
+
 Added 1 New Setting Items:
   Windows Update Check Type
   
