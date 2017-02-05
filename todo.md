@@ -1,8 +1,8 @@
 # To do
 - [X] Ability to create restore point BEFORE script runs
 - [X] Better Sorting of all the function and Item List
-- [ ] Ability to Disable output
-- [ ] Add Color based on Script action (Enable/Disable, Hide/Show, Etc)
+- [T] Ability to Disable output --Testing
+- [T] Add Color based on Script action (Enable/Disable, Hide/Show, Etc) --Testing
 - [ ] Ability Import an app list of your own to Install/Hide/Uninstall from a File
 
 Planned at Later Date
