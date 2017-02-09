@@ -9,7 +9,7 @@
 # Modded Script Info
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script
-# Version: 3.5-Mod, 02-09-2017
+# Version: 3.6-Mod, 02-??-2017
 # Release Type: Testing
 ##########
 <#
