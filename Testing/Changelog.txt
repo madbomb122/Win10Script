@@ -7,6 +7,13 @@ Added Color for Some outputs
 Ability to Disable Output
 Ability to Disable Color on output
 
+renamed 4 items
+APP_SolitaireCollection to APP_SolitaireCollect
+APP_WindowsFeedback     to APP_WindowsFeedbak
+APP_WindowsFeedbackHub  to APP_WindowsFeedbakHub
+APP_MicrosoftOfficeHub  to APP_MicrosoftOffHub
+
+
 -----------------------------------------------------------------------------------
 3.4-Mod (02-03-2017)
 
