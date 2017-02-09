@@ -1,4 +1,9 @@
 -----------------------------------------------------------------------------------
+3.6-Mod (02-??-2017)
+
+NOTHING ATM
+
+-----------------------------------------------------------------------------------
 3.5-Mod (02-09-2017)
 
 Re-ordered some items
@@ -12,7 +17,6 @@ APP_SolitaireCollection to APP_SolitaireCollect
 APP_WindowsFeedback     to APP_WindowsFeedbak
 APP_WindowsFeedbackHub  to APP_WindowsFeedbakHub
 APP_MicrosoftOfficeHub  to APP_MicrosoftOffHub
-
 
 -----------------------------------------------------------------------------------
 3.4-Mod (02-03-2017)
