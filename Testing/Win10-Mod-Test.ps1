@@ -9,7 +9,7 @@
 # Modded Script Info
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script
-# Version: 3.5-Mod, 02-??-2017
+# Version: 3.5-Mod, 02-09-2017
 # Release Type: Testing
 ##########
 <#
@@ -248,59 +248,59 @@ Remove-Item -Path C:\Mnt -Recurse
 # Metro Apps
 # By Default Most of these are installed
 # Function  = Option       # 0-Skip, 1-Unhide, 2- Hide, 3-Uninstall (!!Read Note Above)
-$APP_3DBuilder=0           # '3DBuilder' app
-$APP_AdvertisingXaml=0     ## Removal may cause problem with some apps
-$APP_Appconnector=0        ## Not sure about this one
-$APP_Asphalt8Airborne=0    # 'Asphalt 8' game
-$APP_BingFinance=0         # 'Money' app - Financial news
-$APP_BingFoodAndDrink=0    # 'Food and Drink' app
-$APP_BingHealthFitness=0   # 'Health and Fitness' app
-$APP_BingNews=0            # 'Generic news' app
-$APP_BingSports=0          # 'Sports' app - Sports news
-$APP_BingTranslator=0      # 'Translator' app - Bing Translate
-$APP_BingTravel=0          # 'Travel' app
-$APP_BingWeather=0         # 'Weather' app
-$APP_CandyCrushSoda=0      # 'Candy Crush' game 
-$APP_CommsPhone=0          # 'Phone' app
-$APP_Communications=0      # 'Calendar and Mail' app
-$APP_ConnectivityStore=0       
-$APP_Facebook=0            # 'Facebook' app
-$APP_FarmVille=0           # 'Farm Ville' game
-$APP_FreshPaint=0          # 'Canvas' app
-$APP_Getstarted=0          # 'Get Started' link
-$APP_Messaging=0           # 'Messaging' app
-$APP_MicrosoftJackpot=0    # 'Jackpot' app
-$APP_MicrosoftJigsaw=0     # 'Jigsaw' game       
-$APP_MicrosoftMahjong=0    # 'Mahjong' game
-$APP_MicrosoftOfficeHub=0       
-$APP_MicrosoftSudoku=0     # 'Sudoku' game 
-$APP_MinecraftUWP=0        # 'Minecraft' game    
-$APP_MovieMoments=0          
-$APP_Netflix=0             # 'Netflix' app
-$APP_OfficeOneNote=0       # 'Onenote' app
-$APP_OfficeSway=0          # 'Sway' app
+$APP_3DBuilder = 0         # '3DBuilder' app
+$APP_AdvertisingXaml = 0   ## Removal may cause problem with some apps
+$APP_Appconnector = 0      ## Not sure about this one
+$APP_Asphalt8Airborne = 0  # 'Asphalt 8' game
+$APP_BingFinance = 0       # 'Money' app - Financial news
+$APP_BingFoodAndDrink = 0  # 'Food and Drink' app
+$APP_BingHealthFitness = 0 # 'Health and Fitness' app
+$APP_BingNews = 0          # 'Generic news' app
+$APP_BingSports = 0        # 'Sports' app - Sports news
+$APP_BingTranslator = 0    # 'Translator' app - Bing Translate
+$APP_BingTravel = 0        # 'Travel' app
+$APP_BingWeather = 0       # 'Weather' app
+$APP_CandyCrushSoda = 0    # 'Candy Crush' game 
+$APP_CommsPhone = 0        # 'Phone' app
+$APP_Communications = 0    # 'Calendar and Mail' app
+$APP_ConnectivityStore = 0     
+$APP_Facebook = 0          # 'Facebook' app
+$APP_FarmVille = 0         # 'Farm Ville' game
+$APP_FreshPaint = 0        # 'Canvas' app
+$APP_Getstarted = 0        # 'Get Started' link
+$APP_Messaging = 0         # 'Messaging' app
+$APP_MicrosoftJackpot = 0  # 'Jackpot' app
+$APP_MicrosoftJigsaw = 0   # 'Jigsaw' game       
+$APP_MicrosoftMahjong = 0  # 'Mahjong' game
+$APP_MicrosoftOffHub = 0   # 'Office Hub' app 
+$APP_MicrosoftSudoku = 0   # 'Sudoku' game 
+$APP_MinecraftUWP = 0      # 'Minecraft' game    
+$APP_MovieMoments = 0        
+$APP_Netflix = 0           # 'Netflix' app
+$APP_OfficeOneNote = 0     # 'Onenote' app
+$APP_OfficeSway = 0        # 'Sway' app
 $APP_OneConnect=0
-$APP_People=0              # 'People' app
-$APP_Photos=0              # Photos app
-$APP_SkypeApp=0            # 'Get Skype' link
-$APP_SkypeWiFi=0           
-$APP_SolitaireCollection=0 # Solitaire collection
-$APP_SoundRecorder=0       # 'Sound Recorder' app
-$APP_StickyNotes=0         # 'Sticky Notes' app 
-$APP_StudiosWordament=0    # 'Wordament' game
-$APP_Taptiles=0            
-$APP_Twitter=0             # 'Twitter' app
-$APP_WindowsAlarms=0       # 'Alarms and Clock' app
-$APP_WindowsCalculator=0   # 'Calculator' app
-$APP_WindowsCamera=0       # 'Camera' app
-$APP_WindowsFeedback=0     # 'Feedback' functionality
-$APP_WindowsFeedbackHub=0  # 'Feedback' functionality
-$APP_WindowsMaps=0         # 'Maps' app
-$APP_WindowsPhone=0        # 'Phone Companion' app
-$APP_WindowsStore=0        # Windows Store
-$APP_XboxApp=0             # 'Xbox' app 
-$APP_ZuneMusic=0           # 'Groove Music' app
-$APP_ZuneVideo=0           # 'Groove Music' app
+$APP_People = 0            # 'People' app
+$APP_Photos = 0            # Photos app
+$APP_SkypeApp = 0          # 'Get Skype' link
+$APP_SkypeWiFi = 0         
+$APP_SolitaireCollect = 0  # Solitaire collection
+$APP_SoundRecorder = 0     # 'Sound Recorder' app
+$APP_StickyNotes = 0       # 'Sticky Notes' app 
+$APP_StudiosWordament = 0  # 'Wordament' game
+$APP_Taptiles = 0          
+$APP_Twitter = 0           # 'Twitter' app
+$APP_WindowsAlarms = 0     # 'Alarms and Clock' app
+$APP_WindowsCalculator = 0 # 'Calculator' app
+$APP_WindowsCamera = 0     # 'Camera' app
+$APP_WindowsFeedbak = 0    # 'Feedback' functionality
+$APP_WindowsFeedbakHub = 0 # 'Feedback' functionality
+$APP_WindowsMaps = 0       # 'Maps' app
+$APP_WindowsPhone = 0      # 'Phone Companion' app
+$APP_WindowsStore = 0      # Windows Store
+$APP_XboxApp = 0           # 'Xbox' app 
+$APP_ZuneMusic = 0         # 'Groove Music' app
+$APP_ZuneVideo = 0         # 'Groove Music' app
 
 
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -377,22 +377,23 @@ $AppsList = @(
 )
 
 # predefined Color Array
-$colors = @("black",        #0
-            "blue",         #1
-			"cyan",         #2
-			"darkblue",     #3
-			"darkcyan",     #4
-			"darkgray",     #5
-			"darkgreen",    #6
-			"darkmagenta",  #7
-			"darkred",      #8
-			"darkyellow",   #9
-			"gray",         #10
-			"green",        #11
-			"magenta",      #12
-			"red",          #13
-			"white",        #14
-			"yellow"        #15
+$colors = @(
+     "black",        #0
+     "blue",         #1
+     "cyan",         #2
+     "darkblue",     #3
+     "darkcyan",     #4
+     "darkgray",     #5
+     "darkgreen",    #6
+     "darkmagenta",  #7
+     "darkred",      #8
+     "darkyellow",   #9
+     "gray",         #10
+     "green",        #11
+     "magenta",      #12
+     "red",          #13
+     "white",        #14
+     "yellow"        #15
 )
 
 $CustomSet = 0
@@ -438,9 +439,9 @@ If ($Term_of_Use -eq 1){
      Write-Host "Read License file for full Terms." -ForegroundColor Black -BackgroundColor White
      Write-Host ""
      Write-Host "Do you Accept the Term of Use? (y/n)" -ForegroundColor White -BackgroundColor Black	
-	 $KeyPress= $HOST.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-	 $KeyPress=$KeyPress.Character	 
-	 $HOST.UI.RawUI.Flushinputbuffer()
+     $KeyPress= $HOST.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+     $KeyPress=$KeyPress.Character	 
+     $HOST.UI.RawUI.Flushinputbuffer()
 }
 
 If($KeyPress -eq 'y' -or $Term_of_Use -ne 1) {
@@ -461,16 +462,16 @@ If (!(Test-Path "HKCR:")) {
 
 # Define HKU
 If (!(Test-Path "HKU:")) {
-         New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_USERS | Out-Null
+     New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_USERS | Out-Null
 }
 
 # Check OS bit type
 If ([Environment]::Is32BitProcess -eq $true){
- $OSType=32
+     $OSType=32
 } ElseIf ([Environment]::Is64BitProcess -eq $true){
- $OSType=64
+     $OSType=64
 } Else {
- $OSType=0
+     $OSType=0
 }
 
 # Sorts the apps to Install, Hide or Uninstall
@@ -535,7 +536,7 @@ If($WinDefault -eq 1){
      $Feedback = 1
      $AdvertisingID = 1
      $Cortana = 1
-	 $CortanaSearch = 1
+     $CortanaSearch = 1
      $ErrorReporting = 1
      $WinUpdateDownload = 1
      $AutoLoggerFile = 1
@@ -558,8 +559,8 @@ If($WinDefault -eq 1){
      $PinTo = 1
      $ShareWith = 1
      $SendTo = 1
-	 $BatteryUIBar = 1
-	 $ClockUIBar = 1
+     $BatteryUIBar = 1
+     $ClockUIBar = 1
      $VolumeControlBar = 1
      $TaskbarSearchBox = 1
      $TaskViewButton = 1
@@ -568,7 +569,7 @@ If($WinDefault -eq 1){
      $TrayIcons = 1
      $SecondsInClock = 2
      $LastActiveClick = 2
-	 $MoreColorsTitle = 2
+     $MoreColorsTitle = 2
      $PidInTitleBar = 2
      $AeroSnap = 1
      $AeroShake = 1
@@ -577,7 +578,7 @@ If($WinDefault -eq 1){
      $SystemFiles = 2
      $ThisPCOnDesktop = 2
      $ExplorerOpenLoc = 1
-	 $RecentItemsFrequent = 1
+     $RecentItemsFrequent = 1
      $DesktopIconInThisPC = 1
      $DocumentsIconInThisPC = 1
      $DownloadsIconInThisPC = 1
@@ -600,7 +601,7 @@ If($WinDefault -eq 1){
      $MediaPlayer = 1
      $WorkFolders = 1
      $LinuxSubsystem = 2
-	 $RemoteUACAcctToken = 2
+     $RemoteUACAcctToken = 2
 }
 
 # My Custom Setting
@@ -626,7 +627,7 @@ If($CustomSet -eq 1){
      $Feedback = 2
      $AdvertisingID = 2
      $Cortana = 2
-	 $CortanaSearch = 1
+     $CortanaSearch = 1
      $ErrorReporting = 1
      $WinUpdateDownload = 2
      $AutoLoggerFile = 1
@@ -649,8 +650,8 @@ If($CustomSet -eq 1){
      $PinTo = 2
      $ShareWith = 2
      $SendTo = 2
-	 $BatteryUIBar = 1
-	 $ClockUIBar = 1
+     $BatteryUIBar = 1
+     $ClockUIBar = 1
      $VolumeControlBar = 2
      $TaskbarSearchBox = 2
      $TaskViewButton = 2
@@ -659,7 +660,7 @@ If($CustomSet -eq 1){
      $TrayIcons = 1
      $SecondsInClock = 2
      $LastActiveClick = 1
-	 $MoreColorsTitle = 1
+     $MoreColorsTitle = 1
      $PidInTitleBar = 1
      $AeroSnap = 2
      $AeroShake = 2
@@ -668,7 +669,7 @@ If($CustomSet -eq 1){
      $SystemFiles = 1
      $ThisPCOnDesktop = 1
      $ExplorerOpenLoc = 1
-	 $RecentItemsFrequent = 2
+     $RecentItemsFrequent = 2
      $DesktopIconInThisPC = 2
      $DocumentsIconInThisPC = 2
      $DownloadsIconInThisPC = 2
@@ -691,7 +692,7 @@ If($CustomSet -eq 1){
      $MediaPlayer = 1
      $WorkFolders = 2
      $LinuxSubsystem = 2
-	 $RemoteUACAcctToken = 1
+     $RemoteUACAcctToken = 1
      $APP_3DBuilder=3
      $APP_AdvertisingXaml=0
      $APP_Appconnector=0
@@ -757,7 +758,7 @@ If($CustomSet -eq 1){
 
 DisplayOut ""
 DisplayOut "------------------------" 14 0
-DisplayOut "-   Privacy Settings   -" 15 0
+DisplayOut "-   Privacy Settings   -" 14 0
 DisplayOut "------------------------" 14 0
 DisplayOut ""
 
@@ -949,7 +950,7 @@ If ($AppAutoDownload -eq 1) {
 
 DisplayOut ""
 DisplayOut "-------------------------------" 14 0
-DisplayOut "-   Windows Update Settings   -" 15 0
+DisplayOut "-   Windows Update Settings   -" 14 0
 DisplayOut "-------------------------------" 14 0
 DisplayOut ""
 
@@ -967,19 +968,19 @@ If ($WinUpdateType -ge 1 -and $WinUpdateType -le 4) {
      If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU")) {
          New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" | Out-Null
      }
-	 If ($WinUpdateType -eq 1){
-	     DisplayOut "Notify for windows update download and notify for install..." 16 0
-	     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 2
-	 } ElseIf ($WinUpdateType -eq 2){
-	     DisplayOut "Auto Download for windows update download and notify for install..." 16 0
-	     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 3
-	 } ElseIf ($WinUpdateType -eq 3){
-	     DisplayOut "Auto Download for windows update download and schedule for install..." 16 0
-	     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 4
-	 } ElseIf ($WinUpdateType -eq 4){
-	     DisplayOut "Windows update allow local admin to choose setting..." 16 0
-	     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 5
-	 }
+     If ($WinUpdateType -eq 1){
+         DisplayOut "Notify for windows update download and notify for install..." 16 0
+         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 2
+     } ElseIf ($WinUpdateType -eq 2){
+         DisplayOut "Auto Download for windows update download and notify for install..." 16 0
+         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 3
+     } ElseIf ($WinUpdateType -eq 3){
+         DisplayOut "Auto Download for windows update download and schedule for install..." 16 0
+         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 4
+     } ElseIf ($WinUpdateType -eq 4){
+         DisplayOut "Windows update allow local admin to choose setting..." 16 0
+         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 5
+     }
 }
 
 # Windows Update P2P
@@ -1013,7 +1014,7 @@ If ($WinUpdateDownload -eq 1) {
 
 DisplayOut ""
 DisplayOut "----------------------" 14 0
-DisplayOut "-   Service Tweaks   -" 15 0
+DisplayOut "-   Service Tweaks   -" 14 0
 DisplayOut "----------------------" 14 0
 DisplayOut ""
 
@@ -1114,7 +1115,7 @@ If ($RemoteDesktop -eq 1) {
 
 DisplayOut ""
 DisplayOut "--------------------------" 14 0
-DisplayOut "-   Context Menu Items   -" 15 0
+DisplayOut "-   Context Menu Items   -" 14 0
 DisplayOut "--------------------------" 14 0
 DisplayOut ""
 
@@ -1161,19 +1162,18 @@ If ($PinTo -eq 1) {
      Set-ItemProperty -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -Name "(Default)" -Type String -Value "Taskband Pin"
      New-Item -Path "HKCR:\*\shellex\ContextMenuHandlers\{a2a9545d-a0c2-42b4-9708-a0b2badd77c8}" -Force | Out-Null
      Set-ItemProperty -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\{a2a9545d-a0c2-42b4-9708-a0b2badd77c8}" -Name "(Default)" -Type String -Value "Start Menu Pin"
-	 Set-ItemProperty -Path "HKCR:\Folder\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value "{470C0EBD-5D73-4d58-9CED-E91E22E23282}"
-	 Set-ItemProperty -Path "HKCR:\exefile\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value "{470C0EBD-5D73-4d58-9CED-E91E22E23282}"
-	 Set-ItemProperty -Path "HKCR:\Microsoft.Website\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value "{470C0EBD-5D73-4d58-9CED-E91E22E23282}"
-	 Set-ItemProperty -Path "HKCR:\mscfile\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value "{470C0EBD-5D73-4d58-9CED-E91E22E23282}"
+     Set-ItemProperty -Path "HKCR:\Folder\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value "{470C0EBD-5D73-4d58-9CED-E91E22E23282}"
+     Set-ItemProperty -Path "HKCR:\exefile\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value "{470C0EBD-5D73-4d58-9CED-E91E22E23282}"
+     Set-ItemProperty -Path "HKCR:\Microsoft.Website\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value "{470C0EBD-5D73-4d58-9CED-E91E22E23282}"
+     Set-ItemProperty -Path "HKCR:\mscfile\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value "{470C0EBD-5D73-4d58-9CED-E91E22E23282}"
 } ElseIf ($PinTo -eq 2) {
      DisplayOut "Disabling Pin To Context item..." 12 0
      Remove-Item -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -ErrorAction SilentlyContinue -Force
      Remove-Item -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\{a2a9545d-a0c2-42b4-9708-a0b2badd77c8}" -ErrorAction SilentlyContinue -Force
-	 Set-ItemProperty -Path "HKCR:\Folder\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value ""
-	 Set-ItemProperty -Path "HKCR:\exefile\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value ""
-	 Set-ItemProperty -Path "HKCR:\Microsoft.Website\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value ""
-	 Set-ItemProperty -Path "HKCR:\mscfile\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value ""
-
+     Set-ItemProperty -Path "HKCR:\Folder\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value ""
+     Set-ItemProperty -Path "HKCR:\exefile\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value ""
+     Set-ItemProperty -Path "HKCR:\Microsoft.Website\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value ""
+     Set-ItemProperty -Path "HKCR:\mscfile\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value ""
 }
 
 # Share With Context Menu
@@ -1201,14 +1201,14 @@ If ($ShareWith -eq 1) {
 If ($SendTo -eq 1) {
      DisplayOut "Enabling Send To Context item..." 11 0
      If (!(Test-Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo")) {
-           New-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo"
-	 }
+         New-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo"
+     }
      Set-ItemProperty -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" -Name "(Default)" -Type String -Value "{7BA4C740-9E81-11CF-99D3-00AA004AE837}" -ErrorAction SilentlyContinue | Out-Null
 } ElseIf ($SendTo -eq 2) {
      DisplayOut "Disabling Send To Context item..." 12 0
-	 If (Test-Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo") {
-           Remove-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" -ErrorAction SilentlyContinue
-	 }
+     If (Test-Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo") {
+         Remove-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" -ErrorAction SilentlyContinue
+     }
 }
 
 ##########
@@ -1221,7 +1221,7 @@ If ($SendTo -eq 1) {
 
 DisplayOut ""
 DisplayOut "----------------------" 14 0
-DisplayOut "-   Task Bar Items   -" 15 0
+DisplayOut "-   Task Bar Items   -" 14 0
 DisplayOut "----------------------" 14 0
 DisplayOut ""
 
@@ -1358,7 +1358,7 @@ If ($TaskbarButtOnDisplay -eq 1) {
 
 DisplayOut ""
 DisplayOut "-----------------------" 14 0
-DisplayOut "-   Star Menu Items   -" 15 0
+DisplayOut "-   Star Menu Items   -" 14 0
 DisplayOut "-----------------------" 14 0
 DisplayOut ""
 
@@ -1399,7 +1399,7 @@ If ($MostUsedAppStartMenu -eq 1) {
 # Recent Items and Frequent Places
 If ($RecentItemsFrequent -eq 1) {
      DisplayOut "Enabling Recent Items and Frequent Places..." 11 0
-	 If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu")) {
+     If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu")) {
          New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" | Out-Null
      }
      Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "Start_TrackDocs" -Type DWord -Value 1
@@ -1421,7 +1421,7 @@ If ($RecentItemsFrequent -eq 1) {
 
 DisplayOut ""
 DisplayOut "----------------------" 14 0
-DisplayOut "-   Explorer Items   -" 15 0
+DisplayOut "-   Explorer Items   -" 14 0
 DisplayOut "----------------------" 14 0
 DisplayOut ""
 
@@ -1572,7 +1572,7 @@ If ($Autorun -eq 1) {
 
 DisplayOut ""
 DisplayOut "-----------------------" 14 0
-DisplayOut "-   'This PC' items   -" 15 0
+DisplayOut "-   'This PC' items   -" 14 0
 DisplayOut "-----------------------" 14 0
 DisplayOut ""
 
@@ -1652,7 +1652,7 @@ If ($VideosIconInThisPC -eq 1) {
 
 DisplayOut ""
 DisplayOut "-----------------------------" 14 0
-DisplayOut "-   Photo Viewer Settings   -" 15 0
+DisplayOut "-   Photo Viewer Settings   -" 14 0
 DisplayOut "-----------------------------" 14 0
 DisplayOut ""
 
@@ -1669,17 +1669,17 @@ If ($PVFileAssociation -eq 1) {
      DisplayOut "Unsetting Photo Viewer association for bmp, gif, jpg, png and tif..." 12 0
      If (Test-Path "HKCR:\Paint.Picture\shell\open") {
          Remove-Item -Path "HKCR:\Paint.Picture\shell\open" -Recurse
-	 }
-	 Remove-ItemProperty -Path "HKCR:\giffile\shell\open" -Name "MuiVerb" -ErrorAction SilentlyContinue
+     }
+     Remove-ItemProperty -Path "HKCR:\giffile\shell\open" -Name "MuiVerb" -ErrorAction SilentlyContinue
      Set-ItemProperty -Path "HKCR:\giffile\shell\open" -Name "CommandId" -Type String -Value "IE.File"
      Set-ItemProperty -Path "HKCR:\giffile\shell\open\command" -Name "(Default)" -Type String -Value "`"$env:SystemDrive\Program Files\Internet Explorer\iexplore.exe`" %1"
      Set-ItemProperty -Path "HKCR:\giffile\shell\open\command" -Name "DelegateExecute" -Type String -Value "{17FE9752-0B5A-4665-84CD-569794602F5C}"
      If (Test-Path "HKCR:\jpegfile\shell\open") { 
          Remove-Item -Path "HKCR:\jpegfile\shell\open" -Recurse
      }
-	 If (Test-Path "HKCR:\jpegfile\shell\open") { 
+     If (Test-Path "HKCR:\jpegfile\shell\open") { 
          Remove-Item -Path "HKCR:\pngfile\shell\open" -Recurse
-	 }
+     }
 } 
 
 # Add Photo Viewer to "Open with..."
@@ -1707,7 +1707,7 @@ If ($PVOpenWithMenu -eq 1) {
 
 DisplayOut ""
 DisplayOut "------------------------" 14 0
-DisplayOut "-   Lockscreen Items   -" 15 0
+DisplayOut "-   Lockscreen Items   -" 14 0
 DisplayOut "------------------------" 14 0
 DisplayOut ""
 
@@ -1773,7 +1773,7 @@ If ($CameraOnLockscreen -eq 1) {
 
 DisplayOut ""
 DisplayOut "------------------" 14 0
-DisplayOut "-   Misc Items   -" 15 0
+DisplayOut "-   Misc Items   -" 14 0
 DisplayOut "------------------" 14 0
 DisplayOut ""
 
@@ -1824,7 +1824,7 @@ If ($RemoteUACAcctToken -eq 1) {
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "LocalAccountTokenFilterPolicy" -Type DWord -Value 1
 } ElseIf ($RemoteUACAcctToken -eq 2) {
      DisplayOut "Disabling  Remote UAC Local Account Token Filter..." 12 0
-	 Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "LocalAccountTokenFilterPolicy" -ErrorAction SilentlyContinue
+     Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "LocalAccountTokenFilterPolicy" -ErrorAction SilentlyContinue
 }
 
 # Hibernate Option
@@ -1839,7 +1839,7 @@ If ($HibernatePower -eq 1) {
 # Sleep Option
 If ($SleepPower -eq 1) {
      DisplayOut "Enabling Sleep Option..." 11 0
-	 If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings")) {
+     If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings")) {
           New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" | Out-Null
      }
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" -Name "ShowSleepOption" -Type DWord -Value 1
@@ -1858,7 +1858,7 @@ If ($SleepPower -eq 1) {
 
 DisplayOut ""
 DisplayOut "-------------------------" 14 0
-DisplayOut "-   Application Items   -" 15 0
+DisplayOut "-   Application Items   -" 14 0
 DisplayOut "-------------------------" 14 0
 DisplayOut ""
 
@@ -1877,9 +1877,9 @@ If ($OneDrive -eq 1) {
 # OneDrive Install
 If ($OneDriveInstall -eq 1) {
      DisplayOut "Installing OneDrive..." 11 0
-	 If($OSType -eq 64) {
+     If($OSType -eq 64) {
          $onedriveS = "$env:SYSTEMROOT\SysWOW64\OneDriveSetup.exe"
-	 } Else {
+     } Else {
          $onedriveS = "$env:SYSTEMROOT\System32\OneDriveSetup.exe"
      }
      Start-Process $onedriveS -NoNewWindow
@@ -1887,9 +1887,9 @@ If ($OneDriveInstall -eq 1) {
      DisplayOut "Uninstalling OneDrive..." 15 0
      Stop-Process -Name OneDrive -ErrorAction SilentlyContinue
      Start-Sleep -s 3
-	 If($OSType -eq 64) {
+     If($OSType -eq 64) {
          $onedriveS = "$env:SYSTEMROOT\SysWOW64\OneDriveSetup.exe"
-	 } Else  {
+     } Else {
          $onedriveS = "$env:SYSTEMROOT\System32\OneDriveSetup.exe"
      }
      Start-Process $onedriveS "/uninstall" -NoNewWindow -Wait | Out-Null
@@ -1961,24 +1961,39 @@ If ($LinuxSubsystem -eq 1) {
 
 DisplayOut ""
 DisplayOut "-----------------------" 14 0
-DisplayOut "-   Metro App Items   -" 15 0
+DisplayOut "-   Metro App Items   -" 14 0
 DisplayOut "-----------------------" 14 0
 DisplayOut ""
 
 # Default Microsoft applications (Bloatware)
+DisplayOut "" 14 0
+DisplayOut "Installing Apps..." 11 0
+DisplayOut "------------------" 11 0
+DisplayOut "" 14 0
 ForEach ($AppI in $APPS_AppsInstall) {
-     $APPIDisplay = "Installing "+$AppI+"..."
-     DisplayOut $APPIDisplay 11 0
+     #$APPIDisplay = "Installing "+$AppI+"..."
+     #DisplayOut $APPIDisplay 11 0
+	 DisplayOut $AppI 11 0
      Add-AppxPackage -DisableDevelopmentMode -Register "$($(Get-AppXPackage -AllUsers "$AppI").InstallLocation)\AppXManifest.xml"
 }
+DisplayOut "" 12 0
+DisplayOut "Hidinging Apps..." 12 0
+DisplayOut "-----------------" 12 0
+DisplayOut "" 14 0
 ForEach ($AppH in $APPS_AppsHide) {
-     $APPHDisplay = "Installing "$AppH"..."
-     DisplayOut $APPHDisplay 12 0
+     #$APPHDisplay = "Hidinging "$AppH"..."
+     #DisplayOut $APPHDisplay 12 0
+	 DisplayOut $AppH 12 0
      Get-AppxPackage $AppH | Remove-AppxPackage
 }
+DisplayOut "" 14 0
+DisplayOut "Uninstalling Apps..." 14 0
+DisplayOut "--------------------" 14 0
+DisplayOut "" 14 0
 ForEach ($AppU in $APPS_AppsUninstall) {
-     $APPUDisplay = "Installing "+$AppU+"..."
-     DisplayOut $APPUDisplay 14 0
+     #$APPUDisplay = "Uninstalling "+$AppU+"..."
+     #DisplayOut $APPUDisplay 14 0
+     DisplayOut $AppU 14 0
      $PackageFullName = (Get-AppxPackage $AppU).PackageFullName
      $ProPackageFullName = (Get-AppxProvisionedPackage -online | where {$_.Displayname -eq $AppU}).PackageName
      
@@ -2006,20 +2021,20 @@ ForEach ($AppU in $APPS_AppsUninstall) {
 If ($Disabled -eq 1) {
 If ($MoreColorsTitle -eq 1) {
      DisplayOut "Enabling More Tile Colors..." 11 0
-	 If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\")) {
+     If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\")) {
 	    New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\" | Out-Null
-	 }
-	 for($i=0; $i -ne 4; $i++) {
-	 	 If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\$i\")) {
-		 	New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\$i\" | Out-Null
-	     }
-         for($a=0; $a -ne 2; $a++) {
+     }
+     for($i=0; $i -ne 4; $i++) {
+	    If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\$i\")) {
+	             New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\$i\" | Out-Null
+	    }
+	    for($a=0; $a -ne 2; $a++) {
 	         If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\$i\Theme$a")) {
 	             New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\$i\Theme$a" | Out-Null
 	         } 
 	     }
-	 }
-	 New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\0\Theme0"
+     }
+     New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\0\Theme0"
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\0\Theme0" -Name "Color" -Type DWord -Value "00918b73"
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\0\Theme1" -Name "Color" -Type DWord -Value "00a68e5e"
      Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Accents\1\Theme0" -Name "Color" -Type DWord -Value "00a44817"
@@ -2053,7 +2068,7 @@ If ($MoreColorsTitle -eq 1) {
 ##########
 If ($Restart -eq 1) {
      Write-Host "Restarting in 10 Seconds..."
-	 Start-Sleep -s 10
+     Start-Sleep -s 10
      Restart-Computer
 } Else {
      Write-Host "Goodbye..."
