@@ -1,11 +1,11 @@
 -----------------------------------------------------------------------------------
-3.5-Mod (02-??-2017)
+3.5-Mod (02-09-2017)
 
 Re-ordered some items
 Added Write output when at Each different category
 Added Color for Some outputs
 Ability to Disable Output
-Ability to Disable Color on output
+Ability to Disable Color of output
 
 renamed 4 items
 APP_SolitaireCollection to APP_SolitaireCollect
