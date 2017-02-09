@@ -5,12 +5,12 @@
 
 --------------------------------------------------------------------------------------------------
 
-Planning to do at some point
+# Planning to do
 - [ ] Menu on run that lets you view each Item and can run it like that or lets you run from variables from file or preset
 
 --------------------------------------------------------------------------------------------------
 
-Planned at Later Date
+# Planned at Later Date
 - [ ] Ability to Set Services based on Blackviper's service settings (Not for a few months)
 
 Blackviper's site
