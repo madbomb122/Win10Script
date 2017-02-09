@@ -1,9 +1,10 @@
 # To do
-- [X] Ability to create restore point BEFORE script runs
-- [X] Better Sorting of all the function and Item List
-- [ ] Testing-- Ability to Disable output
-- [ ] Testing-- Add Color based on Script action (Enable/Disable, Hide/Show, Etc)
+- [X] Ability to Disable output
+- [X] Add Color based on Script action (Enable/Disable, Hide/Show, Etc)
 - [ ] Ability Import an app list of your own to Install/Hide/Uninstall from a File
+
+Planning to do at some point
+- [ ] Menu on run that lets you view each Item and can run it like that or lets you run from variables from file or preset
 
 Planned at Later Date
 - [ ] Ability to Set Services based on Blackviper's service settings (Not for a few months)
