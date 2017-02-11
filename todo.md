@@ -11,7 +11,8 @@
 -------------------------------------------------------------------------------------------------------------
 
 # Planned at Later Date
-- [ ] Ability to Set Services based on Blackviper's service settings (Not for a few months)
+- [ ] Ability to Set Services based on Blackviper's service settings
+^Once the Founders Package is released (New Service Pack) and Blackviper releases settings for it
 
 Blackviper's site
 http://www.blackviper.com/service-configurations/black-vipers-windows-10-service-configurations/
