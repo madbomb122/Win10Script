@@ -15,7 +15,7 @@
 # 2. Edit Settings file (what you load)
 # 3. Run script with setting inputed/loaded
 
-# May become part of main script with switch to bypass 
+# May become part of main script with ability to bypass 
 # these menu and run script for automation
 
 $MainMenuItems = @(
