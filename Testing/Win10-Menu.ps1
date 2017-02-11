@@ -3,7 +3,7 @@
 # 
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script
-# Version: 1.0, 02-09-2017
+# Version: 1.0, 02-11-2017
 # 
 # Release Type: Work in Progress
 ##########
