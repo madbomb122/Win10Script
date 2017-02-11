@@ -3,12 +3,12 @@
 - [X] Add Color based on Script action (Enable/Disable, Hide/Show, Etc)
 - [ ] Ability Import an app list of your own to Install/Hide/Uninstall from a File
 
---------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
 
 # Working On/Testing
-- [ ] script with a Menu to make selection of settings easier (writes or load a file or run script)
+- [ ] Seperate script with a Menu to make selection of settings easier (writes or load a file or run script)
 
---------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
 
 # Planned at Later Date
 - [ ] Ability to Set Services based on Blackviper's service settings (Not for a few months)
