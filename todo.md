@@ -5,8 +5,8 @@
 
 --------------------------------------------------------------------------------------------------
 
-# Planning to do
-- [ ] Menu on run that lets you view each Item and can run it like that or lets you run from variables from file or preset
+# Working On/Testing
+- [ ] script with a Menu to make selection of settings easier (writes or load a file or run script)
 
 --------------------------------------------------------------------------------------------------
 
