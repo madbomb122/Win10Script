@@ -8,7 +8,7 @@ This script originally created by https://github.com/Disassembler0/Win10-Initial
 This script is a Modded version of the 2.0 script by Disaseembler0. <br />
 The script has added items with an easier way to change preferences.
 
-## Basic Usage
+# [](#header-1)Basic Usage
 edit the file<br />
 change setting you want (# will give what settings can be for that function) <br />
 **Note: If you're not sure what something does dont change it or do a web search** <br />
@@ -19,7 +19,7 @@ Make sure your account is a member of Administrators group as the script attempt
 <br />
 **Note: The bat file provided can be used to run the script with a custom file, windows default or settings in the script (just edit the file and remove the 2 Colons '::' from the one you want to run.** <br />
 
-### Advanced Usage
+## [](#header-2)Advanced Usage
 The Following will run the script with resetting everything the script can change back to windows default (Other than reinstalling onedrive or apps) <br />
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Mod.ps1 -Set WD` <br />
 or <br />
