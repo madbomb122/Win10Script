@@ -4,6 +4,8 @@
 Working on a Menu Display (Win10-Menu.ps1)
 When done will be part of main script with ability to bypass for automation
 
+Note: Current settings file will NOT work after this is done
+
 -----------------------------------------------------------------------------------
 3.5-Mod (02-09-2017)
 
