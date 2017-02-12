@@ -6,7 +6,7 @@
 -------------------------------------------------------------------------------------------------------------
 
 # Working On/Testing
-- [ ] Seperate script with a Menu to make selection of settings easier (writes or load a file or run script)
+- [ ] Adding a Menu to make selection of settings easier (writes or load a file or run script)
 
 -------------------------------------------------------------------------------------------------------------
 
