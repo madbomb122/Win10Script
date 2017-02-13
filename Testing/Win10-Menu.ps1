@@ -287,18 +287,18 @@ function ScriptSettingsMM {
 		}
         $ScriptSettingsMM = Read-Host "`nSelection"
 		switch ($ScriptSettingsMM) {
-            1 {"The color is red."} #Privacy Settings
-            2 {"                  "} #Service Tweaks
-            3 {"The color is green."} #Star Menu
-            4 {"The color is yellow."} #Lock Screen
-            5 {"The color is orange."} #'This PC' 
-            6 {"The color is green."} #Explorer
-            7 {"The color is yellow."} #Windows Update
-            8 {"The color is orange."} #Context Menu
-            9 {"The color is yellow."} #Task Bar 
-            10 {"The color is orange."} #Features
-            11 {"The color is green."} #Metro Apps
-			12 {"The color is green."} #Misc/Photo Viewer
+            1 {""} #Privacy Settings
+            2 {""} #Service Tweaks
+            3 {""} #Star Menu
+            4 {""} #Lock Screen
+            5 {""} #'This PC' 
+            6 {""} #Explorer
+            7 {""} #Windows Update
+            8 {""} #Context Menu
+            9 {""}} #Task Bar 
+            10 {""} #Features
+            11 {""} #Metro Apps
+			12 {""} #Misc/Photo Viewer
             B {$ScriptSettingsMM = "Out"} 
             default {$Invalid = 1}
 		}
