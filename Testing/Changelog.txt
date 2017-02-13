@@ -1,13 +1,14 @@
 -----------------------------------------------------------------------------------
-?-Mod (02-??-2017)
+?-Mod (02-??-2017) -START VERSION OF NEW SCRIPT
 
 Working on a Menu Display (Win10-Menu.ps1)
 When done will be part of main script with ability to bypass for automation
 
-Note: Current settings file will NOT work after this is done
+Note1: Current settings file will NOT work after this is done
+Note2: 3.5-mod will be the LAST before the new script
 
 -----------------------------------------------------------------------------------
-3.5-Mod (02-09-2017)
+3.5-Mod (02-09-2017) -LAST VERSION OF OLD SCRIPT
 
 Re-ordered some items
 Added Write output when at Each different category
