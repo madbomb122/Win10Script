@@ -8,6 +8,9 @@
 # Release Type: Work in Progress
 ##########
 
+# At the moment the Script will ONLY display items
+# The save/load works but nothing to load/save ATM
+
 # This script it to make selection of settings easier
 
 # This script it ment to
