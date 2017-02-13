@@ -3,7 +3,7 @@
 # 
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script
-# Version: 0.0, 02-12-2017
+# Version: 0.0, 02-13-2017
 # 
 # Release Type: Work in Progress
 ##########
@@ -18,41 +18,62 @@
 # When done will be part of the main script with ability
 # to bypass Menu for Automation
 
+## Remove the Bellow ITEM when done
+# predefined Color Array
+$colors = @(
+     "black",        #0
+     "blue",         #1
+     "cyan",         #2
+     "darkblue",     #3
+     "darkcyan",     #4
+     "darkgray",     #5
+     "darkgreen",    #6
+     "darkmagenta",  #7
+     "darkred",      #8
+     "darkyellow",   #9
+     "gray",         #10
+     "green",        #11
+     "magenta",      #12
+     "red",          #13
+     "white",        #14
+     "yellow"        #15
+)
+## Remove the Above ITEM when done
+
+##########
+# Version Info -Start
+##########
+
 $CurrVer = "0.0 (02-11-17) "
 $RelType = "Beta   "
 #$RelType = "Stable "
 
+##########
+# Version Info -End
+##########
+
+##########
+# Menu Display Items -Start
+##########
+
 $MainMenuItems = @(
 '                    Main Menu                     ',
-'1. Run Script          ',
-'2. Script Settings     ',
-'3. Load Setting        ',
-'4. Save Setting        ',
-'5. Script Option       ',
-'                       ',
-'H. Help                ',
-'A. About/Version       ',
-'C. Copyright           ',
-'                       ',
-'                       ',
-'                       ',
+'1. Run Script          ','H. Help                ',
+'2. Script Settings     ','C. Copyright           ',
+'3. Load Setting        ','A. About/Version       ',
+'4. Save Setting        ','                       ',
+'5. Script Option       ','                       ',
 'Q. Exit/Quit                                      '
 )
 
 $ScriptSettingsMainMenuItems = @(
 '             Script Setting Main Menu             ',
-'1. Privacy Settings    ',
-'2. Windows Update      ',
-'3. Service Tweaks      ',
-'4. Context Menu        ',
-'5. Task Bar            ',
-'6. Star Menu           ',
-'7. Explorer            ',
-"8. 'This PC'           ",
-'9. Photo Viewer        ',
-'10. Lock Screen        ',
-'11. Features/Apps      ',
-'12. Misc               ',
+'1. Privacy Settings    ','7. Windows Update      ',
+'2. Service Tweaks      ','8. Context Menu        ',
+'3. Start Menu          ','9. Task Bar            ',
+'4. Lock Screen         ','10. Features           ',
+"5. 'This PC'           ",'11. Metro Apps         ',
+'6. Explorer            ','12. Misc/Photo Viewer  ',
 'B. Back to Main Menu                              '
 )
 
@@ -65,7 +86,7 @@ $SettingFileItems = @(
 
 $ConfirmMenuItems1 = @(
 '                  Confirm Dialog                  ',
-'                                                 ',
+
 '              Are You sure? (Y/N)                ',
 '0. Cancel/Back to Main Menu                       '
 )
@@ -114,74 +135,96 @@ $AboutItems = @(
 "Press 'Enter' to go back                          "
 )
 
-$Invalid=0
+$CopyrightItems = @(
+'                     Copyright                    ',
+'                                                 ',
+' Copyright (c) 2017 Disassembler -Original       ',
+' Copyright (c) 2017 Madbomb122 -This Script      ',
+' This program is free software: you can          ',
+' redistribute it and/or modify This program is   ',
+' free software This program is free software:    ',
+' you can redistribute it and/or modify it under  ',
+' the terms of the GNU General Public License as  ',
+' published by the Free Software Foundation,      ',
+' version 3 of the License.                       ',
+'                                                 ',
+' This program is distributed in the hope that it ',
+' will be useful, but WITHOUT ANY WARRANTY;       ',
+' without even the implied warranty of            ',
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR     ', 
+' PURPOSE.  See the GNU General Public License    ', 
+' for more details.                               ',
+'                                                 ', 
+' You should have received a copy of the GNU      ',
+' General Public License along with this program. ',
+' If not, see <http://www.gnu.org/licenses/>.     '
+)
 
+##########
+# Menu Display Items -End
+##########
+
+# Used to get all values BEFORE any defined so 
+# when exporting shows ALL defined after this point
 $AutomaticVariables = Get-Variable
 
-function cmpv {
-    Compare-Object (Get-Variable) $AutomaticVariables -Property Name -PassThru | Where -Property Name -ne "AutomaticVariables"
-}
+##########
+# Menu Display Function -Start
+##########
 
+# Displays Menu items but has Seperators
 function MenuDisplay ([Array]$ToDisplay, [Int]$MM) {
-    TitleBottom $ToDisplay[0] 0
+    TitleBottom $ToDisplay[0] 11
 	Write-host "|                         |                         |" -Background Black 
-    Write-host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -Background Black -NoNewline $ToDisplay[1];Write-Host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -Background Black -NoNewline $ToDisplay[7];Write-Host "|" -Background Black 
-    Write-host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -Background Black -NoNewline $ToDisplay[2];Write-Host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -Background Black -NoNewline $ToDisplay[8];Write-Host "|" -Background Black 
-    Write-host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -Background Black -NoNewline $ToDisplay[3];Write-Host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -Background Black -NoNewline $ToDisplay[9];Write-Host "|" -Background Black 
-    Write-host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -Background Black -NoNewline $ToDisplay[4];Write-Host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -Background Black -NoNewline $ToDisplay[10];Write-Host "|" -Background Black 
-    Write-host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -Background Black -NoNewline $ToDisplay[5];Write-Host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -Background Black -NoNewline $ToDisplay[11];Write-Host "|" -Background Black 
-    Write-host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -Background Black -NoNewline $ToDisplay[6];Write-Host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -Background Black -NoNewline $ToDisplay[12];Write-Host "|" -Background Black 
+    for ($i=1; $i -lt $ToDisplay.length-1; $i++) {
+	    Write-host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -Background Black -NoNewline $ToDisplay[$i];Write-Host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -Background Black -NoNewline $ToDisplay[$i+1];Write-Host "|" -Background Black 
+        $i++ 
+    }
 	Write-host "|                         |                         |" -Background Black 
-    TitleBottom $ToDisplay[13] 1
+    TitleBottom $ToDisplay[$ToDisplay.length-1] 13
 	Website
 }
 
 # To display Settings Item with Choices for it
+# 1-2 are for description
+# For loop = Choices
+# $ChToDisplayVal = Current Value
 function ChoicesDisplay ([Array]$ChToDisplay,[Int]$ChToDisplayVal) {
-    TitleBottom $ChToDisplay[0] 0
+    TitleBottom $ChToDisplay[0] 11
 	Write-host "|                                                   |" -Background Black 
     Write-host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -NoNewline $ChToDisplay[1];Write-Host "|" -Background Black 
     Write-host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -NoNewline $ChToDisplay[2];Write-Host "|" -Background Black 
 	Write-host "|                                                   |" -Background Black 
     Write-host "|---------------------------------------------------|" -Background Black 
 	Write-host "|                                                   |" -Background Black 
-    for ($i=3; $i -lt $VarToDisplay.length-1; $i++) {
+    for ($i=3; $i -lt $ChToDisplay.length-1; $i++) {
 	    Write-host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -Background Black -NoNewline $ChToDisplay[$i];Write-Host "|" -Background Black 
     }
 	Write-host "|                                                   |" -Background Black 
     Write-host "|---------------------------------------------------|" -Background Black 
 	Write-host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -Background Black -NoNewline "Current Value: "$ChToDisplayVal;Write-Host "|" -Background Black 
     Write-host "|---------------------------------------------------|" -Background Black 
-    TitleBottom $ChToDisplay[7] 1
+    TitleBottom $ChToDisplay[$ChToDisplay.length-1] 13
 	Website
 }
 
+# Displays items but NO Seperators
 function VariableDisplay ([Array]$VarToDisplay) {
-    TitleBottom $VarToDisplay[0] 0
+    TitleBottom $VarToDisplay[0] 11
     for ($i=1; $i -lt $VarToDisplay.length-1; $i++) {
 	    Write-host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -Background Black -NoNewline $VarToDisplay[$i];Write-Host "|" -Background Black 
     }
-    TitleBottom $VarToDisplay[$VarToDisplay.length-1] 2
+    TitleBottom $VarToDisplay[$VarToDisplay.length-1] 16
 }
 
-function WarningDisplay ([Array]$WarnToDisplay) {
-    TitleBottom $WarnToDisplay[0] 0
-    Write-host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -Background Black -NoNewline $WarnToDisplay[1];Write-Host "|" -Background Black 
-    Write-host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -Background Black -NoNewline $WarnToDisplay[2];Write-Host "|" -Background Black 
-	Write-host "|                                                   |" -Background Black 
-    TitleBottom $WarnToDisplay[3] 1
-	Website
-}
-
+# Displays Title of Menu but with color choices
 function TitleBottom ([String]$TitleA,[Int]$TitleB) {
     Write-host "|---------------------------------------------------|" -Background Black 
-	If($TitleB -eq 0) {
-        Write-host -NoNewline "| " -Background Black ;Write-Host -ForegroundColor Green -Background Black -NoNewline $TitleA;Write-Host "|" -Background Black 
-	} ElseIf($TitleB -eq 1) {
-        Write-host -NoNewline "| " -Background Black ;Write-Host -ForegroundColor Red -Background Black -NoNewline $TitleA;Write-Host "|"	 -Background Black 
-	} ElseIf($TitleB -eq 2) {
+	If($TitleB -eq 16) {
 	    Write-host -NoNewline "| " -Background Black ;Write-Host -ForegroundColor Yellow -BackgroundColor Black -NoNewline "Current Version:"$CurrVer;Write-Host "|" -Background Black -NoNewline;Write-Host -ForegroundColor Red -Background Black -NoNewline " Release:"$RelType;Write-Host "|" -Background Black 
-    }
+    } Else {
+	    Write-host -NoNewline "| " -Background Black ;Write-Host -ForegroundColor $colors[$TitleB] -Background Black -NoNewline $TitleA;Write-Host "|" -Background Black 	
+	}
 	Write-host "|---------------------------------------------------|" -Background Black 
 }
 
@@ -190,9 +233,17 @@ function Website {
     Write-host "|---------------------------------------------------|" -Background Black 
 }
 
+##########
+# Menu Display Function -End
+##########
+
+##########
+# Main Menu -Start
+##########
+
 function mainMenu {
     $mainMenu = 'X'
-    while($mainMenu -ne 0){
+    while($mainMenu -ne "Out"){
         Clear-Host
 		MenuDisplay $MainMenuItems 0
 		If($Invalid -eq 1){
@@ -209,26 +260,75 @@ function mainMenu {
             5 {""} #Script Options
             H {HelpMenu} #Help
             A {AboutMenu}  #About/Version
-            C {""}  #Copyright
-			Q {$mainMenu = 0} 
+            C {CopyrightMenu}  #Copyright
+			Q {$mainMenu = "Out"} 
             default {$Invalid = 1}
         }
     }
 }
 
+##########
+# Main Menu -End
+##########
+
+##########
+# Script Settings -Start
+##########
+
+function ScriptSettingsMM {
+    $ScriptSettingsMM = 'X'
+    while($ScriptSettingsMM -ne "Out"){
+        Clear-Host
+		MenuDisplay $ScriptSettingsMainMenuItems 1
+		If($Invalid -eq 1){
+			Write-host ""
+			Write-host "Invalid Selection" -ForegroundColor Red -BackgroundColor Black -NoNewline
+			$Invalid = 0
+		}
+        $ScriptSettingsMM = Read-Host "`nSelection"
+		switch ($ScriptSettingsMM) {
+            1 {"The color is red."} #Privacy Settings
+            2 {"                  "} #Service Tweaks
+            3 {"The color is green."} #Star Menu
+            4 {"The color is yellow."} #Lock Screen
+            5 {"The color is orange."} #'This PC' 
+            6 {"The color is green."} #Explorer
+            7 {"The color is yellow."} #Windows Update
+            8 {"The color is orange."} #Context Menu
+            9 {"The color is yellow."} #Task Bar 
+            10 {"The color is orange."} #Features
+            11 {"The color is green."} #Metro Apps
+			12 {"The color is green."} #Misc/Photo Viewer
+            B {$ScriptSettingsMM = "Out"} 
+            default {$Invalid = 1}
+		}
+    }
+}
+
+##########
+# Script Settings -End
+##########
+
+##########
+# Load Settings -Start
+##########
+
 function LoadSetting {
     $LoadSetting = 'X'
-    while($LoadSetting -ne 0){
+    while($LoadSetting -ne "Out"){
         Clear-Host
-		WarningDisplay $SettingFileItems
+		VariableDisplay $SettingFileItems
 		If($Invalid -eq 1){
 		    Write-host ""
 			Write-host "No file with the name " $LoadSetting -ForegroundColor Red -BackgroundColor Black -NoNewline
 			$Invalid = 0
 		}
+	# Add ability to load Win Default Values
         $LoadSetting = Read-Host "`nFilename"
-		If (Test-Path $LoadSetting -PathType Leaf){
-			$Conf = ConfrmMenu1
+		If ($LoadSetting -eq $null -or $LoadSetting -eq 0){
+			$LoadSetting ="Out"
+		} ElseIf (Test-Path $LoadSetting -PathType Leaf){
+			$Conf = ConfrmMenu 1
 			If($Conf -eq $true){
 			    Import-Clixml .\$LoadSetting | %{ Set-Variable $_.Name $_.Value }
 				$LoadSetting = 0
@@ -241,96 +341,91 @@ function LoadSetting {
     }
 }
 
+##########
+# Load Settings -End
+##########
+
+##########
+# Save Settings -Start
+##########
+
 function SaveSetting {
     $SaveSetting = 'X'
-    while($SaveSetting -ne 0){
+    while($SaveSetting -ne "Out"){
         Clear-Host
-		WarningDisplay $SettingFileItems
+		VariableDisplay $SettingFileItems
 		$SaveSetting = Read-Host "`nFilename"
-		If ($SaveSetting -ne 0){
-		    If (Test-Path $SaveSetting -PathType Leaf){
-			    $Conf = ConfirmMenu2
+		If ($LoadSetting -eq $null -or $LoadSetting -eq 0){
+			$SaveSetting = "Out"	
+		} Else {
+			If (Test-Path $SaveSetting -PathType Leaf){
+			    $Conf = ConfirmMenu 2
 			    If($Conf -eq $true){
 			        cmpv | Export-Clixml .\$SaveSetting
 			    }		    
 		    } Else {
 			    cmpv | Export-Clixml .\$SaveSetting
 		    }
-			$SaveSetting = 0	
+			$SaveSetting = "Out"	
 		}
     }
 }
 
+##########
+# Save Settings -End
+##########
+
+##########
+# Info Display Stuff -Start
+##########
+
 function HelpMenu {
     $HelpMenu = 'X'
-    while($HelpMenu -ne 0){
+    while($HelpMenu -ne "Out"){
         Clear-Host
 		VariableDisplay $HelpItems 0
         $HelpMenu = Read-Host "`nPress 'Enter' to continue"
 		switch ($HelpMenu) {
-            default {$HelpMenu = 0}
+            default {$HelpMenu = "Out"}
         }
     }
 }
 
 function AboutMenu {
     $AboutMenu = 'X'
-    while($AboutMenu -ne 0){
+    while($AboutMenu -ne "Out"){
         Clear-Host
 		VariableDisplay $AboutItems 0
         $AboutMenu = Read-Host "`nPress 'Enter' to continue"
 		switch ($AboutMenu) {
-            default {$AboutMenu = 0}
+            default {$AboutMenu = "Out"}
         }
     }
 }
 
-function ConfirmMenu([int] $Option) {
-    $ConfirmMenu = 'X'
-    while($ConfirmMenu -ne 0){
+function CopyrightMenu {
+    $AboutMenu = 'X'
+    while($AboutMenu -ne "Out"){
         Clear-Host
-		If ($Option -eq 1){
-			MenuDisplay $ConfirmMenuItems1
-		} ElseIf ($Option -eq 2){
-			MenuDisplay $ConfirmMenuItems2 0
-		}
-		$ConfirmMenu = Read-Host "`nSelection (Y/N)"
-        switch (ConfirmMenu) {
-			Y {Return $true}
-            N {Return $false} 
-		    default {Return $false}
-		}
-    } 
+		VariableDisplay CopyrightItems 0
+        $AboutMenu = Read-Host "`nPress 'Enter' to continue"
+		switch ($AboutMenu) {
+            default {$AboutMenu = "Out"}
+        }
+    }
 }
 
-function ScriptSettingsMM {
-    $ScriptSettingsMM = 'X'
-    while($ScriptSettingsMM -ne 0){
-        Clear-Host
-		MenuDisplay $ScriptSettingsMainMenuItems 1
-		If($Invalid -eq 1){
-			Write-host ""
-			Write-host "Invalid Selection" -ForegroundColor Red -BackgroundColor Black -NoNewline
-			$Invalid = 0
-		}
-        $ScriptSettingsMM = Read-Host "`nSelection"
-		switch ($ScriptSettingsMM) {
-            1 {"The color is red."} #Privacy Settings
-            2 {"                  "} #Windows Update
-            3 {"The color is green."} #Service Tweaks
-            4 {"The color is yellow."} #Context Menu
-            5 {"The color is orange."} #Task Bar 
-            6 {"The color is green."} #Star Menu
-            7 {"The color is yellow."} #Explorer
-            8 {"The color is orange."} #'This PC' 
-            9 {"The color is yellow."} #Photo Viewer
-            10 {"The color is orange."} #Lock Screen
-            11 {"The color is green."} #Features/Apps
-            12 {"The color is yellow."} #Misc
-            B {$ScriptSettingsMM = 0} 
-            default {$Invalid = 1}
-		}
-    }
+##########
+# Info Display Stuff -End
+##########
+
+##########
+# Multi Use Functions -Start
+##########
+
+# Used to Help remove the Automatic variables
+function cmpv {
+    Compare-Object (Get-Variable) $AutomaticVariables -Property Name -PassThru | Where -Property Name -ne "AutomaticVariables"
 }
 
 function ChoicesMenu($Vari,$Number) {
@@ -338,7 +433,7 @@ function ChoicesMenu($Vari,$Number) {
     $VariV = Get-Variable $Vari -valueOnly #Variable
     $VariA = Get-Variable $VariJ -valueOnly #Array
     $ChoicesMenu = 'X'
-    while($ChoicesMenu -ne 'Q'){
+    while($ChoicesMenu -ne "Out"){
         Clear-Host
 		If($Invalid -eq 1){
 		    Write-host ""
@@ -358,5 +453,28 @@ function ChoicesMenu($Vari,$Number) {
 		}
     } 
 }
+
+function ConfirmMenu([int] $Option) {
+    $ConfirmMenu = 'X'
+    while($ConfirmMenu -ne "Out"){
+        Clear-Host
+		If ($Option -eq 1){
+			VariableDisplay $ConfirmMenuItems1
+		} ElseIf ($Option -eq 2){
+			VariableDisplay $ConfirmMenuItems2
+		}
+		$ConfirmMenu = Read-Host "`nSelection (Y/N)"
+        switch (ConfirmMenu) {
+			Y {Return $true}
+            N {Return $false} 
+		    default {Return $false}
+		}
+    } 
+}
+
+##########
+# Multi Use Functions -End
+##########
+
 
 mainMenu
