@@ -81,7 +81,7 @@ function ChoicesMenu($Vari,$Number) {
     	switch ($ScriptSettingsMM) {
             0 {Return 0}
             1 {Return 1}
-            2 {Return 2}
+            2 {if($Number -ge 2) {Return 2} Else {$Invalid = 1}}
             3 {if($Number -ge 3) {Return 3} Else {$Invalid = 1}}
             4 {if($Number -eq 4) {Return 4} Else {$Invalid = 1}}
             C {Return $VariV} 
@@ -209,10 +209,10 @@ function Website {
 
 $MainMenuItems = @(
 '                    Main Menu                     ',
-'1. Run Script          ','H. Help                ',
-'2. Script Settings     ','C. Copyright           ',
-'3. Load Setting        ','A. About/Version       ',
-'4. Save Setting        ','                       ',
+'1. Run Script          ','U. How to Use Script   ',
+'2. Script Settings     ','H. Help                ',
+'3. Load Setting        ','C. Copyright           ',
+'4. Save Setting        ','A. About/Version       ',
 '5. Script Options      ','                       ',
 'Q. Exit/Quit                                      '
 )
@@ -233,7 +233,7 @@ function mainMenu {
             2 {ScriptSettingsMM} #Script Settings Main Menu
             3 {LoadSetting} #Load Settings
             4 {SaveSetting} #Save Settings
-            5 {""} #Script Options
+            5 {ScriptOptionMenu} #Script Options
             H {HelpMenu} #Help
             A {AboutMenu}  #About/Version
             C {CopyrightMenu}  #Copyright
@@ -362,6 +362,90 @@ function SaveSetting {
 ##########
 
 ##########
+# Script Options Sub Menu -Start
+##########
+
+$ScriptOptionMenuItems = @(
+'               Metro Apps Items Menu              ',
+'1. Create Restore Point','4. Show Color          ',
+'2. Agree Term of Use   ','5. Restart when Done   ',
+'3. Verbros             ','                       ',
+'B. Back to Main Menu               '
+)
+
+$CreateRestorePointItems = @(
+'               Create Restore Point               ',
+' Creates a restore point before the script runs. ',
+' This Only can be done once ever 24 Hours.       ',
+'0. Skip                                          ',
+'1. Create Restore Point                          ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$Term_of_UseItems = @(
+'                    Term of Use                   ',
+'                                                 ',
+' DO you Agree to the Terms of Use?               ',
+'0. Agree to Term of Use                          ',
+'1. Disagree (Will See Terms when you run script) ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$VerbrosItems = @(
+'                      Verbros                     ',
+'                                                 ',
+' Shows output of the Script.                     ',
+'0. Dont Show Output                              ',
+'1. Show Output                                   ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$ShowColorItems = @(
+'                    Show Color                    ',
+'                                                 ',
+' Shows color for the output of the Script.       ',
+'0. Dont Show Color                               ',
+'1. Show Color                                    ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$RestartColorItems = @(
+'                      Restart                     ',
+' Restart computer when Script is done?           ',
+' I recommend you restart computer.               ',
+'0. Dont Restart Computer                         ',
+'1. Restart Computer                              ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+function ScriptOptionMenu {
+    $ScriptOptionMenu = 'X'
+    while($ScriptOptionMenu -ne "Out"){
+        Clear-Host
+		MenuDisplay $ScriptOptionMenuItems 1
+		If($Invalid -eq 1){
+			Write-host ""
+			Write-host "Invalid Selection" -ForegroundColor Red -BackgroundColor Black -NoNewline
+			$Invalid = 0
+		}
+        $ScriptOptionMenu = Read-Host "`nSelection"
+		switch ($ScriptOptionMenu) {
+            1 {$CreateRestorePoint = ChoicesMenu CreateRestorePoint 1}
+            2 {$Term_of_Use = ChoicesMenu Term_of_Use 1}
+            3 {$Verbros = ChoicesMenu VerbrosVerbros 1}
+            4 {$ShowColor = ChoicesMenu ShowColor 1}
+            5 {$Restart = ChoicesMenu Restart 1} 
+            B {$ScriptOptionMenu = "Out"} 
+            default {$Invalid = 1}
+		}
+    }
+}
+
+##########
+# Script Options Sub Menu -End
+##########
+
+##########
 # Info Display Stuff -Start
 ##########
 
@@ -395,6 +479,40 @@ function HelpMenu {
         $HelpMenu = Read-Host "`nPress 'Enter' to continue"
 		switch ($HelpMenu) {
             default {$HelpMenu = "Out"}
+        }
+    }
+}
+
+$UsageItems = @(
+'                 How to Use Script                ',
+'                                                 ',
+' Basic Usage:                                    ',
+' Use the menu & select what you want to change.  ',
+'                                                 ',
+' Advanced Usage Choices (Bypasses Menu):         ',
+' 1. Edit the script & change values there then   ',
+'        run script with "-set Run"               ',
+' 2. Run Script with an imported file with        ',
+'        "-set filename"                          ',
+' 3. Run Script with Window Default Values with   ',
+'        "-set WD" or "-set WindowsDefault"       ',
+'                                                 ',
+' Examples:                                       ',
+'    Win10-Mod.ps1 -set Run                       ',
+'    Win10-Mod.ps1 -set Settings.xml              ',
+'    Win10-Mod.ps1 -set WD                        ',
+'                                                 ',
+'Press "Enter" to go back                          '
+)
+
+function UsageMenu {
+    $UsageMenu = 'X'
+    while($UsageMenu -ne "Out"){
+        Clear-Host
+		VariableDisplay $UsageItems 0
+        $UsageMenu = Read-Host "`nPress 'Enter' to continue"
+		switch ($UsageMenu) {
+            default {$UsageMenu = "Out"}
         }
     }
 }
@@ -510,8 +628,9 @@ $ContextMenuSetMenuItems = @(
 
 $StartMenuSetMenuItems = @(
 '               Start Menu Items Menu              ',
-'1. Startmenu Web Search','3. Most Used Apps      ',
-'2. Suggestions         ','4. Recent & Frequent   ',
+'1. Startmenu Web Search','4. Most Used Apps      ',
+'2. Suggestions         ','5. Recent & Frequent   ',
+'3. Unpin Items         ','                       ',
 'B. Back to Script Setting Main Menu               '
 )
 
@@ -571,6 +690,22 @@ $FeaturesAppsMenuItems = @(
 '1. One Drive           ','4. Media Player        ',
 '2. One Drive Install   ','5. Work Folders        ',
 '3. Xbox DVR            ','6. Linux Subsystem     ',
+'B. Back to Script Setting Main Menu               '
+)
+
+$MetroAppsMenuItems = @(
+'               Metro Apps Items Menu              ',
+'1. ALL METRO APPS      ','12. Microsoft Solitaire',
+"2. '3DBuilder' app     ",'13. One Connect        ',
+"3. 'Alarms' app        ",'14. Office OneNote     ',
+"4. 'Calculator' app    ","15. 'People' app       ",
+"5. 'Camera' app        ","16. 'Photos' app       ",
+'6. Feedback Hub        ',"17. 'Skype' app        ",
+"7. 'Get Office' App    ",'18. Sticky Notes       ',
+'8. Get Started         ',"19. 'Store' app        ",
+"9. 'Groove Music' app  ",'20. Voice Recorder     ',
+"10. 'Maps' app         ","21. 'Weather' app      ",
+"11. 'Messaging' App    ","22. 'Xbox' App         ",
 'B. Back to Script Setting Main Menu               '
 )
 
