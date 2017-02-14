@@ -3,7 +3,7 @@
 # 
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script
-# Version: 0.0, 02-13-2017
+# Version: 0.0, 02-14-2017
 # 
 # Release Type: Work in Progress
 ##########
@@ -71,23 +71,24 @@ function ChoicesMenu($Vari,$Number) {
     $ChoicesMenu = 'X'
     while($ChoicesMenu -ne "Out"){
         Clear-Host
+		ChoicesDisplay $VariA $VariV
 		If($Invalid -eq 1){
 		    Write-host ""
 			Write-host "Invalid Selection" -ForegroundColor Red -BackgroundColor Black -NoNewline
 			$Invalid = 0
 		}
-		ChoicesDisplay $VariA $VariV
         $ChoicesMenu = Read-Host "`nChoice"
-    	switch ($ScriptSettingsMM) {
+		Write-host $ChoicesMenu
+    	switch ($ChoicesMenu) {
+		    C {Return $VariV}
             0 {Return 0}
             1 {Return 1}
             2 {if($Number -ge 2) {Return 2} Else {$Invalid = 1}}
             3 {if($Number -ge 3) {Return 3} Else {$Invalid = 1}}
             4 {if($Number -eq 4) {Return 4} Else {$Invalid = 1}}
-            C {Return $VariV} 
             default {$Invalid = 1}
 		}
-    } 
+    }
 }
 
 ##########
@@ -158,8 +159,8 @@ function MenuDisplay ([Array]$ToDisplay, [Int]$MM) {
 function ChoicesDisplay ([Array]$ChToDisplay,[Int]$ChToDisplayVal) {
     TitleBottom $ChToDisplay[0] 11
 	Write-host "|                                                   |" -Background Black 
-    Write-host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -NoNewline $ChToDisplay[1];Write-Host "|" -Background Black 
-    Write-host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -NoNewline $ChToDisplay[2];Write-Host "|" -Background Black 
+    Write-host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -Background Black -NoNewline $ChToDisplay[1];Write-Host "|" -Background Black 
+    Write-host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -Background Black -NoNewline $ChToDisplay[2];Write-Host "|" -Background Black 
 	Write-host "|                                                   |" -Background Black 
     Write-host "|---------------------------------------------------|" -Background Black 
 	Write-host "|                                                   |" -Background Black 
@@ -167,9 +168,7 @@ function ChoicesDisplay ([Array]$ChToDisplay,[Int]$ChToDisplayVal) {
 	    Write-host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -Background Black -NoNewline $ChToDisplay[$i];Write-Host "|" -Background Black 
     }
 	Write-host "|                                                   |" -Background Black 
-    Write-host "|---------------------------------------------------|" -Background Black 
-	Write-host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Cyan -Background Black -NoNewline "Current Value: "$ChToDisplayVal;Write-Host "|" -Background Black 
-    Write-host "|---------------------------------------------------|" -Background Black 
+	Write-host -NoNewline "|  " -Background Black ;Write-Host -ForegroundColor Green -Background Black -NoNewline "Current Value:"$ChToDisplayVal;Write-Host "                                 |" -Background Black 
     TitleBottom $ChToDisplay[$ChToDisplay.length-1] 13
 	Website
 }
@@ -282,7 +281,7 @@ function ScriptSettingsMM {
             6 {""} #Explorer
             7 {""} #Windows Update
             8 {""} #Context Menu
-            9 {""}} #Task Bar 
+            9 {""} #Task Bar 
             10 {""} #Features
             11 {""} #Metro Apps
 			12 {""} #Misc/Photo Viewer
@@ -370,7 +369,7 @@ $ScriptOptionMenuItems = @(
 '1. Create Restore Point','4. Show Color          ',
 '2. Agree Term of Use   ','5. Restart when Done   ',
 '3. Verbros             ','                       ',
-'B. Back to Main Menu               '
+'B. Back to Main Menu                              '
 )
 
 $CreateRestorePointItems = @(
@@ -379,7 +378,7 @@ $CreateRestorePointItems = @(
 ' This Only can be done once ever 24 Hours.       ',
 '0. Skip                                          ',
 '1. Create Restore Point                          ',
-'C. Cancel (Keeps Current Setting)                '
+'C. Cancel (Keeps Current Setting)                 '
 )
 
 $Term_of_UseItems = @(
@@ -388,7 +387,7 @@ $Term_of_UseItems = @(
 ' DO you Agree to the Terms of Use?               ',
 '0. Agree to Term of Use                          ',
 '1. Disagree (Will See Terms when you run script) ',
-'C. Cancel (Keeps Current Setting)                '
+'C. Cancel (Keeps Current Setting)                 '
 )
 
 $VerbrosItems = @(
@@ -397,7 +396,7 @@ $VerbrosItems = @(
 ' Shows output of the Script.                     ',
 '0. Dont Show Output                              ',
 '1. Show Output                                   ',
-'C. Cancel (Keeps Current Setting)                '
+'C. Cancel (Keeps Current Setting)                 '
 )
 
 $ShowColorItems = @(
@@ -406,7 +405,7 @@ $ShowColorItems = @(
 ' Shows color for the output of the Script.       ',
 '0. Dont Show Color                               ',
 '1. Show Color                                    ',
-'C. Cancel (Keeps Current Setting)                '
+'C. Cancel (Keeps Current Setting)                 '
 )
 
 $RestartColorItems = @(
@@ -415,7 +414,7 @@ $RestartColorItems = @(
 ' I recommend you restart computer.               ',
 '0. Dont Restart Computer                         ',
 '1. Restart Computer                              ',
-'C. Cancel (Keeps Current Setting)                '
+'C. Cancel (Keeps Current Setting)                 '
 )
 
 function ScriptOptionMenu {
