@@ -1,10 +1,10 @@
 ##########
 # Win10 Initial Setup Script Settings Menu
-# 
+#
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script
 # Version: 0.0, 02-14-2017
-# 
+#
 # Release Type: Work in Progress
 ##########
 
@@ -44,7 +44,7 @@ $colors = @(
 )
 
 If ($RanOnce -ne "Ran"){
-$Script:CreateRestorePoint = 0 
+$Script:CreateRestorePoint = 0
 $Script:ShowColor = 1
 $Script:RanOnce = "Ran"
 }
@@ -111,6 +111,39 @@ function ChoicesMenu([String]$Vari, [Int]$Number) {
 	Set-Variable -Name $Vari -Value $ReturnV -Scope Script;
 }
 
+function VariMenu([Array]$VariDisplay,[Array]$VariMenuItm) {
+    $VariMenu = 'X'
+    while($VariMenu -ne "Out"){
+        Clear-Host
+		MenuDisplay $VariDisplay
+		If($Invalid -eq 1){
+			Write-host ""
+			Write-host "Invalid Selection" -ForegroundColor Red -BackgroundColor Black -NoNewline
+			$Invalid = 0
+		}
+        $VariMenu = Read-Host "`nSelection"
+		$ConInt = $VariMenu -as [int]
+        If($ConInt -is [int]){
+        	for ($i=0; $i -le $VariMenuItm.length; $i++) {
+            	If($VariMenuItm[$i][0] -eq $ConInt){
+                	$LoopVar = $i
+                	$i = $VariMenuItm.length+1
+            	}
+        	}
+        	If($LoopVar -is [int]){
+                ChoicesMenu ($VariMenuItm[$LoopVar][1]) 1
+        	} Else{
+                $Invalid = 1        
+        	}
+		} Else {
+			switch ($VariMenu) {
+                B {$VariMenu = "Out"}
+                default {$Invalid = 1}
+        	}
+		}
+    }
+}
+
 ##########
 # Multi Use Functions -End
 ##########
@@ -145,10 +178,10 @@ function ConfirmMenu([int]$Option) {
 		$ConfirmMenu = Read-Host "`nSelection (Y/N)"
         switch (ConfirmMenu) {
 			Y {Return $true}
-            N {Return $false} 
+            N {Return $false}
 		    default {Return $false}
 		}
-    } 
+    }
 }
 
 ##########
@@ -162,17 +195,17 @@ function ConfirmMenu([int]$Option) {
 #DisplayOutMenu([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor,[int]$NewLine)
 
 # Displays Menu items but has Seperators
-function MenuDisplay ([Array]$ToDisplay, [Int]$MM) {
+function MenuDisplay ([Array]$ToDisplay) {
     TitleBottom $ToDisplay[0] 11
 	DisplayOutMenu "|                         |                         |" 14 0 1
     for ($i=1; $i -lt $ToDisplay.length-1; $i++) {
-	    DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu $ToDisplay[$i] 2 0 0 ;DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu $ToDisplay[$i+1] 2 0 0 ;DisplayOutMenu "|" 14 0 1 
-        $i++ 
+	    DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu $ToDisplay[$i] 2 0 0 ;DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu $ToDisplay[$i+1] 2 0 0 ;DisplayOutMenu "|" 14 0 1
+        $i++
     }
 	DisplayOutMenu "|                         |                         |" 14 0 1
     TitleBottom $ToDisplay[$ToDisplay.length-1] 13
 	Website
-} 
+}
 
 # To display Settings Item with Choices for it
 # 1-2 are for description
@@ -181,13 +214,13 @@ function MenuDisplay ([Array]$ToDisplay, [Int]$MM) {
 function ChoicesDisplay ([Array]$ChToDisplay, [Int]$ChToDisplayVal) {
     TitleBottom $ChToDisplay[0] 11
     DisplayOutMenu "|                                                   |" 14 0 1
-    DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu $ChToDisplay[1] 2 0 0 ;DisplayOutMenu "|" 14 0 1 
-    DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu $ChToDisplay[2] 2 0 0 ;DisplayOutMenu "|" 14 0 1 
+    DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu $ChToDisplay[1] 2 0 0 ;DisplayOutMenu "|" 14 0 1
+    DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu $ChToDisplay[2] 2 0 0 ;DisplayOutMenu "|" 14 0 1
     DisplayOutMenu "|                                                   |" 14 0 1
     DisplayOutMenu "|---------------------------------------------------|" 14 0 1
     DisplayOutMenu "|                                                   |" 14 0 1
     for ($i=3; $i -lt $ChToDisplay.length-1; $i++) {
-        DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu $ChToDisplay[$i] 2 0 0 ;DisplayOutMenu "|" 14 0 1 
+        DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu $ChToDisplay[$i] 2 0 0 ;DisplayOutMenu "|" 14 0 1
     }
     DisplayOutMenu "|                                                   |" 14 0 1
 	DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu "Current Value: " 13 0 0 ;DisplayOutMenu $ChToDisplayVal 13 0 0 ;DisplayOutMenu "                                 |" 14 0 1
@@ -200,7 +233,7 @@ function ChoicesDisplay ([Array]$ChToDisplay, [Int]$ChToDisplayVal) {
 function VariableDisplay ([Array]$VarToDisplay) {
     TitleBottom $VarToDisplay[0] 11
     for ($i=3; $i -lt $VarToDisplay.length-1; $i++) {
-        DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu $VarToDisplay[$i] 2 0 0 ;DisplayOutMenu "|" 14 0 1 
+        DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu $VarToDisplay[$i] 2 0 0 ;DisplayOutMenu "|" 14 0 1
     }
     TitleBottom $VarToDisplay[$VarToDisplay.length-1] 16
 }
@@ -213,11 +246,11 @@ function TitleBottom ([String]$TitleA,[Int]$TitleB) {
 		If($RelType -eq "Stable "){
 		DisplayOutMenu " Release:" 11 0 0 ;DisplayOutMenu $RelType 11 0 0 ;
 		} Else {
-		DisplayOutMenu " Release:" 15 0 0 ;DisplayOutMenu $RelType 15 0 0 ;		
+		DisplayOutMenu " Release:" 15 0 0 ;DisplayOutMenu $RelType 15 0 0 ;
         }
-		DisplayOutMenu "|" 14 0 1 
+		DisplayOutMenu "|" 14 0 1
     } Else {
-	    DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu $TitleA $TitleB 0 0 ;DisplayOutMenu "|" 14 0 1	
+	    DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu $TitleA $TitleB 0 0 ;DisplayOutMenu "|" 14 0 1
 	}
     DisplayOutMenu "|---------------------------------------------------|" 14 0 1
 }
@@ -261,7 +294,7 @@ function mainMenu {
             2 {ScriptSettingsMM} #Script Settings Main Menu
             3 {LoadSetting} #Load Settings
             4 {SaveSetting} #Save Settings
-            5 {ScriptOptionMenu} #Script Options
+            5 {VariMenu $ScriptOptionMenuItems $ScriptOptionMenuItm} #Script Options
             H {HUACMenu "HelpItems"} #Help
 			U {HUACMenu "UsageItems"} #How to Use
             A {HUACMenu "AboutItems"}  #About/Version
@@ -271,6 +304,8 @@ function mainMenu {
         }
     }
 }
+
+
 
 ##########
 # Main Menu -End
@@ -295,7 +330,7 @@ function ScriptSettingsMM {
     $ScriptSettingsMM = 'X'
     while($ScriptSettingsMM -ne "Out"){
         Clear-Host
-		MenuDisplay $ScriptSettingsMainMenuItems 1
+		MenuDisplay $ScriptSettingsMainMenuItems
 		If($Invalid -eq 1){
 			Write-host ""
 			Write-host "Invalid Selection" -ForegroundColor Red -BackgroundColor Black -NoNewline
@@ -307,19 +342,21 @@ function ScriptSettingsMM {
             2 {""} #Service Tweaks
             3 {""} #Star Menu
             4 {""} #Lock Screen
-            5 {""} #'This PC' 
+            5 {""} #'This PC'
             6 {""} #Explorer
             7 {""} #Windows Update
             8 {""} #Context Menu
-            9 {""} #Task Bar 
+            9 {""} #Task Bar
             10 {""} #Features
             11 {""} #Metro Apps
 			12 {""} #Misc/Photo Viewer
-            B {$ScriptSettingsMM = "Out"} 
+            B {$ScriptSettingsMM = "Out"}
             default {$Invalid = 1}
 		}
     }
 }
+
+            5 {VariMenu $ScriptOptionMenuItems $ScriptOptionMenuItm} #Script Options
 
 ##########
 # Script Settings -End
@@ -356,7 +393,7 @@ function LoadSetting {
 			    Import-Clixml .\$LoadSetting | %{ Set-Variable $_.Name $_.Value }
 				$LoadSetting = 0
 			} Else {
-				$LoadSetting = 0			    
+				$LoadSetting = 0
 			}
 		} Else {
             $Invalid = 1
@@ -371,17 +408,17 @@ function SaveSetting {
 		VariableDisplay $SettingFileItems
 		$SaveSetting = Read-Host "`nFilename"
 		If ($LoadSetting -eq $null -or $LoadSetting -eq 0){
-			$SaveSetting = "Out"	
+			$SaveSetting = "Out"
 		} Else {
 			If (Test-Path $SaveSetting -PathType Leaf){
 			    $Conf = ConfirmMenu 2
 			    If($Conf -eq $true){
 			        cmpv | Export-Clixml .\$SaveSetting
-			    }		    
+			    }
 		    } Else {
 			    cmpv | Export-Clixml .\$SaveSetting
 		    }
-			$SaveSetting = "Out"	
+			$SaveSetting = "Out"
 		}
     }
 }
@@ -400,6 +437,14 @@ $ScriptOptionMenuItems = @(
 '2. Agree Term of Use   ','5. Restart when Done   ',
 '3. Verbros             ','                       ',
 'B. Back to Main Menu                             '
+)
+
+$ScriptOptionMenuItm = (
+(1,"CreateRestorePoint"),
+(2,"Term_of_Use"),
+(3,"Verbros"),
+(4,"ShowColor"),
+(5,"Restart")
 )
 
 $CreateRestorePointItems = @(
@@ -438,7 +483,7 @@ $ShowColorItems = @(
 'C. Cancel (Keeps Current Setting)                '
 )
 
-$RestartColorItems = @(
+$RestartItems = @(
 '                     Restart                     ',
 ' Restart computer when Script is done?           ',
 ' I recommend you restart computer.               ',
@@ -446,29 +491,6 @@ $RestartColorItems = @(
 '1. Restart Computer                              ',
 'C. Cancel (Keeps Current Setting)                '
 )
-
-function ScriptOptionMenu {
-    $ScriptOptionMenu = 'X'
-    while($ScriptOptionMenu -ne "Out"){
-        Clear-Host
-		MenuDisplay $ScriptOptionMenuItems 1
-		If($Invalid -eq 1){
-			Write-host ""
-			Write-host "Invalid Selection" -ForegroundColor Red -BackgroundColor Black -NoNewline
-			$Invalid = 0
-		}
-        $ScriptOptionMenu = Read-Host "`nSelection"
-		switch ($ScriptOptionMenu) {
-            1 {ChoicesMenu "CreateRestorePoint" 1}
-            2 {ChoicesMenu "Term_of_Use" 1}
-            3 {ChoicesMenu "VerbrosVerbros" 1}
-            4 {ChoicesMenu "ShowColor" 1}
-            5 {ChoicesMenu "Restart" 1} 
-            B {$ScriptOptionMenu = "Out"} 
-            default {$Invalid = 1}
-		}
-    }
-}
 
 ##########
 # Script Options Sub Menu -End
@@ -538,10 +560,10 @@ $CopyrightItems = @(
 ' This program is distributed in the hope that it ',
 ' will be useful, but WITHOUT ANY WARRANTY;       ',
 ' without even the implied warranty of            ',
-' MERCHANTABILITY or FITNESS FOR A PARTICULAR     ', 
-' PURPOSE.  See the GNU General Public License    ', 
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR     ',
+' PURPOSE.  See the GNU General Public License    ',
 ' for more details.                               ',
-'                                                 ', 
+'                                                 ',
 ' You should have received a copy of the GNU      ',
 ' General Public License along with this program. ',
 ' If not, see <http://www.gnu.org/licenses/>.     '
@@ -689,12 +711,14 @@ $MetroAppsMenuItems = @(
 'B. Back to Script Setting Main Menu              '
 )
 
+
+
 ##########
 # Script Settings Sub Menu -End
 ##########
 
 
-# Used to get all values BEFORE any defined so 
+# Used to get all values BEFORE any defined so
 # when exporting shows ALL defined after this point
 $AutomaticVariables = Get-Variable
 
