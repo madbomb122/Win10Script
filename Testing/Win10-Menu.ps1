@@ -3,7 +3,7 @@
 #
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script
-# Version: 0.0, 02-15-2017
+# Version: 0.0, 02-16-2017
 #
 # Release Type: Work in Progress
 ##########
@@ -18,9 +18,14 @@
 # 2. Edit Settings file (what you load)
 # 3. Run script with setting inputed/loaded
 
+
 ## READ ME!! 
-## Need to Set ALL variables with $Script:
+
+## To DO:
 ## Need to Move ALL stuff from other script to this when done
+## Need to Set ALL variables with $Script:
+## Need to turn Terms of Use to a Function
+## Need to turn Win Default to function
 ## Need to Add description for ALL items (other than script options)
 ## Need to decide if ALL metro items will be done or just what i have set currently
 
@@ -44,11 +49,8 @@ $colors = @(
      "yellow"        #15
 )
 
-If ($RanOnce -ne "Ran"){
 $Script:CreateRestorePoint = 0
 $Script:ShowColor = 1
-$Script:RanOnce = "Ran"
-}
 ## Remove the Above ITEM when done
 
 ##########
@@ -105,8 +107,9 @@ function ChoicesMenu([String]$Vari, [Int]$Number) {
         }
         $ChoicesMenu = Read-Host "`nChoice"
         switch ($ChoicesMenu) {
+		    [0-4] {if($Number -ge $ChoicesMenu) {$ReturnV = $i; $ChoicesMenu = "Out"} Else {$Invalid = 1}}
             C {$ReturnV = $VariV; $ChoicesMenu = "Out"}
-            default {if($Number -ge $ChoicesMenu) {$ReturnV = $ChoicesMenu; $ChoicesMenu = "Out"} Else {$Invalid = 1}}
+            default {$Invalid = 1}
         }
     }
     Set-Variable -Name $Vari -Value $ReturnV -Scope Script;
@@ -123,7 +126,7 @@ function VariMenu([Array]$VariDisplay,[Array]$VariMenuItm) {
             $Invalid = 0
         }
         $VariMenu = Read-Host "`nSelection"
-        $ConInt = $VariMenu -as [int]
+		$ConInt = $VariMenu -as [int]
         If($ConInt -is [int]){
             for ($i=0; $i -le $VariMenuItm.length; $i++) {
                 If($VariMenuItm[$i][0] -eq $ConInt){
@@ -138,7 +141,43 @@ function VariMenu([Array]$VariDisplay,[Array]$VariMenuItm) {
             }
         } Else {
             switch ($VariMenu) {
-                C {$VariMenu = "Out"}
+			    B {$VariMenu = "Out"}
+                default {$Invalid = 1}
+            }
+        }
+    }
+}
+
+# Need to Change to work better with metro apps
+function MetroMenu([Array]$VariDisplay,[Array]$VariMenuItm) {
+    $MetroMenu = 'X'
+    while($MetroMenu -ne "Out"){
+        Clear-Host
+        MenuDisplay $VariDisplay
+        If($Invalid -eq 1){
+            Write-host ""
+            Write-host "Invalid Selection" -ForegroundColor Red -BackgroundColor Black -NoNewline
+            $Invalid = 0
+        }
+        $MetroMenu = Read-Host "`nSelection"
+		$ConInt = $MetroMenu -as [int]
+        If($ConInt -is [int]){
+            for ($i=0; $i -le $VariMenuItm.length; $i++) {
+                If($VariMenuItm[$i][0] -eq $ConInt){
+                    $LoopVar = $i
+                    $i = $VariMenuItm.length+1
+                }
+            }
+            If($LoopVar -is [int]){
+                ChoicesMenu ($VariMenuItm[$LoopVar][1]) ($VariMenuItm[$LoopVar][2])
+            } Else{
+                $Invalid = 1        
+            }
+        } Else {
+            switch ($MetroMenu) {
+			    B {$MetroMenu = "Out"}
+				N {""} #Next Page
+				P {""} #Previous Page
                 default {$Invalid = 1}
             }
         }
@@ -347,7 +386,7 @@ function ScriptSettingsMM {
             8 {VariMenu $ContextMenuSetMenuItems $ContextMenuSetMenuItm} #Context Menu
             9 {VariMenu $TaskbarSetMenuItems $TaskbarSetMenuItm} #Task Bar
             10 {VariMenu $FeaturesAppsMenuItems $FeaturesAppsMenuItm} #Features
-            11 {VariMenu $MetroAppsMenuItems $MetroAppsMenuItm} #Metro Apps
+            11 {MetroMenu $MetroAppsMenuItems $MetroAppsMenuItm} #Metro Apps
             12 {VariMenu $MiscSetMenuItems $MiscSetMenuItm} #Misc/Photo Viewer
             B {$ScriptSettingsMM = "Out"}
             default {$Invalid = 1}
@@ -363,10 +402,18 @@ function ScriptSettingsMM {
 # Load/Save Settings -Start
 ##########
 
-$SettingFileItems = @(
+$LoadFileItems = @(
 '                  Setting File                   ',
+" Input of WD or  WinDefault will load the Windows",
+' Default settings for each item in this script.  ',
 '                                                 ',
-'            Please Input Filename.               ',
+'          Please Input Filename to Load.         ',
+'  0. Cancel/Back to Main Menu                    '
+)
+
+$SaveSettingItems = @(
+'                  Setting File                   ',
+'          Please Input Filename to Save.         ',
 '  0. Cancel/Back to Main Menu                    '
 )
 
@@ -374,27 +421,30 @@ function LoadSetting {
     $LoadSetting = 'X'
     while($LoadSetting -ne "Out"){
         Clear-Host
-        VariableDisplay $SettingFileItems
+        VariableDisplay $LoadFileItems
         If($Invalid -eq 1){
             Write-host ""
             Write-host "No file with the name " $LoadSetting -ForegroundColor Red -BackgroundColor Black -NoNewline
             $Invalid = 0
         }
-    # Add ability to load Win Default Values
         $LoadSetting = Read-Host "`nFilename"
-        If ($LoadSetting -eq $null -or $LoadSetting -eq 0){
-            $LoadSetting ="Out"
-        } ElseIf (Test-Path $LoadSetting -PathType Leaf){
-            $Conf = ConfrmMenu 1
-            If($Conf -eq $true){
-                Import-Clixml .\$LoadSetting | %{ Set-Variable $_.Name $_.Value }
-                $LoadSetting = 0
+		switch ($LoadSetting) {
+		    0 {$LoadSetting ="Out"; $Switched = "True"}
+			$null {$LoadSetting ="Out"; $Switched = "True"}
+		    WD {LoadWinDefault; $Switched = "True"}
+			WinDefault {LoadWinDefault; $Switched = "True"}
+		}
+		If ($Switched -ne "True"){
+            If (Test-Path $LoadSetting -PathType Leaf){
+                $Conf = ConfrmMenu 1
+                If($Conf -eq $true){
+                    Import-Clixml .\$LoadSetting | %{ Set-Variable $_.Name $_.Value }
+                    $LoadSetting ="Out"
+                }
             } Else {
-                $LoadSetting = 0
+                $Invalid = 1
             }
-        } Else {
-            $Invalid = 1
-        }
+		}
     }
 }
 
@@ -402,7 +452,7 @@ function SaveSetting {
     $SaveSetting = 'X'
     while($SaveSetting -ne "Out"){
         Clear-Host
-        VariableDisplay $SettingFileItems
+        VariableDisplay $SaveSettingItems
         $SaveSetting = Read-Host "`nFilename"
         If ($LoadSetting -eq $null -or $LoadSetting -eq 0){
             $SaveSetting = "Out"
@@ -587,6 +637,10 @@ function HUACMenu([String]$VariJ) {
 # Script Settings Sub Menu -Start
 ##########
 
+  ##########
+  # Privacy Menu -Start
+  ##########
+
 $PrivacySetMenuItems = @(
 '              Privacy Settings Menu              ',
 '1. Telemetry           ','7. Wi-Fi Sense         ',
@@ -613,6 +667,134 @@ $PrivacySetMenuItm = (
 (12,"WAPPush",2)
 )
 
+$TelemetryItems = @(
+'                    Telemetry                    ',
+'                                                 ',
+' Sends various data to Microsoft.                ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$SmartScreenItems = @(
+'                  Smart Screen                   ',
+' Identify reported phishing & malware websites.  ',
+' Helps you make informed decisions for downloads.',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$LocationTrackingItems = @(
+'                Location Tracking                ',
+' Keeps track of your GPS (If avilable).          ',
+" This is used for the 'Find My PC' option.       ",
+'0. Skip                                          ',
+'1. Enable                                        ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$DiagTrackItems = @(
+'               Diagnostic Tracking               ',
+'                                                 ',
+'                                                 ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$CortanaItems = @(
+'                     Cortana                     ',
+'                                                 ',
+'                                                 ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$ErrorReportingItems = @(
+'                 Error Reporting                 ',
+'                                                 ',
+'                                                 ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$WiFiSenseItems = @(
+'                   Wi-Fi Sense                   ',
+' Automatically connects you to open hotspots,    ',
+' it knows about through crowdsourcing            ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$AutoLoggerFileItems = @(
+'                Auto Logger File                 ',
+'                                                 ',
+'                                                 ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$FeedbackItems = @(
+'                    Feedback                     ',
+'                                                 ',
+' A Widnow popup asking for feedback.             ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$AdvertisingIDItems = @(
+'                  Advertising ID                 ',
+' Provides more relevant ads, by allows apps to   ',
+' access a unique identifier for each user.       ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$CortanaSearchItems = @(
+'                  Cortana Search                 ',
+' Allows Search using Cortana, Can enable even    ',
+' when cortana is disabled by this script.        ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$WAPPushItems = @(
+'                    WAP Push                     ',
+' WAP push is a type of txt message that contains ',
+' a direct link to a particular Web page.         ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+  ##########
+  # Privacy Menu -End
+  ##########
+  
+  ##########
+  # Windows Update Menu -Start
+  ##########
+
 $WindowsUpdateSetMenuItems = @(
 '           Window Update Settings Menu           ',
 '1. Check for Update    ','5. Update Type         ',
@@ -631,6 +813,87 @@ $WindowsUpdateSetMenuItm = (
 (6,"UpdateMSRT",2),
 (7,"RestartOnUpdate",2)
 )
+
+$CheckForWinUpdateItems = @(
+'            Check For Windows Update             ',
+'                                                 ',
+' Ability to check for Windows Updates.           ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$WinUpdateDownloadItems = @(
+'             Windows Update Download             ',
+' How Windows gets updates to you, other than     ',
+' from Windows update servers.                    ',
+'0. Skip                                          ',
+'1. P2P* (Get update from other peers)            ',
+'2. Local Only (If another computer has update)   ',
+'3. Disable (Only get from Windows Offical Server)',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$UpdateDriverItems = @(
+'                  Update Driver                  ',
+'                                                 ',
+' If Windows updates installed Drivers.           ',
+'0. Skip                                          ',
+'1. Enable                                        ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$AppAutoDownloadItems = @(
+'                App Auto Download                ',
+'                                                 ',
+' Apps that get Installed without your permission.',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$WinUpdateTypeItems = @(
+'               Windows Update Type               ',
+' How Windows checks for Updates.                 ',
+' Note: May not work with Windows Home.           ',
+'0. Skip                                          ',
+'1. Notify Only                                   ',
+'2. Auto Download (Manual Install)                ',
+'3. Auto Download/Install*                        ',
+'4. Local Admin Choses                            ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$UpdateMSRTItems = @(
+'    Update of Malicious Software Removal Tool    ',
+' Tool checks your for certin malicious software  ',
+' and helps to removes them if found.             ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$RestartOnUpdateItems = @(
+'          Restart After Windows Update           ',
+' If the computer will restart on its own after   ',
+' an update is installed and restart is needed.   ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+  ##########
+  # Windows Update Menu -End
+  ##########
+ 
+  ##########
+  # Service Tweaks Menu -Start
+  ##########
 
 $ServiceTweaksSetMenuItems = @(
 '          Service Tweaks Settings Menu           ',
@@ -652,6 +915,96 @@ $ServiceTweaksSetMenuItm = (
 (8,"RemoteDesktop",2)
 )
 
+$UACItems = @(
+'               User Agent Control                ',
+' Help prevent unauthorized changes to your system',
+' by asking for comfirmation when using some apps.',
+'0. Skip                                          ',
+'1. Never Notify                                  ',
+'2. Normal*                                       ',
+'3. Always Notify                                 ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$AdminSharesItems = @(
+'                  Admin Shares                   ',
+'                                                 ',
+' The default(Hidden) Shared folders              ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$WinDefenderItems = @(
+'                Windows Defender                 ',
+' Windows Defender protected against spyware, it  ',
+' includs a number of real-time security agents   ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$RemoteAssistanceItems = @(
+'                Remote Assistance                ',
+' A temporarily view or control a remote Windows  ',
+' computer over a network or the Internet.        ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$SharingMappedDrivesItems = @(
+'              Sharing Mapped Drives              ',
+' Allow mapped drives to be shared with other     ',
+' users on the computer.                          ',
+'0. Skip                                          ',
+'1. Enable                                        ',
+'2. Disable*                                      ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$FirewallItems = @(
+'                    Firewall                     ',
+'                                                 ',
+'                                                 ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$HomeGroupsItems = @(
+'                   Home Groups                   ',
+' Homegroup is a group of PCs on a home network   ',
+' that can share files and printers.              ',
+'                                                 ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$RemoteDesktopItems = @(
+'                 Remote Desktop                  ',
+' System feature that allows a user to connect to ',
+' a computer in another location.                 ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+  ##########
+  # Service Tweaks Menu -End
+  ##########
+  
+  ##########
+  # Context Menu -Start
+  ##########
+
 $ContextMenuSetMenuItems = @(
 '             Context Menu Items Menu             ',
 '1. Cast to Device      ','4. Previous Versions   ',
@@ -669,6 +1022,74 @@ $ContextMenuSetMenuItm = (
 (6,"SendTo",2)
 )
 
+$CastToDeviceItems = @(
+'           Cast to Device Context Menu           ',
+'                                                 ',
+' Context Menu entry for Cast to Device.          ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$IncludeinLibraryItems = @(
+'         Include in Library Context Menu         ',
+'                                                 ',
+' Context Menu entry for Include in Library.      ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$ShareWithItems = @(
+'             Share With Context Menu             ',
+'                                                 ',
+' Context Menu entry for Share With.              ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$PreviousVersionsItems = @(
+'          Previous Versions Context Menu         ',
+'                                                 ',
+' Context Menu entry for Previous Versions.       ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$PinToItems = @(
+'               Pin To Context Menu               ',
+'                                                 ',
+' Context Menu entry for Pin To.                  ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$SendToItems = @(
+'               Send To Context Menu              ',
+'                                                 ',
+' Context Menu entry for Send To.                 ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+  ##########
+  # Context Menu -End
+  ##########
+  
+  ##########
+  # Start Menu -Start
+  ##########
+
 $StartMenuSetMenuItems = @(
 '              Start Menu Items Menu              ',
 '1. Startmenu Web Search','4. Most Used Apps      ',
@@ -684,6 +1105,14 @@ $StartMenuSetMenuItm = (
 (4,"MostUsedAppStartMenu",2),
 (5,"RecentItemsFrequent",2)
 )
+
+  ##########
+  # Start Menu -End
+  ##########
+  
+  ##########
+  # Taskbar Menu -Start
+  ##########
 
 $TaskbarSetMenuItems = @(
 '               Taskbar Items Menu                ',
@@ -710,7 +1139,15 @@ $TaskbarSetMenuItm = (
 (11,"LastActiveClick",2),
 (12,"TaskbarButtOnDisplay",3)
 )
-
+  
+  ##########
+  # Taskbar Menu -End
+  ##########
+  
+  ##########
+  # Explorer Menu -Start
+  ##########
+  
 $ExplorerSetMenuItems = @(
 '               Explorer Items Menu               ',
 '1. Frequent Quick Acess','7. Content While Drag  ',
@@ -737,6 +1174,14 @@ $ExplorerSetMenuItm = (
 (12,"PidInTitleBar",2)
 )
 
+  ##########
+  # Explorer Menu -End
+  ##########
+  
+  ##########
+  # 'This PC' Menu -Start
+  ##########
+
 $ThisPCSetMenuItems = @(
 "               'This PC' Items Menu              ",
 "1. 'This PC' On Desktop",'5. Desktop Icon        ',
@@ -756,6 +1201,14 @@ $ThisPCSetMenuItm = (
 (7,"PicturesIconInThisPC",2)
 )
 
+  ##########
+  # 'This PC' Menu -End
+  ##########
+  
+  ##########
+  # Lock Screen Menu -Start
+  ##########
+
 $LockScreenSetMenuItems = @(
 '              Lock Screen Items Menu             ',
 '1. Lock Screen         ','3. Power Menu          ',
@@ -769,6 +1222,14 @@ $LockScreenSetMenuItm = (
 (3,"PowerMenuLockScreen",2),
 (4,"CameraOnLockScreen",2)
 )
+
+  ##########
+  # Lock Screen Menu -End
+  ##########
+  
+  ##########
+  # Misc/Photo Viewer Menu -Start
+  ##########
 
 $MiscSetMenuItems = @(
 '           Misc/Photo Viewer Items Menu          ',
@@ -795,6 +1256,14 @@ $MiscSetMenuItm = (
 (9,"PVOpenWithMenu",2)
 )
 
+  ##########
+  # Misc/Photo Viewer Menu -End
+  ##########
+  
+  ##########
+  # Features Menu -Start
+  ##########
+
 $FeaturesAppsMenuItems = @(
 '               Features Items Menu               ',
 '1. One Drive           ','4. Media Player        ',
@@ -815,18 +1284,26 @@ $FeaturesAppsMenuItm = (
 (9,"PVOpenWithMenu",2)
 )
 
+  ##########
+  # Features Menu -End
+  ##########
+  
+  ##########
+  # Metro Apss Menu -Start
+  ##########
+
 $MetroAppsMenuItems = @(
 '              Metro Apps Items Menu              ',
 '1. ALL METRO APPS      ','12. Microsoft Solitaire',
 "2. '3DBuilder' app     ",'13. One Connect        ',
-"3. 'Alarms' app        ",'14. Office OneNote     ',
+"3. 'Alarms' app        ","14. Office 'OneNote'   ",
 "4. 'Calculator' app    ","15. 'People' app       ",
 "5. 'Camera' app        ","16. 'Photos' app       ",
 '6. Feedback Hub        ',"17. 'Skype' app        ",
 "7. 'Get Office' App    ",'18. Sticky Notes       ',
 '8. Get Started         ',"19. 'Store' app        ",
 "9. 'Groove Music' app  ",'20. Voice Recorder     ',
-"10. 'Maps' app         ","21. 'Weather' app      ",
+"10. 'Maps' app         ","21. Bing 'Weather' app ",
 "11. 'Messaging' App    ","22. 'Xbox' App         ",
 'B. Back to Script Setting Main Menu              '
 )
@@ -857,9 +1334,19 @@ $MetroAppsMenuItm = (
 )
 
 <#
-# Apps not listed
-$APP_AdvertisingXaml = 0   ## Removal may cause problem with some apps
-$APP_Appconnector = 0      ## Not sure about this one
+"11. 'Asphalt 8' Game   ","22. Bing 'Food & Drink'",
+"11. Bing 'Money' app   ","22. Bing 'Health & Fit'",
+"11. Bing 'News' app    ","22. Bing 'Sports' app  ",
+"11. Bing Translator app","22. 'Phone' app        ",
+"11. Bing 'Travel' app  ","22. 'Calendar and Mail'",
+"11. 'Candy Crush' game ","22. Bing 'Sports' app  ",
+"11. 'Facebook' app     ","22. 'Netflix' app      ",
+"11. 'Farm Ville' game  ","22. Office 'Sway' app  ",
+"11. 'Twitter' app      ","22. 'Phone Companion'  ",
+"11. 'Farm Ville' game  ","22. 'Canvas' app       ",
+"11. 'Sudoku' game      ","22. 'Minecraft' game   ",
+
+# Apps in list above listed
 $APP_Asphalt8Airborne = 0  # 'Asphalt 8' game
 $APP_BingFinance = 0       # 'Money' app - Financial news
 $APP_BingFoodAndDrink = 0  # 'Food and Drink' app
@@ -868,26 +1355,35 @@ $APP_BingNews = 0          # 'Generic news' app
 $APP_BingSports = 0        # 'Sports' app - Sports news
 $APP_BingTranslator = 0    # 'Translator' app - Bing Translate
 $APP_BingTravel = 0        # 'Travel' app
-$APP_CandyCrushSoda = 0    # 'Candy Crush' game 
+$APP_CandyCrushSoda = 0    # 'Candy Crush' game
 $APP_CommsPhone = 0        # 'Phone' app
 $APP_Communications = 0    # 'Calendar and Mail' app
-$APP_ConnectivityStore = 0     
 $APP_Facebook = 0          # 'Facebook' app
-$APP_FarmVille = 0         # 'Farm Ville' game
-$APP_FreshPaint = 0        # 'Canvas' app
-$APP_MicrosoftJackpot = 0  # 'Jackpot' app
-$APP_MicrosoftJigsaw = 0   # 'Jigsaw' game       
-$APP_MicrosoftMahjong = 0  # 'Mahjong' game
-$APP_MicrosoftSudoku = 0   # 'Sudoku' game 
-$APP_MinecraftUWP = 0      # 'Minecraft' game    
-$APP_MovieMoments = 0        
 $APP_Netflix = 0           # 'Netflix' app
 $APP_OfficeSway = 0        # 'Sway' app
-$APP_StudiosWordament = 0  # 'Wordament' game
-$APP_Taptiles = 0          
 $APP_Twitter = 0           # 'Twitter' app
 $APP_WindowsPhone = 0      # 'Phone Companion' app
+$APP_FarmVille = 0         # 'Farm Ville' game
+$APP_FreshPaint = 0        # 'Canvas' app
+$APP_MicrosoftSudoku = 0   # 'Sudoku' game 
+$APP_MinecraftUWP = 0      # 'Minecraft' game 
+
+
+# Apps not listed
+$APP_AdvertisingXaml = 0   ## Removal may cause problem with some apps
+$APP_Appconnector = 0      ## Not sure about this one
+$APP_ConnectivityStore = 0  
+$APP_MicrosoftJackpot = 0  # 'Jackpot' app
+$APP_MicrosoftJigsaw = 0   # 'Jigsaw' game       
+$APP_MicrosoftMahjong = 0  # 'Mahjong' game 
+$APP_MovieMoments = 0        
+$APP_StudiosWordament = 0  # 'Wordament' game
+$APP_Taptiles = 0   
 #> 
+
+  ##########
+  # Metro Apss Menu -End
+  ##########
 
 ##########
 # Script Settings Sub Menu -End
