@@ -26,7 +26,7 @@
 ## Need to Set ALL variables with $Script:
 ## Need to turn Terms of Use to a Function
 ## Need to turn Win Default to function
-## Need to Add description for ALL items (other than script options)
+## Need to Add description for ALL items (other than script options) --In progress of doing this
 ## Need to decide if ALL metro items will be done or just what i have set currently
 
 ## Remove the Bellow ITEM when done
