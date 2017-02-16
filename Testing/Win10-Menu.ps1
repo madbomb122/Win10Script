@@ -3,7 +3,7 @@
 #
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script
-# Version: 0.0, 02-14-2017
+# Version: 0.0, 02-15-2017
 #
 # Release Type: Work in Progress
 ##########
@@ -18,10 +18,11 @@
 # 2. Edit Settings file (what you load)
 # 3. Run script with setting inputed/loaded
 
-# When done will be part of the main script with ability
-# to bypass Menu for Automation
-
-## READ ME!! Need to Set ALL variables with $Script:
+## READ ME!! 
+## Need to Set ALL variables with $Script:
+## Need to Move ALL stuff from other script to this when done
+## Need to Add description for ALL items (other than script options)
+## Need to decide if ALL metro items will be done or just what i have set currently
 
 ## Remove the Bellow ITEM when done
 $colors = @(
@@ -137,7 +138,7 @@ function VariMenu([Array]$VariDisplay,[Array]$VariMenuItm) {
             }
         } Else {
             switch ($VariMenu) {
-                B {$VariMenu = "Out"}
+                C {$VariMenu = "Out"}
                 default {$Invalid = 1}
             }
         }
@@ -829,6 +830,64 @@ $MetroAppsMenuItems = @(
 "11. 'Messaging' App    ","22. 'Xbox' App         ",
 'B. Back to Script Setting Main Menu              '
 )
+
+$MetroAppsMenuItm = (
+(1,"ALL_METRO_APPS",3), #Need to create
+(2,"APP_3DBuilder",3),
+(3,"APP_WindowsAlarms",3),
+(4,"APP_WindowsCalculator",3),
+(5,"APP_WindowsCamera",3),
+(6,"APP_WindowsFeed",3), #Need to make to combine both feedback
+(7,"APP_MicrosoftOffHub",3),
+(8,"APP_Getstarted",3),
+(9,"APP_Zune",3), #Need to make to combine both Zune
+(10,"APP_WindowsMaps",3),
+(11,"APP_Messaging",3),
+(12,"APP_SolitaireCollect",3),
+(13,"APP_OneConnect",3),
+(14,"APP_OfficeOneNote",3),
+(15,"APP_People",3),
+(16,"APP_Photos",3), #Need to make to combine both Skype
+(17,"APP_Skype",3),
+(18,"APP_StickyNotes",3),
+(19,"APP_WindowsStore",3),
+(20,"APP_SoundRecorder",3),
+(22,"APP_BingWeather",3),
+(21,"APP_XboxApp",3)
+)
+
+<#
+# Apps not listed
+$APP_AdvertisingXaml = 0   ## Removal may cause problem with some apps
+$APP_Appconnector = 0      ## Not sure about this one
+$APP_Asphalt8Airborne = 0  # 'Asphalt 8' game
+$APP_BingFinance = 0       # 'Money' app - Financial news
+$APP_BingFoodAndDrink = 0  # 'Food and Drink' app
+$APP_BingHealthFitness = 0 # 'Health and Fitness' app
+$APP_BingNews = 0          # 'Generic news' app
+$APP_BingSports = 0        # 'Sports' app - Sports news
+$APP_BingTranslator = 0    # 'Translator' app - Bing Translate
+$APP_BingTravel = 0        # 'Travel' app
+$APP_CandyCrushSoda = 0    # 'Candy Crush' game 
+$APP_CommsPhone = 0        # 'Phone' app
+$APP_Communications = 0    # 'Calendar and Mail' app
+$APP_ConnectivityStore = 0     
+$APP_Facebook = 0          # 'Facebook' app
+$APP_FarmVille = 0         # 'Farm Ville' game
+$APP_FreshPaint = 0        # 'Canvas' app
+$APP_MicrosoftJackpot = 0  # 'Jackpot' app
+$APP_MicrosoftJigsaw = 0   # 'Jigsaw' game       
+$APP_MicrosoftMahjong = 0  # 'Mahjong' game
+$APP_MicrosoftSudoku = 0   # 'Sudoku' game 
+$APP_MinecraftUWP = 0      # 'Minecraft' game    
+$APP_MovieMoments = 0        
+$APP_Netflix = 0           # 'Netflix' app
+$APP_OfficeSway = 0        # 'Sway' app
+$APP_StudiosWordament = 0  # 'Wordament' game
+$APP_Taptiles = 0          
+$APP_Twitter = 0           # 'Twitter' app
+$APP_WindowsPhone = 0      # 'Phone Companion' app
+#> 
 
 ##########
 # Script Settings Sub Menu -End
