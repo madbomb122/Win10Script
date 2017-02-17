@@ -1,11 +1,15 @@
 -----------------------------------------------------------------------------------
-?-Mod (02-??-2017) -START VERSION OF NEW SCRIPT
+1.0-Menu (02-??-2017) -START VERSION OF NEW SCRIPT
+In Testing ATM
 
-Working on a Menu Display (Win10-Menu.ps1)
-When done will be part of main script with ability to bypass for automation
+Done With adding a Menu
 
-Note1: Current settings file will NOT work after this is done
-Note2: 3.5-mod will be the LAST before the new script
+Cant Change the Apps to Install/Hide/Uninstall from within script menu..
+  But you can from in the script file (or loaded file).
+  *I might add it to Menu at some other point
+
+Note1: Settings file for Older script (3.5-mod and bellow) will NOT work
+Note2: 3.5-mod is the LAST of the old script
 
 -----------------------------------------------------------------------------------
 3.5-Mod (02-09-2017) -LAST VERSION OF OLD SCRIPT
