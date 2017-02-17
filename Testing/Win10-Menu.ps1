@@ -6,10 +6,10 @@
 # Website: https://github.com/Disassembler0/Win10-Initial-Setup-Script/
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
-# Modded Script Info
+# Modded Script + Menu By
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script
-# Version: 1.0-Mod, 02-09-2017
+# Version: 1.0-Mod, 02-17-2017
 #
 # Release Type: Testing
 ##########
