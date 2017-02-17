@@ -90,25 +90,13 @@ If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
 # 2. Edit Settings file (what you load)
 # 3. Run script with setting inputed/loaded
 
-
-## READ ME!! 
-
-## To DO:
-## Need to Move ALL stuff from other script to this when done
-## Need to Set ALL variables with $Script:
-## Need to turn Terms of Use to a Function
-## Need to turn Win Default to function
-
-## Might make script for JUST the Apps (with NO menu) with 
-##     1. Ability to Run from this script   
-##     2. Have in script but have to set apps setting in script or file
-
 ##########
 # Version Info -Start
 ##########
 
 $CurrVer = "1.0 (02-16-17) "
 $RelType = "Testing"
+#$RelType = "Beta   "
 #$RelType = "Stable "
 
 ##########
@@ -121,18 +109,18 @@ $RelType = "Testing"
 
 Function TOSDisplay {
     If ($Term_of_Use -eq 1){
-	    If($RelType -eq "Testing"){
-            Write-Host "WARNING!!" -ForegroundColor Red -BackgroundColor Black
-            Write-Host "This version is currently being tested and May have problems." -ForegroundColor Yellow -BackgroundColor Black 
-            Write-Host ""
+	    If($RelType -eq "Testing" -or $RelType -eq "Beta   "){
+            Write-Host "                   WARNING!!                   " -ForegroundColor Red -BackgroundColor Black
+            Write-Host "    This version is currently being Tested.    " -ForegroundColor Yellow -BackgroundColor Black 
+            Write-Host "                                               " -ForegroundColor Black -BackgroundColor White
 		}
         Write-Host "This program comes with ABSOLUTELY NO WARRANTY." -ForegroundColor Black -BackgroundColor White
-        Write-Host "This is free software, and you are welcome to" -ForegroundColor Black -BackgroundColor White
-        Write-Host "redistribute it under certain conditions." -ForegroundColor Black -BackgroundColor White
-        Write-Host ""
-        Write-Host "Read License file for full Terms." -ForegroundColor Black -BackgroundColor White
-        Write-Host ""
-        Write-Host "Do you Accept the Term of Use? (y/n)" -ForegroundColor White -BackgroundColor Black	
+        Write-Host "This is free software, and you are welcome to  " -ForegroundColor Black -BackgroundColor White
+        Write-Host "redistribute it under certain conditions.      " -ForegroundColor Black -BackgroundColor White
+        Write-Host "                                               " -ForegroundColor Black -BackgroundColor White
+        Write-Host "Read License file for full Terms.              " -ForegroundColor Black -BackgroundColor White
+        Write-Host "                                               " -ForegroundColor Black -BackgroundColor White
+        Write-Host "Do you Accept the Term of Use? (Y)es/(N)o      " -ForegroundColor White -BackgroundColor Black	
     }
 }
 
@@ -146,10 +134,12 @@ function TOS {
             Write-host "Invalid Input" -ForegroundColor Red -BackgroundColor Black -NoNewline
             $Invalid = 0
         }
-        $TOS = Read-Host "`nDo you Accept the Term of Use? (y/n)"
-        switch ($TOS) {
-		    N {Exit}
-            Y {mainMenu}
+        $TOS = Read-Host "`nAccept? (Y)es/(N)o"
+        switch ($TOS.ToLower()) {
+		    n {Exit}
+			no {Exit}
+            y {mainMenu}
+			yes {mainMenu}
             default {$Invalid = 1}
         }
     }
@@ -192,7 +182,7 @@ Function DisplayOut([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor){
     } 
 }
 
-function ChoicesMenu([String]$Vari, [Int]$Number) {
+function ChoicesMenu([String]$Vari, [Int]$NumberH, [Int]$NumberL) {
     $VariJ = -join($Vari,"Items")
     $VariV = Get-Variable $Vari -valueOnly #Variable
     $VariA = Get-Variable $VariJ -valueOnly #Array
@@ -206,8 +196,9 @@ function ChoicesMenu([String]$Vari, [Int]$Number) {
             $Invalid = 0
         }
         $ChoicesMenu = Read-Host "`nChoice"
-        switch ($ChoicesMenu) {
-		    [0-4] {if($Number -ge $ChoicesMenu) {$ReturnV = $i; $ChoicesMenu = "Out"} Else {$Invalid = 1}}
+        switch -regex ($ChoicesMenu) {
+		    0 {if($NumberL -eq $ChoicesMenu) {$ReturnV = $ChoicesMenu; $ChoicesMenu = "Out"} Else {$Invalid = 1}}
+		    [1-4] {if($NumberH -ge $ChoicesMenu) {$ReturnV = $ChoicesMenu; $ChoicesMenu = "Out"} Else {$Invalid = 1}}
             C {$ReturnV = $VariV; $ChoicesMenu = "Out"}
             default {$Invalid = 1}
         }
@@ -227,18 +218,13 @@ function VariMenu([Array]$VariDisplay,[Array]$VariMenuItm) {
         }
         $VariMenu = Read-Host "`nSelection"
 		$ConInt = $VariMenu -as [int]
-        If($ConInt -is [int]){
+        If($ConInt -is [int] -and $VariMenu -ne $null){
             for ($i=0; $i -le $VariMenuItm.length; $i++) {
                 If($VariMenuItm[$i][0] -eq $ConInt){
-                    $LoopVar = $i
-                    $i = $VariMenuItm.length+1
+			        ChoicesMenu ($VariMenuItm[$i][1]) ($VariMenuItm[$i][2]) ($VariMenuItm[$i][3])
                 }
             }
-            If($LoopVar -is [int]){
-                ChoicesMenu ($VariMenuItm[$LoopVar][1]) ($VariMenuItm[$LoopVar][2])
-            } Else{
-                $Invalid = 1        
-            }
+
         } Else {
             switch ($VariMenu) {
 			    B {$VariMenu = "Out"}
@@ -269,7 +255,7 @@ function MetroMenu([Array]$VariDisplay,[Array]$VariMenuItm) {
                 }
             }
             If($LoopVar -is [int]){
-                ChoicesMenu ($VariMenuItm[$LoopVar][1]) ($VariMenuItm[$LoopVar][2])
+                ChoicesMenu ($VariMenuItm[$LoopVar][1]) ($VariMenuItm[$LoopVar][2]) ($VariMenuItm[$LoopVar][3])
             } Else{
                 $Invalid = 1        
             }
@@ -294,7 +280,7 @@ function MetroMenu([Array]$VariDisplay,[Array]$VariMenuItm) {
 
 $ConfirmMenuItems1 = @(
 '                 Confirm Dialog                  ',
-
+'                                                 ',
 '              Are You sure? (Y/N)                ',
 '0. Cancel/Back to Main Menu                      '
 )
@@ -372,7 +358,7 @@ function ChoicesDisplay ([Array]$ChToDisplay, [Int]$ChToDisplayVal) {
 # Displays items but NO Seperators
 function VariableDisplay ([Array]$VarToDisplay) {
     TitleBottom $VarToDisplay[0] 11
-    for ($i=3; $i -lt $VarToDisplay.length-1; $i++) {
+    for ($i=1; $i -lt $VarToDisplay.length-1; $i++) {
         DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu $VarToDisplay[$i] 2 0 0 ;DisplayOutMenu "|" 14 0 1
     }
     TitleBottom $VarToDisplay[$VarToDisplay.length-1] 16
@@ -382,7 +368,7 @@ function VariableDisplay ([Array]$VarToDisplay) {
 function TitleBottom ([String]$TitleA,[Int]$TitleB) {
     DisplayOutMenu "|---------------------------------------------------|" 14 0 1
     If($TitleB -eq 16) {
-        DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu "Current Version: " 15 0 0 ;DisplayOutMenu $CurrVer 15 0 0 ;DisplayOutMenu "|" 14 0 0
+        DisplayOutMenu "| " 14 0 0 ;DisplayOutMenu "Current Version: " 15 0 0 ;DisplayOutMenu $CurrVer 15 0 0 ;DisplayOutMenu " |" 14 0 0
         If($RelType -eq "Stable "){
         DisplayOutMenu " Release:" 11 0 0 ;DisplayOutMenu $RelType 11 0 0 ;
         } Else {
@@ -430,7 +416,7 @@ function mainMenu {
         }
         $mainMenu = Read-Host "`nSelection"
         switch ($mainMenu) {
-            1 {""} #Run Script
+            1 {RunScript} #Run Script
             2 {ScriptSettingsMM} #Script Settings Main Menu
             3 {LoadSetting} #Load Settings
             4 {SaveSetting} #Save Settings
@@ -439,7 +425,7 @@ function mainMenu {
             U {HUACMenu "UsageItems"} #How to Use
             A {HUACMenu "AboutItems"}  #About/Version
             C {HUACMenu "CopyrightItems"}  #Copyright
-            Q {$mainMenu = "Out"} 
+            Q {Exit} #/Exit/Quit
             default {$Invalid = 1}
         }
     }
@@ -607,11 +593,11 @@ $ScriptOptionMenuItems = @(
 )
 
 $ScriptOptionMenuItm = (
-(1,"CreateRestorePoint",1),
-(2,"Term_of_Use",1),
-(3,"Verbros",1),
-(4,"ShowColor",1),
-(5,"Restart",1)
+(1,"CreateRestorePoint",1,0),
+(2,"Term_of_Use",1,0),
+(3,"Verbros",1,0),
+(4,"ShowColor",1,0),
+(5,"Restart",1,0)
 )
 
 $CreateRestorePointItems = @(
@@ -733,7 +719,9 @@ $CopyrightItems = @(
 '                                                 ',
 ' You should have received a copy of the GNU      ',
 ' General Public License along with this program. ',
-' If not, see <http://www.gnu.org/licenses/>.     '
+' If not, see <http://www.gnu.org/licenses/>.     ',
+'                                                 ',
+"Press 'Enter' to go back                         "
 )
 
 function HUACMenu([String]$VariJ) {
@@ -741,7 +729,7 @@ function HUACMenu([String]$VariJ) {
     $VariA = Get-Variable $VariJ -valueOnly #Array
     while($HUACMenu -ne "Out"){
         Clear-Host
-        VariableDisplay $VariA 0
+        VariableDisplay $VariA
         $HUACMenu = Read-Host "`nPress 'Enter' to continue"
         switch ($HUACMenu) {
             default {$HUACMenu = "Out"}
@@ -773,18 +761,18 @@ $PrivacySetMenuItems = @(
 )
 
 $PrivacySetMenuItm = (
-(1,"Telemetry",2),
-(2,"SmartScreen",2),
-(3,"LocationTracking",2),
-(4,"DiagTrack",2),
-(5,"Cortana",2),
-(6,"ErrorReporting",2),
-(7,"WiFiSense",2),
-(8,"AutoLoggerFile",2),
-(9,"Feedback",2),
-(10,"AdvertisingID",2),
-(11,"CortanaSearch",2),
-(12,"WAPPush",2)
+(1,"Telemetry",2,0),
+(2,"SmartScreen",2,0),
+(3,"LocationTracking",2,0),
+(4,"DiagTrack",2,0),
+(5,"Cortana",2,0),
+(6,"ErrorReporting",2,0),
+(7,"WiFiSense",2,0),
+(8,"AutoLoggerFile",2,0),
+(9,"Feedback",2,0),
+(10,"AdvertisingID",2,0),
+(11,"CortanaSearch",2,0),
+(12,"WAPPush",2,0)
 )
 
 $TelemetryItems = @(
@@ -925,13 +913,13 @@ $WindowsUpdateSetMenuItems = @(
 )
 
 $WindowsUpdateSetMenuItm = (
-(1,"CheckForWinUpdate",2),
-(2,"WinUpdateDownload",3),
-(3,"UpdateDriver",2),
-(4,"AppAutoDownload",2),
-(5,"WinUpdateType",4),
-(6,"UpdateMSRT",2),
-(7,"RestartOnUpdate",2)
+(1,"CheckForWinUpdate",2,0),
+(2,"WinUpdateDownload",3,0),
+(3,"UpdateDriver",2,0),
+(4,"AppAutoDownload",2,0),
+(5,"WinUpdateType",4,0),
+(6,"UpdateMSRT",2,0),
+(7,"RestartOnUpdate",2,0)
 )
 
 $CheckForWinUpdateItems = @(
@@ -1025,14 +1013,14 @@ $ServiceTweaksSetMenuItems = @(
 )
 
 $ServiceTweaksSetMenuItm = (
-(1,"UAC",3),
-(2,"AdminShares",2),
-(3,"WinDefender",2),
-(4,"RemoteAssistance",2),
-(5,"SharingMappedDrives",2),
-(6,"Firewall",2),
-(7,"HomeGroups",2),
-(8,"RemoteDesktop",2)
+(1,"UAC",3,0),
+(2,"AdminShares",2,0),
+(3,"WinDefender",2,0),
+(4,"RemoteAssistance",2,0),
+(5,"SharingMappedDrives",2,0),
+(6,"Firewall",2,0),
+(7,"HomeGroups",2,0),
+(8,"RemoteDesktop",2,0)
 )
 
 $UACItems = @(
@@ -1134,12 +1122,12 @@ $ContextMenuSetMenuItems = @(
 )
 
 $ContextMenuSetMenuItm = (
-(1,"CastToDevice",2),
-(2,"IncludeinLibrary",2),
-(3,"ShareWith",2),
-(4,"PreviousVersions",2),
-(5,"PinTo",2),
-(6,"SendTo",2)
+(1,"CastToDevice",2,0),
+(2,"IncludeinLibrary",2,0),
+(3,"ShareWith",2,0),
+(4,"PreviousVersions",2,0),
+(5,"PinTo",2,0),
+(6,"SendTo",2,0)
 )
 
 $CastToDeviceItems = @(
@@ -1219,11 +1207,11 @@ $StartMenuSetMenuItems = @(
 )
 
 $StartMenuSetMenuItm = (
-(1,"StartMenuWebSearch",2),
-(2,"StartSuggestions",2),
-(3,"UnpinItems",1), #Need to Setup
-(4,"MostUsedAppStartMenu",2),
-(5,"RecentItemsFrequent",2)
+(1,"StartMenuWebSearch",2,0),
+(2,"StartSuggestions",2,0),
+(3,"UnpinItems",1,0),
+(4,"MostUsedAppStartMenu",2,0),
+(5,"RecentItemsFrequent",2,0)
 )
 
 $StartMenuWebSearchItems = @(
@@ -1295,18 +1283,18 @@ $TaskbarSetMenuItems = @(
 )
 
 $TaskbarSetMenuItm = (
-(1,"BatteryUIBar",2),
-(2,"VolumeControlBar",2),
-(3,"TaskViewButton",2),
-(4,"TaskbarGrouping",3),
-(5,"SecondsInClock",2),
-(6,"TaskBarOnMultiDisplay",2),
-(7,"ClockUIBar",2),
-(8,"TaskbarSearchBox",2),
-(9,"TaskbarIconSize",2),
-(10,"TrayIcons",2),
-(11,"LastActiveClick",2),
-(12,"TaskbarButtOnDisplay",3)
+(1,"BatteryUIBar",2,0),
+(2,"VolumeControlBar",2,0),
+(3,"TaskViewButton",2,0),
+(4,"TaskbarGrouping",3,0),
+(5,"SecondsInClock",2,0),
+(6,"TaskBarOnMultiDisplay",2,0),
+(7,"ClockUIBar",2,0),
+(8,"TaskbarSearchBox",2,0),
+(9,"TaskbarIconSize",2,0),
+(10,"TrayIcons",2,0),
+(11,"LastActiveClick",2,0),
+(12,"TaskbarButtOnDisplay",3,0)
 )
  
 $BatteryUIBarItems = @(
@@ -1451,18 +1439,18 @@ $ExplorerSetMenuItems = @(
 )
 
 $ExplorerSetMenuItm = (
-(1,"FrequentFoldersQikAcc",2),
-(2,"RecentFileQikAcc",3),
-(3,"SystemFiles",2),
-(4,"HiddenFiles",2),
-(5,"AeroSnap",2),
-(6,"AeroShake",2),
-(7,"WinContentWhileDrag",2),
-(8,"ExplorerOpenLoc",2),
-(9,"KnownExtensions",2),
-(10,"Autorun",2),
-(11,"Autoplay",2),
-(12,"PidInTitleBar",2)
+(1,"FrequentFoldersQikAcc",2,0),
+(2,"RecentFileQikAcc",3,0),
+(3,"SystemFiles",2,0),
+(4,"HiddenFiles",2,0),
+(5,"AeroSnap",2,0),
+(6,"AeroShake",2,0),
+(7,"WinContentWhileDrag",2,0),
+(8,"ExplorerOpenLoc",2,0),
+(9,"KnownExtensions",2,0),
+(10,"Autorun",2,0),
+(11,"Autoplay",2,0),
+(12,"PidInTitleBar",2,0)
 )
 
 $FrequentFoldersQikAccItems = @(
@@ -1594,13 +1582,13 @@ $ThisPCSetMenuItems = @(
 )
 
 $ThisPCSetMenuItm = (
-(1,"ThisPCOnDesktop",2),
-(2,"DocumentsIconInThisPC",2),
-(3,"MusicIconInThisPC",2),
-(4,"VideosIconInThisPC",2),
-(5,"DesktopIconInThisPC",2),
-(6,"DownloadsIconInThisPC",2),
-(7,"PicturesIconInThisPC",2)
+(1,"ThisPCOnDesktop",2,0),
+(2,"DocumentsIconInThisPC",2,0),
+(3,"MusicIconInThisPC",2,0),
+(4,"VideosIconInThisPC",2,0),
+(5,"DesktopIconInThisPC",2,0),
+(6,"DownloadsIconInThisPC",2,0),
+(7,"PicturesIconInThisPC",2,0)
 )
 
 $ThisPCOnDesktopItems = @(
@@ -1689,10 +1677,10 @@ $LockScreenSetMenuItems = @(
 )
 
 $LockScreenSetMenuItm = (
-(1,"LockScreen",2),
-(2,"LockScreenAlt",2),
-(3,"PowerMenuLockScreen",2),
-(4,"CameraOnLockScreen",2)
+(1,"LockScreen",2,0),
+(2,"LockScreenAlt",2,0),
+(3,"PowerMenuLockScreen",2,0),
+(4,"CameraOnLockScreen",2,0)
 )
 
 $LockScreenItems = @(
@@ -1757,15 +1745,15 @@ $MiscSetMenuItems = @(
 )
 
 $MiscSetMenuItm = (
-(1,"ActionCenter",2),
-(2,"StickyKeyPrompt",2),
-(3,"NumblockOnStart",2),
-(4,"F8BootMenu",2),
-(5,"RemoteUACAcctToken",2),
-(6,"HibernatePower",2),
-(7,"SleepPower",2),
-(8,"PVFileAssociation",2),
-(9,"PVOpenWithMenu",2)
+(1,"ActionCenter",2,0),
+(2,"StickyKeyPrompt",2,0),
+(3,"NumblockOnStart",2,0),
+(4,"F8BootMenu",2,0),
+(5,"RemoteUACAcctToken",2,0),
+(6,"HibernatePower",2,0),
+(7,"SleepPower",2,0),
+(8,"PVFileAssociation",2,0),
+(9,"PVOpenWithMenu",2,0)
 )
 
 $ActionCenterItems = @(
@@ -1875,12 +1863,12 @@ $FeaturesAppsMenuItems = @(
 )
 
 $FeaturesAppsMenuItm = (
-(1,"OneDrive",2),
-(2,"OneDriveInstall",2),
-(3,"XboxDVR",2),
-(4,"MediaPlayer",2),
-(5,"WorkFolders",2),
-(6,"LinuxSubsystem",2)
+(1,"OneDrive",2,0),
+(2,"OneDriveInstall",2,0),
+(3,"XboxDVR",2,0),
+(4,"MediaPlayer",2,0),
+(5,"WorkFolders",2,0),
+(6,"LinuxSubsystem",2,0)
 )
 
 $OneDriveItems = @(
@@ -1968,28 +1956,28 @@ $MetroAppsMenuItems = @(
 )
 
 $MetroAppsMenuItm = (
-(1,"ALL_METRO_APPS",3), #Need to create
-(2,"APP_3DBuilder",3),
-(3,"APP_WindowsAlarms",3),
-(4,"APP_WindowsCalculator",3),
-(5,"APP_WindowsCamera",3),
-(6,"APP_WindowsFeed",3), #Need to make to combine both feedback
-(7,"APP_MicrosoftOffHub",3),
-(8,"APP_Getstarted",3),
-(9,"APP_Zune",3), #Need to make to combine both Zune
-(10,"APP_WindowsMaps",3),
-(11,"APP_Messaging",3),
-(12,"APP_SolitaireCollect",3),
-(13,"APP_OneConnect",3),
-(14,"APP_OfficeOneNote",3),
-(15,"APP_People",3),
-(16,"APP_Photos",3), #Need to make to combine both Skype
-(17,"APP_Skype",3),
-(18,"APP_StickyNotes",3),
-(19,"APP_WindowsStore",3),
-(20,"APP_SoundRecorder",3),
-(22,"APP_BingWeather",3),
-(21,"APP_XboxApp",3)
+(1,"ALL_METRO_APPS",3,0), #Need to create
+(2,"APP_3DBuilder",3,0),
+(3,"APP_WindowsAlarms",3,0),
+(4,"APP_WindowsCalculator",3,0),
+(5,"APP_WindowsCamera",3,0),
+(6,"APP_WindowsFeed",3,0), #Need to make to combine both feedback
+(7,"APP_MicrosoftOffHub",3,0),
+(8,"APP_Getstarted",3,0),
+(9,"APP_Zune",3,0), #Need to make to combine both Zune
+(10,"APP_WindowsMaps",3,0),
+(11,"APP_Messaging",3,0),
+(12,"APP_SolitaireCollect",3,0),
+(13,"APP_OneConnect",3,0),
+(14,"APP_OfficeOneNote",3,0),
+(15,"APP_People",3,0),
+(16,"APP_Photos",3,0), #Need to make to combine both Skype
+(17,"APP_Skype",3,0),
+(18,"APP_StickyNotes",3,0),
+(19,"APP_WindowsStore",3,0),
+(20,"APP_SoundRecorder",3,0),
+(22,"APP_BingWeather",3,0),
+(21,"APP_XboxApp",3,0)
 )
 
 <#
@@ -3840,6 +3828,7 @@ If ($SettingImp -ne $null -and $SettingImp){
         LoadSettingFile($SettingImp)
 	} ElseIf ($SettingImp -eq "WD" -or $SettingImp -eq "WindowsDefault"){
 	    LoadWinDefault
+		RunScript
     }
 } Else{
     TOS
