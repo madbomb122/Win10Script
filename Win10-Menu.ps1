@@ -60,8 +60,9 @@ Example: Win10-Menu.ps1 -Set WinDefault
 3.  To run the script with imported Settings run the script with:    
       -Set Filename
 
-Example: Win10-Menu.ps1 -Set File.xml
-Example: Win10-Menu.ps1 -Set Example
+Example: Win10-Menu.ps1 -Set File.csv
+Example: Win10-Menu.ps1 -Set Example.txt
+Example: Win10-Menu.ps1 -Set whatever.sjdfh
 
 Note: File has to be in the proper format or settings wont be imported
 ----------------------------------------------------------------------------
