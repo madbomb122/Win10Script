@@ -1,0 +1,138 @@
+-----------------------------------------------------------------------------------
+1.0-Menu (02-17-2017) -START VERSION OF NEW SCRIPT
+Done With adding a Menu
+
+Cant Change the Apps to Install/Hide/Uninstall from within script menu..
+  But you can from in the script file (or a loaded file).
+  *I might add it to Menu at some other point
+
+Note1: Settings file for Older script (3.5-mod and bellow) will NOT work
+Note2: 3.5-mod is the LAST of the old script
+
+-----------------------------------------------------------------------------------
+3.5-Mod (02-09-2017) -LAST VERSION OF OLD SCRIPT
+
+Re-ordered some items
+Added Write output when at Each different category
+Added Color for Some outputs
+Ability to Disable Output
+Ability to Disable Color of output
+
+renamed 4 items
+APP_SolitaireCollection to APP_SolitaireCollect
+APP_WindowsFeedback     to APP_WindowsFeedbak
+APP_WindowsFeedbackHub  to APP_WindowsFeedbakHub
+APP_MicrosoftOfficeHub  to APP_MicrosoftOffHub
+
+-----------------------------------------------------------------------------------
+3.4-Mod (02-03-2017)
+
+Added 1 New Setting Items:
+  Windows Update Check Type
+  
+Also a few minor bug fixes
+
+-----------------------------------------------------------------------------------
+3.3-Mod (02-02-2017)
+
+Added Description to some items (May add more later)
+Ability to Create Restore Point Before running Script
+
+Added 12 New Setting Items:
+  Recent Files in Quick Access
+  Frequent Folders in Quick Access
+  Most Used App in Start Menu
+  Power Menu on Lock Screen
+  Hibernate Power Option
+  Sleep Power Option
+  Window Content While Dragging
+  Check For Windows Update
+  Taskbar On Multi Display
+  Taskbar Buttons On Multi Display
+  Remote UAC Local Account Token Filter
+
+-----------------------------------------------------------------------------------
+3.2-Mod (02-01-2017)
+
+Added Description to some items (May add more later)
+Ability to run Pre-defined setting (currently only -Set Set1)
+
+Added 4 New Setting Items:
+  Cortana Search (Can still search with cortana disabled)
+  Classic Clock UI (for the taskbar flyout)
+  Classic Battery UI (for the taskbar flyout)
+  Recent Items and Frequent Places (in start menu)
+  
+Added More Colors for Tiles (But disabled till i figure problem out)
+
+Renamed 2 Items:
+AeroResize to AeroSnap (Proper name of function)
+CameraOnLoc to CameraOnLockScreen (Gives better description of item)
+
+-----------------------------------------------------------------------------------
+3.1-Mod (1-29-2017)
+
+Ability to add Apps to Install, Hide or Uninstall, that the script doesnt list
+   ^This can ONLY be done in the script itself ATM
+
+-----------------------------------------------------------------------------------
+3.0-Mod (01-28-2017)
+
+Greatly Improved the ability to import app list from setting file
+Also changed it so you can Install, Hide or Uninstall for each app (instead of the whole thing)
+Changed the Initial Text that show when you start script
+Removed 3 Apps (since they cant be hidden or removed)
+Fixed a few errors for Photo Viewer Settings
+
+-----------------------------------------------------------------------------------
+2.3-Mod (01-27-2017)
+
+Fixed a bug with imported settings from a file
+Added ability to import app list from setting file
+Added Facebook to applist
+
+-----------------------------------------------------------------------------------
+2.2-Mod (01-26-2017)
+
+Added ability to run imported settings from a file
+Added ability to run windows default settings w/o editing file
+Added a note when you run script and a way to skip it
+
+-----------------------------------------------------------------------------------
+2.1-Mod (01-25-2017)
+
+Change script so it does nothing by default
+Added item to have it run the windows default items
+
+Added 1 New Setting Items:
+  seconds for the clock on the taskbar
+
+-----------------------------------------------------------------------------------
+2.0-Mod (01-25-2017) -- (Started doing my changes)
+
+Made Script easier to pick what you want to run
+Script by default returned items to the default of windows (that the script is set to change)
+
+Added 6 New Setting for Context Menu: (add/remove)
+  Cast To Device
+  Previous Versions
+  Include in Library
+  Pin To
+  Share With
+  Send To
+  
+Added 5 New Settings:
+  Volume Control Bar to classic/new
+  Pid In Title Bar
+  Aero Resize
+  Aero Shake
+  App Auto Download
+  
+Added options for a few of the items that had more than once choice
+Added ability to Remove the bloatware instead of just hiding it
+
+-----------------------------------------------------------------------------------
+2.0 (01-08-2017)
+
+v2.0 Script by Disassembler0
+https://github.com/Disassembler0/Win10-Initial-Setup-Script/
