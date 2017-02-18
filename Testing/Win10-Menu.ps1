@@ -11,7 +11,7 @@
 # Website: https://github.com/madbomb122/Win10Script
 # Version: 1.0-Mod, 02-17-2017
 #
-# Release Type: Testing
+# Release Type: Stable
 ##########
 
 <#
@@ -82,25 +82,15 @@ Note: File has to be in the proper format or settings wont be imported
 
 Param([alias("Set")] [string] $SettingImp)
 
-# Ask for elevated permissions if required
-If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
-     Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $args" -Verb RunAs
-     Exit
-}
-
-# This script it ment to
-# 1. Make a file with your wanted settings
-# 2. Edit Settings file (what you load)
-# 3. Run script with setting inputed/loaded
 
 ##########
 # Version Info -Start
 ##########
 
-$CurrVer = "1.0 (02-16-17) "
-$RelType = "Testing"
+$CurrVer = "1.0 (02-17-17) "
+#$RelType = "Testing"
 #$RelType = "Beta   "
-#$RelType = "Stable "
+$RelType = "Stable "
 
 ##########
 # Version Info -End
@@ -305,7 +295,7 @@ function ConfirmMenu([int]$Option) {
             VariableDisplay $ConfirmMenuItems2
         }
         $ConfirmMenu = Read-Host "`nSelection (Y/N)"
-        switch (ConfirmMenu) {
+        switch ($ConfirmMenu) {
             Y {Return $true}
             N {Return $false}
             default {Return $false}
@@ -532,16 +522,19 @@ function LoadSetting {
         }
         $LoadSetting = Read-Host "`nFilename"
 		switch ($LoadSetting) {
-		    0 {$LoadSetting ="Out"; $Switched = "True"}
-			$null {$LoadSetting ="Out"; $Switched = "True"}
-		    WD {LoadWinDefault; $Switched = "True"}
-			WinDefault {LoadWinDefault; $Switched = "True"}
+		    0 {$LoadSetting ="Out"; $Switched = "True"; write-host "0"}
+			$null {$LoadSetting ="Out"; $Switched = "True"; write-host "null"}
+		    WD {LoadWinDefault; $Switched = "True"; write-host "wd"}
+			WinDefault {LoadWinDefault; $Switched = "True"; write-host "windef"}
+			Default {$Switched = "False"; write-host "def"}
 		}
 		If ($Switched -ne "True"){
             If (Test-Path $LoadSetting -PathType Leaf){
-                $Conf = ConfrmMenu 1
+					    write-host "If 2"
+                $Conf = ConfirmMenu 1
                 If($Conf -eq $true){
-                    Import-Clixml .\$LoadSetting | %{ Set-Variable $_.Name $_.Value }
+                    #Import-Clixml .\$LoadSetting | %{Set-Variable $_.Name $_.Value -Scope Script}
+					Import-Csv .\$LoadSetting | %{Set-Variable $_.Name $_.Value -Scope Script}
                     $LoadSetting ="Out"
                 }
             } Else {
@@ -552,8 +545,8 @@ function LoadSetting {
 }
 
 function LoadSettingFile([String]$Filename) {
-	#Import-Clixml .\$Filename | %{ Set-Variable $_.Name $_.Value }
-	Import-Clixml $Filename | %{ Set-Variable $_.Name $_.Value }
+	#Import-Clixml .\$Filename | %{Set-Variable $_.Name $_.Value -Scope Script}
+	Import-Csv .\$Filenam | %{Set-Variable $_.Name $_.Value -Scope Script}
 	RunScript
 }
 
@@ -563,16 +556,19 @@ function SaveSetting {
         Clear-Host
         VariableDisplay $SaveSettingItems
         $SaveSetting = Read-Host "`nFilename"
-        If ($LoadSetting -eq $null -or $LoadSetting -eq 0){
+        If ($SaveSetting -eq $null -or $SaveSetting -eq 0){
             $SaveSetting = "Out"
         } Else {
+		    $SaveSetting1 = $SaveSetting
             If (Test-Path $SaveSetting -PathType Leaf){
                 $Conf = ConfirmMenu 2
                 If($Conf -eq $true){
-                    cmpv | Export-Clixml .\$SaveSetting
+                #cmpv | Export-Clixml -LiteralPath .\$SaveSetting -force
+				cmpv | Export-Csv -LiteralPath .\$SaveSetting1 -encoding "unicode" -force
                 }
             } Else {
-                cmpv | Export-Clixml .\$SaveSetting
+                #cmpv | Export-Clixml -LiteralPath .\$SaveSetting -force
+				cmpv | Export-Csv -LiteralPath .\$SaveSetting -encoding "unicode" -force
             }
             $SaveSetting = "Out"
         }
@@ -1675,7 +1671,7 @@ $PicturesIconInThisPCItems = @(
 $LockScreenSetMenuItems = @(
 '              Lock Screen Items Menu             ',
 '1. Lock Screen         ','3. Power Menu          ',
-'2. Lock Screen Alt'     ,'4. Camera              ',
+'2. Lock Screen Alt     ','4. Camera              ',
 'B. Back to Script Setting Main Menu              '
 )
 
@@ -2131,10 +2127,6 @@ $colors = @(
 
 $CustomSet = 0
 
-# Used to get all values BEFORE any defined so
-# when exporting shows ALL defined after this point
-$AutomaticVariables = Get-Variable
-
 ##########
 # Needed Variable -End
 ##########
@@ -2241,6 +2233,11 @@ Function LoadWinDefault {
 ##########
 
 Function RunScript {
+# Ask for elevated permissions if required
+    If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
+        Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $args" -Verb RunAs
+        Exit
+    }
 
     If ($CreateRestorePoint -eq 1) {
         DisplayOut "Creating System Restore Point Named -Win10 Initial Setup Script..." 15 1
@@ -2268,15 +2265,6 @@ Function RunScript {
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0
-    
-	    #check these paths for telemetry
-    <#    
-    "hkey_local_machine\software\microsoft\wcmsvc\wifinetworkmanager"
-    "hkey_local_machine\software\microsoft\windows\currentversion\windowsupdate\auto update"
-    "hkey_local_machine\software\microsoft\windows defender\spynet"
-    "hkey_local_machine\software\policies\microsoft\windows\gwx"
-    "hkey_local_machine\software\policies\microsoft\windows\skydrive"
-    #>
     }
 
     # Wi-Fi Sense
@@ -3581,6 +3569,9 @@ Function RunScript {
 # Script -End
 ##########
 
+# Used to get all values BEFORE any defined so
+# when exporting shows ALL defined after this point
+$AutomaticVariables = Get-Variable
 
 # --------------------------------------------------------------------------
 
@@ -3825,6 +3816,7 @@ $Script:APP_ZuneVideo = 0         # 'Groove Music' app
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 # --------------------------------------------------------------------------
+
 
 If ($SettingImp -ne $null -and $SettingImp){
      If (Test-Path $SettingImp -PathType Leaf){
