@@ -135,6 +135,7 @@ function TOS {
             default {$Invalid = 1}
         }
     }
+	Return
 }
 
 # Used to Help remove the Automatic variables
@@ -195,7 +196,8 @@ function ChoicesMenu([String]$Vari, [Int]$NumberH, [Int]$NumberL) {
             default {$Invalid = 1}
         }
     }
-    Set-Variable -Name $Vari -Value $ReturnV -Scope Script;
+    Set-Variable -Name $Vari -Value $ReturnV -Scope Script
+	Return
 }
 
 function VariMenu([Array]$VariDisplay,[Array]$VariMenuItm) {
@@ -214,6 +216,7 @@ function VariMenu([Array]$VariDisplay,[Array]$VariMenuItm) {
             for ($i=0; $i -le $VariMenuItm.length; $i++) {
                 If($VariMenuItm[$i][0] -eq $ConInt){
                     ChoicesMenu ($VariMenuItm[$i][1]) ($VariMenuItm[$i][2]) ($VariMenuItm[$i][3])
+					$i = $VariMenuItm.length +1
                 }
             }
 
@@ -224,42 +227,7 @@ function VariMenu([Array]$VariDisplay,[Array]$VariMenuItm) {
             }
         }
     }
-}
-
-# Need to Change to work better with metro apps
-function MetroMenu([Array]$VariDisplay,[Array]$VariMenuItm) {
-    $MetroMenu = 'X'
-    while($MetroMenu -ne "Out"){
-        Clear-Host
-        MenuDisplay $VariDisplay
-        If($Invalid -eq 1){
-            Write-host ""
-            Write-host "Invalid Selection" -ForegroundColor Red -BackgroundColor Black -NoNewline
-            $Invalid = 0
-        }
-        $MetroMenu = Read-Host "`nSelection"
-        $ConInt = $MetroMenu -as [int]
-        If($ConInt -is [int]){
-            for ($i=0; $i -le $VariMenuItm.length; $i++) {
-                If($VariMenuItm[$i][0] -eq $ConInt){
-                    $LoopVar = $i
-                    $i = $VariMenuItm.length+1
-                }
-            }
-            If($LoopVar -is [int]){
-                ChoicesMenu ($VariMenuItm[$LoopVar][1]) ($VariMenuItm[$LoopVar][2]) ($VariMenuItm[$LoopVar][3])
-            } Else{
-                $Invalid = 1        
-            }
-        } Else {
-            switch ($MetroMenu) {
-                B {$MetroMenu = "Out"}
-                N {""} #Next Page
-                P {""} #Previous Page
-                default {$Invalid = 1}
-            }
-        }
-    }
+	Return
 }
 
 ##########
@@ -421,6 +389,7 @@ function mainMenu {
             default {$Invalid = 1}
         }
     }
+	Return
 }
 
 ##########
@@ -431,6 +400,7 @@ function mainMenu {
 # Script Settings -Start
 ##########
 
+<#
 $ScriptSettingsMainMenuItems = @(
 '            Script Setting Main Menu             ',
 '1. Privacy Settings    ','7. Windows Update      ',
@@ -440,9 +410,10 @@ $ScriptSettingsMainMenuItems = @(
 "5. 'This PC'           ",'11. Misc/Photo Viewer  ',
 '6. Explorer            ','                       ',
 'B. Back to Main Menu                             '
-)
+) 
+#>
 
-<#
+
 $ScriptSettingsMainMenuItems = @(
 '            Script Setting Main Menu             ',
 '1. Privacy Settings    ','7. Windows Update      ',
@@ -453,7 +424,7 @@ $ScriptSettingsMainMenuItems = @(
 '6. Explorer            ','12. Misc/Photo Viewer  ',
 'B. Back to Main Menu                             '
 )
-#>
+
 
 
 function ScriptSettingsMM {
@@ -478,12 +449,13 @@ function ScriptSettingsMM {
             8 {VariMenu $ContextMenuSetMenuItems $ContextMenuSetMenuItm} #Context Menu
             9 {VariMenu $TaskbarSetMenuItems $TaskbarSetMenuItm} #Task Bar
             10 {VariMenu $FeaturesAppsMenuItems $FeaturesAppsMenuItm} #Features
-            #11 {MetroMenu $MetroAppsMenuItems $MetroAppsMenuItm} #Metro Apps
-            11 {VariMenu $MiscSetMenuItems $MiscSetMenuItm} #Misc/Photo Viewer
+            11 {MetroMenu $MetroAppsMenuItems $MetroAppsMenuItm} #Metro Apps
+            12 {VariMenu $MiscSetMenuItems $MiscSetMenuItm} #Misc/Photo Viewer
             B {$ScriptSettingsMM = "Out"}
             default {$Invalid = 1}
         }
     }
+	Return
 }
 
 ##########
@@ -541,6 +513,7 @@ function LoadSetting {
             }
         }
     }
+	Return
 }
 
 function LoadSettingFile([String]$Filename) {
@@ -572,6 +545,7 @@ function SaveSetting {
             $SaveSetting = "Out"
         }
     }
+	Return
 }
 
 ##########
@@ -733,6 +707,7 @@ function HUACMenu([String]$VariJ) {
             default {$HUACMenu = "Out"}
         }
     }
+	Return
 }
 
 ##########
@@ -1944,96 +1919,190 @@ Get-Variable -scope script | ForEach-Object {
     }
 }
 
+function AllMetroSet([Int]$Number){
+    ForEach ($ApL in $APList) {
+        Set-Variable -Name $APList -Value $Number -Scope Script;
+    }
+}
 
+function MetroMenu([Array]$VariDisplay, [Array]$MetroMenuItm) {
+    $MetroMenu = 'X'
+    while($MetroMenu -ne "Out"){
+        Clear-Host
+        MenuDisplay $VariDisplay
+        If($Invalid -eq 1){
+            Write-host ""
+            Write-host "Invalid Selection" -ForegroundColor Red -BackgroundColor Black -NoNewline
+            $Invalid = 0
+        }
+        $MetroMenu = Read-Host "`nSelection"
+        $ConInt = $MetroMenu -as [int]
+        If($ConInt -is [int] -and $MetroMenu -ne $null){
+            for ($i=0; $i -le $MetroMenuItm.length; $i++) {
+                If($MetroMenuItm[$i][0] -eq $ConInt){
+                    ChoicesMenuMetro ($MetroMenuItm[$i][1]) ($MetroMenuItm[$i][2])
+					$i = $MetroMenuItm.length +1
+                }
+            }
+        } Else {
+            switch ($MetroMenu) {
+                B {$MetroMenu = "Out"}
+                default {$Invalid = 1}
+            }
+        }
+    }
+	Return
+}
+
+function ChoicesMenuMetro([String]$Vari, [Int]$MultiV) {
+	If($MultiV -eq 0){
+        $VariM = -join("APP_",$Vari)
+        $VariV = Get-Variable $VariM -valueOnly #Variable
+	} ElseIf($MultiV -eq 1){
+        $VariM = -join("APP_",$Vari)
+	    $Vari1 = -join($VariM,"1")
+        $Vari2 = -join($VariM,"2")
+		$VariV = Get-Variable $Vari1 -valueOnly #Variable
+	} ElseIf($MultiVi -eq 2){
+        $VariM = $Vari
+		$VariV = "N"
+	}
+    $VariJ = -join($VariM,"Items")
+    $VariA = Get-Variable $VariJ -valueOnly #Array
+    $ChoicesMenuMetro = 'X'
+    while($ChoicesMenuMetro -ne "Out"){
+        Clear-Host
+        ChoicesDisplayMetro $VariA $VariV
+        If($Invalid -eq 1){
+            Write-host ""
+            Write-host "Invalid Selection" -ForegroundColor Red -BackgroundColor Black -NoNewline
+            $Invalid = 0
+        }
+        $ChoicesMenuMetro = Read-Host "`nChoice"
+        switch -regex ($ChoicesMenuMetro) {
+            [0-3] {$ReturnV = $ChoicesMenuMetro}
+            C {$ReturnV = $VariV; $ChoicesMenuMetro = "Out"}
+            default {$Invalid = 1}
+        }
+    }
+    If($MultiV -eq 0){
+        Set-Variable -Name $VariM -Value $ReturnV -Scope Script
+	} ElseIf($MultiV -eq 1){
+        Set-Variable -Name $Vari1 -Value $ReturnV -Scope Script
+        Set-Variable -Name $Vari2 -Value $ReturnV -Scope Script
+	} ElseIf($MultiV -eq 2 -and $ReturnV -ne "N"){
+        AllMetroSet $ReturnV
+	}
+	Return
+}
+
+function ChoicesDisplayMetro ([Array]$ChToDisplayMetro, [Int]$ChToDisplayValMetro) {
+    TitleBottom $ChToDisplay[0] 11
+    DisplayOutMenu "|                                                   |" 14 0 1
+    DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu $ChToDisplayMetro[1] 2 0 0 ;DisplayOutMenu "|" 14 0 1
+    DisplayOutMenu "|                                                   |" 14 0 1
+    DisplayOutMenu "|---------------------------------------------------|" 14 0 1
+    DisplayOutMenu "|                                                   |" 14 0 1
+    DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu "0. Skip                                          " 2 0 0 ;DisplayOutMenu "|" 14 0 1
+    DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu "1. Install/Unhide                                " 2 0 0 ;DisplayOutMenu "|" 14 0 1
+    DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu "2. Hide (Current User Only)                      " 2 0 0 ;DisplayOutMenu "|" 14 0 1
+    DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu "3. Uninstall (All users) -Read Note Bellow       " 2 0 0 ;DisplayOutMenu "|" 14 0 1
+    DisplayOutMenu "|                                                   |" 14 0 1
+	If($ChToDisplayValMetro -ne "N"){
+        DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu "Current Value: " 13 0 0 ;DisplayOutMenu $ChToDisplayValMetro 13 0 0 ;DisplayOutMenu "                                 |" 14 0 1
+	}
+    DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu "C. Cancel (Keeps Current Setting)                " 2 0 0 ;DisplayOutMenu "|" 14 0 1
+    DisplayOutMenu "|---------------------------------------------------|" 14 0 1
+    DisplayOutMenu "| " 14 0 0 ;DisplayOutMenu "Note: Some Uninstalled Apps can be Reinstalled by " 15 0 0 ;DisplayOutMenu "|" 14 0 1
+	DisplayOutMenu "| " 14 0 0 ;DisplayOutMenu "      using the windows store. But some can only  " 15 0 0 ;DisplayOutMenu "|" 14 0 1
+	DisplayOutMenu "| " 14 0 0 ;DisplayOutMenu "      be reinstalled using another method which   " 15 0 0 ;DisplayOutMenu "|" 14 0 1
+	DisplayOutMenu "| " 14 0 0 ;DisplayOutMenu "      this script cannot do.                      " 15 0 0 ;DisplayOutMenu "|" 14 0 1
+    DisplayOutMenu "|---------------------------------------------------|" 14 0 1
+
+}
 
 $MetroAppsMenuItems = @(
 '              Metro Apps Items Menu              ',
-'1. ALL METRO APPS      ','12. Microsoft Solitaire',
-"2. '3DBuilder' app     ",'13. One Connect        ',
-"3. 'Alarms' app        ","14. Office 'OneNote'   ",
-"4. 'Calculator' app    ","15. 'People' app       ",
-"5. 'Camera' app        ","16. 'Photos' app       ",
-'6. Feedback Hub        ',"17. 'Skype' app        ",
-"7. 'Get Office' App    ",'18. Sticky Notes       ',
-'8. Get Started         ',"19. 'Store' app        ",
-"9. 'Groove Music' app  ",'20. Voice Recorder     ',
-"10. 'Maps' app         ","21. Bing 'Weather' app ",
-"11. 'Messaging' App    ","22. 'Xbox' App         ",
+'1. ALL Metro Apps      ','26. Jigsaw game        ',
+'2. 3DBuilder app       ','27. Mahjong game       ',
+'3. Alarm & Clock app   ','28. Maps app           ',
+'4. Asphalt 8 game      ','29. Messaging app      ',
+'5. Bing Food & Drink   ','30. Microsoft Solitaire',
+'6. Bing Health & Fitn  ','31. Minecraft game     ',
+'7. Bing Money app      ','32. Movie Moments app  ',
+'8. Bing News app       ','33. Netflix app        ',
+'9. Bing Sports app     ','34. Office OneNote app ',
+'10. Bing Translator app','35. Office Sway app    ',
+'11. Bing Travel app    ','36. One Connect        ',
+'12. Bing Weather app   ','37. People app         ',
+'13. Calculator app     ','38. Phone app          ',
+'14. Calendar & Mail app','39. Phone Companion app',
+'15. Camera app         ','40. Photos app         ',
+'16. Candy Crush game   ','41. Skype App          ',
+'17. Canvas app         ','42. Sticky Notes app   ',
+'18. Facebook app       ','43. Sudoku game        ',
+'19. Farm Ville game    ','44. Taptiles game      ',
+'20. Feedback Support   ','45. Twitter app        ',
+'21. Get Office Link    ','46. Voice Recorder app ',
+'22. Get Started link   ','47. Windows Store      ',
+'23. Groove Music app   ','48. Wordament game     ',
+'24. Houzz app          ','49. Xbox app           ',
+'25. Jackpot game       ','                       ',
 'B. Back to Script Setting Main Menu              '
+
 )
 
 $MetroAppsMenuItm = (
-(1,"ALL_METRO_APPS",3,0), #Need to create
-(2,"APP_3DBuilder",3,0),
-(3,"APP_WindowsAlarms",3,0),
-(4,"APP_WindowsCalculator",3,0),
-(5,"APP_WindowsCamera",3,0),
-(6,"APP_WindowsFeed",3,0), #Need to make to combine both feedback
-(7,"APP_MicrosoftOffHub",3,0),
-(8,"APP_Getstarted",3,0),
-(9,"APP_Zune",3,0), #Need to make to combine both Zune
-(10,"APP_WindowsMaps",3,0),
-(11,"APP_Messaging",3,0),
-(12,"APP_SolitaireCollect",3,0),
-(13,"APP_OneConnect",3,0),
-(14,"APP_OfficeOneNote",3,0),
-(15,"APP_People",3,0),
-(16,"APP_Photos",3,0), 
-(17,"APP_Skype",3,0), #Need to make to combine both Skype
-(18,"APP_StickyNotes",3,0),
-(19,"APP_WindowsStore",3,0),
-(20,"APP_SoundRecorder",3,0),
-(22,"APP_BingWeather",3,0),
-(21,"APP_XboxApp",3,0)
+(1,'ALL_METRO_APPS',2),
+(2,'3DBuilder',0),
+(3,'WindowsAlarms',0),
+(4,'Asphalt8Airborne',0),
+(5,'BingFoodAndDrink',0),
+(6,'BingHealthFitness',0),
+(7,'BingFinance',0),
+(8,'BingNews',0),
+(9,'BingSports',0),
+(10,'BingTranslator',0),
+(11,'BingTravel',0),
+(12,'BingWeather',0),
+(13,'WindowsCalculator',0),
+(14,'Communications',0),
+(15,'WindowsCamera',0),
+(16,'CandyCrushSoda',0),
+(17,'FreshPaint',0),
+(18,'Facebook',0),
+(19,'FarmVille',0),
+(20,'WindowsFeedbak',1),
+(21,'MicrosoftOffHub',0),
+(22,'Getstarted',0),
+(23,'ZuneMusic',1),
+(24,'Houzz',0),
+(25,'MicrosoftJackpot',0),
+(26,'MicrosoftJigsaw',0),
+(27,'MicrosoftMahjong',0),
+(28,'WindowsMaps',0),
+(29,'Messaging',0),
+(30,'SolitaireCollect',0),
+(31,'MinecraftUWP',0),
+(32,'MovieMoments',0),
+(33,'Netflix',0),
+(34,'OfficeOneNote',0),
+(35,'OfficeSway',0),
+(36,'OneConnect',0),
+(37,'People',0),
+(38,'CommsPhone',0),
+(39,'WindowsPhone',0),
+(40,'Photos',0),
+(41,'SkypeApp',1),
+(42,'StickyNotes',0),
+(43,'MicrosoftSudoku',0),
+(44,'Taptiles',0),
+(45,'Twitter',0),
+(46,'VoiceRecorder',0),
+(47,'WindowsStore',0),
+(48,'StudiosWordament',0),
+(49,'XboxApp',0)
 )
-
-<#
-"11. 'Asphalt 8' Game   ","22. Bing 'Food & Drink'",
-"11. Bing 'Money' app   ","22. Bing 'Health & Fit'",
-"11. Bing 'News' app    ","22. Bing 'Sports' app  ",
-"11. Bing Translator app","22. 'Phone' app        ",
-"11. Bing 'Travel' app  ","22. 'Calendar and Mail'",
-"11. 'Candy Crush' game ","22. Bing 'Sports' app  ",
-"11. 'Facebook' app     ","22. 'Netflix' app      ",
-"11. 'Farm Ville' game  ","22. Office 'Sway' app  ",
-"11. 'Twitter' app      ","22. 'Phone Companion'  ",
-"11. 'Farm Ville' game  ","22. 'Canvas' app       ",
-"11. 'Sudoku' game      ","22. 'Minecraft' game   ",
-
-# Apps in list above listed
-$APP_Asphalt8Airborne = 0  # 'Asphalt 8' game
-$APP_BingFinance = 0       # 'Money' app - Financial news
-$APP_BingFoodAndDrink = 0  # 'Food and Drink' app
-$APP_BingHealthFitness = 0 # 'Health and Fitness' app
-$APP_BingNews = 0          # 'Generic news' app
-$APP_BingSports = 0        # 'Sports' app - Sports news
-$APP_BingTranslator = 0    # 'Translator' app - Bing Translate
-$APP_BingTravel = 0        # 'Travel' app
-$APP_CandyCrushSoda = 0    # 'Candy Crush' game
-$APP_CommsPhone = 0        # 'Phone' app
-$APP_Communications = 0    # 'Calendar and Mail' app
-$APP_Facebook = 0          # 'Facebook' app
-$APP_Netflix = 0           # 'Netflix' app
-$APP_OfficeSway = 0        # 'Sway' app
-$APP_Twitter = 0           # 'Twitter' app
-$APP_WindowsPhone = 0      # 'Phone Companion' app
-$APP_FarmVille = 0         # 'Farm Ville' game
-$APP_FreshPaint = 0        # 'Canvas' app
-$APP_MicrosoftSudoku = 0   # 'Sudoku' game 
-$APP_MinecraftUWP = 0      # 'Minecraft' game 
-
-
-# Apps not listed
-$APP_AdvertisingXaml = 0   ## Removal may cause problem with some apps
-$APP_Appconnector = 0      ## Not sure about this one
-$APP_ConnectivityStore = 0  
-$APP_MicrosoftJackpot = 0  # 'Jackpot' app
-$APP_MicrosoftJigsaw = 0   # 'Jigsaw' game       
-$APP_MicrosoftMahjong = 0  # 'Mahjong' game 
-$APP_MovieMoments = 0        
-$APP_StudiosWordament = 0  # 'Wordament' game
-$APP_Taptiles = 0   
-#> 
 
   ##########
   # Metro Apss Menu -End
