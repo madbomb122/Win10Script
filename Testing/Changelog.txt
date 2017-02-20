@@ -1,10 +1,7 @@
 -----------------------------------------------------------------------------------
-1.?-Menu (02-??-2017) 
+1.2-Menu (02-20-2017) 
 
 Metro Apps setting changeable in the menu
-
-Need to add description of Metro App items (an error is shown),
-setting still works with whatever is set
 
 -----------------------------------------------------------------------------------
 1.1-Menu (02-19-2017) 
