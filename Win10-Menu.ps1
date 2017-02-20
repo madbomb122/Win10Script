@@ -9,7 +9,7 @@
 # Modded Script + Menu By
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script
-# Version: 1.1-Menu, 02-20-2017
+# Version: 1.2-Menu, 02-20-2017
 #
 # Release Type: Stable
 ##########
