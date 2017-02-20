@@ -9,7 +9,7 @@
 # Modded Script + Menu By
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script
-# Version: 1.0-Mod, 02-17-2017
+# Version: 1.1-Mod, 02-19-2017
 #
 # Release Type: Stable
 ##########
@@ -43,13 +43,13 @@
 .ADVANCED USAGE
     Use one of the following Methods
 
-1.  Change the variables you want (Bottom of Script) then run script with
+1.    Change the variables you want (Bottom of Script) then run script with
       -Set Run
 
 Example: Win10-Menu.ps1 -Set Run
 Example: Win10-Menu.ps1 -Set run
 ------
-2.  To run the script with the Items in the script back to the Default 
+2.    To run the script with the Items in the script back to the Default 
     for windows run the script with one of the 2 switches bellow:
       -Set WD
       -Set WinDefault 
@@ -57,7 +57,7 @@ Example: Win10-Menu.ps1 -Set run
 Example: Win10-Menu.ps1 -Set WD
 Example: Win10-Menu.ps1 -Set WinDefault
 ------
-3.  To run the script with imported Settings run the script with:    
+3.    To run the script with imported Settings run the script with:    
       -Set Filename
 
 Example: Win10-Menu.ps1 -Set File.csv
@@ -1938,6 +1938,15 @@ $LinuxSubsystemItems = @(
   ##########
   # Metro Apss Menu -Start
   ##########
+$APList = @()
+
+Get-Variable -scope script | ForEach-Object {
+    If($_.name -Match "^APP_*") {
+        $APList += $_.name
+    }
+}
+
+
 
 $MetroAppsMenuItems = @(
 '              Metro Apps Items Menu              ',
@@ -1971,8 +1980,8 @@ $MetroAppsMenuItm = (
 (13,"APP_OneConnect",3,0),
 (14,"APP_OfficeOneNote",3,0),
 (15,"APP_People",3,0),
-(16,"APP_Photos",3,0), #Need to make to combine both Skype
-(17,"APP_Skype",3,0),
+(16,"APP_Photos",3,0), 
+(17,"APP_Skype",3,0), #Need to make to combine both Skype
 (18,"APP_StickyNotes",3,0),
 (19,"APP_WindowsStore",3,0),
 (20,"APP_SoundRecorder",3,0),
@@ -2052,8 +2061,6 @@ If (!(Test-Path "HKU:")) {
 
 $AppsList = @(
     'Microsoft.3DBuilder',
-    'Microsoft.Advertising.Xaml',
-    'Microsoft.Appconnector',
     'GAMELOFTSA.Asphalt8Airborne',
     'Microsoft.BingFinance',
     'Microsoft.BingFoodAndDrink',
@@ -2066,11 +2073,11 @@ $AppsList = @(
     'king.com.CandyCrushSodaSaga',
     'Microsoft.CommsPhone',
     'Microsoft.windowscommunicationsapps',
-    'Microsoft.ConnectivityStore',
     'Facebook.Facebook',
     'D52A8D61.FarmVille2CountryEscape',
     'Microsoft.FreshPaint',
     'Microsoft.Getstarted',
+    '0D16BB98.Houzz',
     'Microsoft.Messaging',
     'Microsoft.MicrosoftJackpot',
     'Microsoft.MicrosoftJigsaw',          
@@ -2088,11 +2095,11 @@ $AppsList = @(
     'Microsoft.SkypeApp',
     'Microsoft.SkypeWiFi',
     'Microsoft.MicrosoftSolitaireCollection',
-    'Microsoft.WindowsSoundRecorder',
     'Microsoft.MicrosoftStickyNotes',
     'Microsoft.Studios.Wordament',
     'Microsoft.Taptiles',
     '9E2F88E3.Twitter',
+    'Microsoft.WindowsSoundRecorder',
     'Microsoft.WindowsAlarms',
     'Microsoft.WindowsCalculator',
     'Microsoft.WindowsCamera',
@@ -2500,7 +2507,8 @@ Function RunScript {
     DisplayOut "----------------------" 14 0
     DisplayOut "-   Service Tweaks   -" 14 0
     DisplayOut "----------------------" 14 0
-    DisplayOut ""   
+    DisplayOut ""
+    
     
     # UAC level
     If ($UAC -eq 1) {
@@ -3444,7 +3452,7 @@ Function RunScript {
     ##########
     
     # Sorts the apps to Install, Hide or Uninstall
-    $APPProcess = Get-Variable -Name "APP_*" -ValueOnly
+    $APPProcess = Get-Variable -Name "APP_*" -ValueOnly  -Scope Script
 
     $A=0
     ForEach ($AppV in $APPProcess) {
@@ -3755,59 +3763,58 @@ Remove-Item -Path C:\Mnt -Recurse
 # Metro Apps
 # By Default Most of these are installed
 # Function  = Option       # 0-Skip, 1-Unhide, 2- Hide, 3-Uninstall (!!Read Note Above)
-$Script:APP_3DBuilder = 0         # '3DBuilder' app
-$Script:APP_AdvertisingXaml = 0   ## Removal may cause problem with some apps
-$Script:APP_Appconnector = 0      ## Not sure about this one
-$Script:APP_Asphalt8Airborne = 0  # 'Asphalt 8' game
-$Script:APP_BingFinance = 0       # 'Money' app - Financial news
-$Script:APP_BingFoodAndDrink = 0  # 'Food and Drink' app
-$Script:APP_BingHealthFitness = 0 # 'Health and Fitness' app
-$Script:APP_BingNews = 0          # 'Generic news' app
-$Script:APP_BingSports = 0        # 'Sports' app - Sports news
-$Script:APP_BingTranslator = 0    # 'Translator' app - Bing Translate
-$Script:APP_BingTravel = 0        # 'Travel' app
-$Script:APP_BingWeather = 0       # 'Weather' app
-$Script:APP_CandyCrushSoda = 0    # 'Candy Crush' game 
-$Script:APP_CommsPhone = 0        # 'Phone' app
-$Script:APP_Communications = 0    # 'Calendar and Mail' app
-$Script:APP_ConnectivityStore = 0     
-$Script:APP_Facebook = 0          # 'Facebook' app
-$Script:APP_FarmVille = 0         # 'Farm Ville' game
-$Script:APP_FreshPaint = 0        # 'Canvas' app
-$Script:APP_Getstarted = 0        # 'Get Started' link
-$Script:APP_Messaging = 0         # 'Messaging' app
-$Script:APP_MicrosoftJackpot = 0  # 'Jackpot' app
-$Script:APP_MicrosoftJigsaw = 0   # 'Jigsaw' game       
-$Script:APP_MicrosoftMahjong = 0  # 'Mahjong' game
-$Script:APP_MicrosoftOffHub = 0   # 'Office Hub' app 
-$Script:APP_MicrosoftSudoku = 0   # 'Sudoku' game 
-$Script:APP_MinecraftUWP = 0      # 'Minecraft' game    
-$Script:APP_MovieMoments = 0        
-$Script:APP_Netflix = 0           # 'Netflix' app
-$Script:APP_OfficeOneNote = 0     # 'Onenote' app
-$Script:APP_OfficeSway = 0        # 'Sway' app
-$Script:APP_OneConnect=0
-$Script:APP_People = 0            # 'People' app
+$Script:APP_3DBuilder = 0         # 3DBuilder app
+$Script:APP_Asphalt8Airborne = 0  # Asphalt 8 game
+$Script:APP_BingFinance = 0       # Bing Money app
+$Script:APP_BingFoodAndDrink = 0  # Bing Food & Drink app
+$Script:APP_BingHealthFitness = 0 # Bing Health & Fitness app
+$Script:APP_BingNews = 0          # Bing News app
+$Script:APP_BingSports = 0        # Bing Sports app
+$Script:APP_BingTranslator = 0    # Bing Translator app
+$Script:APP_BingTravel = 0        # Bing Travel app
+$Script:APP_BingWeather = 0       # Bing Weather app
+$Script:APP_CandyCrushSoda = 0    # Candy Crush game
+$Script:APP_CommsPhone = 0        # Phone app
+$Script:APP_Communications = 0    # Calendar & Mail app
+$Script:APP_Facebook = 0          # Facebook app
+$Script:APP_FarmVille = 0         # Farm Ville game
+$Script:APP_FreshPaint = 0        # Canvas app
+$Script:APP_Getstarted = 0        # Get Started link
+$Script:APP_Houzz = 0             # Houzz app
+$Script:APP_Messaging = 0         # Messaging app
+$Script:APP_MicrosoftJackpot = 0  # Jackpot app
+$Script:APP_MicrosoftJigsaw = 0   # Jigsaw game
+$Script:APP_MicrosoftMahjong = 0  # Mahjong game
+$Script:APP_MicrosoftOffHub = 0   # Get Office Link
+$Script:APP_MicrosoftSudoku = 0   # Sudoku game
+$Script:APP_MinecraftUWP = 0      # Minecraft game
+$Script:APP_MovieMoments = 0      # Movie Moments app
+$Script:APP_Netflix = 0           # Netflix app
+$Script:APP_OfficeOneNote = 0     # Office OneNote app
+$Script:APP_OfficeSway = 0        # Office Sway app
+$Script:APP_OneConnect = 0        # One Connect
+$Script:APP_People = 0            # People app
 $Script:APP_Photos = 0            # Photos app
-$Script:APP_SkypeApp = 0          # 'Get Skype' link
-$Script:APP_SkypeWiFi = 0         
-$Script:APP_SolitaireCollect = 0  # Solitaire collection
-$Script:APP_SoundRecorder = 0     # 'Sound Recorder' app
-$Script:APP_StickyNotes = 0       # 'Sticky Notes' app 
-$Script:APP_StudiosWordament = 0  # 'Wordament' game
-$Script:APP_Taptiles = 0          
-$Script:APP_Twitter = 0           # 'Twitter' app
-$Script:APP_WindowsAlarms = 0     # 'Alarms and Clock' app
-$Script:APP_WindowsCalculator = 0 # 'Calculator' app
-$Script:APP_WindowsCamera = 0     # 'Camera' app
-$Script:APP_WindowsFeedbak = 0    # 'Feedback' functionality
-$Script:APP_WindowsFeedbakHub = 0 # 'Feedback' functionality
-$Script:APP_WindowsMaps = 0       # 'Maps' app
-$Script:APP_WindowsPhone = 0      # 'Phone Companion' app
+$Script:APP_SkypeApp1 = 0         # Skype App
+$Script:APP_SkypeApp2 = 0         # Skype App
+$Script:APP_SolitaireCollect = 0  # Microsoft Solitaire
+$Script:APP_StickyNotes = 0       # Sticky Notes app
+$Script:APP_StudiosWordament = 0  # Wordament game
+$Script:APP_Taptiles = 0          # Taptiles game
+$Script:APP_Twitter = 0           # Twitter app
+$Script:APP_VoiceRecorder = 0     # Voice Recorder app
+$Script:APP_WindowsAlarms = 0     # Alarms and Clock app
+$Script:APP_WindowsCalculator = 0 # Calculator app
+$Script:APP_WindowsCamera = 0     # Camera app
+$Script:APP_WindowsFeedbak1 = 0   # Feedback Hub
+$Script:APP_WindowsFeedbak2 =     # Feedback Hub
+$Script:APP_WindowsMaps = 0       # Maps app
+$Script:APP_WindowsPhone = 0      # Phone Companion app
 $Script:APP_WindowsStore = 0      # Windows Store
-$Script:APP_XboxApp = 0           # 'Xbox' app 
-$Script:APP_ZuneMusic = 0         # 'Groove Music' app
-$Script:APP_ZuneVideo = 0         # 'Groove Music' app
+$Script:APP_XboxApp = 0           # Xbox app
+$Script:APP_ZuneMusic = 0         # Groove Music app
+$Script:APP_ZuneVideo = 0         # Groove Music app
+
 
 
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
