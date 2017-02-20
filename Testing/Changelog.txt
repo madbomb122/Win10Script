@@ -1,15 +1,23 @@
 -----------------------------------------------------------------------------------
 1.?-Menu (02-??-2017) 
 
-Nothing ATM
+Working on making apps setting changeable in the menu
+
+-----------------------------------------------------------------------------------
+1.1-Menu (02-19-2017) 
+
+Fixed 2 Bugs:
+If tos was set to accept in script it did not skip the tos
+fixed a messup with the add/remove/uninstall apps if you set it in script or file
+
+Working on making apps setting changeable in the menu
 
 -----------------------------------------------------------------------------------
 1.0-Menu (02-17-2017) -START VERSION OF NEW SCRIPT
-
 Done With adding a Menu
 
 Cant Change the Apps to Install/Hide/Uninstall from within script menu..
-  But you can from in the script file (or loaded file).
+  But you can from in the script file (or a loaded file).
   *I might add it to Menu at some other point
 
 Note1: Settings file for Older script (3.5-mod and bellow) will NOT work
