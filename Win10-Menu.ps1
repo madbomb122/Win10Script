@@ -102,20 +102,18 @@ $RelType = "Stable "
 ##########
 
 Function TOSDisplay {
-    If ($Term_of_Use -eq 1){
-        If($RelType -eq "Testing" -or $RelType -eq "Beta   "){
-            Write-Host "                   WARNING!!                   " -ForegroundColor Red -BackgroundColor Black
-            Write-Host "    This version is currently being Tested.    " -ForegroundColor Yellow -BackgroundColor Black 
-            Write-Host "                                               " -ForegroundColor Black -BackgroundColor White
-        }
-        Write-Host "This program comes with ABSOLUTELY NO WARRANTY." -ForegroundColor Black -BackgroundColor White
-        Write-Host "This is free software, and you are welcome to  " -ForegroundColor Black -BackgroundColor White
-        Write-Host "redistribute it under certain conditions.      " -ForegroundColor Black -BackgroundColor White
+    If($RelType -eq "Testing" -or $RelType -eq "Beta   "){
+        Write-Host "                   WARNING!!                   " -ForegroundColor Red -BackgroundColor Black
+        Write-Host "    This version is currently being Tested.    " -ForegroundColor Yellow -BackgroundColor Black 
         Write-Host "                                               " -ForegroundColor Black -BackgroundColor White
-        Write-Host "Read License file for full Terms.              " -ForegroundColor Black -BackgroundColor White
-        Write-Host "                                               " -ForegroundColor Black -BackgroundColor White
-        Write-Host "Do you Accept the Term of Use? (Y)es/(N)o      " -ForegroundColor White -BackgroundColor Black    
     }
+    Write-Host "This program comes with ABSOLUTELY NO WARRANTY." -ForegroundColor Black -BackgroundColor White
+    Write-Host "This is free software, and you are welcome to  " -ForegroundColor Black -BackgroundColor White
+    Write-Host "redistribute it under certain conditions.      " -ForegroundColor Black -BackgroundColor White
+    Write-Host "                                               " -ForegroundColor Black -BackgroundColor White
+    Write-Host "Read License file for full Terms.              " -ForegroundColor Black -BackgroundColor White
+    Write-Host "                                               " -ForegroundColor Black -BackgroundColor White
+    Write-Host "Do you Accept the Term of Use? (Y)es/(N)o      " -ForegroundColor White -BackgroundColor Black    
 }
 
 function TOS {
@@ -132,8 +130,8 @@ function TOS {
         switch ($TOS.ToLower()) {
             n {Exit}
             no {Exit}
-            y {mainMenu}
-            yes {mainMenu}
+            y {$Term_of_Use = "Accepted"; mainMenu}
+            yes {$Term_of_Use = "Accepted"; mainMenu}
             default {$Invalid = 1}
         }
     }
@@ -3833,6 +3831,8 @@ If ($SettingImp -ne $null -and $SettingImp){
     } ElseIf ($SettingImp.ToLower() -eq "run"){
         RunScript
     }
-} Else{
+} ElseIf ($Term_of_Use -eq 1){
     TOS
+} ElseIf ($Term_of_Use -ne 1){
+    mainMenu
 }
