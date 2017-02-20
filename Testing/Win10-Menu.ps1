@@ -43,13 +43,13 @@
 .ADVANCED USAGE
     Use one of the following Methods
 
-1.    Change the variables you want (Bottom of Script) then run script with
+1. Change the variables you want (Bottom of Script) then run script with
       -Set Run
 
 Example: Win10-Menu.ps1 -Set Run
 Example: Win10-Menu.ps1 -Set run
 ------
-2.    To run the script with the Items in the script back to the Default 
+2. To run the script with the Items in the script back to the Default 
     for windows run the script with one of the 2 switches bellow:
       -Set WD
       -Set WinDefault 
@@ -57,7 +57,7 @@ Example: Win10-Menu.ps1 -Set run
 Example: Win10-Menu.ps1 -Set WD
 Example: Win10-Menu.ps1 -Set WinDefault
 ------
-3.    To run the script with imported Settings run the script with:    
+3. To run the script with imported Settings run the script with:    
       -Set Filename
 
 Example: Win10-Menu.ps1 -Set File.csv
