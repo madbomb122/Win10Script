@@ -9,7 +9,7 @@
 # Modded Script + Menu By
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script
-# Version: 1.1-Mod, 02-19-2017
+# Version: 1.1-Menu, 02-20-2017
 #
 # Release Type: Stable
 ##########
@@ -43,13 +43,13 @@
 .ADVANCED USAGE
     Use one of the following Methods
 
-1.    Change the variables you want (Bottom of Script) then run script with
+1. Change the variables you want (Bottom of Script) then run script with
       -Set Run
 
 Example: Win10-Menu.ps1 -Set Run
 Example: Win10-Menu.ps1 -Set run
 ------
-2.    To run the script with the Items in the script back to the Default 
+2. To run the script with the Items in the script back to the Default 
     for windows run the script with one of the 2 switches bellow:
       -Set WD
       -Set WinDefault 
@@ -57,7 +57,7 @@ Example: Win10-Menu.ps1 -Set run
 Example: Win10-Menu.ps1 -Set WD
 Example: Win10-Menu.ps1 -Set WinDefault
 ------
-3.    To run the script with imported Settings run the script with:    
+3. To run the script with imported Settings run the script with:    
       -Set Filename
 
 Example: Win10-Menu.ps1 -Set File.csv
@@ -102,6 +102,8 @@ $RelType = "Stable "
 ##########
 
 Function TOSDisplay {
+    Write-Host "                 Terms of Use                  " -ForegroundColor Green -BackgroundColor Black
+    Write-Host "                                               " -ForegroundColor Black -BackgroundColor White
     If($RelType -eq "Testing" -or $RelType -eq "Beta   "){
         Write-Host "                   WARNING!!                   " -ForegroundColor Red -BackgroundColor Black
         Write-Host "    This version is currently being Tested.    " -ForegroundColor Yellow -BackgroundColor Black 
@@ -113,7 +115,7 @@ Function TOSDisplay {
     Write-Host "                                               " -ForegroundColor Black -BackgroundColor White
     Write-Host "Read License file for full Terms.              " -ForegroundColor Black -BackgroundColor White
     Write-Host "                                               " -ForegroundColor Black -BackgroundColor White
-    Write-Host "Do you Accept the Term of Use? (Y)es/(N)o      " -ForegroundColor White -BackgroundColor Black    
+    Write-Host "Do you Accept the Terms of Use? (Y)es/(N)o     " -ForegroundColor White -BackgroundColor Black    
 }
 
 function TOS {
@@ -135,6 +137,7 @@ function TOS {
             default {$Invalid = 1}
         }
     }
+    Return
 }
 
 # Used to Help remove the Automatic variables
@@ -195,7 +198,8 @@ function ChoicesMenu([String]$Vari, [Int]$NumberH, [Int]$NumberL) {
             default {$Invalid = 1}
         }
     }
-    Set-Variable -Name $Vari -Value $ReturnV -Scope Script;
+    Set-Variable -Name $Vari -Value $ReturnV -Scope Script
+    Return
 }
 
 function VariMenu([Array]$VariDisplay,[Array]$VariMenuItm) {
@@ -214,6 +218,7 @@ function VariMenu([Array]$VariDisplay,[Array]$VariMenuItm) {
             for ($i=0; $i -le $VariMenuItm.length; $i++) {
                 If($VariMenuItm[$i][0] -eq $ConInt){
                     ChoicesMenu ($VariMenuItm[$i][1]) ($VariMenuItm[$i][2]) ($VariMenuItm[$i][3])
+                    $i = $VariMenuItm.length +1
                 }
             }
 
@@ -224,42 +229,7 @@ function VariMenu([Array]$VariDisplay,[Array]$VariMenuItm) {
             }
         }
     }
-}
-
-# Need to Change to work better with metro apps
-function MetroMenu([Array]$VariDisplay,[Array]$VariMenuItm) {
-    $MetroMenu = 'X'
-    while($MetroMenu -ne "Out"){
-        Clear-Host
-        MenuDisplay $VariDisplay
-        If($Invalid -eq 1){
-            Write-host ""
-            Write-host "Invalid Selection" -ForegroundColor Red -BackgroundColor Black -NoNewline
-            $Invalid = 0
-        }
-        $MetroMenu = Read-Host "`nSelection"
-        $ConInt = $MetroMenu -as [int]
-        If($ConInt -is [int]){
-            for ($i=0; $i -le $VariMenuItm.length; $i++) {
-                If($VariMenuItm[$i][0] -eq $ConInt){
-                    $LoopVar = $i
-                    $i = $VariMenuItm.length+1
-                }
-            }
-            If($LoopVar -is [int]){
-                ChoicesMenu ($VariMenuItm[$LoopVar][1]) ($VariMenuItm[$LoopVar][2]) ($VariMenuItm[$LoopVar][3])
-            } Else{
-                $Invalid = 1        
-            }
-        } Else {
-            switch ($MetroMenu) {
-                B {$MetroMenu = "Out"}
-                N {""} #Next Page
-                P {""} #Previous Page
-                default {$Invalid = 1}
-            }
-        }
-    }
+    Return
 }
 
 ##########
@@ -421,6 +391,7 @@ function mainMenu {
             default {$Invalid = 1}
         }
     }
+    Return
 }
 
 ##########
@@ -431,6 +402,7 @@ function mainMenu {
 # Script Settings -Start
 ##########
 
+<#
 $ScriptSettingsMainMenuItems = @(
 '            Script Setting Main Menu             ',
 '1. Privacy Settings    ','7. Windows Update      ',
@@ -440,9 +412,10 @@ $ScriptSettingsMainMenuItems = @(
 "5. 'This PC'           ",'11. Misc/Photo Viewer  ',
 '6. Explorer            ','                       ',
 'B. Back to Main Menu                             '
-)
+) 
+#>
 
-<#
+
 $ScriptSettingsMainMenuItems = @(
 '            Script Setting Main Menu             ',
 '1. Privacy Settings    ','7. Windows Update      ',
@@ -453,7 +426,7 @@ $ScriptSettingsMainMenuItems = @(
 '6. Explorer            ','12. Misc/Photo Viewer  ',
 'B. Back to Main Menu                             '
 )
-#>
+
 
 
 function ScriptSettingsMM {
@@ -478,12 +451,13 @@ function ScriptSettingsMM {
             8 {VariMenu $ContextMenuSetMenuItems $ContextMenuSetMenuItm} #Context Menu
             9 {VariMenu $TaskbarSetMenuItems $TaskbarSetMenuItm} #Task Bar
             10 {VariMenu $FeaturesAppsMenuItems $FeaturesAppsMenuItm} #Features
-            #11 {MetroMenu $MetroAppsMenuItems $MetroAppsMenuItm} #Metro Apps
-            11 {VariMenu $MiscSetMenuItems $MiscSetMenuItm} #Misc/Photo Viewer
+            11 {MetroMenu $MetroAppsMenuItems $MetroAppsMenuItm} #Metro Apps
+            12 {VariMenu $MiscSetMenuItems $MiscSetMenuItm} #Misc/Photo Viewer
             B {$ScriptSettingsMM = "Out"}
             default {$Invalid = 1}
         }
     }
+    Return
 }
 
 ##########
@@ -541,6 +515,7 @@ function LoadSetting {
             }
         }
     }
+    Return
 }
 
 function LoadSettingFile([String]$Filename) {
@@ -572,6 +547,7 @@ function SaveSetting {
             $SaveSetting = "Out"
         }
     }
+    Return
 }
 
 ##########
@@ -733,6 +709,7 @@ function HUACMenu([String]$VariJ) {
             default {$HUACMenu = "Out"}
         }
     }
+    Return
 }
 
 ##########
@@ -1944,96 +1921,415 @@ Get-Variable -scope script | ForEach-Object {
     }
 }
 
+function AllMetroSet([Int]$Number){
+    ForEach ($ApL in $APList) {
+        Set-Variable -Name $APList -Value $Number -Scope Script;
+    }
+}
 
+function MetroMenu([Array]$VariDisplay, [Array]$MetroMenuItm) {
+    $MetroMenu = 'X'
+    while($MetroMenu -ne "Out"){
+        Clear-Host
+        MenuDisplay $VariDisplay
+        If($Invalid -eq 1){
+            Write-host ""
+            Write-host "Invalid Selection" -ForegroundColor Red -BackgroundColor Black -NoNewline
+            $Invalid = 0
+        }
+        $MetroMenu = Read-Host "`nSelection"
+        $ConInt = $MetroMenu -as [int]
+        If($ConInt -is [int] -and $MetroMenu -ne $null){
+            for ($i=0; $i -le $MetroMenuItm.length; $i++) {
+                If($MetroMenuItm[$i][0] -eq $ConInt){
+                    ChoicesMenuMetro ($MetroMenuItm[$i][1]) ($MetroMenuItm[$i][2])
+                    $i = $MetroMenuItm.length +1
+                }
+            }
+        } Else {
+            switch ($MetroMenu) {
+                B {$MetroMenu = "Out"}
+                default {$Invalid = 1}
+            }
+        }
+    }
+    Return
+}
+
+function ChoicesMenuMetro([String]$Vari, [Int]$MultiV) {
+    If($MultiV -eq 0){
+        $VariM = -join("APP_",$Vari)
+        $VariV = Get-Variable $VariM -valueOnly #Variable
+    } ElseIf($MultiV -eq 1){
+        $VariM = -join("APP_",$Vari)
+        $Vari1 = -join($VariM,"1")
+        $Vari2 = -join($VariM,"2")
+        $VariV = Get-Variable $Vari1 -valueOnly #Variable
+    } ElseIf($MultiV -eq 2){
+        $VariM = $Vari
+        $VariV = "9"
+    }
+    $VariJ = -join($Vari,"Items")
+    $VariA = Get-Variable $VariJ -valueOnly #Array
+    $ChoicesMenuMetro = 'X'
+    while($ChoicesMenuMetro -ne "Out"){
+        Clear-Host
+        ChoicesDisplayMetro $VariA $VariV
+        If($Invalid -eq 1){
+            Write-host ""
+            Write-host "Invalid Selection" -ForegroundColor Red -BackgroundColor Black -NoNewline
+            $Invalid = 0
+        }
+        $ChoicesMenuMetro = Read-Host "`nChoice"
+        switch -regex ($ChoicesMenuMetro) {
+            [0-3] {$ReturnV = $ChoicesMenuMetro}
+            C {$ReturnV = $VariV; $ChoicesMenuMetro = "Out"}
+            default {$Invalid = 1}
+        }
+    }
+    If($MultiV -eq 0){
+        Set-Variable -Name $VariM -Value $ReturnV -Scope Script
+    } ElseIf($MultiV -eq 1){
+        Set-Variable -Name $Vari1 -Value $ReturnV -Scope Script
+        Set-Variable -Name $Vari2 -Value $ReturnV -Scope Script
+    } ElseIf($MultiV -eq 2 -and $ReturnV -ne "9"){
+        AllMetroSet $ReturnV
+    }
+    Return
+}
+
+function ChoicesDisplayMetro ([Array]$ChToDisplayMetro, [Int]$ChToDisplayValMetro) {
+    TitleBottom $ChToDisplayMetro[0] 11
+    DisplayOutMenu "|                                                   |" 14 0 1
+    DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu $ChToDisplayMetro[1] 2 0 0 ;DisplayOutMenu "|" 14 0 1
+    DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu $ChToDisplayMetro[2] 2 0 0 ;DisplayOutMenu "|" 14 0 1
+    DisplayOutMenu "|                                                   |" 14 0 1
+    DisplayOutMenu "|---------------------------------------------------|" 14 0 1
+    DisplayOutMenu "|                                                   |" 14 0 1
+    DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu "0. Skip                                          " 2 0 0 ;DisplayOutMenu "|" 14 0 1
+    DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu "1. Install/Unhide                                " 2 0 0 ;DisplayOutMenu "|" 14 0 1
+    DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu "2. Hide (Current User Only)                      " 2 0 0 ;DisplayOutMenu "|" 14 0 1
+    DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu "3. Uninstall (All users) -Read Note Bellow       " 2 0 0 ;DisplayOutMenu "|" 14 0 1
+    DisplayOutMenu "|                                                   |" 14 0 1
+    If($ChToDisplayValMetro -ne "9"){
+        DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu "Current Value: " 13 0 0 ;DisplayOutMenu $ChToDisplayValMetro 13 0 0 ;DisplayOutMenu "                                 |" 14 0 1
+    }
+    DisplayOutMenu "|---------------------------------------------------|" 14 0 1
+    DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu "C. Cancel (Keeps Current Setting)                " 2 0 0 ;DisplayOutMenu "|" 14 0 1
+    DisplayOutMenu "|---------------------------------------------------|" 14 0 1
+    DisplayOutMenu "| " 14 0 0 ;DisplayOutMenu "Note: Some Uninstalled Apps can be Reinstalled by " 15 0 0 ;DisplayOutMenu "|" 14 0 1
+    DisplayOutMenu "| " 14 0 0 ;DisplayOutMenu "      using the windows store. But some can only  " 15 0 0 ;DisplayOutMenu "|" 14 0 1
+    DisplayOutMenu "| " 14 0 0 ;DisplayOutMenu "      be reinstalled using another method which   " 15 0 0 ;DisplayOutMenu "|" 14 0 1
+    DisplayOutMenu "| " 14 0 0 ;DisplayOutMenu "      this script cannot do.                      " 15 0 0 ;DisplayOutMenu "|" 14 0 1
+    DisplayOutMenu "|---------------------------------------------------|" 14 0 1
+
+}
 
 $MetroAppsMenuItems = @(
 '              Metro Apps Items Menu              ',
-'1. ALL METRO APPS      ','12. Microsoft Solitaire',
-"2. '3DBuilder' app     ",'13. One Connect        ',
-"3. 'Alarms' app        ","14. Office 'OneNote'   ",
-"4. 'Calculator' app    ","15. 'People' app       ",
-"5. 'Camera' app        ","16. 'Photos' app       ",
-'6. Feedback Hub        ',"17. 'Skype' app        ",
-"7. 'Get Office' App    ",'18. Sticky Notes       ',
-'8. Get Started         ',"19. 'Store' app        ",
-"9. 'Groove Music' app  ",'20. Voice Recorder     ',
-"10. 'Maps' app         ","21. Bing 'Weather' app ",
-"11. 'Messaging' App    ","22. 'Xbox' App         ",
+'1. ALL Metro Apps      ','24. Mahjong game       ',
+'2. 3DBuilder app       ','25. Maps app           ',
+'3. Alarms & Clock app  ','26. Messaging app      ',
+'4. Asphalt 8 game      ','27. Microsoft Solitaire',
+'5. Bing Money app      ','28. Minecraft game     ',
+'6. Bing News app       ','29. Movie Moments app  ',
+'7. Bing Sports app     ','30. Netflix app        ',
+'8. Bing Translator app ','31. Office OneNote app ',
+'9. Bing Weather app    ','32. Office Sway app    ',
+'10. Calculator app     ','33. One Connect        ',
+'11. Calendar & Mail app','34. People app         ',
+'12. Camera app         ','35. Phone app          ',
+'13. Candy Crush game   ','36. Phone Companion app',
+'14. Canvas app         ','37. Photos app         ',
+'15. Facebook app       ','38. Skype App          ',
+'16. Farm Ville game    ','39. Sticky Notes app   ',
+'17. Feedback Hub       ','40. Sudoku game        ',
+'18. Get Office Link    ','41. Taptiles game      ',
+'19. Get Started link   ','42. Twitter app        ',
+'20. Groove Music app   ','43. Voice Recorder app ',
+'21. Houzz app          ','44. Windows Store      ',
+'22. Jackpot game       ','45. Wordament game     ',
+'23. Jigsaw game        ','46. Xbox app           ',
 'B. Back to Script Setting Main Menu              '
 )
 
 $MetroAppsMenuItm = (
-(1,"ALL_METRO_APPS",3,0), #Need to create
-(2,"APP_3DBuilder",3,0),
-(3,"APP_WindowsAlarms",3,0),
-(4,"APP_WindowsCalculator",3,0),
-(5,"APP_WindowsCamera",3,0),
-(6,"APP_WindowsFeed",3,0), #Need to make to combine both feedback
-(7,"APP_MicrosoftOffHub",3,0),
-(8,"APP_Getstarted",3,0),
-(9,"APP_Zune",3,0), #Need to make to combine both Zune
-(10,"APP_WindowsMaps",3,0),
-(11,"APP_Messaging",3,0),
-(12,"APP_SolitaireCollect",3,0),
-(13,"APP_OneConnect",3,0),
-(14,"APP_OfficeOneNote",3,0),
-(15,"APP_People",3,0),
-(16,"APP_Photos",3,0), 
-(17,"APP_Skype",3,0), #Need to make to combine both Skype
-(18,"APP_StickyNotes",3,0),
-(19,"APP_WindowsStore",3,0),
-(20,"APP_SoundRecorder",3,0),
-(22,"APP_BingWeather",3,0),
-(21,"APP_XboxApp",3,0)
+(1,'ALL_METRO_APPS',0),
+(2,'3DBuilder',0),
+(3,'WindowsAlarms',0),
+(4,'Asphalt8Airborne',0),
+(5,'BingFinance',0),
+(6,'BingNews',0),
+(7,'BingSports',0),
+(8,'BingTranslator',0),
+(9,'BingWeather',0),
+(10,'WindowsCalculator',0),
+(11,'Communications',0),
+(12,'WindowsCamera',0),
+(13,'CandyCrushSoda',0),
+(14,'FreshPaint',0),
+(15,'Facebook',0),
+(16,'FarmVille',0),
+(17,'WindowsFeedbak',0),
+(18,'MicrosoftOffHub',0),
+(19,'Getstarted',0),
+(20,'ZuneMusic',0),
+(21,'Houzz',0),
+(22,'MicrosoftJackpot',0),
+(23,'MicrosoftJigsaw',0),
+(24,'MicrosoftMahjong',0),
+(25,'WindowsMaps',0),
+(26,'Messaging',0),
+(27,'SolitaireCollect',0),
+(28,'MinecraftUWP',0),
+(29,'MovieMoments',0),
+(30,'Netflix',0),
+(31,'OfficeOneNote',0),
+(32,'OfficeSway',0),
+(33,'OneConnect',0),
+(34,'People',0),
+(35,'CommsPhone',0),
+(36,'WindowsPhone',0),
+(37,'Photos',0),
+(38,'SkypeApp',0),
+(39,'StickyNotes',0),
+(40,'MicrosoftSudoku',0),
+(41,'Taptiles',0),
+(42,'Twitter',0),
+(43,'VoiceRecorder',0),
+(44,'WindowsStore',0),
+(45,'StudiosWordament',0),
+(46,'XboxApp',0)
 )
 
-<#
-"11. 'Asphalt 8' Game   ","22. Bing 'Food & Drink'",
-"11. Bing 'Money' app   ","22. Bing 'Health & Fit'",
-"11. Bing 'News' app    ","22. Bing 'Sports' app  ",
-"11. Bing Translator app","22. 'Phone' app        ",
-"11. Bing 'Travel' app  ","22. 'Calendar and Mail'",
-"11. 'Candy Crush' game ","22. Bing 'Sports' app  ",
-"11. 'Facebook' app     ","22. 'Netflix' app      ",
-"11. 'Farm Ville' game  ","22. Office 'Sway' app  ",
-"11. 'Twitter' app      ","22. 'Phone Companion'  ",
-"11. 'Farm Ville' game  ","22. 'Canvas' app       ",
-"11. 'Sudoku' game      ","22. 'Minecraft' game   ",
+$ALL_METRO_APPSItems = @(
+'                 ALL Metro Apps                  ',
+'                                                 ',
+'All Metro Apps are set to your choice            ')
 
-# Apps in list above listed
-$APP_Asphalt8Airborne = 0  # 'Asphalt 8' game
-$APP_BingFinance = 0       # 'Money' app - Financial news
-$APP_BingFoodAndDrink = 0  # 'Food and Drink' app
-$APP_BingHealthFitness = 0 # 'Health and Fitness' app
-$APP_BingNews = 0          # 'Generic news' app
-$APP_BingSports = 0        # 'Sports' app - Sports news
-$APP_BingTranslator = 0    # 'Translator' app - Bing Translate
-$APP_BingTravel = 0        # 'Travel' app
-$APP_CandyCrushSoda = 0    # 'Candy Crush' game
-$APP_CommsPhone = 0        # 'Phone' app
-$APP_Communications = 0    # 'Calendar and Mail' app
-$APP_Facebook = 0          # 'Facebook' app
-$APP_Netflix = 0           # 'Netflix' app
-$APP_OfficeSway = 0        # 'Sway' app
-$APP_Twitter = 0           # 'Twitter' app
-$APP_WindowsPhone = 0      # 'Phone Companion' app
-$APP_FarmVille = 0         # 'Farm Ville' game
-$APP_FreshPaint = 0        # 'Canvas' app
-$APP_MicrosoftSudoku = 0   # 'Sudoku' game 
-$APP_MinecraftUWP = 0      # 'Minecraft' game 
+$3DBuilderItems = @(
+'                 3DBuilder app                  ',
+'View, capture, personalize, and print 3D models ',
+'using 3D Builder.                               ')
 
+$WindowsAlarmsItems = @(
+'               Alarms & Clock app                ',
+'Set alarms & reminders, check times around the   ',
+'world, and time your activities, including laps  ')
 
-# Apps not listed
-$APP_AdvertisingXaml = 0   ## Removal may cause problem with some apps
-$APP_Appconnector = 0      ## Not sure about this one
-$APP_ConnectivityStore = 0  
-$APP_MicrosoftJackpot = 0  # 'Jackpot' app
-$APP_MicrosoftJigsaw = 0   # 'Jigsaw' game       
-$APP_MicrosoftMahjong = 0  # 'Mahjong' game 
-$APP_MovieMoments = 0        
-$APP_StudiosWordament = 0  # 'Wordament' game
-$APP_Taptiles = 0   
-#> 
+$Asphalt8AirborneItems = @(
+'                 Asphalt 8 game                  ',
+'                                                 ',
+'A multiplayer racecar game.                      ')
+
+$BingFinanceItems = @(
+'                 Bing Money app                  ',
+"Know more about your money with the world's best ",
+'financial news and data.                         ')
+
+$BingNewsItems = @(
+'                  Bing News app                  ',
+'                                                 ',
+'See the top stories of the day and breaking news.')
+
+$BingSportsItems = @(
+'                 Bing Sports app                 ',
+'App is packed with live scores & in-depth game   ',
+'experiences for more than 150 leagues.           ')
+
+$BingTranslatorItems = @(
+'               Bing Translator app               ',
+'Translate text or speech, translate conversation,',
+' and even download languages to use offline.     ')
+
+$BingWeatherItems = @(
+'                Bing Weather app                 ',
+"Get the latest weather conditions, whether you're",
+'hitting the slopes, or the beach.                ')
+
+$WindowsCalculatorItems = @(
+'                 Calculator app                  ',
+'Calculator that includes standard, scientific, & ',
+'programmer modes, as well as a unit converter.   ')
+
+$CommunicationsItems = @(
+'               Calendar & Mail app               ',
+'                                                 ',
+'                                                 ')
+
+$WindowsCameraItems = @(
+'                   Camera app                    ',
+'                                                 ',
+'                                                 ')
+
+$CandyCrushSodaItems = @(
+'                Candy Crush game                 ',
+'                                                 ',
+'                                                 ')
+
+$FreshPaintItems = @(
+'                   Canvas app                    ',
+'                                                 ',
+'                                                 ')
+
+$FacebookItems = @(
+'                  Facebook app                   ',
+'                                                 ',
+'                                                 ')
+
+$FarmVilleItems = @(
+'                 Farm Ville game                 ',
+'                                                 ',
+'                                                 ')
+
+$WindowsFeedbakItems = @(
+'                  Feedback Hub                   ',
+'                                                 ',
+'Ability to give Feedback to windows or for an APP')
+
+$MicrosoftOffHubItems = @(
+'                 Get Office Link                 ',
+'Get special offers for Office 365. Office 365    ',
+'gives you the latest desktop versions of Office. ')
+
+$GetstartedItems = @(
+'                Get Started link                 ',
+'                                                 ',
+'                                                 ')
+
+$ZuneMusicItems = @(
+'                Groove Music app                 ',
+'Enjoy all your music on Windows, iOS and Android ',
+'devices with Groove.                             ')
+
+$HouzzItems = @(
+'                    Houzz app                    ',
+'Whether you’re looking to renovate or redecorate,',
+'Has everything you need to improve your home.    ')
+
+$MicrosoftJackpotItems = @(
+'                  Jackpot game                   ',
+'                                                 ',
+'Slot Machines.                                   ')
+
+$MicrosoftJigsawItems = @(
+'                   Jigsaw game                   ',
+'                                                 ',
+'                                                 ')
+
+$MicrosoftMahjongItems = @(
+'                  Mahjong game                   ',
+'                                                 ',
+'                                                 ')
+
+$WindowsMapsItems = @(
+'                    Maps app                     ',
+'Voice navigation & turn-by-turn driving, transit,',
+'and walking directions.                          ')
+
+$MessagingItems = @(
+'                  Messaging app                  ',
+'Microsoft Messaging enables, quick, reliable SMS,',
+'MMS and RCS messaging from your phone.           ')
+
+$SolitaireCollectItems = @(
+'               Microsoft Solitaire               ',
+'                                                 ',
+'Collection of different Solitaire like games     ')
+
+$MinecraftUWPItems = @(
+'                 Minecraft game                  ',
+'                                                 ',
+'                                                 ')
+
+$MovieMomentsItems = @(
+'                Movie Moments app                ',
+'Trim videos to your favorite parts, highlight key',
+'moments with captions & effects, and set music.  ')
+
+$NetflixItems = @(
+'                   Netflix app                   ',
+'                                                 ',
+'                                                 ')
+
+$OfficeOneNoteItems = @(
+'               Office OneNote app                ',
+'                                                 ',
+'                                                 ')
+
+$OfficeSwayItems = @(
+'                 Office Sway app                 ',
+'                                                 ',
+'                                                 ')
+
+$OneConnectItems = @(
+'                   One Connect                   ',
+'                                                 ',
+'                                                 ')
+
+$PeopleItems = @(
+'                   People app                    ',
+'Check out what people are up to across services  ',
+'they use &  how you to connect to with them.     ')
+
+$CommsPhoneItems = @(
+'                    Phone app                    ',
+'                                                 ',
+'                                                 ')
+
+$WindowsPhoneItems = @(
+'               Phone Companion app               ',
+'                                                 ',
+'                                                 ')
+
+$PhotosItems = @(
+'                   Photos app                    ',
+'Enjoy, organize, edit, and share all your digital',
+'memories.                                        ')
+
+$SkypeAppItems = @(
+'                    Skype App                    ',
+'                                                 ',
+'                                                 ')
+
+$StickyNotesItems = @(
+'                Sticky Notes app                 ',
+'                                                 ',
+'                                                 ')
+
+$MicrosoftSudokuItems = @(
+'                   Sudoku game                   ',
+'                                                 ',
+'                                                 ')
+
+$TaptilesItems = @(
+'                  Taptiles game                  ',
+'                                                 ',
+'                                                 ')
+
+$TwitterItems = @(
+'                   Twitter app                   ',
+'                                                 ',
+'                                                 ')
+
+$VoiceRecorderItems = @(
+'               Voice Recorder app                ',
+'Record sounds, lectures, interviews, & events.   ',
+'Mark key moments as you record.                  ')
+
+$WindowsStoreItems = @(' Windows Store',
+'                                                 ',
+'                                                 ')
+
+$StudiosWordamentItems = @(
+'                  Wordament game                 ',
+'Boggle like game that is a real-time continuous  ',
+'word tournament.                                 ')
+
+$XboxAppItems = @(
+'                    Xbox app                     ',
+'                                                 ',
+'                                                 ')
 
   ##########
   # Metro Apss Menu -End
@@ -2061,12 +2357,9 @@ $AppsList = @(
     'Microsoft.3DBuilder',
     'GAMELOFTSA.Asphalt8Airborne',
     'Microsoft.BingFinance',
-    'Microsoft.BingFoodAndDrink',
-    'Microsoft.BingHealthAndFitness',
     'Microsoft.BingNews',
     'Microsoft.BingSports',
     'Microsoft.BingTranslator',
-    'Microsoft.BingTravel',
     'Microsoft.BingWeather',
     'king.com.CandyCrushSodaSaga',
     'Microsoft.CommsPhone',
@@ -3764,12 +4057,9 @@ Remove-Item -Path C:\Mnt -Recurse
 $Script:APP_3DBuilder = 0         # 3DBuilder app
 $Script:APP_Asphalt8Airborne = 0  # Asphalt 8 game
 $Script:APP_BingFinance = 0       # Bing Money app
-$Script:APP_BingFoodAndDrink = 0  # Bing Food & Drink app
-$Script:APP_BingHealthFitness = 0 # Bing Health & Fitness app
 $Script:APP_BingNews = 0          # Bing News app
 $Script:APP_BingSports = 0        # Bing Sports app
 $Script:APP_BingTranslator = 0    # Bing Translator app
-$Script:APP_BingTravel = 0        # Bing Travel app
 $Script:APP_BingWeather = 0       # Bing Weather app
 $Script:APP_CandyCrushSoda = 0    # Candy Crush game
 $Script:APP_CommsPhone = 0        # Phone app
