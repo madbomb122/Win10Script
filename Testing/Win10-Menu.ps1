@@ -2054,7 +2054,7 @@ $MetroAppsMenuItems = @(
 )
 
 $MetroAppsMenuItm = (
-(1,'ALL_METRO_APPS',0),
+(1,'ALL_METRO_APPS',2),
 (2,'3DBuilder',0),
 (3,'WindowsAlarms',0),
 (4,'Asphalt8Airborne',0),
@@ -2070,10 +2070,10 @@ $MetroAppsMenuItm = (
 (14,'FreshPaint',0),
 (15,'Facebook',0),
 (16,'FarmVille',0),
-(17,'WindowsFeedbak',0),
+(17,'WindowsFeedbak',1),
 (18,'MicrosoftOffHub',0),
 (19,'Getstarted',0),
-(20,'ZuneMusic',0),
+(20,'ZuneMusic',1),
 (21,'Houzz',0),
 (22,'MicrosoftJackpot',0),
 (23,'MicrosoftJigsaw',0),
@@ -2091,7 +2091,7 @@ $MetroAppsMenuItm = (
 (35,'CommsPhone',0),
 (36,'WindowsPhone',0),
 (37,'Photos',0),
-(38,'SkypeApp',0),
+(38,'SkypeApp',1),
 (39,'StickyNotes',0),
 (40,'MicrosoftSudoku',0),
 (41,'Taptiles',0),
