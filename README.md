@@ -15,7 +15,8 @@ Set what you want <br />
 Select option to run script <br />
 
 ## [](#header-2)Advanced Usage
-Use one of the following Methods
+Use one of the following Methods 
+(Bat file provided can run script, look in bat file for insructions)
 
 Change the variables you want (Bottom of Script) then run script with: <br />
    -Set Run
