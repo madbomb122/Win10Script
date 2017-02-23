@@ -12,9 +12,9 @@ Nothing ATM
 
 -------------------------------------------------------------------------------------------------------------
 
-# Planned at Later Date
-- [ ] Ability to Set Services based on Blackviper's service settings <br>
- Note: Once the Founders Package is released (New Service Pack) and Blackviper releases settings for it
+# Planned to add
+- [ ] Semi-Done -Ability to Set Services based on Blackviper's service settings <br> 
+Note: Script is made but in seperate a repo/script atm <br>
 
 Blackviper's site
 http://www.blackviper.com/service-configurations/black-vipers-windows-10-service-configurations/
