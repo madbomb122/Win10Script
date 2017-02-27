@@ -46,6 +46,11 @@ Examples: <br />
 **Q:** The script file looks all messy in notepad, How do i view/change it? <br />
 **A:** Try using wordpad or what I recommend, Notepad++ https://notepad-plus-plus.org/
 
+**Q:** When I tell the script to run (after the menu), it runs a new session and all settings are reset.. what do I do? <br />
+**A:** Due to the fact that admin is required for some items it needs to run as admin. You can do a few things. <br />
+       1. Change the settings you want and save it to file then load it on new session or using the switch to run a file <br />
+       2. Tell the script to run as admin and change settings there
+
 **Q:** Can I run the script safely? <br />
 **A:** The script itself is safe, however some setting it can change may compromise your computer.
 
