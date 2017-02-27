@@ -8,8 +8,8 @@
 #
 # Modded Script + Menu By
 # Author: Madbomb122
-# Website: https://github.com/madbomb122/Win10Script
-# Version: 1.2-Menu, 02-20-2017
+# Website: https://github.com/madbomb122/Win10Script/
+# Version: 1.3-Menu, 02-27-2017
 #
 # Release Type: Stable
 ##########
@@ -82,6 +82,8 @@ Note: File has to be in the proper format or settings wont be imported
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 Param([alias("Set")] [string] $SettingImp)
+
+$Global:filebase = $PSScriptRoot
 
 
 ##########
@@ -344,7 +346,7 @@ function TitleBottom ([String]$TitleA,[Int]$TitleB) {
 }
 
 function Website {
-    DisplayOutMenu "|" 14 0 0 ;DisplayOutMenu "     https://github.com/madbomb122/Win10Script     " 15 0 0 ;DisplayOutMenu "|" 14 0 1
+    DisplayOutMenu "|" 14 0 0 ;DisplayOutMenu "     https://github.com/madbomb122/Win10Script/    " 15 0 0 ;DisplayOutMenu "|" 14 0 1
     DisplayOutMenu "|---------------------------------------------------|" 14 0 1
 }
 
@@ -520,7 +522,7 @@ function LoadSetting {
 
 function LoadSettingFile([String]$Filename) {
     #Import-Clixml .\$Filename | %{Set-Variable $_.Name $_.Value -Scope Script}
-    Import-Csv .\$Filenam | %{Set-Variable $_.Name $_.Value -Scope Script}
+    Import-Csv .\$Filename | %{Set-Variable $_.Name $_.Value -Scope Script}
     RunScript
 }
 
@@ -533,16 +535,16 @@ function SaveSetting {
         If ($SaveSetting -eq $null -or $SaveSetting -eq 0){
             $SaveSetting = "Out"
         } Else {
-            $SaveSetting1 = $SaveSetting
-            If (Test-Path $SaveSetting -PathType Leaf){
+			$SavePath = $filebase+"\"+$SaveSetting
+            If (Test-Path $SavePath -PathType Leaf){
                 $Conf = ConfirmMenu 2
                 If($Conf -eq $true){
                 #cmpv | Export-Clixml -LiteralPath .\$SaveSetting -force
-                cmpv | Export-Csv -LiteralPath .\$SaveSetting1 -encoding "unicode" -force
+                cmpv | Export-Csv -LiteralPath $SavePath -encoding "unicode" -force
                 }
             } Else {
                 #cmpv | Export-Clixml -LiteralPath .\$SaveSetting -force
-                cmpv | Export-Csv -LiteralPath .\$SaveSetting -encoding "unicode" -force
+                cmpv | Export-Csv -LiteralPath $SavePath -encoding "unicode" -force
             }
             $SaveSetting = "Out"
         }
@@ -3771,7 +3773,7 @@ Function RunScript {
     ForEach ($AppI in $APPS_AppsInstall) {
         #$APPIDisplay = "Installing "+$AppI+"..."
         #DisplayOut $APPIDisplay 11 0
-         DisplayOut $AppI 11 0
+        DisplayOut $AppI 11 0
         Add-AppxPackage -DisableDevelopmentMode -Register "$($(Get-AppXPackage -AllUsers "$AppI").InstallLocation)\AppXManifest.xml"
     }
     DisplayOut "" 12 0
@@ -3781,7 +3783,7 @@ Function RunScript {
     ForEach ($AppH in $APPS_AppsHide) {
         #$APPHDisplay = "Hidinging "$AppH"..."
         #DisplayOut $APPHDisplay 12 0
-         DisplayOut $AppH 12 0
+        DisplayOut $AppH 12 0
         Get-AppxPackage $AppH | Remove-AppxPackage
     }
     DisplayOut "" 14 0
@@ -3844,6 +3846,7 @@ Function RunScript {
     # Metro App Items -End
     ##########
     
+	Remove-Variable -Name filebase -scope global
     If ($Restart -eq 1) {
         Clear-Host
         $Seconds = 10
@@ -3884,25 +3887,25 @@ $AutomaticVariables = Get-Variable
 
 # Note: If you're not sure what something does dont change it or do a web search 
 
-# Can ONLY create 1 per 24 hours with this script (Will give error if it tries)
+# Can ONLY create 1 per 24 hours with this script (Will give an error)
 $Script:CreateRestorePoint = 0    #0-Skip, 1-Create --(Restore point before script runs)
 
-# Skips Term of Use
-$Script:Term_of_Use = 1           #1-See, Anything else = Accepts Term of Use
+#Skips Term of Use
+$Script:Term_of_Use = 1           #1-See ToS, Anything else = Accepts Term of Use
 
-# Output Display
+#Output Display
 $Script:Verbros = 1               #0-Dont Show output, 1-Show output
 $Script:ShowColor = 1             #0-Dont Show output Color, 1-Show output Colors
 
-# Restart when done? (I recommend restarting when done)
+#Restart when done? (I recommend restarting when done)
 $Script:Restart = 1               #0-Dont Restart, 1-Restart
 
-# Windows Default for ALL Settings 
+#Windows Default for ALL Settings 
 $Script:WinDefault = 2            #1-Yes*, 2-No 
 # IF 1 is set then Everything Other than the following will use the Default Win Settings
-# ALL Values Above this one, All Metro Apps and $Script:OneDriveInstall  (These will use what you set)
+# ALL Values Above this one, All Metro Apps and OneDriveInstall  (Will use what you set)
 
-# Privacy Settings
+#Privacy Settings
 # Function  = Option              #Choices (* Indicates Windows Default)
 $Script:Telemetry = 0             #0-Skip, 1-Enable*, 2-Disable
 $Script:WiFiSense = 0             #0-Skip, 1-Enable*, 2-Disable
@@ -3917,7 +3920,7 @@ $Script:AutoLoggerFile = 0        #0-Skip, 1-Enable*, 2-Disable
 $Script:DiagTrack = 0             #0-Skip, 1-Enable*, 2-Disable
 $Script:WAPPush = 0               #0-Skip, 1-Enable*, 2-Disable --(type of text message that contains a direct link to a particular Web page)
 
-# Windows Update
+#Windows Update
 # Function  = Option              #Choices (* Indicates Windows Default)
 $Script:CheckForWinUpdate = 0     #0-Skip, 1-Enable*, 2-Disable
 $Script:WinUpdateType = 0         #0-Skip, 1-Notify, 2-Auto DL, 3-Auto DL+Install*, 4-Local admin chose --(May not work with Home version)
@@ -3927,7 +3930,7 @@ $Script:UpdateDriver = 0          #0-Skip, 1-Enable*, 2-Disable --(Offering of d
 $Script:RestartOnUpdate = 0       #0-Skip, 1-Enable*, 2-Disable
 $Script:AppAutoDownload = 0       #0-Skip, 1-Enable*, 2-Disable
 
-# Service Tweaks
+#Service Tweaks
 # Function  = Option              #Choices (* Indicates Windows Default)
 $Script:UAC = 0                   #0-Skip, 1-Lower, 2-Normal*, 3-Higher
 $Script:SharingMappedDrives = 0   #0-Skip, 1-Enable, 2-Disable* --(Sharing mapped drives between users)
@@ -4025,10 +4028,6 @@ $Script:MediaPlayer = 0           #0-Skip, 1-Installed*, 2-Uninstall
 $Script:WorkFolders = 0           #0-Skip, 1-Installed*, 2-Uninstall
 $Script:LinuxSubsystem = 0        #0-Skip, 1-Installed, 2-Uninstall* (Anniversary Update)
 
-#Disabled Items (Till Fixed)
-#$Script:MoreColorsTitle = 0       #0-Skip, 1-Enable, 2-Disable* --(Adds more Colors to pick from for the Title Colors)
-
-
 # Custom List of App to Install, Hide or Uninstall
 # I dunno if you can Install random apps with this script
 # Cant Import these ATM
@@ -4104,7 +4103,6 @@ $Script:APP_ZuneMusic = 0         # Groove Music app
 $Script:APP_ZuneVideo = 0         # Groove Music app
 
 
-
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## !!!!!!!!!               SAFE TO EDIT VALUES              !!!!!!!!!
 ## !!!!!!!!!                   -- END --                    !!!!!!!!!
@@ -4113,7 +4111,7 @@ $Script:APP_ZuneVideo = 0         # Groove Music app
 # --------------------------------------------------------------------------
 
 If ($SettingImp -ne $null -and $SettingImp){
-     If (Test-Path $SettingImp -PathType Leaf){
+    If (Test-Path $SettingImp -PathType Leaf){
         LoadSettingFile($SettingImp)
     } ElseIf ($SettingImp.ToLower() -eq "wd" -or $SettingImp.ToLower() -eq "windefault"){
         LoadWinDefault
