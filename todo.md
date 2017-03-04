@@ -7,14 +7,8 @@
 -------------------------------------------------------------------------------------------------------------
 
 # Working On/Testing
-
-Nothing ATM
-
--------------------------------------------------------------------------------------------------------------
-
-# Planned to add
-- [ ] Semi-Done -Ability to Set Services based on Blackviper's service settings <br> 
-Note: Script is made but in seperate a repo/script atm <br>
+- [X] Testing -Ability to Set Services based on Blackviper's service settings <br> 
+Note: Seperate script works, testing integration with this script <br>
 
 Blackviper's site
 http://www.blackviper.com/service-configurations/black-vipers-windows-10-service-configurations/
