@@ -7,8 +7,8 @@
 -------------------------------------------------------------------------------------------------------------
 
 # Working On/Testing
-- [X] Testing -Ability to Set Services based on Blackviper's service settings <br> 
+- [X] Testing -Ability to Set Services based on Black Viper's service settings <br> 
 Note: Seperate script works, testing integration with this script <br>
 
-Blackviper's site
+Black Viper's site
 http://www.blackviper.com/service-configurations/black-vipers-windows-10-service-configurations/
