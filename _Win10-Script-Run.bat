@@ -22,6 +22,7 @@ Pause
 
 ::Run script with Settings that are in the Script
 ::PowerShell.exe -NoProfile -Command "& {Start-Process PowerShell.exe -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File %~dp0Win10-Menu.ps1' -Set Run -Verb RunAs}"
+::Note: Default Settings in script is to Skip, you have to change them
 
 ::Run script with Windows Default Settings
 ::PowerShell.exe -NoProfile -Command "& {Start-Process PowerShell.exe -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File %~dp0Win10-Menu.ps1 -Set WD' -Verb RunAs}"
