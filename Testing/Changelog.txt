@@ -1,7 +1,16 @@
 -----------------------------------------------------------------------------------
-1.?-Menu (02-??-2017) 
+1.4-Menu (03-03-2017) 
 
-Nothing ATM
+Adding Black Viper's service settings (Win 10 Home/Pro ONLY)
+*Seperate script works.. checking integration with this script (had to change things)
+
+*Note: Seperate script for just the Black Viper's service settings avaiable
+https://github.com/madbomb122/BlackViperScript
+
+-----------------------------------------------------------------------------------
+1.3-Menu (02-27-2017) 
+
+Load/save setting fix
 
 -----------------------------------------------------------------------------------
 1.2-Menu (02-20-2017) 
