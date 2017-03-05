@@ -2,6 +2,7 @@
 1.5-Menu (03-?-2017) 
 
 Added option to show/hide when an item is akipped
+Added a check if running in Powershell or Powershell ISE (ISE is not supported) 
 
 -----------------------------------------------------------------------------------
 1.4-Menu (03-04-2017) 
