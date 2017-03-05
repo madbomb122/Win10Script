@@ -1,8 +1,14 @@
 -----------------------------------------------------------------------------------
-1.4-Menu (03-03-2017) 
+1.?-Menu (??-??-2017) 
 
-Adding Black Viper's service settings (Win 10 Home/Pro ONLY)
-*Seperate script works.. checking integration with this script (had to change things)
+NOTHING ATM
+
+-----------------------------------------------------------------------------------
+1.4-Menu (03-04-2017) 
+
+Added Black Viper's service settings (Win 10 Home/Pro ONLY)
+Removed Lock Screen alt (script check run the correct lockscreen work around)
+Added a display of skipped items
 
 *Note: Seperate script for just the Black Viper's service settings avaiable
 https://github.com/madbomb122/BlackViperScript
