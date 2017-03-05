@@ -92,7 +92,7 @@ Param([alias("Set")] [string] $SettingImp)
 # Version Info -Start
 ##########
 
-$CurrVer = "1.4 (03-03-17) "
+$CurrVer = "1.5 (03-05-17) "
 $RelType = "Testing"
 #$RelType = "Beta   "
 #$RelType = "Stable "
@@ -104,6 +104,58 @@ $RelType = "Testing"
 ##########
 # Pre-Script -Start
 ##########
+
+# Pause function by
+# https://adamstech.wordpress.com/2011/05/12/how-to-properly-pause-a-powershell-script/
+Function Pause ($Message = "Press any key to continue . . . ") {
+    If ($psISE) {
+        $Shell = New-Object -ComObject "WScript.Shell"
+        $Button = $Shell.Popup("Powershell ISE is not supported. Click OK to continue.", 0, "Error", 0)
+        Return
+    }
+ 
+    Write-Host -NoNewline $Message
+ 
+    $Ignore =
+        16,  # Shift (left or right)
+        17,  # Ctrl (left or right)
+        18,  # Alt (left or right)
+        20,  # Caps lock
+        91,  # Windows key (left)
+        92,  # Windows key (right)
+        93,  # Menu key
+        144, # Num lock
+        145, # Scroll lock
+        166, # Back
+        167, # Forward
+        168, # Refresh
+        169, # Stop
+        170, # Search
+        171, # Favorites
+        172, # Start/Home
+        173, # Mute
+        174, # Volume Down
+        175, # Volume Up
+        176, # Next Track
+        177, # Previous Track
+        178, # Stop Media
+        179, # Play
+        180, # Mail
+        181, # Select Media
+        182, # Application 1
+        183  # Application 2
+ 
+    While ($KeyInfo.VirtualKeyCode -Eq $Null -Or $Ignore -Contains $KeyInfo.VirtualKeyCode) {
+        $KeyInfo = $Host.UI.RawUI.ReadKey("NoEcho, IncludeKeyDown")
+    }
+    Write-Host
+}
+
+If ($host.name -ne "ConsoleHost") {
+    Write-Host "This Script cannot be ran in Powershell ISE" -ForegroundColor Red -BackgroundColor Black
+	Pause
+	Exit
+}
 
 $Global:filebase = $PSScriptRoot
 $ErrorActionPreference= 'silentlycontinue'
@@ -616,7 +668,7 @@ $VerbrosItems = @(
 '                     Verbros                     ',
 " Shows output of the Script's progress.          ",
 '                                                 ',
-'0. Dont Show ANY Output                          ',
+'0. Dont Show ANY Output (Other than Errors)      ',
 '1. Show Output                                   ',
 'C. Cancel (Keeps Current Setting)                '
 )
@@ -4248,7 +4300,6 @@ Function RunScript {
         DisplayOut "Changing Services..." 12 0
         DisplayOut "--------------------" 12 0
         DisplayOut "" 14 0
-
         for ($i=0; $i -ne $ServiceLen; $i++) {
             write-host "Test = $i"
             $ServiceT = $ServicesList[$i][$Back_Viper]
@@ -4275,7 +4326,7 @@ Function RunScript {
         }
     } ElseIf($Back_Viper -eq 9) {
         Write-Host ""
-        Write-Host "Not a Valid OS for Black Viper's Service Settings."  -ForegroundColor Red -BackgroundColor Black
+        Write-Host "Not a Valid OS for Black Viper's Service Settings." -ForegroundColor Red -BackgroundColor Black
         Write-Host "Win 10 Home and Pro Only"
         Write-Host ""
     }
@@ -4285,8 +4336,8 @@ Function RunScript {
     ##########
     
     Remove-Variable -Name filebase -scope global
-    If ($Restart -eq 1) {
-        #Clear-Host
+    If ($Restart -eq 1 -and $RelType -eq "Stable ") {
+        Clear-Host
         Write-Host ""
         $Seconds = 10
         Write-Host "Restarting Computer in 10 Seconds..." -ForegroundColor Yellow -BackgroundColor Black
@@ -4300,9 +4351,11 @@ Function RunScript {
         }
         Write-Host "Restarting Computer..." -ForegroundColor Red -BackgroundColor Black
         Restart-Computer
-    } Else {
+    } ElseIf ($RelType -eq "Stable ") {
         Write-Host "Goodbye..."
         Exit
+    } Else {
+       Read-Host -Prompt "Press any key to continue"
     }
 }
 
