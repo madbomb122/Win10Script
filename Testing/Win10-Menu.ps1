@@ -9,7 +9,7 @@
 # Modded Script + Menu By
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script/
-# Version: 1.4-Menu, 03-03-2017
+# Version: 1.5-Menu, 03-05-2017
 #
 # Release Type: Testing
 ##########
@@ -187,7 +187,7 @@ function DisplayOutMenu([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor,[int]
 }
 
 # Function to Display or Not Display OUTPUT
-function DisplayOut([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor){
+function DisplayOut([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor,){
     If($Verbros -eq 1){
         If($TxtColor -le 15 -and $ShowColor -eq 1){
              Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor]
@@ -579,8 +579,8 @@ function SaveSetting {
 $ScriptOptionMenuItems = @(
 '              Metro Apps Items Menu              ',
 '1. Create Restore Point','4. Show Color          ',
-'2. Agree Term of Use   ','5. Restart when Done   ',
-'3. Verbros             ','                       ',
+'2. Agree Term of Use   ','5. Show Skipped Items  ',
+'3. Verbros             ','6. Restart when Done   ',
 'B. Back to Main Menu                             '
 )
 
@@ -589,8 +589,10 @@ $ScriptOptionMenuItm = (
 (2,"Term_of_Use",1,0),
 (3,"Verbros",1,0),
 (4,"ShowColor",1,0),
-(5,"Restart",1,0)
+(5,"ShowSkipped",1,0),
+(6,"Restart",1,0)
 )
+ShowSkipped
 
 $CreateRestorePointItems = @(
 '              Create Restore Point               ',
@@ -612,9 +614,9 @@ $Term_of_UseItems = @(
 
 $VerbrosItems = @(
 '                     Verbros                     ',
+" Shows output of the Script's progress.          ",
 '                                                 ',
-' Shows output of the Script.                     ',
-'0. Dont Show Output                              ',
+'0. Dont Show ANY Output                          ',
 '1. Show Output                                   ',
 'C. Cancel (Keeps Current Setting)                '
 )
@@ -625,6 +627,15 @@ $ShowColorItems = @(
 ' Shows color for the output of the Script.       ',
 '0. Dont Show Color                               ',
 '1. Show Color                                    ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$ShowSkippedItems = @(
+'               Show Skipped Items                ',
+'                                                 ',
+' Show output showing skipped items.              ',
+'0. Dont Show Skipped Items                       ',
+'1. Show Skipped Items                            ',
 'C. Cancel (Keeps Current Setting)                '
 )
 
@@ -2735,8 +2746,11 @@ Function LoadWinDefault {
 ##########
 
 Function RunScript {
-    If ($CreateRestorePoint -eq 1) {
-        DisplayOut "Creating System Restore Point Named -Win10 Initial Setup Script..." 15 1
+    If ($CreateRestorePoint -eq 0 -and $ShowSkipped -eq 1) {
+        DisplayOut "Skipping Creation of System Restore Point..." 15 0
+    } ElseIf ($CreateRestorePoint -eq 1) {
+        DisplayOut "Creating System Restore Point Named 'Win10 Initial Setup Script'." 15 1
+        DisplayOut "Please Wait..." 15 1
         Checkpoint-Computer -Description "Win10 Initial Setup Script" | Out-Null
     }
 
@@ -2760,7 +2774,7 @@ Function RunScript {
     DisplayOut "" 14 0
 
     # Telemetry
-    If ($Telemetry -eq 0) {
+    If ($Telemetry -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Telemetry..." 15 0
     } ElseIf ($Telemetry -eq 1) {
         DisplayOut "Enabling Telemetry..." 11 0
@@ -2775,7 +2789,7 @@ Function RunScript {
     }
 
     # Wi-Fi Sense
-    If ($WiFiSense -eq 0) {
+    If ($WiFiSense -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Wi-Fi Sense..." 15 0
     } ElseIf ($WiFiSense -eq 1) {
         DisplayOut "Enabling Wi-Fi Sense..." 11 0
@@ -2791,7 +2805,7 @@ Function RunScript {
     }
 
     # SmartScreen Filter
-    If ($SmartScreen -eq 0) {
+    If ($SmartScreen -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping SmartScreen Filter..." 15 0
     } ElseIf ($SmartScreen -eq 1) {
         DisplayOut "Enabling SmartScreen Filter..." 11 0
@@ -2804,7 +2818,7 @@ Function RunScript {
     }    
 
     # Location Tracking
-    If ($LocationTracking -eq 0) {
+    If ($LocationTracking -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Location Tracking..." 15 0
     } ElseIf ($LocationTracking -eq 1) {
         DisplayOut "Enabling Location Tracking..." 11 0
@@ -2817,7 +2831,7 @@ Function RunScript {
     }
 
     # Disable Feedback
-    If ($Feedback -eq 0) {
+    If ($Feedback -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Feedback..." 15 0
     } ElseIf ($Feedback -eq 1) {
         DisplayOut "Enabling Feedback..." 11 0
@@ -2831,7 +2845,7 @@ Function RunScript {
     }
 
     # Disable Advertising ID
-    If ($AdvertisingID -eq 0) {
+    If ($AdvertisingID -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Advertising ID..." 15 0
     } ElseIf ($AdvertisingID -eq 1) {
         DisplayOut "Enabling Advertising ID..." 11 0
@@ -2845,7 +2859,7 @@ Function RunScript {
     }
     
     # Cortana
-    If ($Cortana -eq 0) {
+    If ($Cortana -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Cortana..." 15 0
     } ElseIf ($Cortana -eq 1) {
         DisplayOut "Enabling Cortana..." 11 0
@@ -2871,7 +2885,7 @@ Function RunScript {
     }
     
     # Cortana Search
-    If ($CortanaSearch -eq 0) {
+    If ($CortanaSearch -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Cortana Search..." 15 0
     } ElseIf ($CortanaSearch -eq 1) {
         DisplayOut "Enabling Cortana Search..." 11 0
@@ -2885,7 +2899,7 @@ Function RunScript {
     }
     
     # Error Reporting
-    If ($ErrorReporting -eq 0) {
+    If ($ErrorReporting -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Error Reporting..." 15 0
     } ElseIf ($ErrorReporting -eq 1) {
         DisplayOut "Enabling Error Reporting..." 11 0
@@ -2896,7 +2910,7 @@ Function RunScript {
     }
     
     # AutoLogger file and restrict directory
-    If ($AutoLoggerFile -eq 0) {
+    If ($AutoLoggerFile -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping AutoLogger..." 15 0
     } ElseIf ($AutoLoggerFile -eq 1) {
         DisplayOut "Unrestricting AutoLogger Directory..." 11 0
@@ -2912,7 +2926,7 @@ Function RunScript {
     }
     
     # Diagnostics Tracking Service
-    If ($DiagTrack -eq 0) {
+    If ($DiagTrack -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Diagnostics Tracking..." 15 0
     } ElseIf ($DiagTrack -eq 1) {
         DisplayOut "Enabling and Starting Diagnostics Tracking Service..." 11 0
@@ -2925,7 +2939,7 @@ Function RunScript {
     }
     
     # WAP Push Service
-    If ($WAPPush -eq 0) {
+    If ($WAPPush -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping WAP Push..." 15 0
     } ElseIf ($WAPPush -eq 1) {
         DisplayOut "Enabling and Starting WAP Push Service..." 11 0
@@ -2939,7 +2953,7 @@ Function RunScript {
     }
     
     # App Auto Download
-    If ($AppAutoDownload -eq 0) {
+    If ($AppAutoDownload -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping App Auto Download..." 15 0
     } ElseIf ($AppAutoDownload -eq 1) {
         DisplayOut "Enabling App Auto Download..." 11 0
@@ -2969,7 +2983,7 @@ Function RunScript {
     DisplayOut "" 14 0
     
     # Check for Windows Update
-    If ($CheckForWinUpdate -eq 0) {
+    If ($CheckForWinUpdate -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Check for Windows Update..." 15 0
     } ElseIf ($CheckForWinUpdate -eq 1) {
         DisplayOut "Enabling Check for Windows Update..." 11 0
@@ -2980,7 +2994,7 @@ Function RunScript {
     }
     
     # Windows Update Check Type
-    If ($WinUpdateType -eq 0) {
+    If ($WinUpdateType -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Windows Update Check Type..." 15 0
     } ElseIf ($WinUpdateType -In 1..4) {
         If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU")) {
@@ -3002,7 +3016,7 @@ Function RunScript {
     }
     
     # Windows Update P2P
-    If ($WinUpdateDownload -eq 0) {
+    If ($WinUpdateDownload -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Windows Update P2P..." 15 0
     } ElseIf ($WinUpdateDownload -eq 1) {
         DisplayOut "Unrestricting Windows Update P2P to internet..." 16 0
@@ -3040,7 +3054,7 @@ Function RunScript {
     
     
     # UAC level
-    If ($UAC -eq 0) {
+    If ($UAC -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping UAC Level..." 15 0
     } ElseIf ($UAC -eq 1) {
         DisplayOut "Lowering UAC level..." 16 0
@@ -3068,7 +3082,7 @@ Function RunScript {
     }
     
     # Administrative shares
-    If ($AdminShares -eq 0) {
+    If ($AdminShares -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Hidden Administrative Shares..." 15 0
     } ElseIf ($AdminShares -eq 1) {
         DisplayOut "Enabling Hidden Administrative Shares..." 11 0
@@ -3079,7 +3093,7 @@ Function RunScript {
     }
     
     # Firewall
-    If ($Firewall -eq 0) {
+    If ($Firewall -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Firewall..." 15 0
     } ElseIf ($Firewall -eq 1) {
         DisplayOut "Enabling Firewall..." 11 0
@@ -3090,7 +3104,7 @@ Function RunScript {
     }
     
     # Windows Defender
-    If ($WinDefender -eq 0) {
+    If ($WinDefender -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Windows Defender..." 15 0
     } ElseIf ($WinDefender -eq 1) {
         DisplayOut "Enabling Windows Defender..." 11 0
@@ -3103,7 +3117,7 @@ Function RunScript {
     }
     
     # Home Groups services
-    If ($HomeGroups -eq 0) {
+    If ($HomeGroups -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Home Groups Services..." 15 0
     } ElseIf ($HomeGroups -eq 1) {
         DisplayOut "Enabling Home Groups Services..." 11 0
@@ -3119,7 +3133,7 @@ Function RunScript {
     }
     
     # Remote Assistance
-    If ($RemoteAssistance -eq 0) {
+    If ($RemoteAssistance -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Remote Assistance..." 15 0
     } ElseIf ($RemoteAssistance -eq 1) {
         DisplayOut "Enabling Remote Assistance..." 11 0
@@ -3130,7 +3144,7 @@ Function RunScript {
     }
     
     # Enable Remote Desktop w/o Network Level Authentication
-    If ($RemoteDesktop -eq 0) {
+    If ($RemoteDesktop -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Remote Desktop..." 15 0
     } ElseIf ($RemoteDesktop -eq 1) {
         DisplayOut "Enabling Remote Desktop w/o Network Level Authentication..." 11 0
@@ -3157,7 +3171,7 @@ Function RunScript {
     DisplayOut "" 14 0
     
     # Cast to Device Context
-    If ($CastToDevice -eq 0) {
+    If ($CastToDevice -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Cast to Device Context item..." 15 0
     } ElseIf ($CastToDevice -eq 1) {
         DisplayOut "Enabling Cast to Device Context item..." 11 0
@@ -3171,7 +3185,7 @@ Function RunScript {
     }
     
     # Previous Versions Context Menu
-    If ($PreviousVersions -eq 0) {
+    If ($PreviousVersions -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Previous Versions Context item..." 15 0
     } ElseIf ($PreviousVersions -eq 1) {
         DisplayOut "Enabling Previous Versions Context item..." 11 0
@@ -3188,7 +3202,7 @@ Function RunScript {
     }
     
     # Include in Library Context Menu
-    If ($IncludeinLibrary -eq 0) {
+    If ($IncludeinLibrary -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Include in Library Context item..." 15 0
     } ElseIf ($IncludeinLibrary -eq 1) {
         DisplayOut "Enabling Include in Library Context item..." 11 0
@@ -3199,7 +3213,7 @@ Function RunScript {
     }
     
     # Pin To Context Menu
-    If ($PinTo -eq 0) {
+    If ($PinTo -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Pin To Context item..." 15 0
     } ElseIf ($PinTo -eq 1) {
         DisplayOut "Enabling Pin To Context item..." 11 0
@@ -3222,7 +3236,7 @@ Function RunScript {
     }
     
     # Share With Context Menu
-    If ($ShareWith -eq 0) {
+    If ($ShareWith -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Share With Context item..." 15 0
     } ElseIf ($ShareWith -eq 1) {
         DisplayOut "Enabling Share With Context item..." 11 0
@@ -3245,7 +3259,7 @@ Function RunScript {
     }
     
     # Send To Context Menu
-    If ($SendTo -eq 0) {
+    If ($SendTo -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Send To Context item..." 15 0
     } ElseIf ($SendTo -eq 1) {
         DisplayOut "Enabling Send To Context item..." 11 0
@@ -3275,7 +3289,7 @@ Function RunScript {
     DisplayOut "" 14 0
     
     # Battery UI Bar
-    If ($BatteryUIBar -eq 0) {
+    If ($BatteryUIBar -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Battery UI Bar..." 15 0
     } ElseIf ($BatteryUIBar -eq 1) {
         DisplayOut "Enabling New Battery UI Bar..." 16 0
@@ -3289,7 +3303,7 @@ Function RunScript {
     }
     
     # Clock UI Bar
-    If ($ClockUIBar -eq 0) {
+    If ($ClockUIBar -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Clock UI Bar..." 15 0
     } ElseIf ($ClockUIBar -eq 1) {
         DisplayOut "Enabling New Clock UI Bar..." 16 0
@@ -3303,7 +3317,7 @@ Function RunScript {
     }
          
     # Volume Control Bar
-    If ($VolumeControlBar -eq 0) {
+    If ($VolumeControlBar -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Volume Control Bar..." 15 0
     } ElseIf ($VolumeControlBar -eq 1) {
         DisplayOut "Enabling New Volume Control Bar (Horizontal)..." 16 0
@@ -3317,7 +3331,7 @@ Function RunScript {
     }
     
     # Taskbar Search button / box
-    If ($TaskbarSearchBox -eq 0) {
+    If ($TaskbarSearchBox -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Taskbar Search box / button..." 15 0
     } ElseIf ($TaskbarSearchBox -eq 1) {
         DisplayOut "Showing Taskbar Search box / button..." 11 0
@@ -3328,7 +3342,7 @@ Function RunScript {
     }
     
     # Task View button
-    If ($TaskViewButton -eq 0) {
+    If ($TaskViewButton -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Task View button..." 15 0
     } ElseIf ($TaskViewButton -eq 1) {
         DisplayOut "Showing Task View button..." 11 0
@@ -3339,7 +3353,7 @@ Function RunScript {
     }
     
     # Taskbar Icon Size
-    If ($TaskbarIconSize -eq 0) {
+    If ($TaskbarIconSize -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Icon Size in Taskbar..." 15 0
     } ElseIf ($TaskbarIconSize -eq 1) {
         DisplayOut "Showing Normal Icon Size in Taskbar..." 11 0
@@ -3350,7 +3364,7 @@ Function RunScript {
     }
     
     # Taskbar Item Grouping
-    If ($TaskbarGrouping -eq 0) {
+    If ($TaskbarGrouping -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Taskbar Item Grouping..." 15 0
     } ElseIf ($TaskbarGrouping -eq 1) {
         DisplayOut "Never Group Taskbar Items..." 16 0
@@ -3364,7 +3378,7 @@ Function RunScript {
     }
     
     # Tray icons
-    If ($TrayIcons -eq 0) {
+    If ($TrayIcons -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Tray icons..." 15 0
     } ElseIf ($TrayIcons -eq 1) {
         DisplayOut "Showing All Tray Icons..." 11 0
@@ -3375,7 +3389,7 @@ Function RunScript {
     }
     
     # Seconds in Taskbar Clock
-    If ($SecondsInClock -eq 0) {
+    If ($SecondsInClock -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Seconds in Taskbar Clock..." 15 0
     } ElseIf ($SecondsInClock -eq 1) {
         DisplayOut "Showing Seconds in Taskbar Clock..." 16 0
@@ -3386,7 +3400,7 @@ Function RunScript {
     }
     
     # Last Active Click
-    If ($LastActiveClick -eq 0) {
+    If ($LastActiveClick -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Last Active Click..." 15 0
     } ElseIf ($LastActiveClick -eq 1) {
         DisplayOut "Enabling Last Active Click..." 11 0
@@ -3397,7 +3411,7 @@ Function RunScript {
     }
     
     # Taskbar on multiple displays
-    If ($TaskBarOnMultiDisplay -eq 0) {
+    If ($TaskBarOnMultiDisplay -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Taskbar on Multiple Displays..." 15 0
     } ElseIf ($TaskBarOnMultiDisplay -eq 1) {
         DisplayOut "Showing Taskbar on Multiple Displays..." 11 0
@@ -3408,7 +3422,7 @@ Function RunScript {
     }
     
     # Taskbar on multiple displays
-    If ($TaskbarButtOnDisplay -eq 0) {
+    If ($TaskbarButtOnDisplay -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Taskbar Buttons on Multiple Displays..." 15 0
     } ElseIf ($TaskbarButtOnDisplay -eq 1) {
         DisplayOut "Showing Taskbar Buttons on All Taskbars..." 16 0
@@ -3436,7 +3450,7 @@ Function RunScript {
     DisplayOut "" 14 0
     
     # Web Search in Start Menu
-    If ($StartMenuWebSearch -eq 0) {
+    If ($StartMenuWebSearch -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Bing Search in Start Menu..." 15 0
     } ElseIf ($StartMenuWebSearch -eq 1) {
         DisplayOut "Enabling Bing Search in Start Menu..." 11 0
@@ -3452,7 +3466,7 @@ Function RunScript {
     }
     
     # Start Menu suggestions
-    If ($StartSuggestions -eq 0) {
+    If ($StartSuggestions -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Start Menu Suggestions..." 15 0
     } ElseIf ($StartSuggestions -eq 1) {
         DisplayOut "Enabling Start Menu Suggestions..." 11 0
@@ -3465,7 +3479,7 @@ Function RunScript {
     }
     
     # Most used apps in Start menu
-    If ($MostUsedAppStartMenu -eq 0) {
+    If ($MostUsedAppStartMenu -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Most used Apps in Start Menu..." 15 0
     } ElseIf ($MostUsedAppStartMenu -eq 1) {
         DisplayOut "Showing Most used Apps in Start Menu..." 11 0
@@ -3476,7 +3490,7 @@ Function RunScript {
     }
     
     # Recent Items and Frequent Places
-    If ($RecentItemsFrequent -eq 0) {
+    If ($RecentItemsFrequent -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Recent Items and Frequent Places..." 15 0
     } ElseIf ($RecentItemsFrequent -eq 1) {
         DisplayOut "Enabling Recent Items and Frequent Places..." 11 0
@@ -3507,7 +3521,7 @@ Function RunScript {
     DisplayOut "" 14 0
     
     # Process ID on Title Bar
-    If ($PidInTitleBar -eq 0) {
+    If ($PidInTitleBar -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Process ID on Title Bar..." 15 0
     } ElseIf ($PidInTitleBar -eq 1) {
         DisplayOut "Showing Process ID on Title Bar..." 11 0
@@ -3518,7 +3532,7 @@ Function RunScript {
     }
     
     # Aero Snap
-    If ($AeroSnap -eq 0) {
+    If ($AeroSnap -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Aero Snap..." 15 0
     } ElseIf ($AeroSnap -eq 1) {
         DisplayOut "Enabling Aero Snap..." 11 0
@@ -3529,7 +3543,7 @@ Function RunScript {
     }
     
     # Aero Shake
-    If ($AeroShake -eq 0) {
+    If ($AeroShake -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Aero Shake..." 15 0
     } ElseIf ($AeroShake -eq 1) {
         DisplayOut "Enabling Aero Shake..." 11 0
@@ -3543,7 +3557,7 @@ Function RunScript {
     }
     
     # File extensions
-    If ($KnownExtensions -eq 0) {
+    If ($KnownExtensions -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Known File Extensions..." 15 0
     } ElseIf ($KnownExtensions -eq 1) {
         DisplayOut "Showing Known File Extensions..." 11 0
@@ -3554,7 +3568,7 @@ Function RunScript {
     }
     
     # Hidden files
-    If ($HiddenFiles -eq 0) {
+    If ($HiddenFiles -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Hidden Files..." 15 0
     } ElseIf ($HiddenFiles -eq 1) {
         DisplayOut "Showing Hidden Files..." 11 0
@@ -3565,7 +3579,7 @@ Function RunScript {
     }
     
     # System files
-    If ($SystemFiles -eq 0) {
+    If ($SystemFiles -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping System Files..." 15 0
     } ElseIf ($SystemFiles -eq 1) {
         DisplayOut "Showing System Files..." 11 0
@@ -3576,7 +3590,7 @@ Function RunScript {
     }
     
     # Change default Explorer view
-    If ($ExplorerOpenLoc -eq 0) {
+    If ($ExplorerOpenLoc -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Default Explorer view to Quick Access..." 15 0
     } ElseIf ($ExplorerOpenLoc -eq 1) {
         DisplayOut "Changing Default Explorer view to Quick Access..." 16 0
@@ -3587,7 +3601,7 @@ Function RunScript {
     }
     
     # Recent Files in Quick Access
-    If ($RecentFileQikAcc -eq 0) {
+    If ($RecentFileQikAcc -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Recent Files in Quick Access..." 15 0
     } ElseIf ($RecentFileQikAcc -eq 1) {
         DisplayOut "Showing Recent Files in Quick Access..." 11 0
@@ -3607,7 +3621,7 @@ Function RunScript {
     }
     
     # Frequent folders in Quick_access
-    If ($FrequentFoldersQikAcc -eq 0) {
+    If ($FrequentFoldersQikAcc -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Frequent Folders in Quick Access..." 15 0
     } ElseIf ($FrequentFoldersQikAcc -eq 1) {
         DisplayOut "Showing Frequent Folders in Quick Access..." 11 0
@@ -3618,7 +3632,7 @@ Function RunScript {
     }
     
     # Window Content while Dragging
-    If ($WinContentWhileDrag -eq 0) {
+    If ($WinContentWhileDrag -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Window Content while Dragging..." 15 0
     } ElseIf ($WinContentWhileDrag -eq 1) {
         DisplayOut "Showing Window Content while Dragging..." 11 0
@@ -3629,7 +3643,7 @@ Function RunScript {
     }
     
     # Autoplay
-    If ($Autoplay -eq 0) {
+    If ($Autoplay -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Autoplay..." 15 0
     } ElseIf ($Autoplay -eq 1) {
         DisplayOut "Enabling Autoplay..." 11 0
@@ -3640,7 +3654,7 @@ Function RunScript {
     }
     
     # Autorun for all drives
-    If ($Autorun -eq 0) {
+    If ($Autorun -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Autorun for all Drives..." 15 0
     } ElseIf ($Autorun -eq 1) {
         DisplayOut "Enabling Autorun for all Drives..." 11 0
@@ -3668,7 +3682,7 @@ Function RunScript {
     DisplayOut "" 14 0
     
     # Show This PC shortcut on desktop
-    If ($ThisPCOnDesktop -eq 0) {
+    If ($ThisPCOnDesktop -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping This PC Shortcut on Desktop..." 15 0
     } ElseIf ($ThisPCOnDesktop -eq 1) {
         DisplayOut "Showing This PC Shortcut on Desktop..." 11 0
@@ -3684,7 +3698,7 @@ Function RunScript {
     }    
     
     # Desktop Icon in This PC
-    If ($DesktopIconInThisPC -eq 0) {
+    If ($DesktopIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Desktop Icon in This PC..." 15 0
     } ElseIf ($DesktopIconInThisPC -eq 1) {
         DisplayOut "Showing Desktop Icon in This PC..." 11 0
@@ -3697,7 +3711,7 @@ Function RunScript {
     }
     
     # Documents Icon in This PC
-    If ($DocumentsIconInThisPC -eq 0) {
+    If ($DocumentsIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Documents Icon in This PC..." 15 0
     } ElseIf ($DocumentsIconInThisPC -eq 1) {
         DisplayOut "Showing Documents Icon in This PC..." 11 0
@@ -3710,7 +3724,7 @@ Function RunScript {
     }
     
     # Downloads icon from This PC
-    If ($DownloadsIconInThisPC -eq 0) {
+    If ($DownloadsIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Downloads Icon in This PC..." 15 0
     } ElseIf ($DownloadsIconInThisPC -eq 1) {
         DisplayOut "Showing Downloads Icon in This PC..." 11 0
@@ -3723,7 +3737,7 @@ Function RunScript {
     }
     
     # Music icon from This PC
-    If ($MusicIconInThisPC -eq 0) {
+    If ($MusicIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Music Icon in This PC..." 15 0
     } ElseIf ($MusicIconInThisPC -eq 1) {
         DisplayOut "Showing Music Icon in This PC..." 11 0
@@ -3736,7 +3750,7 @@ Function RunScript {
     }
     
     # Pictures icon from This PC
-    If ($PicturesIconInThisPC -eq 0) {
+    If ($PicturesIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Pictures Icon in This PC..." 15 0
     } ElseIf ($PicturesIconInThisPC -eq 1) {
         DisplayOut "Showing Pictures Icon in This PC..." 11 0
@@ -3749,7 +3763,7 @@ Function RunScript {
     }
     
     # Hide Videos icon from This PC
-    If ($VideosIconInThisPC -eq 0) {
+    If ($VideosIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Videos Icon in This PC..." 15 0
     } ElseIf ($VideosIconInThisPC -eq 1) {
         DisplayOut "Showing Videos Icon in This PC..." 11 0
@@ -3776,7 +3790,7 @@ Function RunScript {
     DisplayOut "" 14 0
     
     # Photo Viewer association for bmp, gif, jpg, png and tif
-    If ($PVFileAssociation -eq 0) {
+    If ($PVFileAssociation -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Photo Viewer File Association..." 15 0
     } ElseIf ($PVFileAssociation -eq 1) {
         DisplayOut "Setting Photo Viewer File Association for bmp, gif, jpg, png and tif..." 11 0
@@ -3804,7 +3818,7 @@ Function RunScript {
     } 
     
     # Add Photo Viewer to "Open with..."
-    If ($PVOpenWithMenu -eq 0) {
+    If ($PVOpenWithMenu -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Photo Viewer Open with Menu..." 15 0
     } ElseIf ($PVOpenWithMenu -eq 1) {
         DisplayOut "Adding Photo Viewer to Open with Menu..." 11 0
@@ -3835,7 +3849,7 @@ Function RunScript {
     DisplayOut "" 14 0
     
     # Lock screen
-    If ($LockScreen -eq 0) {
+    If ($LockScreen -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Lock Screen..." 15 0
     } ElseIf ($LockScreen -eq 1) {
         If ($BuildVer -eq 10240 -or $BuildVer -eq 10586){
@@ -3873,7 +3887,7 @@ Function RunScript {
     }
     
     # Power Menu on Lock Screen
-    If ($PowerMenuLockScreen -eq 0) {
+    If ($PowerMenuLockScreen -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Power Menu on Lock Screen..." 15 0
     } ElseIf ($PowerMenuLockScreen -eq 1) {
         DisplayOut "Showing Power Menu on Lock Screen..." 11 0
@@ -3884,7 +3898,7 @@ Function RunScript {
     }
     
     # Camera at Lockscreen
-    If ($CameraOnLockscreen -eq 0) {
+    If ($CameraOnLockscreen -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Camera at Lockscreen..." 15 0
     } ElseIf ($CameraOnLockscreen -eq 1) {
         DisplayOut "Enabling Camera at Lockscreen..." 11 0
@@ -3912,7 +3926,7 @@ Function RunScript {
     DisplayOut "" 14 0
     
     # Action Center
-    If ($ActionCenter -eq 0) {
+    If ($ActionCenter -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Action Center..." 15 0
     } ElseIf ($ActionCenter -eq 1) {
         DisplayOut "Enabling Action Center..." 11 0
@@ -3928,7 +3942,7 @@ Function RunScript {
     }
     
     # Sticky keys prompt
-    If ($StickyKeyPrompt -eq 0) {
+    If ($StickyKeyPrompt -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Sticky Keys Prompt..." 15 0
     } ElseIf ($StickyKeyPrompt -eq 1) {
         DisplayOut "Enabling Sticky Keys Prompt..." 11 0
@@ -3939,7 +3953,7 @@ Function RunScript {
     }
     
     # Num Lock after startup
-    If ($NumblockOnStart -eq 0) {
+    If ($NumblockOnStart -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Num Lock after startup..." 15 0
     } ElseIf ($NumblockOnStart -eq 1) {
         DisplayOut "Enabling Num Lock after startup..." 11 0
@@ -3950,7 +3964,7 @@ Function RunScript {
     }
     
     # Enable F8 boot menu options
-    If ($F8BootMenu -eq 0) {
+    If ($F8BootMenu -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping F8 boot menu options..." 15 0
     } ElseIf ($F8BootMenu -eq 1) {
         DisplayOut "Enabling F8 boot menu options..." 11 0
@@ -3961,7 +3975,7 @@ Function RunScript {
     }
     
     # Remote UAC Local Account Token Filter
-    If ($RemoteUACAcctToken -eq 0) {
+    If ($RemoteUACAcctToken -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Remote UAC Local Account Token Filter..." 15 0
     } ElseIf ($RemoteUACAcctToken -eq 1) {
         DisplayOut "Enabling Remote UAC Local Account Token Filter..." 11 0
@@ -3972,7 +3986,7 @@ Function RunScript {
     }
     
     # Hibernate Option
-    If ($HibernatePower -eq 0) {
+    If ($HibernatePower -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Hibernate Option..." 15 0
     } ElseIf ($HibernatePower -eq 1) {
         DisplayOut "Enabling Hibernate Option..." 11 0
@@ -3983,7 +3997,7 @@ Function RunScript {
     }
     
     # Sleep Option
-    If ($SleepPower -eq 0) {
+    If ($SleepPower -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Sleep Option..." 15 0
     } ElseIf ($SleepPower -eq 1) {
         DisplayOut "Enabling Sleep Option..." 11 0
@@ -4011,7 +4025,7 @@ Function RunScript {
     DisplayOut "" 14 0
     
     # OneDrive
-    If ($OneDrive -eq 0) {
+    If ($OneDrive -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping OneDrive..." 15 0
     } ElseIf ($OneDrive -eq 1) {
         DisplayOut "Enabling OneDrive..." 11 0
@@ -4025,7 +4039,7 @@ Function RunScript {
     }
     
     # OneDrive Install
-    If ($OneDriveInstall -eq 0) {
+    If ($OneDriveInstall -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping OneDrive Installing..." 15 0
     } ElseIf ($OneDriveInstall -eq 1) {
         DisplayOut "Installing OneDrive..." 11 0
@@ -4059,7 +4073,7 @@ Function RunScript {
     }
     
     # Xbox DVR
-    If ($XboxDVR -eq 0) {
+    If ($XboxDVR -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Xbox DVR..." 15 0
     } ElseIf ($XboxDVR -eq 1) {
         DisplayOut "Enabling Xbox DVR..." 11 0
@@ -4075,7 +4089,7 @@ Function RunScript {
     }
     
     # Windows Media Player
-    If ($MediaPlayer -eq 0) {
+    If ($MediaPlayer -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Windows Media Player..." 15 0
     } ElseIf ($MediaPlayer -eq 1) {
         DisplayOut "Installing Windows Media Player..." 11 0
@@ -4086,7 +4100,7 @@ Function RunScript {
     }
     
     # Work Folders Client
-    If ($WorkFolders -eq 0) {
+    If ($WorkFolders -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Work Folders Client..." 15 0
     } ElseIf ($WorkFolders -eq 1) {
         DisplayOut "Installing Work Folders Client..." 11 0
@@ -4098,7 +4112,7 @@ Function RunScript {
     
     # Install Linux Subsystem - Applicable to RS1 or newer
     If ($BuildVer -ge 14393) {
-        If ($LinuxSubsystem -eq 0) {
+        If ($LinuxSubsystem -eq 0 -and $ShowSkipped -eq 1) {
             DisplayOut "Skipping Linux Subsystem..." 15 0
         } ElseIf ($LinuxSubsystem -eq 1) {
             DisplayOut "Installing Linux Subsystem..." 11 0
@@ -4111,8 +4125,8 @@ Function RunScript {
             Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" -Name "AllowAllTrustedApps" -Type DWord -Value 0
             dism /online /Disable-Feature /FeatureName:Microsoft-Windows-Subsystem-Linux /Quiet /NoRestart
         }
-    } Else {
-        DisplayOut "Windows 10 Build isnt new enough for Linux Subsystem..." 14 0
+    } ElseIf ($LinuxSubsystem -ne 0) {
+        DisplayOut "Windows 10 Build isn't new enough for Linux Subsystem..." 14 0
     }
     
     ##########
@@ -4198,7 +4212,7 @@ Function RunScript {
     # Unpin App Items -Start
     ##########
     
-    If ($Unpin -eq 0) {
+    If ($Unpin -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Unpinning Items..." 15 0
     } ElseIf ($Unpin -eq 1){
         DisplayOut "" 12 0
@@ -4227,7 +4241,7 @@ Function RunScript {
     $Back_Viper = Black_Viper_Set $Back_Viper
     write-host $Back_Viper
     
-    If ($Back_Viper -eq 0) {
+    If ($Back_Viper -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Black Viper Services..." 15 0
     } ElseIf($Back_Viper -In 1..4) {    
         DisplayOut "" 14 0
@@ -4254,6 +4268,9 @@ Function RunScript {
                     $RegPath = "HKLM\System\CurrentControlSet\Services\"+($ServiceNameFull)
                     Set-ItemProperty -Path $RegPath -Name "DelayedAutostart" -Type DWORD -Value 1
                 }
+            } Else {
+                $DispTemp = "$ServiceNameFull is already $ServiceType"
+                DisplayOut $DispTemp  15 0
             }
         }
     } ElseIf($Back_Viper -eq 9) {
@@ -4321,6 +4338,7 @@ $Script:Term_of_Use = 1           #1-See ToS, Anything else = Accepts Term of Us
 
 #Output Display
 $Script:Verbros = 1               #0-Dont Show output, 1-Show output
+$Script:ShowSkipped = 1           #0-Dont Show Skipped, 1-Show Skipped
 $Script:ShowColor = 1             #0-Dont Show output Color, 1-Show output Colors
 
 #Restart when done? (I recommend restarting when done)
