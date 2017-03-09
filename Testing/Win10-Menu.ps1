@@ -9,7 +9,7 @@
 # Modded Script + Menu By
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script/
-# Version: 1.5-Menu, 03-05-2017
+# Version: 1.5-Menu, 03-08-2017
 #
 # Release Type: Testing
 ##########
@@ -92,7 +92,7 @@ Param([alias("Set")] [string] $SettingImp)
 # Version Info -Start
 ##########
 
-$CurrVer = "1.5 (03-05-17) "
+$CurrVer = "1.5 (03-08-17) "
 $RelType = "Testing"
 #$RelType = "Beta   "
 #$RelType = "Stable "
@@ -492,7 +492,7 @@ $ScriptSettingsMainMenuItems = @(
 '2. Service Tweaks      ','8. Context Menu        ',
 '3. Start Menu          ','9. Task Bar            ',
 '4. Lock Screen         ','10. Features           ',
-"5. 'This PC'           ",'11. Metro Apps         ',
+"5. This PC/Desktop Icon",'11. Metro Apps         ',
 '6. Explorer            ','12. Misc/Photo Viewer  ',
 'B. Back to Main Menu                             '
 )
@@ -1803,26 +1803,33 @@ $AutorunItems = @(
   ##########
 
 $ThisPCSetMenuItems = @(
-"               'This PC' Items Menu              ",
-"1. 'This PC' On Desktop",'5. Desktop Icon        ',
-'2. Documents Icon      ','6. Downloads Icon      ',
-'3. Music Icon          ','7. Pictures Icon       ',
-'4. Videos Icon         ','                       ',
+"        This PC/Desktop Icons Items Menu         ",
+"    'This PC' Icons    ",'     Desktop Icons     ',
+'1. Desktop Icon        ',"7. 'This PC' Icon      ",
+'2. Documents Icon      ','8. Network Icon        ',
+'3. Music Icon          ','9. Recycle Bin Icon    ',
+'4. Videos Icon         ',"10. User's Files       ",
+'5. Downloads Icon      ','11. Control Panel      ',
+'6. Pictures Icon       ','                       ',
 'B. Back to Script Setting Main Menu              '
 )
 
 $ThisPCSetMenuItm = (
-(1,"ThisPCOnDesktop",2,0),
+(1,"DesktopIconInThisPC",2,0),
 (2,"DocumentsIconInThisPC",2,0),
 (3,"MusicIconInThisPC",2,0),
 (4,"VideosIconInThisPC",2,0),
-(5,"DesktopIconInThisPC",2,0),
-(6,"DownloadsIconInThisPC",2,0),
-(7,"PicturesIconInThisPC",2,0)
+(5,"DownloadsIconInThisPC",2,0),
+(6,"PicturesIconInThisPC",2,0),
+(7,"ThisPCOnDesktop",2,0),
+(8,"NetworkOnDesktop",2,0),
+(9,"RecycleBinOnDesktop",2,0),
+(10,"UsersFileOnDesktop",2,0),
+(11,"ControlPanelOnDesktop",2,0),
 )
 
-$ThisPCOnDesktopItems = @(
-"               'This PC' On Desktop              ",
+$DesktopIconInThisPCItems = @(
+"            Desktop Icon in 'This PC'            ",
 '                                                 ',
 '                                                 ',
 '0. Skip                                          ',
@@ -1861,16 +1868,6 @@ $VideosIconInThisPCItems = @(
 'C. Cancel (Keeps Current Setting)                '
 )
 
-$DesktopIconInThisPCItems = @(
-"            Desktop Icon in 'This PC'            ",
-'                                                 ',
-'                                                 ',
-'0. Skip                                          ',
-'1. Show                                          ',
-'2. Hide*                                         ',
-'C. Cancel (Keeps Current Setting)                '
-)
-
 $DownloadsIconInThisPCItems = @(
 "           Download Icon in 'This PC'            ",
 '                                                 ',
@@ -1883,6 +1880,46 @@ $DownloadsIconInThisPCItems = @(
 
 $PicturesIconInThisPCItems = @(
 "            Picture Icon in 'This PC'            ",
+'                                                 ',
+'                                                 ',
+'0. Skip                                          ',
+'1. Show                                          ',
+'2. Hide*                                         ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$ThisPCOnDesktopItems = @(
+"               'This PC' On Desktop              ",
+'                                                 ',
+'                                                 ',
+'0. Skip                                          ',
+'1. Show                                          ',
+'2. Hide*                                         ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$NetworkOnDesktopItems = @(
+"                Network On Desktop               ",
+'                                                 ',
+'                                                 ',
+'0. Skip                                          ',
+'1. Show                                          ',
+'2. Hide*                                         ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$UsersFileOnDesktopItems = @(
+"              User's File On Desktop             ",
+'                                                 ',
+'                                                 ',
+'0. Skip                                          ',
+'1. Show                                          ',
+'2. Hide*                                         ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$ControlPanelOnDesktopItems = @(
+"             Control Panel On Desktop            ",
 '                                                 ',
 '                                                 ',
 '0. Skip                                          ',
@@ -3729,25 +3766,9 @@ Function RunScript {
     
     DisplayOut "" 14 0
     DisplayOut "-----------------------" 14 0
-    DisplayOut "-   'This PC' items   -" 14 0
+    DisplayOut "-   'This PC' Items   -" 14 0
     DisplayOut "-----------------------" 14 0
     DisplayOut "" 14 0
-    
-    # Show This PC shortcut on desktop
-    If ($ThisPCOnDesktop -eq 0 -and $ShowSkipped -eq 1) {
-        DisplayOut "Skipping This PC Shortcut on Desktop..." 15 0
-    } ElseIf ($ThisPCOnDesktop -eq 1) {
-        DisplayOut "Showing This PC Shortcut on Desktop..." 11 0
-        If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu")) {
-            New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" | Out-Null
-        }
-        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type DWord -Value 0
-        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type DWord -Value 0
-    } ElseIf ($ThisPCOnDesktop -eq 2) {
-        DisplayOut "Hiding This PC Shortcut on Desktop..." 12 0
-        Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}"
-        Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}"
-    }    
     
     # Desktop Icon in This PC
     If ($DesktopIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
@@ -3830,7 +3851,90 @@ Function RunScript {
     ##########
     # 'This PC' items -End
     ##########
+
+    ##########
+    # Desktop items -Start
+    ##########
     
+    DisplayOut "" 14 0
+    DisplayOut "---------------------" 14 0
+    DisplayOut "-   Desktop Items   -" 14 0
+    DisplayOut "---------------------" 14 0
+    DisplayOut "" 14 0
+	
+    If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu")) {
+        New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" | Out-Null
+    }
+    
+    # This PC Icon on desktop
+    If ($ThisPCOnDesktop -eq 0 -and $ShowSkipped -eq 1) {
+        DisplayOut "Skipping This PC Icon on Desktop..." 15 0
+    } ElseIf ($ThisPCOnDesktop -eq 1) {
+        DisplayOut "Showing This PC Shortcut on Desktop..." 11 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type DWord -Value 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type DWord -Value 0
+    } ElseIf ($ThisPCOnDesktop -eq 2) {
+        DisplayOut "Hiding This PC Shortcut on Desktop..." 12 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type DWord -Value 1
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type DWord -Value 1
+    }
+	
+    # Network Icon on desktop
+    If ($NetworkOnDesktop -eq 0 -and $ShowSkipped -eq 1) {
+        DisplayOut "Skipping Network Icon on Desktop..." 15 0
+    } ElseIf ($NetworkOnDesktop -eq 1) {
+        DisplayOut "Showing Network Icon on Desktop..." 11 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}" -Type DWord -Value 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}" -Type DWord -Value 0
+    } ElseIf ($NetworkOnDesktop -eq 2) {
+        DisplayOut "Hiding Network Icon on Desktop..." 12 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}" -Type DWord -Value 1
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}" -Type DWord -Value 1
+    }
+
+    # Recycle Bin Icon on desktop
+    If ($RecycleBinOnDesktop -eq 0 -and $ShowSkipped -eq 1) {
+        DisplayOut "Skipping Recycle Bin Icon on Desktop..." 15 0
+    } ElseIf ($RecycleBinOnDesktop -eq 1) {
+        DisplayOut "Showing Recycle Bin Icon on Desktop..." 11 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{645FF040-5081-101B-9F08-00AA002F954E}" -Type DWord -Value 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{645FF040-5081-101B-9F08-00AA002F954E}" -Type DWord -Value 0
+    } ElseIf ($RecycleBinOnDesktop -eq 2) {
+        DisplayOut "Hiding Recycle Bin Icon on Desktop..." 12 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{645FF040-5081-101B-9F08-00AA002F954E}" -Type DWord -Value 1
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{645FF040-5081-101B-9F08-00AA002F954E}" -Type DWord -Value 1
+    }
+
+    # Recycle Bin Icon on desktop
+    If ($UsersFileOnDesktop -eq 0 -and $ShowSkipped -eq 1) {
+        DisplayOut "Skipping Recycle Bin Icon on Desktop..." 15 0
+    } ElseIf ($UsersFileOnDesktop -eq 1) {
+        DisplayOut "Showing Recycle Bin Icon on Desktop..." 11 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" -Type DWord -Value 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" -Type DWord -Value 0
+    } ElseIf ($UsersFileOnDesktop -eq 2) {
+        DisplayOut "Hiding Recycle Bin Icon on Desktop..." 12 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" -Type DWord -Value 1
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" -Type DWord -Value 1
+    }
+
+    # Control Panel Icon on desktop
+    If ($ControlPanelOnDesktop -eq 0 -and $ShowSkipped -eq 1) {
+        DisplayOut "Skipping Control Panel Icon on Desktop..." 15 0
+    } ElseIf ($ControlPanelOnDesktop -eq 1) {
+        DisplayOut "Showing Control Panel Icon on Desktop..." 11 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}" -Type DWord -Value 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}" -Type DWord -Value 0
+    } ElseIf ($ControlPanelOnDesktop -eq 2) {
+        DisplayOut "Hiding Control Panel Icon on Desktop..." 12 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}" -Type DWord -Value 1
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}" -Type DWord -Value 1
+    }
+
+    ##########
+    # Desktop items -End
+    ########## 
+
     ##########
     # Photo Viewer Settings -Start
     ##########
@@ -4390,7 +4494,7 @@ $Script:CreateRestorePoint = 0    #0-Skip, 1-Create --(Restore point before scri
 $Script:Term_of_Use = 1           #1-See ToS, Anything else = Accepts Term of Use
 
 #Output Display
-$Script:Verbros = 1               #0-Dont Show output, 1-Show output
+$Script:Verbros = 1               #0-Dont Show output (Other than Errors), 1-Show output
 $Script:ShowSkipped = 1           #0-Dont Show Skipped, 1-Show Skipped
 $Script:ShowColor = 1             #0-Dont Show output Color, 1-Show output Colors
 
@@ -4484,15 +4588,22 @@ $Script:RecentFileQikAcc = 0      #0-Skip, 1-Show/Add*, 2-Hide, 3-Remove --(Rece
 $Script:FrequentFoldersQikAcc = 0 #0-Skip, 1-Show*, 2-Hide --(Frequent Folders in Quick Access)
 $Script:WinContentWhileDrag = 0   #0-Skip, 1-Show*, 2-Hide
 
-#'This PC' items
+#'This PC' Items
 # Function  = Option              #Choices (* Indicates Windows Default)
-$Script:ThisPCOnDesktop = 0       #0-Skip, 1-Show, 2-Hide*
 $Script:DesktopIconInThisPC = 0   #0-Skip, 1-Show*, 2-Hide
 $Script:DocumentsIconInThisPC = 0 #0-Skip, 1-Show*, 2-Hide
 $Script:DownloadsIconInThisPC = 0 #0-Skip, 1-Show*, 2-Hide
 $Script:MusicIconInThisPC = 0     #0-Skip, 1-Show*, 2-Hide
 $Script:PicturesIconInThisPC = 0  #0-Skip, 1-Show*, 2-Hide
 $Script:VideosIconInThisPC = 0    #0-Skip, 1-Show*, 2-Hide
+
+#Desktop Items
+# Function  = Option              #Choices (* Indicates Windows Default)
+$Script:ThisPCOnDesktop = 0       #0-Skip, 1-Show, 2-Hide*
+$Script:NetworkOnDesktop = 0      #0-Skip, 1-Show, 2-Hide*
+$Script:RecycleBinOnDesktop = 0   #0-Skip, 1-Show, 2-Hide*
+$Script:UsersFileOnDesktop = 0    #0-Skip, 1-Show, 2-Hide*
+$Script:ControlPanelOnDesktop = 0 #0-Skip, 1-Show, 2-Hide*
 
 #Lock Screen
 # Function  = Option              #Choices (* Indicates Windows Default)
