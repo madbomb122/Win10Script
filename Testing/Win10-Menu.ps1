@@ -9,7 +9,7 @@
 # Modded Script + Menu By
 # Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script/
-# Version: 1.5-Menu, 03-08-2017
+# Version: 1.5-Menu, 03-09-2017
 #
 # Release Type: Testing
 ##########
@@ -92,7 +92,7 @@ Param([alias("Set")] [string] $SettingImp)
 # Version Info -Start
 ##########
 
-$CurrVer = "1.5 (03-08-17) "
+$CurrVer = "1.5 (03-00-17) "
 $RelType = "Testing"
 #$RelType = "Beta   "
 #$RelType = "Stable "
@@ -153,8 +153,8 @@ Function Pause ($Message = "Press any key to continue . . . ") {
 
 If ($host.name -ne "ConsoleHost") {
     Write-Host "This Script cannot be ran in Powershell ISE" -ForegroundColor Red -BackgroundColor Black
-	Pause
-	Exit
+    Pause
+    Exit
 }
 
 $Global:filebase = $PSScriptRoot
@@ -496,8 +496,6 @@ $ScriptSettingsMainMenuItems = @(
 '6. Explorer            ','12. Misc/Photo Viewer  ',
 'B. Back to Main Menu                             '
 )
-
-
 
 function ScriptSettingsMM {
     $ScriptSettingsMM = 'X'
@@ -1345,9 +1343,10 @@ $RemoteDesktopItems = @(
 
 $ContextMenuSetMenuItems = @(
 '             Context Menu Items Menu             ',
-'1. Cast to Device      ','4. Previous Versions   ',
-'2. Include in Library  ','5. Pin To              ',
-'3. Share With          ','6. Send To             ',
+'1. Cast to Device      ','5. Pin To Start        ',
+'2. Include in Library  ','6. Pin To Quick Access ',
+'3. Share With          ','7. Send To             ',
+'4. Previous Versions   ','                       ',
 'B. Back to Script Setting Main Menu              '
 )
 
@@ -1356,8 +1355,9 @@ $ContextMenuSetMenuItm = (
 (2,"IncludeinLibrary",2,0),
 (3,"ShareWith",2,0),
 (4,"PreviousVersions",2,0),
-(5,"PinTo",2,0),
-(6,"SendTo",2,0)
+(5,"PinToStart",2,0),
+(6,"PinToQuickAccess",2,0),
+(7,"SendTo",2,0)
 )
 
 $CastToDeviceItems = @(
@@ -1400,10 +1400,20 @@ $PreviousVersionsItems = @(
 'C. Cancel (Keeps Current Setting)                '
 )
 
-$PinToItems = @(
-'               Pin To Context Menu               ',
+$PinToStartItems = @(
+'            Pin To Start Context Menu            ',
 '                                                 ',
-' Context Menu entry for Pin To.                  ',
+' Context Menu entry for Pin To Start.            ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$PinToQuickAccessItems = @(
+'        Pin To Quick Access Context Menu         ',
+'                                                 ',
+' Context Menu entry for Pin To Quick Access.     ',
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
@@ -3301,11 +3311,11 @@ Function RunScript {
         Set-ItemProperty -Path "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location" -Name "(Default)" -Type String -Value ""
     }
     
-    # Pin To Context Menu
-    If ($PinTo -eq 0 -and $ShowSkipped -eq 1) {
-        DisplayOut "Skipping Pin To Context item..." 15 0
-    } ElseIf ($PinTo -eq 1) {
-        DisplayOut "Enabling Pin To Context item..." 11 0
+    # Pin To Start Context Menu
+    If ($PinToStart -eq 0 -and $ShowSkipped -eq 1) {
+        DisplayOut "Skipping Pin To Start Context item..." 15 0
+    } ElseIf ($PinToStart -eq 1) {
+        DisplayOut "Enabling Pin To Start Context item..." 11 0
         New-Item -Path "HKCR:\*\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -Force | Out-Null
         Set-ItemProperty -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -Name "(Default)" -Type String -Value "Taskband Pin"
         New-Item -Path "HKCR:\*\shellex\ContextMenuHandlers\{a2a9545d-a0c2-42b4-9708-a0b2badd77c8}" -Force | Out-Null
@@ -3314,14 +3324,35 @@ Function RunScript {
         Set-ItemProperty -Path "HKCR:\exefile\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value "{470C0EBD-5D73-4d58-9CED-E91E22E23282}"
         Set-ItemProperty -Path "HKCR:\Microsoft.Website\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value "{470C0EBD-5D73-4d58-9CED-E91E22E23282}"
         Set-ItemProperty -Path "HKCR:\mscfile\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value "{470C0EBD-5D73-4d58-9CED-E91E22E23282}"
-    } ElseIf ($PinTo -eq 2) {
-        DisplayOut "Disabling Pin To Context item..." 12 0
+    } ElseIf ($PinToStart -eq 2) {
+        DisplayOut "Disabling Pin To Start Context item..." 12 0
         Remove-Item -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -Force
         Remove-Item -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\{a2a9545d-a0c2-42b4-9708-a0b2badd77c8}" -Force
         Set-ItemProperty -Path "HKCR:\Folder\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value ""
         Set-ItemProperty -Path "HKCR:\exefile\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value ""
         Set-ItemProperty -Path "HKCR:\Microsoft.Website\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value ""
         Set-ItemProperty -Path "HKCR:\mscfile\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value ""
+    }
+	
+    # Pin To Quick Access Context Menu
+    If ($PinToQuickAccess -eq 0 -and $ShowSkipped -eq 1) {
+        DisplayOut "Skipping Pin To Quick Access Context item..." 15 0
+    } ElseIf ($PinToQuickAccess -eq 1) {
+        DisplayOut "Enabling Pin To Quick Access Context item..." 11 0
+        Set-ItemProperty -Path "HKCR:\Folder\shell\pintohome"  -Name "MUIVerb" -Type String -Value "@shell32.dll,-51377"
+        Set-ItemProperty -Path "HKCR:\Folder\shell\pintohome"  -Name "AppliesTo" -Type String -Value 'System.ParsingName:<>"::{679f85cb-0220-4080-b29b-5540cc05aab6}" AND System.ParsingName:<>"::{645FF040-5081-101B-9F08-00AA002F954E}" AND System.IsFolder:=System.StructuredQueryType.Boolean#True'
+        Set-ItemProperty -Path "HKCR:\Folder\shell\pintohome\command"  -Name "DelegateExecute" -Type String -Value "{b455f46e-e4af-4035-b0a4-cf18d2f6f28e}"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome"  -Name "MUIVerb" -Type String -Value "@shell32.dll,-51377"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome"  -Name "AppliesTo" -Type String -Value 'System.ParsingName:<>"::{679f85cb-0220-4080-b29b-5540cc05aab6}" AND System.ParsingName:<>"::{645FF040-5081-101B-9F08-00AA002F954E}" AND System.IsFolder:=System.StructuredQueryType.Boolean#True'
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome\command]"  -Name "DelegateExecute" -Type String -Value "{b455f46e-e4af-4035-b0a4-cf18d2f6f28e}"
+    } ElseIf ($PinToQuickAccess -eq 2) {
+        DisplayOut "Disabling Pin To Quick Access Context item..." 12 0
+        Set-ItemProperty -Path "HKCR:\Folder\shell\pintohome"  -Name "MUIVerb" -Type String -Value ""
+        Set-ItemProperty -Path "HKCR:\Folder\shell\pintohome"  -Name "AppliesTo" -Type String -Value ""
+        Set-ItemProperty -Path "HKCR:\Folder\shell\pintohome\command"  -Name "DelegateExecute" -Type String -Value ""
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome"  -Name "MUIVerb" -Type String -Value ""
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome"  -Name "AppliesTo" -Type String -Value ""
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome\command]"  -Name "DelegateExecute" -Type String -Value ""		
     }
     
     # Share With Context Menu
@@ -3861,7 +3892,7 @@ Function RunScript {
     DisplayOut "-   Desktop Items   -" 14 0
     DisplayOut "---------------------" 14 0
     DisplayOut "" 14 0
-	
+    
     If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu")) {
         New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" | Out-Null
     }
@@ -3878,7 +3909,7 @@ Function RunScript {
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type DWord -Value 1
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type DWord -Value 1
     }
-	
+    
     # Network Icon on desktop
     If ($NetworkOnDesktop -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Network Icon on Desktop..." 15 0
@@ -4334,8 +4365,11 @@ Function RunScript {
     ForEach ($AppH in $APPS_AppsHide) {
         #$APPHDisplay = "Hidinging "$AppH"..."
         #DisplayOut $APPHDisplay 12 0
-        DisplayOut $AppH 12 0
-        Get-AppxPackage $AppH | Remove-AppxPackage
+        $ProvisionedPackage = Get-AppxProvisionedPackage -online | Where-Object {$_.displayName -eq $AppH}
+        If ($ProvisionedPackage -ne $null) {
+            DisplayOut $AppH 12 0
+            Get-AppxPackage $AppH | Remove-AppxPackage
+        }
     }
     
     DisplayOut "" 14 0
@@ -4346,20 +4380,23 @@ Function RunScript {
     ForEach ($AppU in $APPS_AppsUninstall) {
         #$APPUDisplay = "Uninstalling "+$AppU+"..."
         #DisplayOut $APPUDisplay 14 0
-        DisplayOut $AppU 14 0
-        $PackageFullName = (Get-AppxPackage $AppU).PackageFullName
-        $ProPackageFullName = (Get-AppxProvisionedPackage -online | where {$_.Displayname -eq $AppU}).PackageName
+        $ProvisionedPackage = Get-AppxProvisionedPackage -online | Where-Object {$_.displayName -eq $AppU}
+        If ($ProvisionedPackage -ne $null) {
+            DisplayOut $AppU 14 0
+            $PackageFullName = (Get-AppxPackage $AppU).PackageFullName
+            $ProPackageFullName = (Get-AppxProvisionedPackage -online | where {$_.Displayname -eq $AppU}).PackageName
         
-        # Alt removal
-        # DISM /Online /Remove-ProvisionedAppxPackage /PackageName:          
-        If ($PackageFullName) {
-            Remove-AppxPackage -package $PackageFullName
-        }
-        If ($ProPackageFullName) {
-            Remove-AppxProvisionedPackage -online -packagename $ProPackageFullName
+            # Alt removal
+            # DISM /Online /Remove-ProvisionedAppxPackage /PackageName:          
+            If ($PackageFullName) {
+                Remove-AppxPackage -package $PackageFullName
+            }
+            If ($ProPackageFullName) {
+                Remove-AppxProvisionedPackage -online -packagename $ProPackageFullName
+            }
         }
     }
-    
+
     ##########
     # Metro App Items -End
     ##########
@@ -4546,7 +4583,8 @@ $Script:RemoteDesktop = 0         #0-Skip, 1-Enable, 2-Disable* --(Remote Deskto
 $Script:CastToDevice = 0          #0-Skip, 1-Enable*, 2-Disable
 $Script:PreviousVersions = 0      #0-Skip, 1-Enable*, 2-Disable
 $Script:IncludeinLibrary = 0      #0-Skip, 1-Enable*, 2-Disable
-$Script:PinTo = 0                 #0-Skip, 1-Enable*, 2-Disable
+$Script:PinToStart = 0            #0-Skip, 1-Enable*, 2-Disable
+$Script:PinToQuickAccess = 0      #0-Skip, 1-Enable*, 2-Disable
 $Script:ShareWith = 0             #0-Skip, 1-Enable*, 2-Disable
 $Script:SendTo = 0                #0-Skip, 1-Enable*, 2-Disable
 
@@ -4705,7 +4743,7 @@ $Script:APP_WindowsAlarms = 0     # Alarms and Clock app
 $Script:APP_WindowsCalculator = 0 # Calculator app
 $Script:APP_WindowsCamera = 0     # Camera app
 $Script:APP_WindowsFeedbak1 = 0   # Feedback Hub
-$Script:APP_WindowsFeedbak2 =     # Feedback Hub
+$Script:APP_WindowsFeedbak2 = 0   # Feedback Hub
 $Script:APP_WindowsMaps = 0       # Maps app
 $Script:APP_WindowsPhone = 0      # Phone Companion app
 $Script:APP_WindowsStore = 0      # Windows Store
