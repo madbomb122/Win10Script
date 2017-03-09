@@ -2,7 +2,9 @@
 1.5-Menu (03-?-2017) 
 
 Added option to show/hide when an item is skipped
-Added a check if running in Powershell or Powershell ISE (ISE is not supported) 
+Added a check if running in Powershell or Powershell ISE (ISE is not supported)
+Renamed 'Pin To' to 'Pin To Start'
+Added Ability to Add/Remove 'Pin To Quick Access'
 
 Added Ability to Show/Hide following icons to desktop:
 Network
