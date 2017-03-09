@@ -239,7 +239,7 @@ function DisplayOutMenu([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor,[int]
 }
 
 # Function to Display or Not Display OUTPUT
-function DisplayOut([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor,){
+function DisplayOut([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor){
     If($Verbros -eq 1){
         If($TxtColor -le 15 -and $ShowColor -eq 1){
              Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor]
@@ -1825,7 +1825,7 @@ $ThisPCSetMenuItm = (
 (8,"NetworkOnDesktop",2,0),
 (9,"RecycleBinOnDesktop",2,0),
 (10,"UsersFileOnDesktop",2,0),
-(11,"ControlPanelOnDesktop",2,0),
+(11,"ControlPanelOnDesktop",2,0)
 )
 
 $DesktopIconInThisPCItems = @(
@@ -3160,7 +3160,7 @@ Function RunScript {
     }
     
     # Sharing mapped drives between users
-    If ($SharingMappedDrives -eq 0) {
+    If ($SharingMappedDrives -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Sharing Mapped Drives between Users..." 15 0
     } ElseIf ($SharingMappedDrives -eq 1) {
         DisplayOut "Enabling Sharing Mapped Drives between Users..." 11 0
@@ -4395,7 +4395,6 @@ Function RunScript {
     DisplayOut "" 14 0
     
     $Back_Viper = Black_Viper_Set $Back_Viper
-    write-host $Back_Viper
     
     If ($Back_Viper -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Black Viper Services..." 15 0
