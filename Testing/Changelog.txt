@@ -1,8 +1,14 @@
 -----------------------------------------------------------------------------------
 1.5-Menu (03-?-2017) 
 
-Added option to show/hide when an item is akipped
+Added option to show/hide when an item is skipped
 Added a check if running in Powershell or Powershell ISE (ISE is not supported) 
+
+Added Ability to Show/Hide following icons to desktop:
+Network
+Recycle Bin
+User's Files 
+Control Panel
 
 -----------------------------------------------------------------------------------
 1.4-Menu (03-04-2017) 
