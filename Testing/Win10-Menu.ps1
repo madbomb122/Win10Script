@@ -1,20 +1,26 @@
 ##########
 # Win10 Initial Setup Script Settings with Menu
 # 
-# Original Basic Script from
-# Author: Disassembler
+# Original Basic Script By
+#  Author: Disassembler
 # Website: https://github.com/Disassembler0/Win10-Initial-Setup-Script/
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
+# Service Configurations By
+#  Author: Black Viper
+# Website: http://www.blackviper.com/service-configurations/black-vipers-windows-10-service-configurations/
+# Version: Based on April 2017 Creators Update
+#
 # Modded Script + Menu By
-# Author: Madbomb122
+#  Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script/
-# Version: 1.5-Menu, 03-09-2017
+# Version: 1.5-Menu, 03-11-2017
 #
 # Release Type: Testing
 ##########
 
 <#
+    Copyright (c) 1999-2017 by Charles "Black Viper" Sparks -Black Viper Service Configurations 
     Copyright (c) 2017 Disassembler -Original Basic Version of Script
     Copyright (c) 2017 Madbomb122 -Modded + Menu Version of Script
     
@@ -92,7 +98,7 @@ Param([alias("Set")] [string] $SettingImp)
 # Version Info -Start
 ##########
 
-$CurrVer = "1.5 (03-00-17) "
+$CurrVer = "1.5 (03-11-17) "
 $RelType = "Testing"
 #$RelType = "Beta   "
 #$RelType = "Stable "
@@ -731,6 +737,7 @@ $UsageItems = @(
 '    Win10-Mod.ps1 -set Run                       ',
 '    Win10-Mod.ps1 -set Settings.xml              ',
 '    Win10-Mod.ps1 -set WD                        ',
+'    Win10-Mod.ps1 -set WinDefault                ',
 '                                                 ',
 'Press "Enter" to go back                         '
 )
@@ -741,20 +748,27 @@ $AboutItems = @(
 ' This script makes it easier to setup an         ',
 ' existing or new install with modded setting.    ',
 '                                                 ',
-' This script was made by Me (Madbomb122).        ',
+' This script was made by Madbomb122 (Me)         ',
 '    https://github.com/madbomb122/Win10Script    ',
 '                                                 ',
-' Original basic script was made by Disassembler  ',
+' Original Basic Script was made by Disassembler  ',
 '    https://github.com/Disassembler0/            ',
 '                                                 ',
+' Service Configurations by Black Viper           ',
+'    http://www.blackviper.com/                   ',
 "Press 'Enter' to go back                         "
 )
 
 $CopyrightItems = @(
 '                    Copyright                    ',
 '                                                 ',
+' Copyright (c) 1999-2017 by Charles "Black Viper"',
+'    Sparks -Black Viper Service Configurations   ',
+'                                                 ',
 ' Copyright (c) 2017 Disassembler -Original       ',
+'                                                 ',
 ' Copyright (c) 2017 Madbomb122 -This Script      ',
+'                                                 ',
 ' This program is free software: you can          ',
 ' redistribute it and/or modify This program is   ',
 ' free software This program is free software:    ',
@@ -805,9 +819,9 @@ function HUACMenu([String]$VariJ) {
   
 
 $BlackViperItems = @(
-'               Black Viper Services              ',
+"       Black Viper's Service Configurations      ",
 ' Will change the services based on your choice.  ',
-" Settings based on Black Viper's Settings        ",
+" Settings based on Black Viper's Configurations  ",
 '0. Skip                                          ',
 '1. Default                                       ',
 '2. Safe                                          ',
@@ -4426,15 +4440,15 @@ Function RunScript {
     ##########
 
     DisplayOut "" 14 0
-    DisplayOut "----------------------------" 14 0
-    DisplayOut "-   Black Viper Services   -" 14 0
-    DisplayOut "----------------------------" 14 0
+    DisplayOut "--------------------------------------------" 14 0
+    DisplayOut "-   Black Viper's Service Configurations   -" 14 0
+    DisplayOut "--------------------------------------------" 14 0
     DisplayOut "" 14 0
     
     $Back_Viper = Black_Viper_Set $Back_Viper
     
     If ($Back_Viper -eq 0 -and $ShowSkipped -eq 1) {
-        DisplayOut "Skipping Black Viper Services..." 15 0
+        DisplayOut "Skipping Black Viper's Service Configurations..." 15 0
     } ElseIf($Back_Viper -In 1..4) {    
         DisplayOut "" 14 0
         DisplayOut "Changing Services..." 12 0
@@ -4466,7 +4480,7 @@ Function RunScript {
         }
     } ElseIf($Back_Viper -eq 9) {
         Write-Host ""
-        Write-Host "Not a Valid OS for Black Viper's Service Settings." -ForegroundColor Red -BackgroundColor Black
+        Write-Host "Not a Valid OS for Black Viper's Service Configurations." -ForegroundColor Red -BackgroundColor Black
         Write-Host "Win 10 Home and Pro Only"
         Write-Host ""
     }
@@ -4672,7 +4686,7 @@ $Script:MediaPlayer = 0           #0-Skip, 1-Installed*, 2-Uninstall
 $Script:WorkFolders = 0           #0-Skip, 1-Installed*, 2-Uninstall
 $Script:LinuxSubsystem = 0        #0-Skip, 1-Installed, 2-Uninstall* (Anniversary Update)
 
-# Black Viper's Services Setting
+# Black Viper's Service Configurations
 $Script:Back_Viper = 0            #0-Skip, 1-Default, 2-Safe, 3-Tweaked
 # Black Viper's Website
 # http://www.blackviper.com/service-configurations/black-vipers-windows-10-service-configurations/
