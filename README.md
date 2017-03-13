@@ -61,9 +61,9 @@ Examples: <br />
 **A2:** You also may beable to use system restore if you created a restore point (can be done from script)
 
 **Q:** The script messed up my computer. <br />
-**A:** The script is as is, any problems you have/had is not my problem.
+**A:** The script is 'as is', any problems you have/had is not my problem.
 
-**Q:** Can I use the script or modify it for my / my company's needs? <br />
+**Q:** Can I use the script or modify it for my/my company's needs? <br />
 **A:** Sure. Just don't forget to include copyright notice as per the license requirements, and leave any Copyright in script too.
 
 **Q:** How long are you going to maintain the script? <br />
@@ -81,3 +81,6 @@ Examples: <br />
 
 **Q:** Are you planning to add *BLAH* to the script? <br />
 **A:** Check the todo list, anything i am planning to do or thinking of doing will be there.
+
+**Q:** Are you going to update the Black Viper's Service Configurations when it's updated? <br />
+**A:** Yes, if I see that it has changed. (assuming I am still maintaining this script)
