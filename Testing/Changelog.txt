@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
-1.5-Menu (03-?-2017) 
+1.5-Menu (03-12-2017) 
 
 Added option to show/hide when an item is skipped
 Added a check if running in Powershell or Powershell ISE (ISE is not supported)
@@ -12,9 +12,6 @@ Network
 Recycle Bin
 User's Files 
 Control Panel
-
-Note: Somehow Metro Apps choices are not working.. until it's fixed this will
-  stay in testing
 
 -----------------------------------------------------------------------------------
 1.4-Menu (03-04-2017) 
