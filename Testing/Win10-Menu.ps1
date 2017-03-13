@@ -119,9 +119,7 @@ Function Pause ($Message = "Press any key to continue . . . ") {
         $Button = $Shell.Popup("Powershell ISE is not supported. Click OK to continue.", 0, "Error", 0)
         Return
     }
- 
     Write-Host -NoNewline $Message
- 
     $Ignore =
         16,  # Shift (left or right)
         17,  # Ctrl (left or right)
@@ -150,7 +148,6 @@ Function Pause ($Message = "Press any key to continue . . . ") {
         181, # Select Media
         182, # Application 1
         183  # Application 2
- 
     While ($KeyInfo.VirtualKeyCode -Eq $Null -Or $Ignore -Contains $KeyInfo.VirtualKeyCode) {
         $KeyInfo = $Host.UI.RawUI.ReadKey("NoEcho, IncludeKeyDown")
     }
@@ -314,7 +311,6 @@ function VariMenu([Array]$VariDisplay,[Array]$VariMenuItm) {
     Return
 }
 
-
 function OpenWebsite ([String]$Website){
     $IE=new-object -com internetexplorer.application
     $IE.navigate2($Website)
@@ -333,15 +329,13 @@ $ConfirmMenuItems1 = @(
 '                 Confirm Dialog                  ',
 '                                                 ',
 '              Are You sure? (Y/N)                ',
-'0. Cancel/Back to Main Menu                      '
-)
+'0. Cancel/Back to Main Menu                      ')
 
 $ConfirmMenuItems2 = @(
 '                 Confirm Dialog                  ',
 '                                                 ',
 '  File Exists do you want to overwrite? (Y/N)    ',
-'0. Cancel/Back to Main Menu                      '
-)
+'0. Cancel/Back to Main Menu                      ')
 
 function ConfirmMenu([int]$Option) {
     $ConfirmMenu = 'X'
@@ -452,8 +446,7 @@ $MainMenuItems = @(
 '3. Load Setting        ','C. Copyright           ',
 '4. Save Setting        ','A. About/Version       ',
 '5. Script Options      ',"W. Madbomb's Github    ",
-'Q. Exit/Quit                                     '
-)
+'Q. Exit/Quit                                     ')
 
 function mainMenu {
     $mainMenu = 'X'
@@ -500,8 +493,7 @@ $ScriptSettingsMainMenuItems = @(
 '4. Lock Screen         ','10. Features           ',
 "5. This PC/Desktop Icon",'11. Metro Apps         ',
 '6. Explorer            ','12. Misc/Photo Viewer  ',
-'B. Back to Main Menu                             '
-)
+'B. Back to Main Menu                             ')
 
 function ScriptSettingsMM {
     $ScriptSettingsMM = 'X'
@@ -548,14 +540,12 @@ $LoadFileItems = @(
 ' Default settings for each item in this script.  ',
 '                                                 ',
 '          Please Input Filename to Load.         ',
-'  0. Cancel/Back to Main Menu                    '
-)
+'  0. Cancel/Back to Main Menu                    ')
 
 $SaveSettingItems = @(
 '                  Setting File                   ',
 '          Please Input Filename to Save.         ',
-'  0. Cancel/Back to Main Menu                    '
-)
+'  0. Cancel/Back to Main Menu                    ')
 
 function LoadSetting {
     $LoadSetting = 'X'
@@ -637,18 +627,14 @@ $ScriptOptionMenuItems = @(
 '1. Create Restore Point','4. Show Color          ',
 '2. Restart when Done   ','5. Show Skipped Items  ',
 '3. Verbros             ','                       ',
-'B. Back to Main Menu                             '
-)
+'B. Back to Main Menu                             ')
 
 $ScriptOptionMenuItm = (
 (1,"CreateRestorePoint",1,0),
 (2,"Restart",1,0),
-#(2,"Term_of_Use",1,0),
 (3,"Verbros",1,0),
 (4,"ShowColor",1,0),
-(5,"ShowSkipped",1,0)
-)
-ShowSkipped
+(5,"ShowSkipped",1,0))
 
 $CreateRestorePointItems = @(
 '              Create Restore Point               ',
@@ -656,17 +642,7 @@ $CreateRestorePointItems = @(
 ' This Only can be done once ever 24 Hours.       ',
 '0. Skip                                          ',
 '1. Create Restore Point                          ',
-'C. Cancel (Keeps Current Setting)                '
-)
-
-$Term_of_UseItems = @(
-'                   Term of Use                   ',
-'                                                 ',
-' DO you Agree to the Terms of Use?               ',
-'0. Agree to Term of Use                          ',
-'1. Disagree (Will See Terms when you run script) ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $VerbrosItems = @(
 '                     Verbros                     ',
@@ -674,8 +650,7 @@ $VerbrosItems = @(
 '                                                 ',
 '0. Dont Show ANY Output (Other than Errors)      ',
 '1. Show Output                                   ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $ShowColorItems = @(
 '                   Show Color                    ',
@@ -683,8 +658,7 @@ $ShowColorItems = @(
 ' Shows color for the output of the Script.       ',
 '0. Dont Show Color                               ',
 '1. Show Color                                    ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $ShowSkippedItems = @(
 '               Show Skipped Items                ',
@@ -692,8 +666,7 @@ $ShowSkippedItems = @(
 ' Show output showing skipped items.              ',
 '0. Dont Show Skipped Items                       ',
 '1. Show Skipped Items                            ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $RestartItems = @(
 '                     Restart                     ',
@@ -701,8 +674,7 @@ $RestartItems = @(
 ' I recommend you restart computer.               ',
 '0. Dont Restart Computer                         ',
 '1. Restart Computer                              ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 ##########
 # Script Options Sub Menu -End
@@ -716,8 +688,7 @@ $HelpItems = @(
 '                      Help                       ',
 '                                                 ',
 '                                                 ',
-'Press "Enter" to go back                         '
-)
+'Press "Enter" to go back                         ')
 
 $UsageItems = @(
 '                How to Use Script                ',
@@ -739,8 +710,7 @@ $UsageItems = @(
 '    Win10-Mod.ps1 -set WD                        ',
 '    Win10-Mod.ps1 -set WinDefault                ',
 '                                                 ',
-'Press "Enter" to go back                         '
-)
+'Press "Enter" to go back                         ')
 
 $AboutItems = @(
 '                About this Script                ',
@@ -756,8 +726,7 @@ $AboutItems = @(
 '                                                 ',
 ' Service Configurations by Black Viper           ',
 '    http://www.blackviper.com/                   ',
-"Press 'Enter' to go back                         "
-)
+"Press 'Enter' to go back                         ")
 
 $CopyrightItems = @(
 '                    Copyright                    ',
@@ -788,8 +757,7 @@ $CopyrightItems = @(
 ' General Public License along with this program. ',
 ' If not, see <http://www.gnu.org/licenses/>.     ',
 '                                                 ',
-"Press 'Enter' to go back                         "
-)
+"Press 'Enter' to go back                         ")
 
 function HUACMenu([String]$VariJ) {
     $HUACMenu = 'X'
@@ -816,7 +784,6 @@ function HUACMenu([String]$VariJ) {
   ##########
   # Black Viper -Start
   ##########
-  
 
 $BlackViperItems = @(
 "       Black Viper's Service Configurations      ",
@@ -827,8 +794,7 @@ $BlackViperItems = @(
 '2. Safe                                          ',
 '3. Tweaked                                       ',
 "W. Go to Black Viper's Website                   ",
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $ServicesList = @(
 #(Service Name, Def-Home, Def-Pro , Safe, Tweaked)
@@ -904,8 +870,8 @@ $ServicesList = @(
 ('WwanSvc',2,2,1,1),
 ('XblAuthManager',2,2,1,1),
 ('XblGameSave',2,2,1,1),
-('XboxNetApiSvc',2,2,1,1)
-)
+('XboxNetApiSvc',2,2,1,1))
+
 $ServiceLen = $ServicesList.length
 
 $ServicesTypeList = @(
@@ -997,8 +963,7 @@ $PrivacySetMenuItems = @(
 '4. Diagnostic Track    ','10. Advertising ID     ',
 '5. Cortana             ','11. Cortana Search     ',
 '6. Error Reporting     ','12. WAP Push           ',
-'B. Back to Script Setting Main Menu              '
-)
+'B. Back to Script Setting Main Menu              ')
 
 $PrivacySetMenuItm = (
 (1,"Telemetry",2,0),
@@ -1012,8 +977,7 @@ $PrivacySetMenuItm = (
 (9,"Feedback",2,0),
 (10,"AdvertisingID",2,0),
 (11,"CortanaSearch",2,0),
-(12,"WAPPush",2,0)
-)
+(12,"WAPPush",2,0))
 
 $TelemetryItems = @(
 '                    Telemetry                    ',
@@ -1022,8 +986,7 @@ $TelemetryItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $SmartScreenItems = @(
 '                  Smart Screen                   ',
@@ -1032,8 +995,7 @@ $SmartScreenItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $LocationTrackingItems = @(
 '                Location Tracking                ',
@@ -1042,8 +1004,7 @@ $LocationTrackingItems = @(
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $DiagTrackItems = @(
 '               Diagnostic Tracking               ',
@@ -1052,8 +1013,7 @@ $DiagTrackItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $CortanaItems = @(
 '                     Cortana                     ',
@@ -1062,8 +1022,7 @@ $CortanaItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $ErrorReportingItems = @(
 '                 Error Reporting                 ',
@@ -1072,8 +1031,7 @@ $ErrorReportingItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $WiFiSenseItems = @(
 '                   Wi-Fi Sense                   ',
@@ -1082,8 +1040,7 @@ $WiFiSenseItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $AutoLoggerFileItems = @(
 '                Auto Logger File                 ',
@@ -1092,8 +1049,7 @@ $AutoLoggerFileItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $FeedbackItems = @(
 '                    Feedback                     ',
@@ -1102,8 +1058,7 @@ $FeedbackItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $AdvertisingIDItems = @(
 '                  Advertising ID                 ',
@@ -1112,8 +1067,7 @@ $AdvertisingIDItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $CortanaSearchItems = @(
 '                  Cortana Search                 ',
@@ -1122,8 +1076,7 @@ $CortanaSearchItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $WAPPushItems = @(
 '                    WAP Push                     ',
@@ -1132,8 +1085,7 @@ $WAPPushItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
   ##########
   # Privacy Menu -End
@@ -1149,8 +1101,7 @@ $WindowsUpdateSetMenuItems = @(
 '2. Update Download     ','6. Update MSRT         ',
 '3. Update Driver       ','7. Restart on Update   ',
 '4. App Auto Download   ','                       ',
-'B. Back to Script Setting Main Menu              '
-)
+'B. Back to Script Setting Main Menu              ')
 
 $WindowsUpdateSetMenuItm = (
 (1,"CheckForWinUpdate",2,0),
@@ -1159,8 +1110,7 @@ $WindowsUpdateSetMenuItm = (
 (4,"AppAutoDownload",2,0),
 (5,"WinUpdateType",4,0),
 (6,"UpdateMSRT",2,0),
-(7,"RestartOnUpdate",2,0)
-)
+(7,"RestartOnUpdate",2,0))
 
 $CheckForWinUpdateItems = @(
 '            Check For Windows Update             ',
@@ -1169,8 +1119,7 @@ $CheckForWinUpdateItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $WinUpdateDownloadItems = @(
 '             Windows Update Download             ',
@@ -1180,8 +1129,7 @@ $WinUpdateDownloadItems = @(
 '1. P2P* (Get update from other peers)            ',
 '2. Local Only (If another computer has update)   ',
 '3. Disable (Only get from Windows Offical Server)',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $UpdateDriverItems = @(
 '                  Update Driver                  ',
@@ -1190,8 +1138,7 @@ $UpdateDriverItems = @(
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $AppAutoDownloadItems = @(
 '                App Auto Download                ',
@@ -1200,8 +1147,7 @@ $AppAutoDownloadItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $WinUpdateTypeItems = @(
 '               Windows Update Type               ',
@@ -1212,8 +1158,7 @@ $WinUpdateTypeItems = @(
 '2. Auto Download (Manual Install)                ',
 '3. Auto Download/Install*                        ',
 '4. Local Admin Choses                            ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $UpdateMSRTItems = @(
 '    Update of Malicious Software Removal Tool    ',
@@ -1222,8 +1167,7 @@ $UpdateMSRTItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $RestartOnUpdateItems = @(
 '          Restart After Windows Update           ',
@@ -1232,8 +1176,7 @@ $RestartOnUpdateItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
   ##########
   # Windows Update Menu -End
@@ -1250,8 +1193,7 @@ $ServiceTweaksSetMenuItems = @(
 '3. Windows Defender    ','8. Remote Desktop      ',
 '4. Remote Assistance   ','9. Black Viper Setting ',
 '5. Sharing Mapped Drive','                       ',
-'B. Back to Script Setting Main Menu              '
-)
+'B. Back to Script Setting Main Menu              ')
 
 $ServiceTweaksSetMenuItm = (
 (1,"UAC",3,0),
@@ -1262,8 +1204,7 @@ $ServiceTweaksSetMenuItm = (
 (6,"Firewall",2,0),
 (7,"HomeGroups",2,0),
 (8,"RemoteDesktop",2,0),
-(9,"Black_Viper_Input",3,0)
-)
+(9,"Black_Viper_Input",3,0))
 
 $UACItems = @(
 '               User Agent Control                ',
@@ -1273,8 +1214,7 @@ $UACItems = @(
 '1. Never Notify                                  ',
 '2. Normal*                                       ',
 '3. Always Notify                                 ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $AdminSharesItems = @(
 '                  Admin Shares                   ',
@@ -1283,8 +1223,7 @@ $AdminSharesItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $WinDefenderItems = @(
 '                Windows Defender                 ',
@@ -1293,8 +1232,7 @@ $WinDefenderItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $RemoteAssistanceItems = @(
 '                Remote Assistance                ',
@@ -1303,8 +1241,7 @@ $RemoteAssistanceItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $SharingMappedDrivesItems = @(
 '              Sharing Mapped Drives              ',
@@ -1313,8 +1250,7 @@ $SharingMappedDrivesItems = @(
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable*                                      ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $FirewallItems = @(
 '                    Firewall                     ',
@@ -1323,8 +1259,7 @@ $FirewallItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $HomeGroupsItems = @(
 '                   Home Groups                   ',
@@ -1334,8 +1269,7 @@ $HomeGroupsItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $RemoteDesktopItems = @(
 '                 Remote Desktop                  ',
@@ -1344,8 +1278,7 @@ $RemoteDesktopItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
   ##########
   # Service Tweaks Menu -End
@@ -1361,8 +1294,7 @@ $ContextMenuSetMenuItems = @(
 '2. Include in Library  ','6. Pin To Quick Access ',
 '3. Share With          ','7. Send To             ',
 '4. Previous Versions   ','                       ',
-'B. Back to Script Setting Main Menu              '
-)
+'B. Back to Script Setting Main Menu              ')
 
 $ContextMenuSetMenuItm = (
 (1,"CastToDevice",2,0),
@@ -1371,8 +1303,7 @@ $ContextMenuSetMenuItm = (
 (4,"PreviousVersions",2,0),
 (5,"PinToStart",2,0),
 (6,"PinToQuickAccess",2,0),
-(7,"SendTo",2,0)
-)
+(7,"SendTo",2,0))
 
 $CastToDeviceItems = @(
 '           Cast to Device Context Menu           ',
@@ -1381,8 +1312,7 @@ $CastToDeviceItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $IncludeinLibraryItems = @(
 '         Include in Library Context Menu         ',
@@ -1391,8 +1321,7 @@ $IncludeinLibraryItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $ShareWithItems = @(
 '             Share With Context Menu             ',
@@ -1401,8 +1330,7 @@ $ShareWithItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $PreviousVersionsItems = @(
 '          Previous Versions Context Menu         ',
@@ -1411,8 +1339,7 @@ $PreviousVersionsItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $PinToStartItems = @(
 '            Pin To Start Context Menu            ',
@@ -1421,8 +1348,7 @@ $PinToStartItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $PinToQuickAccessItems = @(
 '        Pin To Quick Access Context Menu         ',
@@ -1431,8 +1357,7 @@ $PinToQuickAccessItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $SendToItems = @(
 '               Send To Context Menu              ',
@@ -1441,8 +1366,7 @@ $SendToItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
   ##########
   # Context Menu -End
@@ -1457,8 +1381,7 @@ $StartMenuSetMenuItems = @(
 '1. Startmenu Web Search','4. Most Used Apps      ',
 '2. App Suggestions     ',"5. Recent & Frequent   ",
 '3. Unpin Items         ','                       ',
-'B. Back to Script Setting Main Menu              '
-)
+'B. Back to Script Setting Main Menu              ')
 
 $StartMenuSetMenuItm = (
 (1,"StartMenuWebSearch",2,0),
@@ -1475,8 +1398,7 @@ $StartMenuWebSearchItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $StartSuggestionsItems = @(
 '                 App Suggestions                 ',
@@ -1485,8 +1407,7 @@ $StartSuggestionsItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $UnpinItemsItems = @(
 '                Unpin Tile Items                 ',
@@ -1494,8 +1415,7 @@ $UnpinItemsItems = @(
 ' Edge, Weather, Twitter, Skype, and a few others.',
 '0. Skip                                          ',
 '1. Unpin                                         ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $MostUsedAppStartMenuItems = @(
 '                  Most Used App                  ',
@@ -1504,8 +1424,7 @@ $MostUsedAppStartMenuItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $RecentItemsFrequentItems = @(
 "         Recent & Frequent in Start Menu         ",
@@ -1514,8 +1433,7 @@ $RecentItemsFrequentItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
   ##########
   # Start Menu -End
@@ -1533,8 +1451,7 @@ $TaskbarSetMenuItems = @(
 '4. Taskbar Grouping    ','10. Notifcation Icons  ',
 '5. Seconds in Clock    ','11. Last Active Click  ',
 '6. Multi Display       ','12. Buttons on Display ',
-'B. Back to Script Setting Main Menu              '
-)
+'B. Back to Script Setting Main Menu              ')
 
 $TaskbarSetMenuItm = (
 (1,"BatteryUIBar",2,0),
@@ -1548,8 +1465,7 @@ $TaskbarSetMenuItm = (
 (9,"TaskbarIconSize",2,0),
 (10,"TrayIcons",2,0),
 (11,"LastActiveClick",2,0),
-(12,"TaskbarButtOnDisplay",3,0)
-)
+(12,"TaskbarButtOnDisplay",3,0))
  
 $BatteryUIBarItems = @(
 '          Battery UI Flyout on Taskbar           ',
@@ -1558,8 +1474,7 @@ $BatteryUIBarItems = @(
 '0. Skip                                          ',
 '1. New Flyout*                                   ',
 '2. Classic Flyout (like the on Win 7 uses)       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $VolumeControlBarItems = @(
 '       Volume Control UI Flyout on Taskbar       ',
@@ -1568,8 +1483,7 @@ $VolumeControlBarItems = @(
 '0. Skip                                          ',
 '1. New Flyout (Horizontal)*                      ',
 '2. Classic Flyout (Vertical)                     ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $TaskViewButtonItems = @(
 '           Task View Button on Taskbar           ',
@@ -1578,8 +1492,7 @@ $TaskViewButtonItems = @(
 '0. Skip                                          ',
 '1. Show*                                         ',
 '2. Hide                                          ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $TaskbarGroupingItems = @(
 '           Grouping of Icons on Taskbar          ',
@@ -1589,8 +1502,7 @@ $TaskbarGroupingItems = @(
 '1. Never Group                                   ',
 '2. Always Group*                                 ',
 '3. When Needed                                   ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $SecondsInClockItems = @(
 '           Seconds in Clock on Taskbar           ',
@@ -1599,8 +1511,7 @@ $SecondsInClockItems = @(
 '0. Skip                                          ',
 '1. Show Seconds                                  ',
 '2. Hide Seconds*                                 ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $TaskBarOnMultiDisplayItems = @(
 '           Taskbar on Multiple Display           ',
@@ -1609,8 +1520,7 @@ $TaskBarOnMultiDisplayItems = @(
 '0. Skip                                          ',
 '1. Show on all Display*                          ',
 '2. Hide on other Display                         ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $ClockUIBarItems = @(
 '           Clock UI Flyout on Taskbar            ',
@@ -1619,8 +1529,7 @@ $ClockUIBarItems = @(
 '0. Skip                                          ',
 '1. New Flyout*                                   ',
 '2. Classic Flyout (like the on Win 7 uses)       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $TaskbarSearchBoxItems = @(
 '              Search box on Taskbar              ',
@@ -1629,8 +1538,7 @@ $TaskbarSearchBoxItems = @(
 '0. Skip                                          ',
 '1. Show*                                         ',
 '2. Hide                                          ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $TaskbarIconSizeItems = @(
 '                Taskbar Icon Size                ',
@@ -1639,8 +1547,7 @@ $TaskbarIconSizeItems = @(
 '0. Skip                                          ',
 '1. Normal*                                       ',
 '2. Smaller                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $TrayIconItems = @(
 '                Notifcation Icons                ',
@@ -1649,8 +1556,7 @@ $TrayIconItems = @(
 '0. Skip                                          ',
 '1. Auto Hide*                                    ',
 '2. Always Show                                   ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $LastActiveClickItems = @(
 '                Last Active Click                ',
@@ -1659,8 +1565,7 @@ $LastActiveClickItems = @(
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable*                                      ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $TaskbarButtOnDisplayItems = @(
 '             Taskbar Button Display              ',
@@ -1670,8 +1575,7 @@ $TaskbarButtOnDisplayItems = @(
 '1. All Taskbars                                  ',
 '2. Where Window is Open                          ',
 '3. Main + Where Window is Open                   ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
   ##########
   # Taskbar Menu -End
@@ -1689,8 +1593,7 @@ $ExplorerSetMenuItems = @(
 '4. Hidden Files        ','10. Autorun            ',
 '5. Aero Snape          ','11. Autoplay           ',
 '6. Aero Shake          ','12. Pid in Title Bar   ',
-'B. Back to Script Setting Main Menu              '
-)
+'B. Back to Script Setting Main Menu              ')
 
 $ExplorerSetMenuItm = (
 (1,"FrequentFoldersQikAcc",2,0),
@@ -1704,8 +1607,7 @@ $ExplorerSetMenuItm = (
 (9,"KnownExtensions",2,0),
 (10,"Autorun",2,0),
 (11,"Autoplay",2,0),
-(12,"PidInTitleBar",2,0)
-)
+(12,"PidInTitleBar",2,0))
 
 $FrequentFoldersQikAccItems = @(
 '         Frequent Items in Quick Access          ',
@@ -1714,8 +1616,7 @@ $FrequentFoldersQikAccItems = @(
 '0. Skip                                          ',
 '1. Show*                                         ',
 '2. Hide                                          ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $RecentFileQikAccItems = @(
 '          Recent Items in Quick Access           ',
@@ -1725,8 +1626,7 @@ $RecentFileQikAccItems = @(
 '1. Show*                                         ',
 '2. Hide                                          ',
 '3. Remove                                        ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $SystemFilesItems = @(
 '                  System Files                   ',
@@ -1735,8 +1635,7 @@ $SystemFilesItems = @(
 '0. Skip                                          ',
 '1. Show System Files/Folders                     ',
 '2. Hide System Files/Folders*                    ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $HiddenFilesItems = @(
 '                  Hidden Files                   ',
@@ -1745,8 +1644,7 @@ $HiddenFilesItems = @(
 '0. Skip                                          ',
 '1. Show Hidden Files/Folders                     ',
 '2. Hide Hidden Files/Folders*                    ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $AeroSnapItems = @(
 '                    Aero Snap                    ',
@@ -1755,8 +1653,7 @@ $AeroSnapItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $AeroShakeItems = @(
 '                   Aero Shake                    ',
@@ -1765,8 +1662,7 @@ $AeroShakeItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $WinContentWhileDragItems = @(
 '          Windows Content While Dragging         ',
@@ -1775,8 +1671,7 @@ $WinContentWhileDragItems = @(
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $ExplorerOpenLocItems = @(
 '             Explorer Open Location              ',
@@ -1785,8 +1680,7 @@ $ExplorerOpenLocItems = @(
 '0. Skip                                          ',
 '1. Quick Access*                                 ',
 "2. 'This PC'                                     ",
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $KnownExtensionsItems = @(
 '              Known File Extensions              ',
@@ -1795,8 +1689,7 @@ $KnownExtensionsItems = @(
 '0. Skip                                          ',
 '1. Show                                          ',
 '2. Hide*                                         ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $AutorunItems = @(
 '                     Autorun                     ',
@@ -1805,8 +1698,7 @@ $AutorunItems = @(
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $AutoplayItems = @(
 '                     Autoplay                    ',
@@ -1815,8 +1707,7 @@ $AutoplayItems = @(
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $PidInTitleBarItems = @(
 '                 PID In Title Bar                ',
@@ -1825,8 +1716,7 @@ $PidInTitleBarItems = @(
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
   ##########
   # Explorer Menu -End
@@ -1845,8 +1735,7 @@ $ThisPCSetMenuItems = @(
 '4. Videos Icon         ',"10. User's Files       ",
 '5. Downloads Icon      ','11. Control Panel      ',
 '6. Pictures Icon       ','                       ',
-'B. Back to Script Setting Main Menu              '
-)
+'B. Back to Script Setting Main Menu              ')
 
 $ThisPCSetMenuItm = (
 (1,"DesktopIconInThisPC",2,0),
@@ -1859,8 +1748,7 @@ $ThisPCSetMenuItm = (
 (8,"NetworkOnDesktop",2,0),
 (9,"RecycleBinOnDesktop",2,0),
 (10,"UsersFileOnDesktop",2,0),
-(11,"ControlPanelOnDesktop",2,0)
-)
+(11,"ControlPanelOnDesktop",2,0))
 
 $DesktopIconInThisPCItems = @(
 "            Desktop Icon in 'This PC'            ",
@@ -1869,8 +1757,7 @@ $DesktopIconInThisPCItems = @(
 '0. Skip                                          ',
 '1. Show                                          ',
 '2. Hide*                                         ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $DocumentsIconInThisPCItems = @(
 "           Documents Icon in 'This PC'           ",
@@ -1879,8 +1766,7 @@ $DocumentsIconInThisPCItems = @(
 '0. Skip                                          ',
 '1. Show                                          ',
 '2. Hide*                                         ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $MusicIconInThisPCItems = @(
 "             Music Icon in 'This PC'             ",
@@ -1889,8 +1775,7 @@ $MusicIconInThisPCItems = @(
 '0. Skip                                          ',
 '1. Show                                          ',
 '2. Hide*                                         ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $VideosIconInThisPCItems = @(
 "             Video Icon in 'This PC'             ",
@@ -1899,8 +1784,7 @@ $VideosIconInThisPCItems = @(
 '0. Skip                                          ',
 '1. Show                                          ',
 '2. Hide*                                         ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $DownloadsIconInThisPCItems = @(
 "           Download Icon in 'This PC'            ",
@@ -1909,8 +1793,7 @@ $DownloadsIconInThisPCItems = @(
 '0. Skip                                          ',
 '1. Show                                          ',
 '2. Hide*                                         ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $PicturesIconInThisPCItems = @(
 "            Picture Icon in 'This PC'            ",
@@ -1919,8 +1802,7 @@ $PicturesIconInThisPCItems = @(
 '0. Skip                                          ',
 '1. Show                                          ',
 '2. Hide*                                         ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $ThisPCOnDesktopItems = @(
 "               'This PC' On Desktop              ",
@@ -1929,8 +1811,7 @@ $ThisPCOnDesktopItems = @(
 '0. Skip                                          ',
 '1. Show                                          ',
 '2. Hide*                                         ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $NetworkOnDesktopItems = @(
 "                Network On Desktop               ",
@@ -1939,8 +1820,7 @@ $NetworkOnDesktopItems = @(
 '0. Skip                                          ',
 '1. Show                                          ',
 '2. Hide*                                         ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $RecycleBinOnDesktopItems = @(
 "                RecyclBin On Desktop             ",
@@ -1949,8 +1829,7 @@ $RecycleBinOnDesktopItems = @(
 '0. Skip                                          ',
 '1. Show                                          ',
 '2. Hide*                                         ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $UsersFileOnDesktopItems = @(
 "              User's File On Desktop             ",
@@ -1959,8 +1838,7 @@ $UsersFileOnDesktopItems = @(
 '0. Skip                                          ',
 '1. Show                                          ',
 '2. Hide*                                         ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $ControlPanelOnDesktopItems = @(
 "             Control Panel On Desktop            ",
@@ -1969,8 +1847,7 @@ $ControlPanelOnDesktopItems = @(
 '0. Skip                                          ',
 '1. Show                                          ',
 '2. Hide*                                         ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
   ##########
   # 'This PC' Menu -End
@@ -1984,14 +1861,12 @@ $LockScreenSetMenuItems = @(
 '              Lock Screen Items Menu             ',
 '1. Lock Screen         ','3. Camera              ',
 '2. Power Menu          ','                       ',
-'B. Back to Script Setting Main Menu              '
-)
+'B. Back to Script Setting Main Menu              ')
 
 $LockScreenSetMenuItm = (
 (1,"LockScreen",2,0),
 (2,"PowerMenuLockScreen",2,0),
-(3,"CameraOnLockScreen",2,0)
-)
+(3,"CameraOnLockScreen",2,0))
 
 $LockScreenItems = @(
 '                   Lock Screen                   ',
@@ -2000,8 +1875,7 @@ $LockScreenItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $PowerMenuLockScreenItems = @(
 '             Power Menu on Lock Screen           ',
@@ -2010,8 +1884,7 @@ $PowerMenuLockScreenItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $CameraOnLockScreenItems = @(
 '               Camera on Lock Screen             ',
@@ -2020,8 +1893,7 @@ $CameraOnLockScreenItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
   ##########
   # Lock Screen Menu -End
@@ -2041,8 +1913,7 @@ $MiscSetMenuItems = @(
 '5. Remote UAC Token    ','                       ',
 '6. Hibernate           ','                       ',
 '7. Sleep               ','                       ',
-'B. Back to Script Setting Main Menu              '
-)
+'B. Back to Script Setting Main Menu              ')
 
 $MiscSetMenuItm = (
 (1,"ActionCenter",2,0),
@@ -2053,8 +1924,7 @@ $MiscSetMenuItm = (
 (6,"HibernatePower",2,0),
 (7,"SleepPower",2,0),
 (8,"PVFileAssociation",2,0),
-(9,"PVOpenWithMenu",2,0)
-)
+(9,"PVOpenWithMenu",2,0))
 
 $ActionCenterItems = @(
 '                  Action Center                  ',
@@ -2063,8 +1933,7 @@ $ActionCenterItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $StickyKeyPromptItems = @(
 '                Sticky Key Prompt                ',
@@ -2073,8 +1942,7 @@ $StickyKeyPromptItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $NumblockOnStartItems = @(
 '               Numblock on Startup               ',
@@ -2083,8 +1951,7 @@ $NumblockOnStartItems = @(
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $F8BootMenuItems = @(
 '                  F8 Boot Menu                   ',
@@ -2093,8 +1960,7 @@ $F8BootMenuItems = @(
 '0. Skip                                          ',
 '1. Legacy                                        ',
 '2. Standard*                                     ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $RemoteUACAcctTokenItems = @(
 '            Remote UAC Acctount Token            ',
@@ -2103,8 +1969,7 @@ $RemoteUACAcctTokenItems = @(
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable*                                      ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $HibernatePowerItems = @(
 '             Hibernate Power Options             ',
@@ -2113,8 +1978,7 @@ $HibernatePowerItems = @(
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $SleepPowerItems = @(
 '               Sleep Power Options               ',
@@ -2123,8 +1987,7 @@ $SleepPowerItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $PVFileAssociationItems = @(
 '          Photo Viewer File Association          ',
@@ -2133,8 +1996,7 @@ $PVFileAssociationItems = @(
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable*                                      ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $PVOpenWithMenuItems = @(
 '          Photo Viewer Open With Entry           ',
@@ -2143,8 +2005,7 @@ $PVOpenWithMenuItems = @(
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable*                                      ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
   ##########
   # Misc/Photo Viewer Menu -End
@@ -2159,8 +2020,7 @@ $FeaturesAppsMenuItems = @(
 '1. One Drive           ','4. Media Player        ',
 '2. One Drive Install   ','5. Work Folders        ',
 '3. Xbox One DVR        ','6. Linux Subsystem     ',
-'B. Back to Script Setting Main Menu              '
-)
+'B. Back to Script Setting Main Menu              ')
 
 $FeaturesAppsMenuItm = (
 (1,"OneDrive",2,0),
@@ -2168,8 +2028,7 @@ $FeaturesAppsMenuItm = (
 (3,"XboxDVR",2,0),
 (4,"MediaPlayer",2,0),
 (5,"WorkFolders",2,0),
-(6,"LinuxSubsystem",2,0)
-)
+(6,"LinuxSubsystem",2,0))
 
 $OneDriveItems = @(
 '                    One Drive                    ',
@@ -2178,8 +2037,7 @@ $OneDriveItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $OneDriveInstallItems = @(
 '                One Drive Install                ',
@@ -2188,8 +2046,7 @@ $OneDriveInstallItems = @(
 '0. Skip                                          ',
 '1. Install*                                      ',
 '2. Uninstall                                     ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $XboxDVRItems = @(
 '                  Xbox One DVR                   ',
@@ -2198,8 +2055,7 @@ $XboxDVRItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $MediaPlayerItems = @(
 '              Windows Media Player               ',
@@ -2208,8 +2064,7 @@ $MediaPlayerItems = @(
 '0. Skip                                          ',
 '1. Install*                                      ',
 '2. Uninstall                                     ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $WorkFoldersItems = @(
 '                  Work Folders                   ',
@@ -2218,8 +2073,7 @@ $WorkFoldersItems = @(
 '0. Skip                                          ',
 '1. Install*                                      ',
 '2. Uninstall                                     ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $LinuxSubsystemItems = @(
 '                 Linux Subsystem                 ',
@@ -2228,8 +2082,7 @@ $LinuxSubsystemItems = @(
 '0. Skip                                          ',
 '1. Install                                       ',
 '2. Uninstall*                                    ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
   ##########
   # Features Menu -End
@@ -2238,7 +2091,56 @@ $LinuxSubsystemItems = @(
   ##########
   # Metro Apss Menu -Start
   ##########
-$APList = @()
+$APList = @(
+    'APP_3DBuilder',
+    'APP_Asphalt8Airborne',
+    'APP_BingFinance',
+    'APP_BingNews',
+    'APP_BingSports',
+    'APP_BingTranslator',
+    'APP_BingWeather',
+    'APP_CandyCrushSoda',
+    'APP_CommsPhone',
+    'APP_Communications',
+    'APP_Facebook',
+    'APP_FarmVille',
+    'APP_FreshPaint',
+    'APP_Getstarted',
+    'APP_Houzz',
+    'APP_Messaging',
+    'APP_MicrosoftJackpot',
+    'APP_MicrosoftJigsaw',
+    'APP_MicrosoftMahjong',
+    'APP_MicrosoftOffHub',
+    'APP_MicrosoftSudoku',
+    'APP_MinecraftUWP',
+    'APP_MovieMoments',
+    'APP_Netflix',
+    'APP_OfficeOneNote',
+    'APP_OfficeSway',
+    'APP_OneConnect',
+    'APP_People',
+    'APP_Photos',
+    'APP_SkypeApp1',
+    'APP_SkypeApp2',
+    'APP_SolitaireCollect',
+    'APP_StickyNotes',
+    'APP_StudiosWordament',
+    'APP_Taptiles',
+    'APP_Twitter',
+    'APP_VoiceRecorder',
+    'APP_WindowsAlarms',
+    'APP_WindowsCalculator',
+    'APP_WindowsCamera',
+    'APP_WindowsFeedbak1',
+    'APP_WindowsFeedbak2',
+    'APP_WindowsMaps',
+    'APP_WindowsPhone',
+    'APP_WindowsStore',
+    'APP_XboxApp',
+    'APP_ZuneMusic',
+    'APP_ZuneVideo'
+)
 
 Get-Variable -scope script | ForEach-Object {
     If($_.name -Match "^APP_*") {
@@ -2307,7 +2209,7 @@ function ChoicesMenuMetro([String]$Vari, [Int]$MultiV) {
         }
         $ChoicesMenuMetro = Read-Host "`nChoice"
         switch -regex ($ChoicesMenuMetro) {
-            [0-3] {$ReturnV = $ChoicesMenuMetro}
+            [0-3] {$ReturnV = $ChoicesMenuMetro; $ChoicesMenuMetro = "Out"}
             C {$ReturnV = $VariV; $ChoicesMenuMetro = "Out"}
             default {$Invalid = 1}
         }
@@ -2424,8 +2326,7 @@ $MetroAppsMenuItm = (
 (43,'VoiceRecorder',0),
 (44,'WindowsStore',0),
 (45,'StudiosWordament',0),
-(46,'XboxApp',0)
-)
+(46,'XboxApp',0))
 
 $ALL_METRO_APPSItems = @(
 '                 ALL Metro Apps                  ',
