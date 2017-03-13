@@ -17,6 +17,7 @@ Select option to run script <br />
 ## [](#header-2)Advanced Usage
 Use one of the following Methods 
 (Bat file provided can run script, look in bat file for insructions)
+**Note: For some odd reason you cant use the -run filename ability in the bat file.. it loads nothing
 
 Change the variables you want (Bottom of Script) then run script with: <br />
    -Set Run
@@ -45,12 +46,6 @@ Examples: <br />
 ## FAQ
 **Q:** The script file looks all messy in notepad, How do i view/change it? <br />
 **A:** Try using wordpad or what I recommend, Notepad++ https://notepad-plus-plus.org/
-
-**Q:** When I tell the script to run (after the menu), it runs a new session and all settings are reset.. what do I do? <br />
-**A:** Due to the fact that admin is required for some items it needs to run as admin. You can do a few things. <br />
-       1. Change the settings you want and save it to file then load it on new session or using the switch to run a file. <br />
-       2. Tell the script to run as admin and change settings there <br />
-       3. Change settings in the script file and run the script
 
 **Q:** Can I run the script safely? <br />
 **A:** The script itself is safe, however some setting it can change may compromise your computer.
