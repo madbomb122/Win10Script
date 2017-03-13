@@ -1,20 +1,26 @@
 ##########
 # Win10 Initial Setup Script Settings with Menu
 # 
-# Original Basic Script from
-# Author: Disassembler
+# Original Basic Script By
+#  Author: Disassembler
 # Website: https://github.com/Disassembler0/Win10-Initial-Setup-Script/
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
+# Service Configurations By
+#  Author: Black Viper
+# Website: http://www.blackviper.com/service-configurations/black-vipers-windows-10-service-configurations/
+# Version: Based on April 2017 Creators Update
+#
 # Modded Script + Menu By
-# Author: Madbomb122
+#  Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script/
-# Version: 1.4-Menu, 03-04-2017
+# Version: 1.5-Menu, 03-12-2017
 #
 # Release Type: Stable
 ##########
 
 <#
+    Copyright (c) 1999-2017 by Charles "Black Viper" Sparks -Black Viper Service Configurations 
     Copyright (c) 2017 Disassembler -Original Basic Version of Script
     Copyright (c) 2017 Madbomb122 -Modded + Menu Version of Script
     
@@ -92,7 +98,7 @@ Param([alias("Set")] [string] $SettingImp)
 # Version Info -Start
 ##########
 
-$CurrVer = "1.4 (03-04-17) "
+$CurrVer = "1.5 (03-12-17) "
 #$RelType = "Testing"
 #$RelType = "Beta   "
 $RelType = "Stable "
@@ -104,6 +110,55 @@ $RelType = "Stable "
 ##########
 # Pre-Script -Start
 ##########
+
+# Pause function by
+# https://adamstech.wordpress.com/2011/05/12/how-to-properly-pause-a-powershell-script/
+Function Pause ($Message = "Press any key to continue . . . ") {
+    If ($psISE) {
+        $Shell = New-Object -ComObject "WScript.Shell"
+        $Button = $Shell.Popup("Powershell ISE is not supported. Click OK to continue.", 0, "Error", 0)
+        Return
+    }
+    Write-Host -NoNewline $Message
+    $Ignore =
+        16,  # Shift (left or right)
+        17,  # Ctrl (left or right)
+        18,  # Alt (left or right)
+        20,  # Caps lock
+        91,  # Windows key (left)
+        92,  # Windows key (right)
+        93,  # Menu key
+        144, # Num lock
+        145, # Scroll lock
+        166, # Back
+        167, # Forward
+        168, # Refresh
+        169, # Stop
+        170, # Search
+        171, # Favorites
+        172, # Start/Home
+        173, # Mute
+        174, # Volume Down
+        175, # Volume Up
+        176, # Next Track
+        177, # Previous Track
+        178, # Stop Media
+        179, # Play
+        180, # Mail
+        181, # Select Media
+        182, # Application 1
+        183  # Application 2
+    While ($KeyInfo.VirtualKeyCode -Eq $Null -Or $Ignore -Contains $KeyInfo.VirtualKeyCode) {
+        $KeyInfo = $Host.UI.RawUI.ReadKey("NoEcho, IncludeKeyDown")
+    }
+    Write-Host
+}
+
+If ($host.name -ne "ConsoleHost") {
+    Write-Host "This Script cannot be ran in Powershell ISE" -ForegroundColor Red -BackgroundColor Black
+    Pause
+    Exit
+}
 
 $Global:filebase = $PSScriptRoot
 $ErrorActionPreference= 'silentlycontinue'
@@ -256,7 +311,6 @@ function VariMenu([Array]$VariDisplay,[Array]$VariMenuItm) {
     Return
 }
 
-
 function OpenWebsite ([String]$Website){
     $IE=new-object -com internetexplorer.application
     $IE.navigate2($Website)
@@ -275,15 +329,13 @@ $ConfirmMenuItems1 = @(
 '                 Confirm Dialog                  ',
 '                                                 ',
 '              Are You sure? (Y/N)                ',
-'0. Cancel/Back to Main Menu                      '
-)
+'0. Cancel/Back to Main Menu                      ')
 
 $ConfirmMenuItems2 = @(
 '                 Confirm Dialog                  ',
 '                                                 ',
 '  File Exists do you want to overwrite? (Y/N)    ',
-'0. Cancel/Back to Main Menu                      '
-)
+'0. Cancel/Back to Main Menu                      ')
 
 function ConfirmMenu([int]$Option) {
     $ConfirmMenu = 'X'
@@ -394,8 +446,7 @@ $MainMenuItems = @(
 '3. Load Setting        ','C. Copyright           ',
 '4. Save Setting        ','A. About/Version       ',
 '5. Script Options      ',"W. Madbomb's Github    ",
-'Q. Exit/Quit                                     '
-)
+'Q. Exit/Quit                                     ')
 
 function mainMenu {
     $mainMenu = 'X'
@@ -440,12 +491,9 @@ $ScriptSettingsMainMenuItems = @(
 '2. Service Tweaks      ','8. Context Menu        ',
 '3. Start Menu          ','9. Task Bar            ',
 '4. Lock Screen         ','10. Features           ',
-"5. 'This PC'           ",'11. Metro Apps         ',
+"5. This PC/Desktop Icon",'11. Metro Apps         ',
 '6. Explorer            ','12. Misc/Photo Viewer  ',
-'B. Back to Main Menu                             '
-)
-
-
+'B. Back to Main Menu                             ')
 
 function ScriptSettingsMM {
     $ScriptSettingsMM = 'X'
@@ -492,14 +540,12 @@ $LoadFileItems = @(
 ' Default settings for each item in this script.  ',
 '                                                 ',
 '          Please Input Filename to Load.         ',
-'  0. Cancel/Back to Main Menu                    '
-)
+'  0. Cancel/Back to Main Menu                    ')
 
 $SaveSettingItems = @(
 '                  Setting File                   ',
 '          Please Input Filename to Save.         ',
-'  0. Cancel/Back to Main Menu                    '
-)
+'  0. Cancel/Back to Main Menu                    ')
 
 function LoadSetting {
     $LoadSetting = 'X'
@@ -577,20 +623,18 @@ function SaveSetting {
 ##########
 
 $ScriptOptionMenuItems = @(
-'              Metro Apps Items Menu              ',
+'            Script Option Items Menu             ',
 '1. Create Restore Point','4. Show Color          ',
-'2. Agree Term of Use   ','5. Restart when Done   ',
+'2. Restart when Done   ','5. Show Skipped Items  ',
 '3. Verbros             ','                       ',
-'B. Back to Main Menu                             '
-)
+'B. Back to Main Menu                             ')
 
 $ScriptOptionMenuItm = (
 (1,"CreateRestorePoint",1,0),
-(2,"Term_of_Use",1,0),
+(2,"Restart",1,0),
 (3,"Verbros",1,0),
 (4,"ShowColor",1,0),
-(5,"Restart",1,0)
-)
+(5,"ShowSkipped",1,0))
 
 $CreateRestorePointItems = @(
 '              Create Restore Point               ',
@@ -598,26 +642,15 @@ $CreateRestorePointItems = @(
 ' This Only can be done once ever 24 Hours.       ',
 '0. Skip                                          ',
 '1. Create Restore Point                          ',
-'C. Cancel (Keeps Current Setting)                '
-)
-
-$Term_of_UseItems = @(
-'                   Term of Use                   ',
-'                                                 ',
-' DO you Agree to the Terms of Use?               ',
-'0. Agree to Term of Use                          ',
-'1. Disagree (Will See Terms when you run script) ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $VerbrosItems = @(
 '                     Verbros                     ',
+" Shows output of the Script's progress.          ",
 '                                                 ',
-' Shows output of the Script.                     ',
-'0. Dont Show Output                              ',
+'0. Dont Show ANY Output (Other than Errors)      ',
 '1. Show Output                                   ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $ShowColorItems = @(
 '                   Show Color                    ',
@@ -625,8 +658,15 @@ $ShowColorItems = @(
 ' Shows color for the output of the Script.       ',
 '0. Dont Show Color                               ',
 '1. Show Color                                    ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
+
+$ShowSkippedItems = @(
+'               Show Skipped Items                ',
+'                                                 ',
+' Show output showing skipped items.              ',
+'0. Dont Show Skipped Items                       ',
+'1. Show Skipped Items                            ',
+'C. Cancel (Keeps Current Setting)                ')
 
 $RestartItems = @(
 '                     Restart                     ',
@@ -634,8 +674,7 @@ $RestartItems = @(
 ' I recommend you restart computer.               ',
 '0. Dont Restart Computer                         ',
 '1. Restart Computer                              ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 ##########
 # Script Options Sub Menu -End
@@ -649,17 +688,16 @@ $HelpItems = @(
 '                      Help                       ',
 '                                                 ',
 '                                                 ',
-'Press "Enter" to go back                         '
-)
+'Press "Enter" to go back                         ')
 
 $UsageItems = @(
 '                How to Use Script                ',
 '                                                 ',
 ' Basic Usage:                                    ',
-' Use the menu & select what you want to change.  ',
+" Use the menu & select what you want to change.  ",
 '                                                 ',
 ' Advanced Usage Choices (Bypasses Menu):         ',
-' 1. Edit the script & change values there then   ',
+" 1. Edit the script & change values there then   ",
 '        run script with "-set Run"               ',
 ' 2. Run Script with an imported file with        ',
 '        "-set filename"                          ',
@@ -670,9 +708,9 @@ $UsageItems = @(
 '    Win10-Mod.ps1 -set Run                       ',
 '    Win10-Mod.ps1 -set Settings.xml              ',
 '    Win10-Mod.ps1 -set WD                        ',
+'    Win10-Mod.ps1 -set WinDefault                ',
 '                                                 ',
-'Press "Enter" to go back                         '
-)
+'Press "Enter" to go back                         ')
 
 $AboutItems = @(
 '                About this Script                ',
@@ -680,20 +718,26 @@ $AboutItems = @(
 ' This script makes it easier to setup an         ',
 ' existing or new install with modded setting.    ',
 '                                                 ',
-' This script was made by Me (Madbomb122).        ',
+' This script was made by Madbomb122 (Me)         ',
 '    https://github.com/madbomb122/Win10Script    ',
 '                                                 ',
-' Original basic script was made by Disassembler  ',
+' Original Basic Script was made by Disassembler  ',
 '    https://github.com/Disassembler0/            ',
 '                                                 ',
-"Press 'Enter' to go back                         "
-)
+' Service Configurations by Black Viper           ',
+'    http://www.blackviper.com/                   ',
+"Press 'Enter' to go back                         ")
 
 $CopyrightItems = @(
 '                    Copyright                    ',
 '                                                 ',
+' Copyright (c) 1999-2017 by Charles "Black Viper"',
+'    Sparks -Black Viper Service Configurations   ',
+'                                                 ',
 ' Copyright (c) 2017 Disassembler -Original       ',
+'                                                 ',
 ' Copyright (c) 2017 Madbomb122 -This Script      ',
+'                                                 ',
 ' This program is free software: you can          ',
 ' redistribute it and/or modify This program is   ',
 ' free software This program is free software:    ',
@@ -713,8 +757,7 @@ $CopyrightItems = @(
 ' General Public License along with this program. ',
 ' If not, see <http://www.gnu.org/licenses/>.     ',
 '                                                 ',
-"Press 'Enter' to go back                         "
-)
+"Press 'Enter' to go back                         ")
 
 function HUACMenu([String]$VariJ) {
     $HUACMenu = 'X'
@@ -741,19 +784,17 @@ function HUACMenu([String]$VariJ) {
   ##########
   # Black Viper -Start
   ##########
-  
 
 $BlackViperItems = @(
-'               Black Viper Services              ',
+"       Black Viper's Service Configurations      ",
 ' Will change the services based on your choice.  ',
-" Settings based on Black Viper's Settings        ",
+" Settings based on Black Viper's Configurations  ",
 '0. Skip                                          ',
 '1. Default                                       ',
 '2. Safe                                          ',
 '3. Tweaked                                       ',
 "W. Go to Black Viper's Website                   ",
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $ServicesList = @(
 #(Service Name, Def-Home, Def-Pro , Safe, Tweaked)
@@ -829,8 +870,8 @@ $ServicesList = @(
 ('WwanSvc',2,2,1,1),
 ('XblAuthManager',2,2,1,1),
 ('XblGameSave',2,2,1,1),
-('XboxNetApiSvc',2,2,1,1)
-)
+('XboxNetApiSvc',2,2,1,1))
+
 $ServiceLen = $ServicesList.length
 
 $ServicesTypeList = @(
@@ -922,8 +963,7 @@ $PrivacySetMenuItems = @(
 '4. Diagnostic Track    ','10. Advertising ID     ',
 '5. Cortana             ','11. Cortana Search     ',
 '6. Error Reporting     ','12. WAP Push           ',
-'B. Back to Script Setting Main Menu              '
-)
+'B. Back to Script Setting Main Menu              ')
 
 $PrivacySetMenuItm = (
 (1,"Telemetry",2,0),
@@ -937,8 +977,7 @@ $PrivacySetMenuItm = (
 (9,"Feedback",2,0),
 (10,"AdvertisingID",2,0),
 (11,"CortanaSearch",2,0),
-(12,"WAPPush",2,0)
-)
+(12,"WAPPush",2,0))
 
 $TelemetryItems = @(
 '                    Telemetry                    ',
@@ -947,18 +986,16 @@ $TelemetryItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $SmartScreenItems = @(
 '                  Smart Screen                   ',
-' Identify reported phishing & malware websites.  ',
+" Identify reported phishing & malware websites.  ",
 ' Helps you make informed decisions for downloads.',
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $LocationTrackingItems = @(
 '                Location Tracking                ',
@@ -967,8 +1004,7 @@ $LocationTrackingItems = @(
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $DiagTrackItems = @(
 '               Diagnostic Tracking               ',
@@ -977,8 +1013,7 @@ $DiagTrackItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $CortanaItems = @(
 '                     Cortana                     ',
@@ -987,8 +1022,7 @@ $CortanaItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $ErrorReportingItems = @(
 '                 Error Reporting                 ',
@@ -997,8 +1031,7 @@ $ErrorReportingItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $WiFiSenseItems = @(
 '                   Wi-Fi Sense                   ',
@@ -1007,8 +1040,7 @@ $WiFiSenseItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $AutoLoggerFileItems = @(
 '                Auto Logger File                 ',
@@ -1017,8 +1049,7 @@ $AutoLoggerFileItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $FeedbackItems = @(
 '                    Feedback                     ',
@@ -1027,8 +1058,7 @@ $FeedbackItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $AdvertisingIDItems = @(
 '                  Advertising ID                 ',
@@ -1037,8 +1067,7 @@ $AdvertisingIDItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $CortanaSearchItems = @(
 '                  Cortana Search                 ',
@@ -1047,8 +1076,7 @@ $CortanaSearchItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $WAPPushItems = @(
 '                    WAP Push                     ',
@@ -1057,8 +1085,7 @@ $WAPPushItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
   ##########
   # Privacy Menu -End
@@ -1074,8 +1101,7 @@ $WindowsUpdateSetMenuItems = @(
 '2. Update Download     ','6. Update MSRT         ',
 '3. Update Driver       ','7. Restart on Update   ',
 '4. App Auto Download   ','                       ',
-'B. Back to Script Setting Main Menu              '
-)
+'B. Back to Script Setting Main Menu              ')
 
 $WindowsUpdateSetMenuItm = (
 (1,"CheckForWinUpdate",2,0),
@@ -1084,8 +1110,7 @@ $WindowsUpdateSetMenuItm = (
 (4,"AppAutoDownload",2,0),
 (5,"WinUpdateType",4,0),
 (6,"UpdateMSRT",2,0),
-(7,"RestartOnUpdate",2,0)
-)
+(7,"RestartOnUpdate",2,0))
 
 $CheckForWinUpdateItems = @(
 '            Check For Windows Update             ',
@@ -1094,8 +1119,7 @@ $CheckForWinUpdateItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $WinUpdateDownloadItems = @(
 '             Windows Update Download             ',
@@ -1105,8 +1129,7 @@ $WinUpdateDownloadItems = @(
 '1. P2P* (Get update from other peers)            ',
 '2. Local Only (If another computer has update)   ',
 '3. Disable (Only get from Windows Offical Server)',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $UpdateDriverItems = @(
 '                  Update Driver                  ',
@@ -1115,8 +1138,7 @@ $UpdateDriverItems = @(
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $AppAutoDownloadItems = @(
 '                App Auto Download                ',
@@ -1125,8 +1147,7 @@ $AppAutoDownloadItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $WinUpdateTypeItems = @(
 '               Windows Update Type               ',
@@ -1137,8 +1158,7 @@ $WinUpdateTypeItems = @(
 '2. Auto Download (Manual Install)                ',
 '3. Auto Download/Install*                        ',
 '4. Local Admin Choses                            ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $UpdateMSRTItems = @(
 '    Update of Malicious Software Removal Tool    ',
@@ -1147,8 +1167,7 @@ $UpdateMSRTItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $RestartOnUpdateItems = @(
 '          Restart After Windows Update           ',
@@ -1157,8 +1176,7 @@ $RestartOnUpdateItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
   ##########
   # Windows Update Menu -End
@@ -1175,8 +1193,7 @@ $ServiceTweaksSetMenuItems = @(
 '3. Windows Defender    ','8. Remote Desktop      ',
 '4. Remote Assistance   ','9. Black Viper Setting ',
 '5. Sharing Mapped Drive','                       ',
-'B. Back to Script Setting Main Menu              '
-)
+'B. Back to Script Setting Main Menu              ')
 
 $ServiceTweaksSetMenuItm = (
 (1,"UAC",3,0),
@@ -1187,8 +1204,7 @@ $ServiceTweaksSetMenuItm = (
 (6,"Firewall",2,0),
 (7,"HomeGroups",2,0),
 (8,"RemoteDesktop",2,0),
-(9,"Black_Viper_Input",3,0)
-)
+(9,"Black_Viper_Input",3,0))
 
 $UACItems = @(
 '               User Agent Control                ',
@@ -1198,8 +1214,7 @@ $UACItems = @(
 '1. Never Notify                                  ',
 '2. Normal*                                       ',
 '3. Always Notify                                 ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $AdminSharesItems = @(
 '                  Admin Shares                   ',
@@ -1208,8 +1223,7 @@ $AdminSharesItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $WinDefenderItems = @(
 '                Windows Defender                 ',
@@ -1218,8 +1232,7 @@ $WinDefenderItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $RemoteAssistanceItems = @(
 '                Remote Assistance                ',
@@ -1228,8 +1241,7 @@ $RemoteAssistanceItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $SharingMappedDrivesItems = @(
 '              Sharing Mapped Drives              ',
@@ -1238,8 +1250,7 @@ $SharingMappedDrivesItems = @(
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable*                                      ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $FirewallItems = @(
 '                    Firewall                     ',
@@ -1248,8 +1259,7 @@ $FirewallItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $HomeGroupsItems = @(
 '                   Home Groups                   ',
@@ -1259,8 +1269,7 @@ $HomeGroupsItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $RemoteDesktopItems = @(
 '                 Remote Desktop                  ',
@@ -1269,8 +1278,7 @@ $RemoteDesktopItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
   ##########
   # Service Tweaks Menu -End
@@ -1282,20 +1290,20 @@ $RemoteDesktopItems = @(
 
 $ContextMenuSetMenuItems = @(
 '             Context Menu Items Menu             ',
-'1. Cast to Device      ','4. Previous Versions   ',
-'2. Include in Library  ','5. Pin To              ',
-'3. Share With          ','6. Send To             ',
-'B. Back to Script Setting Main Menu              '
-)
+'1. Cast to Device      ','5. Pin To Start        ',
+'2. Include in Library  ','6. Pin To Quick Access ',
+'3. Share With          ','7. Send To             ',
+'4. Previous Versions   ','                       ',
+'B. Back to Script Setting Main Menu              ')
 
 $ContextMenuSetMenuItm = (
 (1,"CastToDevice",2,0),
 (2,"IncludeinLibrary",2,0),
 (3,"ShareWith",2,0),
 (4,"PreviousVersions",2,0),
-(5,"PinTo",2,0),
-(6,"SendTo",2,0)
-)
+(5,"PinToStart",2,0),
+(6,"PinToQuickAccess",2,0),
+(7,"SendTo",2,0))
 
 $CastToDeviceItems = @(
 '           Cast to Device Context Menu           ',
@@ -1304,8 +1312,7 @@ $CastToDeviceItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $IncludeinLibraryItems = @(
 '         Include in Library Context Menu         ',
@@ -1314,8 +1321,7 @@ $IncludeinLibraryItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $ShareWithItems = @(
 '             Share With Context Menu             ',
@@ -1324,8 +1330,7 @@ $ShareWithItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $PreviousVersionsItems = @(
 '          Previous Versions Context Menu         ',
@@ -1334,18 +1339,25 @@ $PreviousVersionsItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
-$PinToItems = @(
-'               Pin To Context Menu               ',
+$PinToStartItems = @(
+'            Pin To Start Context Menu            ',
 '                                                 ',
-' Context Menu entry for Pin To.                  ',
+' Context Menu entry for Pin To Start.            ',
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
+
+$PinToQuickAccessItems = @(
+'        Pin To Quick Access Context Menu         ',
+'                                                 ',
+' Context Menu entry for Pin To Quick Access.     ',
+'0. Skip                                          ',
+'1. Enable*                                       ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                ')
 
 $SendToItems = @(
 '               Send To Context Menu              ',
@@ -1354,8 +1366,7 @@ $SendToItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
   ##########
   # Context Menu -End
@@ -1368,10 +1379,9 @@ $SendToItems = @(
 $StartMenuSetMenuItems = @(
 '              Start Menu Items Menu              ',
 '1. Startmenu Web Search','4. Most Used Apps      ',
-'2. App Suggestions     ','5. Recent & Frequent   ',
+'2. App Suggestions     ',"5. Recent & Frequent   ",
 '3. Unpin Items         ','                       ',
-'B. Back to Script Setting Main Menu              '
-)
+'B. Back to Script Setting Main Menu              ')
 
 $StartMenuSetMenuItm = (
 (1,"StartMenuWebSearch",2,0),
@@ -1388,8 +1398,7 @@ $StartMenuWebSearchItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $StartSuggestionsItems = @(
 '                 App Suggestions                 ',
@@ -1398,8 +1407,7 @@ $StartSuggestionsItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $UnpinItemsItems = @(
 '                Unpin Tile Items                 ',
@@ -1407,8 +1415,7 @@ $UnpinItemsItems = @(
 ' Edge, Weather, Twitter, Skype, and a few others.',
 '0. Skip                                          ',
 '1. Unpin                                         ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $MostUsedAppStartMenuItems = @(
 '                  Most Used App                  ',
@@ -1417,18 +1424,16 @@ $MostUsedAppStartMenuItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $RecentItemsFrequentItems = @(
-'         Recent & Frequent in Start Menu         ',
+"         Recent & Frequent in Start Menu         ",
 '                                                 ',
 ' Recent and Frequent items listed in Start Menu. ',
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
   ##########
   # Start Menu -End
@@ -1446,8 +1451,7 @@ $TaskbarSetMenuItems = @(
 '4. Taskbar Grouping    ','10. Notifcation Icons  ',
 '5. Seconds in Clock    ','11. Last Active Click  ',
 '6. Multi Display       ','12. Buttons on Display ',
-'B. Back to Script Setting Main Menu              '
-)
+'B. Back to Script Setting Main Menu              ')
 
 $TaskbarSetMenuItm = (
 (1,"BatteryUIBar",2,0),
@@ -1461,8 +1465,7 @@ $TaskbarSetMenuItm = (
 (9,"TaskbarIconSize",2,0),
 (10,"TrayIcons",2,0),
 (11,"LastActiveClick",2,0),
-(12,"TaskbarButtOnDisplay",3,0)
-)
+(12,"TaskbarButtOnDisplay",3,0))
  
 $BatteryUIBarItems = @(
 '          Battery UI Flyout on Taskbar           ',
@@ -1471,8 +1474,7 @@ $BatteryUIBarItems = @(
 '0. Skip                                          ',
 '1. New Flyout*                                   ',
 '2. Classic Flyout (like the on Win 7 uses)       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $VolumeControlBarItems = @(
 '       Volume Control UI Flyout on Taskbar       ',
@@ -1481,8 +1483,7 @@ $VolumeControlBarItems = @(
 '0. Skip                                          ',
 '1. New Flyout (Horizontal)*                      ',
 '2. Classic Flyout (Vertical)                     ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $TaskViewButtonItems = @(
 '           Task View Button on Taskbar           ',
@@ -1491,8 +1492,7 @@ $TaskViewButtonItems = @(
 '0. Skip                                          ',
 '1. Show*                                         ',
 '2. Hide                                          ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $TaskbarGroupingItems = @(
 '           Grouping of Icons on Taskbar          ',
@@ -1502,8 +1502,7 @@ $TaskbarGroupingItems = @(
 '1. Never Group                                   ',
 '2. Always Group*                                 ',
 '3. When Needed                                   ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $SecondsInClockItems = @(
 '           Seconds in Clock on Taskbar           ',
@@ -1512,8 +1511,7 @@ $SecondsInClockItems = @(
 '0. Skip                                          ',
 '1. Show Seconds                                  ',
 '2. Hide Seconds*                                 ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $TaskBarOnMultiDisplayItems = @(
 '           Taskbar on Multiple Display           ',
@@ -1522,8 +1520,7 @@ $TaskBarOnMultiDisplayItems = @(
 '0. Skip                                          ',
 '1. Show on all Display*                          ',
 '2. Hide on other Display                         ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $ClockUIBarItems = @(
 '           Clock UI Flyout on Taskbar            ',
@@ -1532,8 +1529,7 @@ $ClockUIBarItems = @(
 '0. Skip                                          ',
 '1. New Flyout*                                   ',
 '2. Classic Flyout (like the on Win 7 uses)       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $TaskbarSearchBoxItems = @(
 '              Search box on Taskbar              ',
@@ -1542,8 +1538,7 @@ $TaskbarSearchBoxItems = @(
 '0. Skip                                          ',
 '1. Show*                                         ',
 '2. Hide                                          ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $TaskbarIconSizeItems = @(
 '                Taskbar Icon Size                ',
@@ -1552,18 +1547,16 @@ $TaskbarIconSizeItems = @(
 '0. Skip                                          ',
 '1. Normal*                                       ',
 '2. Smaller                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
-$TaskbarIconSizeItems = @(
+$TrayIconItems = @(
 '                Notifcation Icons                ',
 '                                                 ',
 '                                                 ',
 '0. Skip                                          ',
 '1. Auto Hide*                                    ',
 '2. Always Show                                   ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $LastActiveClickItems = @(
 '                Last Active Click                ',
@@ -1572,8 +1565,7 @@ $LastActiveClickItems = @(
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable*                                      ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $TaskbarButtOnDisplayItems = @(
 '             Taskbar Button Display              ',
@@ -1583,8 +1575,7 @@ $TaskbarButtOnDisplayItems = @(
 '1. All Taskbars                                  ',
 '2. Where Window is Open                          ',
 '3. Main + Where Window is Open                   ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
   ##########
   # Taskbar Menu -End
@@ -1602,8 +1593,7 @@ $ExplorerSetMenuItems = @(
 '4. Hidden Files        ','10. Autorun            ',
 '5. Aero Snape          ','11. Autoplay           ',
 '6. Aero Shake          ','12. Pid in Title Bar   ',
-'B. Back to Script Setting Main Menu              '
-)
+'B. Back to Script Setting Main Menu              ')
 
 $ExplorerSetMenuItm = (
 (1,"FrequentFoldersQikAcc",2,0),
@@ -1617,8 +1607,7 @@ $ExplorerSetMenuItm = (
 (9,"KnownExtensions",2,0),
 (10,"Autorun",2,0),
 (11,"Autoplay",2,0),
-(12,"PidInTitleBar",2,0)
-)
+(12,"PidInTitleBar",2,0))
 
 $FrequentFoldersQikAccItems = @(
 '         Frequent Items in Quick Access          ',
@@ -1627,8 +1616,7 @@ $FrequentFoldersQikAccItems = @(
 '0. Skip                                          ',
 '1. Show*                                         ',
 '2. Hide                                          ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $RecentFileQikAccItems = @(
 '          Recent Items in Quick Access           ',
@@ -1638,8 +1626,7 @@ $RecentFileQikAccItems = @(
 '1. Show*                                         ',
 '2. Hide                                          ',
 '3. Remove                                        ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $SystemFilesItems = @(
 '                  System Files                   ',
@@ -1648,8 +1635,7 @@ $SystemFilesItems = @(
 '0. Skip                                          ',
 '1. Show System Files/Folders                     ',
 '2. Hide System Files/Folders*                    ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $HiddenFilesItems = @(
 '                  Hidden Files                   ',
@@ -1658,8 +1644,7 @@ $HiddenFilesItems = @(
 '0. Skip                                          ',
 '1. Show Hidden Files/Folders                     ',
 '2. Hide Hidden Files/Folders*                    ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $AeroSnapItems = @(
 '                    Aero Snap                    ',
@@ -1668,8 +1653,7 @@ $AeroSnapItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $AeroShakeItems = @(
 '                   Aero Shake                    ',
@@ -1678,8 +1662,7 @@ $AeroShakeItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $WinContentWhileDragItems = @(
 '          Windows Content While Dragging         ',
@@ -1688,8 +1671,7 @@ $WinContentWhileDragItems = @(
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $ExplorerOpenLocItems = @(
 '             Explorer Open Location              ',
@@ -1698,8 +1680,7 @@ $ExplorerOpenLocItems = @(
 '0. Skip                                          ',
 '1. Quick Access*                                 ',
 "2. 'This PC'                                     ",
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $KnownExtensionsItems = @(
 '              Known File Extensions              ',
@@ -1708,8 +1689,7 @@ $KnownExtensionsItems = @(
 '0. Skip                                          ',
 '1. Show                                          ',
 '2. Hide*                                         ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $AutorunItems = @(
 '                     Autorun                     ',
@@ -1718,18 +1698,25 @@ $AutorunItems = @(
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
-$AutorunItems = @(
+$AutoplayItems = @(
 '                     Autoplay                    ',
 '                                                 ',
 '                                                 ',
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
+
+$PidInTitleBarItems = @(
+'                 PID In Title Bar                ',
+' PID = Processor ID                              ',
+' PID will Show in Top Left of Title Bar.         ',
+'0. Skip                                          ',
+'1. Enable                                        ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                ')
 
   ##########
   # Explorer Menu -End
@@ -1740,63 +1727,28 @@ $AutorunItems = @(
   ##########
 
 $ThisPCSetMenuItems = @(
-"               'This PC' Items Menu              ",
-"1. 'This PC' On Desktop",'5. Desktop Icon        ',
-'2. Documents Icon      ','6. Downloads Icon      ',
-'3. Music Icon          ','7. Pictures Icon       ',
-'4. Videos Icon         ','                       ',
-'B. Back to Script Setting Main Menu              '
-)
+"        This PC/Desktop Icons Items Menu         ",
+"    'This PC' Icons    ",'     Desktop Icons     ',
+'1. Desktop Icon        ',"7. 'This PC' Icon      ",
+'2. Documents Icon      ','8. Network Icon        ',
+'3. Music Icon          ','9. Recycle Bin Icon    ',
+'4. Videos Icon         ',"10. User's Files       ",
+'5. Downloads Icon      ','11. Control Panel      ',
+'6. Pictures Icon       ','                       ',
+'B. Back to Script Setting Main Menu              ')
 
 $ThisPCSetMenuItm = (
-(1,"ThisPCOnDesktop",2,0),
+(1,"DesktopIconInThisPC",2,0),
 (2,"DocumentsIconInThisPC",2,0),
 (3,"MusicIconInThisPC",2,0),
 (4,"VideosIconInThisPC",2,0),
-(5,"DesktopIconInThisPC",2,0),
-(6,"DownloadsIconInThisPC",2,0),
-(7,"PicturesIconInThisPC",2,0)
-)
-
-$ThisPCOnDesktopItems = @(
-"               'This PC' On Desktop              ",
-'                                                 ',
-'                                                 ',
-'0. Skip                                          ',
-'1. Show                                          ',
-'2. Hide*                                         ',
-'C. Cancel (Keeps Current Setting)                '
-)
-
-$DocumentsIconInThisPCItems = @(
-"           Documents Icon in 'This PC'           ",
-'                                                 ',
-'                                                 ',
-'0. Skip                                          ',
-'1. Show                                          ',
-'2. Hide*                                         ',
-'C. Cancel (Keeps Current Setting)                '
-)
-
-$MusicIconInThisPCItems = @(
-"             Music Icon in 'This PC'             ",
-'                                                 ',
-'                                                 ',
-'0. Skip                                          ',
-'1. Show                                          ',
-'2. Hide*                                         ',
-'C. Cancel (Keeps Current Setting)                '
-)
-
-$VideosIconInThisPCItems = @(
-"             Video Icon in 'This PC'             ",
-'                                                 ',
-'                                                 ',
-'0. Skip                                          ',
-'1. Show                                          ',
-'2. Hide*                                         ',
-'C. Cancel (Keeps Current Setting)                '
-)
+(5,"DownloadsIconInThisPC",2,0),
+(6,"PicturesIconInThisPC",2,0),
+(7,"ThisPCOnDesktop",2,0),
+(8,"NetworkOnDesktop",2,0),
+(9,"RecycleBinOnDesktop",2,0),
+(10,"UsersFileOnDesktop",2,0),
+(11,"ControlPanelOnDesktop",2,0))
 
 $DesktopIconInThisPCItems = @(
 "            Desktop Icon in 'This PC'            ",
@@ -1805,8 +1757,34 @@ $DesktopIconInThisPCItems = @(
 '0. Skip                                          ',
 '1. Show                                          ',
 '2. Hide*                                         ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
+
+$DocumentsIconInThisPCItems = @(
+"           Documents Icon in 'This PC'           ",
+'                                                 ',
+'                                                 ',
+'0. Skip                                          ',
+'1. Show                                          ',
+'2. Hide*                                         ',
+'C. Cancel (Keeps Current Setting)                ')
+
+$MusicIconInThisPCItems = @(
+"             Music Icon in 'This PC'             ",
+'                                                 ',
+'                                                 ',
+'0. Skip                                          ',
+'1. Show                                          ',
+'2. Hide*                                         ',
+'C. Cancel (Keeps Current Setting)                ')
+
+$VideosIconInThisPCItems = @(
+"             Video Icon in 'This PC'             ",
+'                                                 ',
+'                                                 ',
+'0. Skip                                          ',
+'1. Show                                          ',
+'2. Hide*                                         ',
+'C. Cancel (Keeps Current Setting)                ')
 
 $DownloadsIconInThisPCItems = @(
 "           Download Icon in 'This PC'            ",
@@ -1815,8 +1793,7 @@ $DownloadsIconInThisPCItems = @(
 '0. Skip                                          ',
 '1. Show                                          ',
 '2. Hide*                                         ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $PicturesIconInThisPCItems = @(
 "            Picture Icon in 'This PC'            ",
@@ -1825,8 +1802,52 @@ $PicturesIconInThisPCItems = @(
 '0. Skip                                          ',
 '1. Show                                          ',
 '2. Hide*                                         ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
+
+$ThisPCOnDesktopItems = @(
+"               'This PC' On Desktop              ",
+'                                                 ',
+'                                                 ',
+'0. Skip                                          ',
+'1. Show                                          ',
+'2. Hide*                                         ',
+'C. Cancel (Keeps Current Setting)                ')
+
+$NetworkOnDesktopItems = @(
+"                Network On Desktop               ",
+'                                                 ',
+'                                                 ',
+'0. Skip                                          ',
+'1. Show                                          ',
+'2. Hide*                                         ',
+'C. Cancel (Keeps Current Setting)                ')
+
+$RecycleBinOnDesktopItems = @(
+"                RecyclBin On Desktop             ",
+'                                                 ',
+'                                                 ',
+'0. Skip                                          ',
+'1. Show                                          ',
+'2. Hide*                                         ',
+'C. Cancel (Keeps Current Setting)                ')
+
+$UsersFileOnDesktopItems = @(
+"              User's File On Desktop             ",
+'                                                 ',
+'                                                 ',
+'0. Skip                                          ',
+'1. Show                                          ',
+'2. Hide*                                         ',
+'C. Cancel (Keeps Current Setting)                ')
+
+$ControlPanelOnDesktopItems = @(
+"             Control Panel On Desktop            ",
+'                                                 ',
+'                                                 ',
+'0. Skip                                          ',
+'1. Show                                          ',
+'2. Hide*                                         ',
+'C. Cancel (Keeps Current Setting)                ')
 
   ##########
   # 'This PC' Menu -End
@@ -1840,14 +1861,12 @@ $LockScreenSetMenuItems = @(
 '              Lock Screen Items Menu             ',
 '1. Lock Screen         ','3. Camera              ',
 '2. Power Menu          ','                       ',
-'B. Back to Script Setting Main Menu              '
-)
+'B. Back to Script Setting Main Menu              ')
 
 $LockScreenSetMenuItm = (
 (1,"LockScreen",2,0),
 (2,"PowerMenuLockScreen",2,0),
-(3,"CameraOnLockScreen",2,0)
-)
+(3,"CameraOnLockScreen",2,0))
 
 $LockScreenItems = @(
 '                   Lock Screen                   ',
@@ -1856,8 +1875,7 @@ $LockScreenItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $PowerMenuLockScreenItems = @(
 '             Power Menu on Lock Screen           ',
@@ -1866,8 +1884,7 @@ $PowerMenuLockScreenItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $CameraOnLockScreenItems = @(
 '               Camera on Lock Screen             ',
@@ -1876,8 +1893,7 @@ $CameraOnLockScreenItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
   ##########
   # Lock Screen Menu -End
@@ -1897,8 +1913,7 @@ $MiscSetMenuItems = @(
 '5. Remote UAC Token    ','                       ',
 '6. Hibernate           ','                       ',
 '7. Sleep               ','                       ',
-'B. Back to Script Setting Main Menu              '
-)
+'B. Back to Script Setting Main Menu              ')
 
 $MiscSetMenuItm = (
 (1,"ActionCenter",2,0),
@@ -1909,8 +1924,7 @@ $MiscSetMenuItm = (
 (6,"HibernatePower",2,0),
 (7,"SleepPower",2,0),
 (8,"PVFileAssociation",2,0),
-(9,"PVOpenWithMenu",2,0)
-)
+(9,"PVOpenWithMenu",2,0))
 
 $ActionCenterItems = @(
 '                  Action Center                  ',
@@ -1919,8 +1933,7 @@ $ActionCenterItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $StickyKeyPromptItems = @(
 '                Sticky Key Prompt                ',
@@ -1929,8 +1942,7 @@ $StickyKeyPromptItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $NumblockOnStartItems = @(
 '               Numblock on Startup               ',
@@ -1939,8 +1951,7 @@ $NumblockOnStartItems = @(
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $F8BootMenuItems = @(
 '                  F8 Boot Menu                   ',
@@ -1949,8 +1960,7 @@ $F8BootMenuItems = @(
 '0. Skip                                          ',
 '1. Legacy                                        ',
 '2. Standard*                                     ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $RemoteUACAcctTokenItems = @(
 '            Remote UAC Acctount Token            ',
@@ -1959,8 +1969,7 @@ $RemoteUACAcctTokenItems = @(
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable*                                      ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $HibernatePowerItems = @(
 '             Hibernate Power Options             ',
@@ -1969,8 +1978,7 @@ $HibernatePowerItems = @(
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $SleepPowerItems = @(
 '               Sleep Power Options               ',
@@ -1979,8 +1987,7 @@ $SleepPowerItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $PVFileAssociationItems = @(
 '          Photo Viewer File Association          ',
@@ -1989,8 +1996,7 @@ $PVFileAssociationItems = @(
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable*                                      ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $PVOpenWithMenuItems = @(
 '          Photo Viewer Open With Entry           ',
@@ -1999,8 +2005,7 @@ $PVOpenWithMenuItems = @(
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable*                                      ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
   ##########
   # Misc/Photo Viewer Menu -End
@@ -2015,8 +2020,7 @@ $FeaturesAppsMenuItems = @(
 '1. One Drive           ','4. Media Player        ',
 '2. One Drive Install   ','5. Work Folders        ',
 '3. Xbox One DVR        ','6. Linux Subsystem     ',
-'B. Back to Script Setting Main Menu              '
-)
+'B. Back to Script Setting Main Menu              ')
 
 $FeaturesAppsMenuItm = (
 (1,"OneDrive",2,0),
@@ -2024,8 +2028,7 @@ $FeaturesAppsMenuItm = (
 (3,"XboxDVR",2,0),
 (4,"MediaPlayer",2,0),
 (5,"WorkFolders",2,0),
-(6,"LinuxSubsystem",2,0)
-)
+(6,"LinuxSubsystem",2,0))
 
 $OneDriveItems = @(
 '                    One Drive                    ',
@@ -2034,8 +2037,7 @@ $OneDriveItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $OneDriveInstallItems = @(
 '                One Drive Install                ',
@@ -2044,8 +2046,7 @@ $OneDriveInstallItems = @(
 '0. Skip                                          ',
 '1. Install*                                      ',
 '2. Uninstall                                     ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $XboxDVRItems = @(
 '                  Xbox One DVR                   ',
@@ -2054,8 +2055,7 @@ $XboxDVRItems = @(
 '0. Skip                                          ',
 '1. Enable*                                       ',
 '2. Disable                                       ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $MediaPlayerItems = @(
 '              Windows Media Player               ',
@@ -2064,18 +2064,16 @@ $MediaPlayerItems = @(
 '0. Skip                                          ',
 '1. Install*                                      ',
 '2. Uninstall                                     ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $WorkFoldersItems = @(
 '                  Work Folders                   ',
 ' When using Work Folders to store files, you can ',
-' get to them from all your devices—even offline  ',
+' get to them from all your devices-even offline  ',
 '0. Skip                                          ',
 '1. Install*                                      ',
 '2. Uninstall                                     ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
 $LinuxSubsystemItems = @(
 '                 Linux Subsystem                 ',
@@ -2084,8 +2082,7 @@ $LinuxSubsystemItems = @(
 '0. Skip                                          ',
 '1. Install                                       ',
 '2. Uninstall*                                    ',
-'C. Cancel (Keeps Current Setting)                '
-)
+'C. Cancel (Keeps Current Setting)                ')
 
   ##########
   # Features Menu -End
@@ -2094,7 +2091,56 @@ $LinuxSubsystemItems = @(
   ##########
   # Metro Apss Menu -Start
   ##########
-$APList = @()
+$APList = @(
+    'APP_3DBuilder',
+    'APP_Asphalt8Airborne',
+    'APP_BingFinance',
+    'APP_BingNews',
+    'APP_BingSports',
+    'APP_BingTranslator',
+    'APP_BingWeather',
+    'APP_CandyCrushSoda',
+    'APP_CommsPhone',
+    'APP_Communications',
+    'APP_Facebook',
+    'APP_FarmVille',
+    'APP_FreshPaint',
+    'APP_Getstarted',
+    'APP_Houzz',
+    'APP_Messaging',
+    'APP_MicrosoftJackpot',
+    'APP_MicrosoftJigsaw',
+    'APP_MicrosoftMahjong',
+    'APP_MicrosoftOffHub',
+    'APP_MicrosoftSudoku',
+    'APP_MinecraftUWP',
+    'APP_MovieMoments',
+    'APP_Netflix',
+    'APP_OfficeOneNote',
+    'APP_OfficeSway',
+    'APP_OneConnect',
+    'APP_People',
+    'APP_Photos',
+    'APP_SkypeApp1',
+    'APP_SkypeApp2',
+    'APP_SolitaireCollect',
+    'APP_StickyNotes',
+    'APP_StudiosWordament',
+    'APP_Taptiles',
+    'APP_Twitter',
+    'APP_VoiceRecorder',
+    'APP_WindowsAlarms',
+    'APP_WindowsCalculator',
+    'APP_WindowsCamera',
+    'APP_WindowsFeedbak1',
+    'APP_WindowsFeedbak2',
+    'APP_WindowsMaps',
+    'APP_WindowsPhone',
+    'APP_WindowsStore',
+    'APP_XboxApp',
+    'APP_ZuneMusic',
+    'APP_ZuneVideo'
+)
 
 Get-Variable -scope script | ForEach-Object {
     If($_.name -Match "^APP_*") {
@@ -2163,7 +2209,7 @@ function ChoicesMenuMetro([String]$Vari, [Int]$MultiV) {
         }
         $ChoicesMenuMetro = Read-Host "`nChoice"
         switch -regex ($ChoicesMenuMetro) {
-            [0-3] {$ReturnV = $ChoicesMenuMetro}
+            [0-3] {$ReturnV = $ChoicesMenuMetro; $ChoicesMenuMetro = "Out"}
             C {$ReturnV = $VariV; $ChoicesMenuMetro = "Out"}
             default {$Invalid = 1}
         }
@@ -2210,7 +2256,7 @@ $MetroAppsMenuItems = @(
 '              Metro Apps Items Menu              ',
 '1. ALL Metro Apps      ','24. Mahjong game       ',
 '2. 3DBuilder app       ','25. Maps app           ',
-'3. Alarms & Clock app  ','26. Messaging app      ',
+"3. Alarms & Clock app  ",'26. Messaging app      ',
 '4. Asphalt 8 game      ','27. Microsoft Solitaire',
 '5. Bing Money app      ','28. Minecraft game     ',
 '6. Bing News app       ','29. Movie Moments app  ',
@@ -2218,7 +2264,7 @@ $MetroAppsMenuItems = @(
 '8. Bing Translator app ','31. Office OneNote app ',
 '9. Bing Weather app    ','32. Office Sway app    ',
 '10. Calculator app     ','33. One Connect        ',
-'11. Calendar & Mail app','34. People app         ',
+"11. Calendar & Mail app",'34. People app         ',
 '12. Camera app         ','35. Phone app          ',
 '13. Candy Crush game   ','36. Phone Companion app',
 '14. Canvas app         ','37. Photos app         ',
@@ -2280,8 +2326,7 @@ $MetroAppsMenuItm = (
 (43,'VoiceRecorder',0),
 (44,'WindowsStore',0),
 (45,'StudiosWordament',0),
-(46,'XboxApp',0)
-)
+(46,'XboxApp',0))
 
 $ALL_METRO_APPSItems = @(
 '                 ALL Metro Apps                  ',
@@ -2289,13 +2334,13 @@ $ALL_METRO_APPSItems = @(
 'All Metro Apps are set to your choice            ')
 
 $3DBuilderItems = @(
-'                 3DBuilder app                  ',
-'View, capture, personalize, and print 3D models ',
-'using 3D Builder.                               ')
+'                 3DBuilder app                   ',
+'View, capture, personalize, and print 3D models  ',
+'using 3D Builder.                                ')
 
 $WindowsAlarmsItems = @(
-'               Alarms & Clock app                ',
-'Set alarms & reminders, check times around the   ',
+"               Alarms & Clock app                ",
+"Set alarms & reminders, check times around the   ",
 'world, and time your activities, including laps  ')
 
 $Asphalt8AirborneItems = @(
@@ -2315,7 +2360,7 @@ $BingNewsItems = @(
 
 $BingSportsItems = @(
 '                 Bing Sports app                 ',
-'App is packed with live scores & in-depth game   ',
+"App is packed with live scores & in-depth game   ",
 'experiences for more than 150 leagues.           ')
 
 $BingTranslatorItems = @(
@@ -2330,11 +2375,11 @@ $BingWeatherItems = @(
 
 $WindowsCalculatorItems = @(
 '                 Calculator app                  ',
-'Calculator that includes standard, scientific, & ',
+"Calculator that includes standard, scientific, & ",
 'programmer modes, as well as a unit converter.   ')
 
 $CommunicationsItems = @(
-'               Calendar & Mail app               ',
+"               Calendar & Mail app               ",
 '                                                 ',
 '                                                 ')
 
@@ -2385,7 +2430,7 @@ $ZuneMusicItems = @(
 
 $HouzzItems = @(
 '                    Houzz app                    ',
-'Whether you’re looking to renovate or redecorate,',
+"Whether you're looking to renovate or redecorate,",
 'Has everything you need to improve your home.    ')
 
 $MicrosoftJackpotItems = @(
@@ -2405,7 +2450,7 @@ $MicrosoftMahjongItems = @(
 
 $WindowsMapsItems = @(
 '                    Maps app                     ',
-'Voice navigation & turn-by-turn driving, transit,',
+"Voice navigation & turn-by-turn driving, transit,",
 'and walking directions.                          ')
 
 $MessagingItems = @(
@@ -2426,7 +2471,7 @@ $MinecraftUWPItems = @(
 $MovieMomentsItems = @(
 '                Movie Moments app                ',
 'Trim videos to your favorite parts, highlight key',
-'moments with captions & effects, and set music.  ')
+"moments with captions & effects, and set music.  ")
 
 $NetflixItems = @(
 '                   Netflix app                   ',
@@ -2451,7 +2496,7 @@ $OneConnectItems = @(
 $PeopleItems = @(
 '                   People app                    ',
 'Check out what people are up to across services  ',
-'they use &  how you to connect to with them.     ')
+"they use &  how you to connect to with them.     ")
 
 $CommsPhoneItems = @(
 '                    Phone app                    ',
@@ -2495,7 +2540,7 @@ $TwitterItems = @(
 
 $VoiceRecorderItems = @(
 '               Voice Recorder app                ',
-'Record sounds, lectures, interviews, & events.   ',
+"Record sounds, lectures, interviews, & events.   ",
 'Mark key moments as you record.                  ')
 
 $WindowsStoreItems = @(' Windows Store',
@@ -2619,7 +2664,7 @@ $Pined_App = @(
     'Candy Crush Soda Saga',
     'xbox',
     'Groove music',
-    'movies & tv',
+    "movies & tv",
     'microsoft solitaire collection',
     'money',
     'get office',
@@ -2735,8 +2780,17 @@ Function LoadWinDefault {
 ##########
 
 Function RunScript {
-    If ($CreateRestorePoint -eq 1) {
-        DisplayOut "Creating System Restore Point Named -Win10 Initial Setup Script..." 15 1
+    DisplayOut "" 14 0
+    DisplayOut "------------------" 14 0
+    DisplayOut "-   Pre-Script   -" 14 0
+    DisplayOut "------------------" 14 0
+    DisplayOut "" 14 0
+	
+    If ($CreateRestorePoint -eq 0 -and $ShowSkipped -eq 1) {
+        DisplayOut "Skipping Creation of System Restore Point..." 15 0
+    } ElseIf ($CreateRestorePoint -eq 1) {
+        DisplayOut "Creating System Restore Point Named 'Win10 Initial Setup Script'." 11 1
+        DisplayOut "Please Wait..." 11 1
         Checkpoint-Computer -Description "Win10 Initial Setup Script" | Out-Null
     }
 
@@ -2760,7 +2814,7 @@ Function RunScript {
     DisplayOut "" 14 0
 
     # Telemetry
-    If ($Telemetry -eq 0) {
+    If ($Telemetry -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Telemetry..." 15 0
     } ElseIf ($Telemetry -eq 1) {
         DisplayOut "Enabling Telemetry..." 11 0
@@ -2775,7 +2829,7 @@ Function RunScript {
     }
 
     # Wi-Fi Sense
-    If ($WiFiSense -eq 0) {
+    If ($WiFiSense -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Wi-Fi Sense..." 15 0
     } ElseIf ($WiFiSense -eq 1) {
         DisplayOut "Enabling Wi-Fi Sense..." 11 0
@@ -2791,7 +2845,7 @@ Function RunScript {
     }
 
     # SmartScreen Filter
-    If ($SmartScreen -eq 0) {
+    If ($SmartScreen -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping SmartScreen Filter..." 15 0
     } ElseIf ($SmartScreen -eq 1) {
         DisplayOut "Enabling SmartScreen Filter..." 11 0
@@ -2804,7 +2858,7 @@ Function RunScript {
     }    
 
     # Location Tracking
-    If ($LocationTracking -eq 0) {
+    If ($LocationTracking -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Location Tracking..." 15 0
     } ElseIf ($LocationTracking -eq 1) {
         DisplayOut "Enabling Location Tracking..." 11 0
@@ -2817,7 +2871,7 @@ Function RunScript {
     }
 
     # Disable Feedback
-    If ($Feedback -eq 0) {
+    If ($Feedback -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Feedback..." 15 0
     } ElseIf ($Feedback -eq 1) {
         DisplayOut "Enabling Feedback..." 11 0
@@ -2831,7 +2885,7 @@ Function RunScript {
     }
 
     # Disable Advertising ID
-    If ($AdvertisingID -eq 0) {
+    If ($AdvertisingID -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Advertising ID..." 15 0
     } ElseIf ($AdvertisingID -eq 1) {
         DisplayOut "Enabling Advertising ID..." 11 0
@@ -2845,7 +2899,7 @@ Function RunScript {
     }
     
     # Cortana
-    If ($Cortana -eq 0) {
+    If ($Cortana -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Cortana..." 15 0
     } ElseIf ($Cortana -eq 1) {
         DisplayOut "Enabling Cortana..." 11 0
@@ -2871,7 +2925,7 @@ Function RunScript {
     }
     
     # Cortana Search
-    If ($CortanaSearch -eq 0) {
+    If ($CortanaSearch -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Cortana Search..." 15 0
     } ElseIf ($CortanaSearch -eq 1) {
         DisplayOut "Enabling Cortana Search..." 11 0
@@ -2885,7 +2939,7 @@ Function RunScript {
     }
     
     # Error Reporting
-    If ($ErrorReporting -eq 0) {
+    If ($ErrorReporting -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Error Reporting..." 15 0
     } ElseIf ($ErrorReporting -eq 1) {
         DisplayOut "Enabling Error Reporting..." 11 0
@@ -2896,7 +2950,7 @@ Function RunScript {
     }
     
     # AutoLogger file and restrict directory
-    If ($AutoLoggerFile -eq 0) {
+    If ($AutoLoggerFile -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping AutoLogger..." 15 0
     } ElseIf ($AutoLoggerFile -eq 1) {
         DisplayOut "Unrestricting AutoLogger Directory..." 11 0
@@ -2912,7 +2966,7 @@ Function RunScript {
     }
     
     # Diagnostics Tracking Service
-    If ($DiagTrack -eq 0) {
+    If ($DiagTrack -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Diagnostics Tracking..." 15 0
     } ElseIf ($DiagTrack -eq 1) {
         DisplayOut "Enabling and Starting Diagnostics Tracking Service..." 11 0
@@ -2925,7 +2979,7 @@ Function RunScript {
     }
     
     # WAP Push Service
-    If ($WAPPush -eq 0) {
+    If ($WAPPush -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping WAP Push..." 15 0
     } ElseIf ($WAPPush -eq 1) {
         DisplayOut "Enabling and Starting WAP Push Service..." 11 0
@@ -2939,7 +2993,7 @@ Function RunScript {
     }
     
     # App Auto Download
-    If ($AppAutoDownload -eq 0) {
+    If ($AppAutoDownload -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping App Auto Download..." 15 0
     } ElseIf ($AppAutoDownload -eq 1) {
         DisplayOut "Enabling App Auto Download..." 11 0
@@ -2969,7 +3023,7 @@ Function RunScript {
     DisplayOut "" 14 0
     
     # Check for Windows Update
-    If ($CheckForWinUpdate -eq 0) {
+    If ($CheckForWinUpdate -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Check for Windows Update..." 15 0
     } ElseIf ($CheckForWinUpdate -eq 1) {
         DisplayOut "Enabling Check for Windows Update..." 11 0
@@ -2980,7 +3034,7 @@ Function RunScript {
     }
     
     # Windows Update Check Type
-    If ($WinUpdateType -eq 0) {
+    If ($WinUpdateType -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Windows Update Check Type..." 15 0
     } ElseIf ($WinUpdateType -In 1..4) {
         If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU")) {
@@ -3002,7 +3056,7 @@ Function RunScript {
     }
     
     # Windows Update P2P
-    If ($WinUpdateDownload -eq 0) {
+    If ($WinUpdateDownload -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Windows Update P2P..." 15 0
     } ElseIf ($WinUpdateDownload -eq 1) {
         DisplayOut "Unrestricting Windows Update P2P to internet..." 16 0
@@ -3040,7 +3094,7 @@ Function RunScript {
     
     
     # UAC level
-    If ($UAC -eq 0) {
+    If ($UAC -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping UAC Level..." 15 0
     } ElseIf ($UAC -eq 1) {
         DisplayOut "Lowering UAC level..." 16 0
@@ -3057,7 +3111,7 @@ Function RunScript {
     }
     
     # Sharing mapped drives between users
-    If ($SharingMappedDrives -eq 0) {
+    If ($SharingMappedDrives -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Sharing Mapped Drives between Users..." 15 0
     } ElseIf ($SharingMappedDrives -eq 1) {
         DisplayOut "Enabling Sharing Mapped Drives between Users..." 11 0
@@ -3068,7 +3122,7 @@ Function RunScript {
     }
     
     # Administrative shares
-    If ($AdminShares -eq 0) {
+    If ($AdminShares -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Hidden Administrative Shares..." 15 0
     } ElseIf ($AdminShares -eq 1) {
         DisplayOut "Enabling Hidden Administrative Shares..." 11 0
@@ -3079,7 +3133,7 @@ Function RunScript {
     }
     
     # Firewall
-    If ($Firewall -eq 0) {
+    If ($Firewall -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Firewall..." 15 0
     } ElseIf ($Firewall -eq 1) {
         DisplayOut "Enabling Firewall..." 11 0
@@ -3090,7 +3144,7 @@ Function RunScript {
     }
     
     # Windows Defender
-    If ($WinDefender -eq 0) {
+    If ($WinDefender -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Windows Defender..." 15 0
     } ElseIf ($WinDefender -eq 1) {
         DisplayOut "Enabling Windows Defender..." 11 0
@@ -3103,7 +3157,7 @@ Function RunScript {
     }
     
     # Home Groups services
-    If ($HomeGroups -eq 0) {
+    If ($HomeGroups -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Home Groups Services..." 15 0
     } ElseIf ($HomeGroups -eq 1) {
         DisplayOut "Enabling Home Groups Services..." 11 0
@@ -3119,7 +3173,7 @@ Function RunScript {
     }
     
     # Remote Assistance
-    If ($RemoteAssistance -eq 0) {
+    If ($RemoteAssistance -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Remote Assistance..." 15 0
     } ElseIf ($RemoteAssistance -eq 1) {
         DisplayOut "Enabling Remote Assistance..." 11 0
@@ -3130,7 +3184,7 @@ Function RunScript {
     }
     
     # Enable Remote Desktop w/o Network Level Authentication
-    If ($RemoteDesktop -eq 0) {
+    If ($RemoteDesktop -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Remote Desktop..." 15 0
     } ElseIf ($RemoteDesktop -eq 1) {
         DisplayOut "Enabling Remote Desktop w/o Network Level Authentication..." 11 0
@@ -3157,7 +3211,7 @@ Function RunScript {
     DisplayOut "" 14 0
     
     # Cast to Device Context
-    If ($CastToDevice -eq 0) {
+    If ($CastToDevice -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Cast to Device Context item..." 15 0
     } ElseIf ($CastToDevice -eq 1) {
         DisplayOut "Enabling Cast to Device Context item..." 11 0
@@ -3171,7 +3225,7 @@ Function RunScript {
     }
     
     # Previous Versions Context Menu
-    If ($PreviousVersions -eq 0) {
+    If ($PreviousVersions -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Previous Versions Context item..." 15 0
     } ElseIf ($PreviousVersions -eq 1) {
         DisplayOut "Enabling Previous Versions Context item..." 11 0
@@ -3188,7 +3242,7 @@ Function RunScript {
     }
     
     # Include in Library Context Menu
-    If ($IncludeinLibrary -eq 0) {
+    If ($IncludeinLibrary -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Include in Library Context item..." 15 0
     } ElseIf ($IncludeinLibrary -eq 1) {
         DisplayOut "Enabling Include in Library Context item..." 11 0
@@ -3198,11 +3252,11 @@ Function RunScript {
         Set-ItemProperty -Path "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location" -Name "(Default)" -Type String -Value ""
     }
     
-    # Pin To Context Menu
-    If ($PinTo -eq 0) {
-        DisplayOut "Skipping Pin To Context item..." 15 0
-    } ElseIf ($PinTo -eq 1) {
-        DisplayOut "Enabling Pin To Context item..." 11 0
+    # Pin To Start Context Menu
+    If ($PinToStart -eq 0 -and $ShowSkipped -eq 1) {
+        DisplayOut "Skipping Pin To Start Context item..." 15 0
+    } ElseIf ($PinToStart -eq 1) {
+        DisplayOut "Enabling Pin To Start Context item..." 11 0
         New-Item -Path "HKCR:\*\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -Force | Out-Null
         Set-ItemProperty -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -Name "(Default)" -Type String -Value "Taskband Pin"
         New-Item -Path "HKCR:\*\shellex\ContextMenuHandlers\{a2a9545d-a0c2-42b4-9708-a0b2badd77c8}" -Force | Out-Null
@@ -3211,8 +3265,8 @@ Function RunScript {
         Set-ItemProperty -Path "HKCR:\exefile\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value "{470C0EBD-5D73-4d58-9CED-E91E22E23282}"
         Set-ItemProperty -Path "HKCR:\Microsoft.Website\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value "{470C0EBD-5D73-4d58-9CED-E91E22E23282}"
         Set-ItemProperty -Path "HKCR:\mscfile\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value "{470C0EBD-5D73-4d58-9CED-E91E22E23282}"
-    } ElseIf ($PinTo -eq 2) {
-        DisplayOut "Disabling Pin To Context item..." 12 0
+    } ElseIf ($PinToStart -eq 2) {
+        DisplayOut "Disabling Pin To Start Context item..." 12 0
         Remove-Item -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -Force
         Remove-Item -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\{a2a9545d-a0c2-42b4-9708-a0b2badd77c8}" -Force
         Set-ItemProperty -Path "HKCR:\Folder\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value ""
@@ -3220,9 +3274,30 @@ Function RunScript {
         Set-ItemProperty -Path "HKCR:\Microsoft.Website\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value ""
         Set-ItemProperty -Path "HKCR:\mscfile\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value ""
     }
+	
+    # Pin To Quick Access Context Menu
+    If ($PinToQuickAccess -eq 0 -and $ShowSkipped -eq 1) {
+        DisplayOut "Skipping Pin To Quick Access Context item..." 15 0
+    } ElseIf ($PinToQuickAccess -eq 1) {
+        DisplayOut "Enabling Pin To Quick Access Context item..." 11 0
+        Set-ItemProperty -Path "HKCR:\Folder\shell\pintohome"  -Name "MUIVerb" -Type String -Value "@shell32.dll,-51377"
+        Set-ItemProperty -Path "HKCR:\Folder\shell\pintohome"  -Name "AppliesTo" -Type String -Value 'System.ParsingName:<>"::{679f85cb-0220-4080-b29b-5540cc05aab6}" AND System.ParsingName:<>"::{645FF040-5081-101B-9F08-00AA002F954E}" AND System.IsFolder:=System.StructuredQueryType.Boolean#True'
+        Set-ItemProperty -Path "HKCR:\Folder\shell\pintohome\command"  -Name "DelegateExecute" -Type String -Value "{b455f46e-e4af-4035-b0a4-cf18d2f6f28e}"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome"  -Name "MUIVerb" -Type String -Value "@shell32.dll,-51377"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome"  -Name "AppliesTo" -Type String -Value 'System.ParsingName:<>"::{679f85cb-0220-4080-b29b-5540cc05aab6}" AND System.ParsingName:<>"::{645FF040-5081-101B-9F08-00AA002F954E}" AND System.IsFolder:=System.StructuredQueryType.Boolean#True'
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome\command]"  -Name "DelegateExecute" -Type String -Value "{b455f46e-e4af-4035-b0a4-cf18d2f6f28e}"
+    } ElseIf ($PinToQuickAccess -eq 2) {
+        DisplayOut "Disabling Pin To Quick Access Context item..." 12 0
+        Set-ItemProperty -Path "HKCR:\Folder\shell\pintohome"  -Name "MUIVerb" -Type String -Value ""
+        Set-ItemProperty -Path "HKCR:\Folder\shell\pintohome"  -Name "AppliesTo" -Type String -Value ""
+        Set-ItemProperty -Path "HKCR:\Folder\shell\pintohome\command"  -Name "DelegateExecute" -Type String -Value ""
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome"  -Name "MUIVerb" -Type String -Value ""
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome"  -Name "AppliesTo" -Type String -Value ""
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome\command]"  -Name "DelegateExecute" -Type String -Value ""		
+    }
     
     # Share With Context Menu
-    If ($ShareWith -eq 0) {
+    If ($ShareWith -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Share With Context item..." 15 0
     } ElseIf ($ShareWith -eq 1) {
         DisplayOut "Enabling Share With Context item..." 11 0
@@ -3245,7 +3320,7 @@ Function RunScript {
     }
     
     # Send To Context Menu
-    If ($SendTo -eq 0) {
+    If ($SendTo -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Send To Context item..." 15 0
     } ElseIf ($SendTo -eq 1) {
         DisplayOut "Enabling Send To Context item..." 11 0
@@ -3275,13 +3350,13 @@ Function RunScript {
     DisplayOut "" 14 0
     
     # Battery UI Bar
-    If ($BatteryUIBar -eq 0) {
+    If ($BatteryUIBar -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Battery UI Bar..." 15 0
     } ElseIf ($BatteryUIBar -eq 1) {
-        DisplayOut "Enabling New Battery UI Bar..." 16 0
+        DisplayOut "Enabling New Battery UI Bar..." 11 0
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" -Name "UseWin32BatteryFlyout"
     } ElseIf ($BatteryUIBar -eq 2) {
-        DisplayOut "Enabling Old Battery UI Bar..." 16 0
+        DisplayOut "Enabling Old Battery UI Bar..." 12 0
         If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell")) {
             New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" | Out-Null
         }
@@ -3289,13 +3364,13 @@ Function RunScript {
     }
     
     # Clock UI Bar
-    If ($ClockUIBar -eq 0) {
+    If ($ClockUIBar -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Clock UI Bar..." 15 0
     } ElseIf ($ClockUIBar -eq 1) {
-        DisplayOut "Enabling New Clock UI Bar..." 16 0
+        DisplayOut "Enabling New Clock UI Bar..." 11 0
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" -Name "UseWin32TrayClockExperience"
     } ElseIf ($ClockUIBar -eq 2) {
-        DisplayOut "Enabling Old Clock UI Bar..." 16 0
+        DisplayOut "Enabling Old Clock UI Bar..." 12 0
         If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell")) {
             New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" | Out-Null
         }
@@ -3303,13 +3378,13 @@ Function RunScript {
     }
          
     # Volume Control Bar
-    If ($VolumeControlBar -eq 0) {
+    If ($VolumeControlBar -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Volume Control Bar..." 15 0
     } ElseIf ($VolumeControlBar -eq 1) {
-        DisplayOut "Enabling New Volume Control Bar (Horizontal)..." 16 0
+        DisplayOut "Enabling New Volume Control Bar (Horizontal)..." 11 0
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\MTCUVC" -Name "EnableMtcUvc"
     } ElseIf ($VolumeControlBar -eq 2) {
-        DisplayOut "Enabling Classic Volume Control Bar (Vertical)..." 16 0
+        DisplayOut "Enabling Classic Volume Control Bar (Vertical)..." 12 0
         If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\MTCUVC")) {
             New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\MTCUVC" | Out-Null
         }
@@ -3317,7 +3392,7 @@ Function RunScript {
     }
     
     # Taskbar Search button / box
-    If ($TaskbarSearchBox -eq 0) {
+    If ($TaskbarSearchBox -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Taskbar Search box / button..." 15 0
     } ElseIf ($TaskbarSearchBox -eq 1) {
         DisplayOut "Showing Taskbar Search box / button..." 11 0
@@ -3328,7 +3403,7 @@ Function RunScript {
     }
     
     # Task View button
-    If ($TaskViewButton -eq 0) {
+    If ($TaskViewButton -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Task View button..." 15 0
     } ElseIf ($TaskViewButton -eq 1) {
         DisplayOut "Showing Task View button..." 11 0
@@ -3339,7 +3414,7 @@ Function RunScript {
     }
     
     # Taskbar Icon Size
-    If ($TaskbarIconSize -eq 0) {
+    If ($TaskbarIconSize -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Icon Size in Taskbar..." 15 0
     } ElseIf ($TaskbarIconSize -eq 1) {
         DisplayOut "Showing Normal Icon Size in Taskbar..." 11 0
@@ -3350,7 +3425,7 @@ Function RunScript {
     }
     
     # Taskbar Item Grouping
-    If ($TaskbarGrouping -eq 0) {
+    If ($TaskbarGrouping -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Taskbar Item Grouping..." 15 0
     } ElseIf ($TaskbarGrouping -eq 1) {
         DisplayOut "Never Group Taskbar Items..." 16 0
@@ -3364,7 +3439,7 @@ Function RunScript {
     }
     
     # Tray icons
-    If ($TrayIcons -eq 0) {
+    If ($TrayIcons -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Tray icons..." 15 0
     } ElseIf ($TrayIcons -eq 1) {
         DisplayOut "Showing All Tray Icons..." 11 0
@@ -3375,18 +3450,18 @@ Function RunScript {
     }
     
     # Seconds in Taskbar Clock
-    If ($SecondsInClock -eq 0) {
+    If ($SecondsInClock -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Seconds in Taskbar Clock..." 15 0
     } ElseIf ($SecondsInClock -eq 1) {
-        DisplayOut "Showing Seconds in Taskbar Clock..." 16 0
+        DisplayOut "Showing Seconds in Taskbar Clock..." 11 0
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSecondsInSystemClock" -Type DWord -Value 1
     } ElseIf ($SecondsInClock -eq 2) {
-        DisplayOut "Hiding Seconds in Taskbar Clock..." 16 0
+        DisplayOut "Hiding Seconds in Taskbar Clock..." 12 0
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSecondsInSystemClock" -Type DWord -Value 0
     }
     
     # Last Active Click
-    If ($LastActiveClick -eq 0) {
+    If ($LastActiveClick -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Last Active Click..." 15 0
     } ElseIf ($LastActiveClick -eq 1) {
         DisplayOut "Enabling Last Active Click..." 11 0
@@ -3397,7 +3472,7 @@ Function RunScript {
     }
     
     # Taskbar on multiple displays
-    If ($TaskBarOnMultiDisplay -eq 0) {
+    If ($TaskBarOnMultiDisplay -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Taskbar on Multiple Displays..." 15 0
     } ElseIf ($TaskBarOnMultiDisplay -eq 1) {
         DisplayOut "Showing Taskbar on Multiple Displays..." 11 0
@@ -3408,7 +3483,7 @@ Function RunScript {
     }
     
     # Taskbar on multiple displays
-    If ($TaskbarButtOnDisplay -eq 0) {
+    If ($TaskbarButtOnDisplay -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Taskbar Buttons on Multiple Displays..." 15 0
     } ElseIf ($TaskbarButtOnDisplay -eq 1) {
         DisplayOut "Showing Taskbar Buttons on All Taskbars..." 16 0
@@ -3436,7 +3511,7 @@ Function RunScript {
     DisplayOut "" 14 0
     
     # Web Search in Start Menu
-    If ($StartMenuWebSearch -eq 0) {
+    If ($StartMenuWebSearch -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Bing Search in Start Menu..." 15 0
     } ElseIf ($StartMenuWebSearch -eq 1) {
         DisplayOut "Enabling Bing Search in Start Menu..." 11 0
@@ -3452,7 +3527,7 @@ Function RunScript {
     }
     
     # Start Menu suggestions
-    If ($StartSuggestions -eq 0) {
+    If ($StartSuggestions -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Start Menu Suggestions..." 15 0
     } ElseIf ($StartSuggestions -eq 1) {
         DisplayOut "Enabling Start Menu Suggestions..." 11 0
@@ -3465,7 +3540,7 @@ Function RunScript {
     }
     
     # Most used apps in Start menu
-    If ($MostUsedAppStartMenu -eq 0) {
+    If ($MostUsedAppStartMenu -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Most used Apps in Start Menu..." 15 0
     } ElseIf ($MostUsedAppStartMenu -eq 1) {
         DisplayOut "Showing Most used Apps in Start Menu..." 11 0
@@ -3476,7 +3551,7 @@ Function RunScript {
     }
     
     # Recent Items and Frequent Places
-    If ($RecentItemsFrequent -eq 0) {
+    If ($RecentItemsFrequent -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Recent Items and Frequent Places..." 15 0
     } ElseIf ($RecentItemsFrequent -eq 1) {
         DisplayOut "Enabling Recent Items and Frequent Places..." 11 0
@@ -3507,7 +3582,7 @@ Function RunScript {
     DisplayOut "" 14 0
     
     # Process ID on Title Bar
-    If ($PidInTitleBar -eq 0) {
+    If ($PidInTitleBar -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Process ID on Title Bar..." 15 0
     } ElseIf ($PidInTitleBar -eq 1) {
         DisplayOut "Showing Process ID on Title Bar..." 11 0
@@ -3518,7 +3593,7 @@ Function RunScript {
     }
     
     # Aero Snap
-    If ($AeroSnap -eq 0) {
+    If ($AeroSnap -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Aero Snap..." 15 0
     } ElseIf ($AeroSnap -eq 1) {
         DisplayOut "Enabling Aero Snap..." 11 0
@@ -3529,7 +3604,7 @@ Function RunScript {
     }
     
     # Aero Shake
-    If ($AeroShake -eq 0) {
+    If ($AeroShake -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Aero Shake..." 15 0
     } ElseIf ($AeroShake -eq 1) {
         DisplayOut "Enabling Aero Shake..." 11 0
@@ -3543,7 +3618,7 @@ Function RunScript {
     }
     
     # File extensions
-    If ($KnownExtensions -eq 0) {
+    If ($KnownExtensions -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Known File Extensions..." 15 0
     } ElseIf ($KnownExtensions -eq 1) {
         DisplayOut "Showing Known File Extensions..." 11 0
@@ -3554,7 +3629,7 @@ Function RunScript {
     }
     
     # Hidden files
-    If ($HiddenFiles -eq 0) {
+    If ($HiddenFiles -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Hidden Files..." 15 0
     } ElseIf ($HiddenFiles -eq 1) {
         DisplayOut "Showing Hidden Files..." 11 0
@@ -3565,7 +3640,7 @@ Function RunScript {
     }
     
     # System files
-    If ($SystemFiles -eq 0) {
+    If ($SystemFiles -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping System Files..." 15 0
     } ElseIf ($SystemFiles -eq 1) {
         DisplayOut "Showing System Files..." 11 0
@@ -3576,7 +3651,7 @@ Function RunScript {
     }
     
     # Change default Explorer view
-    If ($ExplorerOpenLoc -eq 0) {
+    If ($ExplorerOpenLoc -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Default Explorer view to Quick Access..." 15 0
     } ElseIf ($ExplorerOpenLoc -eq 1) {
         DisplayOut "Changing Default Explorer view to Quick Access..." 16 0
@@ -3587,7 +3662,7 @@ Function RunScript {
     }
     
     # Recent Files in Quick Access
-    If ($RecentFileQikAcc -eq 0) {
+    If ($RecentFileQikAcc -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Recent Files in Quick Access..." 15 0
     } ElseIf ($RecentFileQikAcc -eq 1) {
         DisplayOut "Showing Recent Files in Quick Access..." 11 0
@@ -3607,7 +3682,7 @@ Function RunScript {
     }
     
     # Frequent folders in Quick_access
-    If ($FrequentFoldersQikAcc -eq 0) {
+    If ($FrequentFoldersQikAcc -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Frequent Folders in Quick Access..." 15 0
     } ElseIf ($FrequentFoldersQikAcc -eq 1) {
         DisplayOut "Showing Frequent Folders in Quick Access..." 11 0
@@ -3618,7 +3693,7 @@ Function RunScript {
     }
     
     # Window Content while Dragging
-    If ($WinContentWhileDrag -eq 0) {
+    If ($WinContentWhileDrag -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Window Content while Dragging..." 15 0
     } ElseIf ($WinContentWhileDrag -eq 1) {
         DisplayOut "Showing Window Content while Dragging..." 11 0
@@ -3629,7 +3704,7 @@ Function RunScript {
     }
     
     # Autoplay
-    If ($Autoplay -eq 0) {
+    If ($Autoplay -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Autoplay..." 15 0
     } ElseIf ($Autoplay -eq 1) {
         DisplayOut "Enabling Autoplay..." 11 0
@@ -3640,7 +3715,7 @@ Function RunScript {
     }
     
     # Autorun for all drives
-    If ($Autorun -eq 0) {
+    If ($Autorun -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Autorun for all Drives..." 15 0
     } ElseIf ($Autorun -eq 1) {
         DisplayOut "Enabling Autorun for all Drives..." 11 0
@@ -3663,28 +3738,12 @@ Function RunScript {
     
     DisplayOut "" 14 0
     DisplayOut "-----------------------" 14 0
-    DisplayOut "-   'This PC' items   -" 14 0
+    DisplayOut "-   'This PC' Items   -" 14 0
     DisplayOut "-----------------------" 14 0
     DisplayOut "" 14 0
     
-    # Show This PC shortcut on desktop
-    If ($ThisPCOnDesktop -eq 0) {
-        DisplayOut "Skipping This PC Shortcut on Desktop..." 15 0
-    } ElseIf ($ThisPCOnDesktop -eq 1) {
-        DisplayOut "Showing This PC Shortcut on Desktop..." 11 0
-        If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu")) {
-            New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" | Out-Null
-        }
-        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type DWord -Value 0
-        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type DWord -Value 0
-    } ElseIf ($ThisPCOnDesktop -eq 2) {
-        DisplayOut "Hiding This PC Shortcut on Desktop..." 12 0
-        Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}"
-        Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}"
-    }    
-    
     # Desktop Icon in This PC
-    If ($DesktopIconInThisPC -eq 0) {
+    If ($DesktopIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Desktop Icon in This PC..." 15 0
     } ElseIf ($DesktopIconInThisPC -eq 1) {
         DisplayOut "Showing Desktop Icon in This PC..." 11 0
@@ -3697,7 +3756,7 @@ Function RunScript {
     }
     
     # Documents Icon in This PC
-    If ($DocumentsIconInThisPC -eq 0) {
+    If ($DocumentsIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Documents Icon in This PC..." 15 0
     } ElseIf ($DocumentsIconInThisPC -eq 1) {
         DisplayOut "Showing Documents Icon in This PC..." 11 0
@@ -3710,7 +3769,7 @@ Function RunScript {
     }
     
     # Downloads icon from This PC
-    If ($DownloadsIconInThisPC -eq 0) {
+    If ($DownloadsIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Downloads Icon in This PC..." 15 0
     } ElseIf ($DownloadsIconInThisPC -eq 1) {
         DisplayOut "Showing Downloads Icon in This PC..." 11 0
@@ -3723,7 +3782,7 @@ Function RunScript {
     }
     
     # Music icon from This PC
-    If ($MusicIconInThisPC -eq 0) {
+    If ($MusicIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Music Icon in This PC..." 15 0
     } ElseIf ($MusicIconInThisPC -eq 1) {
         DisplayOut "Showing Music Icon in This PC..." 11 0
@@ -3736,7 +3795,7 @@ Function RunScript {
     }
     
     # Pictures icon from This PC
-    If ($PicturesIconInThisPC -eq 0) {
+    If ($PicturesIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Pictures Icon in This PC..." 15 0
     } ElseIf ($PicturesIconInThisPC -eq 1) {
         DisplayOut "Showing Pictures Icon in This PC..." 11 0
@@ -3749,7 +3808,7 @@ Function RunScript {
     }
     
     # Hide Videos icon from This PC
-    If ($VideosIconInThisPC -eq 0) {
+    If ($VideosIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Videos Icon in This PC..." 15 0
     } ElseIf ($VideosIconInThisPC -eq 1) {
         DisplayOut "Showing Videos Icon in This PC..." 11 0
@@ -3764,7 +3823,90 @@ Function RunScript {
     ##########
     # 'This PC' items -End
     ##########
+
+    ##########
+    # Desktop items -Start
+    ##########
     
+    DisplayOut "" 14 0
+    DisplayOut "---------------------" 14 0
+    DisplayOut "-   Desktop Items   -" 14 0
+    DisplayOut "---------------------" 14 0
+    DisplayOut "" 14 0
+    
+    If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu")) {
+        New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" | Out-Null
+    }
+    
+    # This PC Icon on desktop
+    If ($ThisPCOnDesktop -eq 0 -and $ShowSkipped -eq 1) {
+        DisplayOut "Skipping This PC Icon on Desktop..." 15 0
+    } ElseIf ($ThisPCOnDesktop -eq 1) {
+        DisplayOut "Showing This PC Shortcut on Desktop..." 11 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type DWord -Value 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type DWord -Value 0
+    } ElseIf ($ThisPCOnDesktop -eq 2) {
+        DisplayOut "Hiding This PC Shortcut on Desktop..." 12 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type DWord -Value 1
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type DWord -Value 1
+    }
+    
+    # Network Icon on desktop
+    If ($NetworkOnDesktop -eq 0 -and $ShowSkipped -eq 1) {
+        DisplayOut "Skipping Network Icon on Desktop..." 15 0
+    } ElseIf ($NetworkOnDesktop -eq 1) {
+        DisplayOut "Showing Network Icon on Desktop..." 11 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}" -Type DWord -Value 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}" -Type DWord -Value 0
+    } ElseIf ($NetworkOnDesktop -eq 2) {
+        DisplayOut "Hiding Network Icon on Desktop..." 12 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}" -Type DWord -Value 1
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}" -Type DWord -Value 1
+    }
+
+    # Recycle Bin Icon on desktop
+    If ($RecycleBinOnDesktop -eq 0 -and $ShowSkipped -eq 1) {
+        DisplayOut "Skipping Recycle Bin Icon on Desktop..." 15 0
+    } ElseIf ($RecycleBinOnDesktop -eq 1) {
+        DisplayOut "Showing Recycle Bin Icon on Desktop..." 11 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{645FF040-5081-101B-9F08-00AA002F954E}" -Type DWord -Value 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{645FF040-5081-101B-9F08-00AA002F954E}" -Type DWord -Value 0
+    } ElseIf ($RecycleBinOnDesktop -eq 2) {
+        DisplayOut "Hiding Recycle Bin Icon on Desktop..." 12 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{645FF040-5081-101B-9F08-00AA002F954E}" -Type DWord -Value 1
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{645FF040-5081-101B-9F08-00AA002F954E}" -Type DWord -Value 1
+    }
+
+    # Recycle Bin Icon on desktop
+    If ($UsersFileOnDesktop -eq 0 -and $ShowSkipped -eq 1) {
+        DisplayOut "Skipping Recycle Bin Icon on Desktop..." 15 0
+    } ElseIf ($UsersFileOnDesktop -eq 1) {
+        DisplayOut "Showing Recycle Bin Icon on Desktop..." 11 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" -Type DWord -Value 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" -Type DWord -Value 0
+    } ElseIf ($UsersFileOnDesktop -eq 2) {
+        DisplayOut "Hiding Recycle Bin Icon on Desktop..." 12 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" -Type DWord -Value 1
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" -Type DWord -Value 1
+    }
+
+    # Control Panel Icon on desktop
+    If ($ControlPanelOnDesktop -eq 0 -and $ShowSkipped -eq 1) {
+        DisplayOut "Skipping Control Panel Icon on Desktop..." 15 0
+    } ElseIf ($ControlPanelOnDesktop -eq 1) {
+        DisplayOut "Showing Control Panel Icon on Desktop..." 11 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}" -Type DWord -Value 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}" -Type DWord -Value 0
+    } ElseIf ($ControlPanelOnDesktop -eq 2) {
+        DisplayOut "Hiding Control Panel Icon on Desktop..." 12 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}" -Type DWord -Value 1
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}" -Type DWord -Value 1
+    }
+
+    ##########
+    # Desktop items -End
+    ########## 
+
     ##########
     # Photo Viewer Settings -Start
     ##########
@@ -3776,7 +3918,7 @@ Function RunScript {
     DisplayOut "" 14 0
     
     # Photo Viewer association for bmp, gif, jpg, png and tif
-    If ($PVFileAssociation -eq 0) {
+    If ($PVFileAssociation -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Photo Viewer File Association..." 15 0
     } ElseIf ($PVFileAssociation -eq 1) {
         DisplayOut "Setting Photo Viewer File Association for bmp, gif, jpg, png and tif..." 11 0
@@ -3804,7 +3946,7 @@ Function RunScript {
     } 
     
     # Add Photo Viewer to "Open with..."
-    If ($PVOpenWithMenu -eq 0) {
+    If ($PVOpenWithMenu -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Photo Viewer Open with Menu..." 15 0
     } ElseIf ($PVOpenWithMenu -eq 1) {
         DisplayOut "Adding Photo Viewer to Open with Menu..." 11 0
@@ -3835,7 +3977,7 @@ Function RunScript {
     DisplayOut "" 14 0
     
     # Lock screen
-    If ($LockScreen -eq 0) {
+    If ($LockScreen -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Lock Screen..." 15 0
     } ElseIf ($LockScreen -eq 1) {
         If ($BuildVer -eq 10240 -or $BuildVer -eq 10586){
@@ -3873,7 +4015,7 @@ Function RunScript {
     }
     
     # Power Menu on Lock Screen
-    If ($PowerMenuLockScreen -eq 0) {
+    If ($PowerMenuLockScreen -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Power Menu on Lock Screen..." 15 0
     } ElseIf ($PowerMenuLockScreen -eq 1) {
         DisplayOut "Showing Power Menu on Lock Screen..." 11 0
@@ -3884,7 +4026,7 @@ Function RunScript {
     }
     
     # Camera at Lockscreen
-    If ($CameraOnLockscreen -eq 0) {
+    If ($CameraOnLockscreen -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Camera at Lockscreen..." 15 0
     } ElseIf ($CameraOnLockscreen -eq 1) {
         DisplayOut "Enabling Camera at Lockscreen..." 11 0
@@ -3912,7 +4054,7 @@ Function RunScript {
     DisplayOut "" 14 0
     
     # Action Center
-    If ($ActionCenter -eq 0) {
+    If ($ActionCenter -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Action Center..." 15 0
     } ElseIf ($ActionCenter -eq 1) {
         DisplayOut "Enabling Action Center..." 11 0
@@ -3928,7 +4070,7 @@ Function RunScript {
     }
     
     # Sticky keys prompt
-    If ($StickyKeyPrompt -eq 0) {
+    If ($StickyKeyPrompt -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Sticky Keys Prompt..." 15 0
     } ElseIf ($StickyKeyPrompt -eq 1) {
         DisplayOut "Enabling Sticky Keys Prompt..." 11 0
@@ -3939,7 +4081,7 @@ Function RunScript {
     }
     
     # Num Lock after startup
-    If ($NumblockOnStart -eq 0) {
+    If ($NumblockOnStart -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Num Lock after startup..." 15 0
     } ElseIf ($NumblockOnStart -eq 1) {
         DisplayOut "Enabling Num Lock after startup..." 11 0
@@ -3950,7 +4092,7 @@ Function RunScript {
     }
     
     # Enable F8 boot menu options
-    If ($F8BootMenu -eq 0) {
+    If ($F8BootMenu -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping F8 boot menu options..." 15 0
     } ElseIf ($F8BootMenu -eq 1) {
         DisplayOut "Enabling F8 boot menu options..." 11 0
@@ -3961,7 +4103,7 @@ Function RunScript {
     }
     
     # Remote UAC Local Account Token Filter
-    If ($RemoteUACAcctToken -eq 0) {
+    If ($RemoteUACAcctToken -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Remote UAC Local Account Token Filter..." 15 0
     } ElseIf ($RemoteUACAcctToken -eq 1) {
         DisplayOut "Enabling Remote UAC Local Account Token Filter..." 11 0
@@ -3972,7 +4114,7 @@ Function RunScript {
     }
     
     # Hibernate Option
-    If ($HibernatePower -eq 0) {
+    If ($HibernatePower -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Hibernate Option..." 15 0
     } ElseIf ($HibernatePower -eq 1) {
         DisplayOut "Enabling Hibernate Option..." 11 0
@@ -3983,7 +4125,7 @@ Function RunScript {
     }
     
     # Sleep Option
-    If ($SleepPower -eq 0) {
+    If ($SleepPower -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Sleep Option..." 15 0
     } ElseIf ($SleepPower -eq 1) {
         DisplayOut "Enabling Sleep Option..." 11 0
@@ -4011,7 +4153,7 @@ Function RunScript {
     DisplayOut "" 14 0
     
     # OneDrive
-    If ($OneDrive -eq 0) {
+    If ($OneDrive -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping OneDrive..." 15 0
     } ElseIf ($OneDrive -eq 1) {
         DisplayOut "Enabling OneDrive..." 11 0
@@ -4025,7 +4167,7 @@ Function RunScript {
     }
     
     # OneDrive Install
-    If ($OneDriveInstall -eq 0) {
+    If ($OneDriveInstall -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping OneDrive Installing..." 15 0
     } ElseIf ($OneDriveInstall -eq 1) {
         DisplayOut "Installing OneDrive..." 11 0
@@ -4059,7 +4201,7 @@ Function RunScript {
     }
     
     # Xbox DVR
-    If ($XboxDVR -eq 0) {
+    If ($XboxDVR -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Xbox DVR..." 15 0
     } ElseIf ($XboxDVR -eq 1) {
         DisplayOut "Enabling Xbox DVR..." 11 0
@@ -4075,7 +4217,7 @@ Function RunScript {
     }
     
     # Windows Media Player
-    If ($MediaPlayer -eq 0) {
+    If ($MediaPlayer -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Windows Media Player..." 15 0
     } ElseIf ($MediaPlayer -eq 1) {
         DisplayOut "Installing Windows Media Player..." 11 0
@@ -4086,7 +4228,7 @@ Function RunScript {
     }
     
     # Work Folders Client
-    If ($WorkFolders -eq 0) {
+    If ($WorkFolders -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Work Folders Client..." 15 0
     } ElseIf ($WorkFolders -eq 1) {
         DisplayOut "Installing Work Folders Client..." 11 0
@@ -4098,7 +4240,7 @@ Function RunScript {
     
     # Install Linux Subsystem - Applicable to RS1 or newer
     If ($BuildVer -ge 14393) {
-        If ($LinuxSubsystem -eq 0) {
+        If ($LinuxSubsystem -eq 0 -and $ShowSkipped -eq 1) {
             DisplayOut "Skipping Linux Subsystem..." 15 0
         } ElseIf ($LinuxSubsystem -eq 1) {
             DisplayOut "Installing Linux Subsystem..." 11 0
@@ -4111,8 +4253,8 @@ Function RunScript {
             Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" -Name "AllowAllTrustedApps" -Type DWord -Value 0
             dism /online /Disable-Feature /FeatureName:Microsoft-Windows-Subsystem-Linux /Quiet /NoRestart
         }
-    } Else {
-        DisplayOut "Windows 10 Build isnt new enough for Linux Subsystem..." 14 0
+    } ElseIf ($LinuxSubsystem -ne 0) {
+        DisplayOut "Windows 10 Build isn't new enough for Linux Subsystem..." 14 0
     }
     
     ##########
@@ -4164,8 +4306,11 @@ Function RunScript {
     ForEach ($AppH in $APPS_AppsHide) {
         #$APPHDisplay = "Hidinging "$AppH"..."
         #DisplayOut $APPHDisplay 12 0
-        DisplayOut $AppH 12 0
-        Get-AppxPackage $AppH | Remove-AppxPackage
+        $ProvisionedPackage = Get-AppxProvisionedPackage -online | Where-Object {$_.displayName -eq $AppH}
+        If ($ProvisionedPackage -ne $null) {
+            DisplayOut $AppH 12 0
+            Get-AppxPackage $AppH | Remove-AppxPackage
+        }
     }
     
     DisplayOut "" 14 0
@@ -4176,20 +4321,23 @@ Function RunScript {
     ForEach ($AppU in $APPS_AppsUninstall) {
         #$APPUDisplay = "Uninstalling "+$AppU+"..."
         #DisplayOut $APPUDisplay 14 0
-        DisplayOut $AppU 14 0
-        $PackageFullName = (Get-AppxPackage $AppU).PackageFullName
-        $ProPackageFullName = (Get-AppxProvisionedPackage -online | where {$_.Displayname -eq $AppU}).PackageName
+        $ProvisionedPackage = Get-AppxProvisionedPackage -online | Where-Object {$_.displayName -eq $AppU}
+        If ($ProvisionedPackage -ne $null) {
+            DisplayOut $AppU 14 0
+            $PackageFullName = (Get-AppxPackage $AppU).PackageFullName
+            $ProPackageFullName = (Get-AppxProvisionedPackage -online | where {$_.Displayname -eq $AppU}).PackageName
         
-        # Alt removal
-        # DISM /Online /Remove-ProvisionedAppxPackage /PackageName:          
-        If ($PackageFullName) {
-            Remove-AppxPackage -package $PackageFullName
-        }
-        If ($ProPackageFullName) {
-            Remove-AppxProvisionedPackage -online -packagename $ProPackageFullName
+            # Alt removal
+            # DISM /Online /Remove-ProvisionedAppxPackage /PackageName:          
+            If ($PackageFullName) {
+                Remove-AppxPackage -package $PackageFullName
+            }
+            If ($ProPackageFullName) {
+                Remove-AppxProvisionedPackage -online -packagename $ProPackageFullName
+            }
         }
     }
-    
+
     ##########
     # Metro App Items -End
     ##########
@@ -4198,7 +4346,7 @@ Function RunScript {
     # Unpin App Items -Start
     ##########
     
-    If ($Unpin -eq 0) {
+    If ($Unpin -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Unpinning Items..." 15 0
     } ElseIf ($Unpin -eq 1){
         DisplayOut "" 12 0
@@ -4219,24 +4367,21 @@ Function RunScript {
     ##########
 
     DisplayOut "" 14 0
-    DisplayOut "----------------------------" 14 0
-    DisplayOut "-   Black Viper Services   -" 14 0
-    DisplayOut "----------------------------" 14 0
+    DisplayOut "--------------------------------------------" 14 0
+    DisplayOut "-   Black Viper's Service Configurations   -" 14 0
+    DisplayOut "--------------------------------------------" 14 0
     DisplayOut "" 14 0
     
     $Back_Viper = Black_Viper_Set $Back_Viper
-    write-host $Back_Viper
     
-    If ($Back_Viper -eq 0) {
-        DisplayOut "Skipping Black Viper Services..." 15 0
+    If ($Back_Viper -eq 0 -and $ShowSkipped -eq 1) {
+        DisplayOut "Skipping Black Viper's Service Configurations..." 15 0
     } ElseIf($Back_Viper -In 1..4) {    
         DisplayOut "" 14 0
         DisplayOut "Changing Services..." 12 0
         DisplayOut "--------------------" 12 0
         DisplayOut "" 14 0
-
         for ($i=0; $i -ne $ServiceLen; $i++) {
-            write-host "Test = $i"
             $ServiceT = $ServicesList[$i][$Back_Viper]
             $ServiceName = $ServicesList[$i][0]
             $ServiceNameFull = GetServiceNameFull $ServiceName
@@ -4254,11 +4399,14 @@ Function RunScript {
                     $RegPath = "HKLM\System\CurrentControlSet\Services\"+($ServiceNameFull)
                     Set-ItemProperty -Path $RegPath -Name "DelayedAutostart" -Type DWORD -Value 1
                 }
+            } Else {
+                $DispTemp = "$ServiceNameFull is already $ServiceType"
+                DisplayOut $DispTemp  15 0
             }
         }
     } ElseIf($Back_Viper -eq 9) {
         Write-Host ""
-        Write-Host "Not a Valid OS for Black Viper's Service Settings."  -ForegroundColor Red -BackgroundColor Black
+        Write-Host "Not a Valid OS for Black Viper's Service Configurations." -ForegroundColor Red -BackgroundColor Black
         Write-Host "Win 10 Home and Pro Only"
         Write-Host ""
     }
@@ -4268,8 +4416,8 @@ Function RunScript {
     ##########
     
     Remove-Variable -Name filebase -scope global
-    If ($Restart -eq 1) {
-        #Clear-Host
+    If ($Restart -eq 1 -and $RelType -eq "Stable ") {
+        Clear-Host
         Write-Host ""
         $Seconds = 10
         Write-Host "Restarting Computer in 10 Seconds..." -ForegroundColor Yellow -BackgroundColor Black
@@ -4283,9 +4431,11 @@ Function RunScript {
         }
         Write-Host "Restarting Computer..." -ForegroundColor Red -BackgroundColor Black
         Restart-Computer
-    } Else {
+    } ElseIf ($RelType -eq "Stable ") {
         Write-Host "Goodbye..."
         Exit
+    } Else {
+       Read-Host -Prompt "Press any key to continue"
     }
 }
 
@@ -4320,7 +4470,8 @@ $Script:CreateRestorePoint = 0    #0-Skip, 1-Create --(Restore point before scri
 $Script:Term_of_Use = 1           #1-See ToS, Anything else = Accepts Term of Use
 
 #Output Display
-$Script:Verbros = 1               #0-Dont Show output, 1-Show output
+$Script:Verbros = 1               #0-Dont Show output (Other than Errors), 1-Show output
+$Script:ShowSkipped = 1           #0-Dont Show Skipped, 1-Show Skipped
 $Script:ShowColor = 1             #0-Dont Show output Color, 1-Show output Colors
 
 #Restart when done? (I recommend restarting when done)
@@ -4372,7 +4523,8 @@ $Script:RemoteDesktop = 0         #0-Skip, 1-Enable, 2-Disable* --(Remote Deskto
 $Script:CastToDevice = 0          #0-Skip, 1-Enable*, 2-Disable
 $Script:PreviousVersions = 0      #0-Skip, 1-Enable*, 2-Disable
 $Script:IncludeinLibrary = 0      #0-Skip, 1-Enable*, 2-Disable
-$Script:PinTo = 0                 #0-Skip, 1-Enable*, 2-Disable
+$Script:PinToStart = 0            #0-Skip, 1-Enable*, 2-Disable
+$Script:PinToQuickAccess = 0      #0-Skip, 1-Enable*, 2-Disable
 $Script:ShareWith = 0             #0-Skip, 1-Enable*, 2-Disable
 $Script:SendTo = 0                #0-Skip, 1-Enable*, 2-Disable
 
@@ -4413,15 +4565,22 @@ $Script:RecentFileQikAcc = 0      #0-Skip, 1-Show/Add*, 2-Hide, 3-Remove --(Rece
 $Script:FrequentFoldersQikAcc = 0 #0-Skip, 1-Show*, 2-Hide --(Frequent Folders in Quick Access)
 $Script:WinContentWhileDrag = 0   #0-Skip, 1-Show*, 2-Hide
 
-#'This PC' items
+#'This PC' Items
 # Function  = Option              #Choices (* Indicates Windows Default)
-$Script:ThisPCOnDesktop = 0       #0-Skip, 1-Show, 2-Hide*
 $Script:DesktopIconInThisPC = 0   #0-Skip, 1-Show*, 2-Hide
 $Script:DocumentsIconInThisPC = 0 #0-Skip, 1-Show*, 2-Hide
 $Script:DownloadsIconInThisPC = 0 #0-Skip, 1-Show*, 2-Hide
 $Script:MusicIconInThisPC = 0     #0-Skip, 1-Show*, 2-Hide
 $Script:PicturesIconInThisPC = 0  #0-Skip, 1-Show*, 2-Hide
 $Script:VideosIconInThisPC = 0    #0-Skip, 1-Show*, 2-Hide
+
+#Desktop Items
+# Function  = Option              #Choices (* Indicates Windows Default)
+$Script:ThisPCOnDesktop = 0       #0-Skip, 1-Show, 2-Hide*
+$Script:NetworkOnDesktop = 0      #0-Skip, 1-Show, 2-Hide*
+$Script:RecycleBinOnDesktop = 0   #0-Skip, 1-Show, 2-Hide*
+$Script:UsersFileOnDesktop = 0    #0-Skip, 1-Show, 2-Hide*
+$Script:ControlPanelOnDesktop = 0 #0-Skip, 1-Show, 2-Hide*
 
 #Lock Screen
 # Function  = Option              #Choices (* Indicates Windows Default)
@@ -4453,7 +4612,7 @@ $Script:MediaPlayer = 0           #0-Skip, 1-Installed*, 2-Uninstall
 $Script:WorkFolders = 0           #0-Skip, 1-Installed*, 2-Uninstall
 $Script:LinuxSubsystem = 0        #0-Skip, 1-Installed, 2-Uninstall* (Anniversary Update)
 
-# Black Viper's Services Setting
+# Black Viper's Service Configurations
 $Script:Back_Viper = 0            #0-Skip, 1-Default, 2-Safe, 3-Tweaked
 # Black Viper's Website
 # http://www.blackviper.com/service-configurations/black-vipers-windows-10-service-configurations/
@@ -4524,7 +4683,7 @@ $Script:APP_WindowsAlarms = 0     # Alarms and Clock app
 $Script:APP_WindowsCalculator = 0 # Calculator app
 $Script:APP_WindowsCamera = 0     # Camera app
 $Script:APP_WindowsFeedbak1 = 0   # Feedback Hub
-$Script:APP_WindowsFeedbak2 =     # Feedback Hub
+$Script:APP_WindowsFeedbak2 = 0   # Feedback Hub
 $Script:APP_WindowsMaps = 0       # Maps app
 $Script:APP_WindowsPhone = 0      # Phone Companion app
 $Script:APP_WindowsStore = 0      # Windows Store
