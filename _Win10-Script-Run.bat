@@ -13,7 +13,7 @@ Pause
 :: Format of File
 :: Description of "The Command"
 :: "The Command"
-:: Note (If any)
+:: Note(s) (If any)
 
 ::----------------------------------------------------------------------
 
@@ -30,3 +30,4 @@ Pause
 ::Run script with Import of setting file Mine.txt
 ::PowerShell.exe -NoProfile -Command "& {Start-Process PowerShell.exe -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File %~dp0Win10-Menu.ps1 -Set %~dp0Mine.txt' -Verb RunAs}"
 ::Note: If your setting file is a different name make sure to change it from "Mine.txt" to your filename
+::Note: DOES NOT WORK ATM
