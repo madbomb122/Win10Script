@@ -5,12 +5,16 @@ Added option to show/hide when an item is skipped
 Added a check if running in Powershell or Powershell ISE (ISE is not supported)
 Renamed 'Pin To' to 'Pin To Start'
 Added Ability to Add/Remove 'Pin To Quick Access'
+Fixed some Items not displaying
 
 Added Ability to Show/Hide following icons to desktop:
 Network
 Recycle Bin
 User's Files 
 Control Panel
+
+Note: Somehow Metro Apps choices are not working.. until it's fixed this will
+  stay in testing
 
 -----------------------------------------------------------------------------------
 1.4-Menu (03-04-2017) 
