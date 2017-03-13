@@ -14,7 +14,7 @@
 # Modded Script + Menu By
 #  Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script/
-# Version: 1.5-Menu, 03-11-2017
+# Version: 1.5-Menu, 03-12-2017
 #
 # Release Type: Testing
 ##########
@@ -98,7 +98,7 @@ Param([alias("Set")] [string] $SettingImp)
 # Version Info -Start
 ##########
 
-$CurrVer = "1.5 (03-11-17) "
+$CurrVer = "1.5 (03-12-17) "
 $RelType = "Testing"
 #$RelType = "Beta   "
 #$RelType = "Stable "
@@ -633,20 +633,20 @@ function SaveSetting {
 ##########
 
 $ScriptOptionMenuItems = @(
-'              Metro Apps Items Menu              ',
+'            Script Option Items Menu             ',
 '1. Create Restore Point','4. Show Color          ',
-'2. Agree Term of Use   ','5. Show Skipped Items  ',
-'3. Verbros             ','6. Restart when Done   ',
+'2. Restart when Done   ','5. Show Skipped Items  ',
+'3. Verbros             ','                       ',
 'B. Back to Main Menu                             '
 )
 
 $ScriptOptionMenuItm = (
 (1,"CreateRestorePoint",1,0),
-(2,"Term_of_Use",1,0),
+(2,"Restart",1,0),
+#(2,"Term_of_Use",1,0),
 (3,"Verbros",1,0),
 (4,"ShowColor",1,0),
-(5,"ShowSkipped",1,0),
-(6,"Restart",1,0)
+(5,"ShowSkipped",1,0)
 )
 ShowSkipped
 
@@ -723,10 +723,10 @@ $UsageItems = @(
 '                How to Use Script                ',
 '                                                 ',
 ' Basic Usage:                                    ',
-' Use the menu & select what you want to change.  ',
+" Use the menu & select what you want to change.  ",
 '                                                 ',
 ' Advanced Usage Choices (Bypasses Menu):         ',
-' 1. Edit the script & change values there then   ',
+" 1. Edit the script & change values there then   ",
 '        run script with "-set Run"               ',
 ' 2. Run Script with an imported file with        ',
 '        "-set filename"                          ',
@@ -1027,7 +1027,7 @@ $TelemetryItems = @(
 
 $SmartScreenItems = @(
 '                  Smart Screen                   ',
-' Identify reported phishing & malware websites.  ',
+" Identify reported phishing & malware websites.  ",
 ' Helps you make informed decisions for downloads.',
 '0. Skip                                          ',
 '1. Enable*                                       ',
@@ -1455,7 +1455,7 @@ $SendToItems = @(
 $StartMenuSetMenuItems = @(
 '              Start Menu Items Menu              ',
 '1. Startmenu Web Search','4. Most Used Apps      ',
-'2. App Suggestions     ','5. Recent & Frequent   ',
+'2. App Suggestions     ',"5. Recent & Frequent   ",
 '3. Unpin Items         ','                       ',
 'B. Back to Script Setting Main Menu              '
 )
@@ -1508,7 +1508,7 @@ $MostUsedAppStartMenuItems = @(
 )
 
 $RecentItemsFrequentItems = @(
-'         Recent & Frequent in Start Menu         ',
+"         Recent & Frequent in Start Menu         ",
 '                                                 ',
 ' Recent and Frequent items listed in Start Menu. ',
 '0. Skip                                          ',
@@ -1642,7 +1642,7 @@ $TaskbarIconSizeItems = @(
 'C. Cancel (Keeps Current Setting)                '
 )
 
-$TaskbarIconSizeItems = @(
+$TrayIconItems = @(
 '                Notifcation Icons                ',
 '                                                 ',
 '                                                 ',
@@ -1808,10 +1808,20 @@ $AutorunItems = @(
 'C. Cancel (Keeps Current Setting)                '
 )
 
-$AutorunItems = @(
+$AutoplayItems = @(
 '                     Autoplay                    ',
 '                                                 ',
 '                                                 ',
+'0. Skip                                          ',
+'1. Enable                                        ',
+'2. Disable                                       ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$PidInTitleBarItems = @(
+'                 PID In Title Bar                ',
+' PID = Processor ID                              ',
+' PID will Show in Top Left of Title Bar.         ',
 '0. Skip                                          ',
 '1. Enable                                        ',
 '2. Disable                                       ',
@@ -1924,6 +1934,16 @@ $ThisPCOnDesktopItems = @(
 
 $NetworkOnDesktopItems = @(
 "                Network On Desktop               ",
+'                                                 ',
+'                                                 ',
+'0. Skip                                          ',
+'1. Show                                          ',
+'2. Hide*                                         ',
+'C. Cancel (Keeps Current Setting)                '
+)
+
+$RecycleBinOnDesktopItems = @(
+"                RecyclBin On Desktop             ",
 '                                                 ',
 '                                                 ',
 '0. Skip                                          ',
@@ -2194,7 +2214,7 @@ $MediaPlayerItems = @(
 $WorkFoldersItems = @(
 '                  Work Folders                   ',
 ' When using Work Folders to store files, you can ',
-' get to them from all your devices—even offline  ',
+' get to them from all your devices-even offline  ',
 '0. Skip                                          ',
 '1. Install*                                      ',
 '2. Uninstall                                     ',
@@ -2334,7 +2354,7 @@ $MetroAppsMenuItems = @(
 '              Metro Apps Items Menu              ',
 '1. ALL Metro Apps      ','24. Mahjong game       ',
 '2. 3DBuilder app       ','25. Maps app           ',
-'3. Alarms & Clock app  ','26. Messaging app      ',
+"3. Alarms & Clock app  ",'26. Messaging app      ',
 '4. Asphalt 8 game      ','27. Microsoft Solitaire',
 '5. Bing Money app      ','28. Minecraft game     ',
 '6. Bing News app       ','29. Movie Moments app  ',
@@ -2342,7 +2362,7 @@ $MetroAppsMenuItems = @(
 '8. Bing Translator app ','31. Office OneNote app ',
 '9. Bing Weather app    ','32. Office Sway app    ',
 '10. Calculator app     ','33. One Connect        ',
-'11. Calendar & Mail app','34. People app         ',
+"11. Calendar & Mail app",'34. People app         ',
 '12. Camera app         ','35. Phone app          ',
 '13. Candy Crush game   ','36. Phone Companion app',
 '14. Canvas app         ','37. Photos app         ',
@@ -2413,13 +2433,13 @@ $ALL_METRO_APPSItems = @(
 'All Metro Apps are set to your choice            ')
 
 $3DBuilderItems = @(
-'                 3DBuilder app                  ',
-'View, capture, personalize, and print 3D models ',
-'using 3D Builder.                               ')
+'                 3DBuilder app                   ',
+'View, capture, personalize, and print 3D models  ',
+'using 3D Builder.                                ')
 
 $WindowsAlarmsItems = @(
-'               Alarms & Clock app                ',
-'Set alarms & reminders, check times around the   ',
+"               Alarms & Clock app                ",
+"Set alarms & reminders, check times around the   ",
 'world, and time your activities, including laps  ')
 
 $Asphalt8AirborneItems = @(
@@ -2439,7 +2459,7 @@ $BingNewsItems = @(
 
 $BingSportsItems = @(
 '                 Bing Sports app                 ',
-'App is packed with live scores & in-depth game   ',
+"App is packed with live scores & in-depth game   ",
 'experiences for more than 150 leagues.           ')
 
 $BingTranslatorItems = @(
@@ -2454,11 +2474,11 @@ $BingWeatherItems = @(
 
 $WindowsCalculatorItems = @(
 '                 Calculator app                  ',
-'Calculator that includes standard, scientific, & ',
+"Calculator that includes standard, scientific, & ",
 'programmer modes, as well as a unit converter.   ')
 
 $CommunicationsItems = @(
-'               Calendar & Mail app               ',
+"               Calendar & Mail app               ",
 '                                                 ',
 '                                                 ')
 
@@ -2509,7 +2529,7 @@ $ZuneMusicItems = @(
 
 $HouzzItems = @(
 '                    Houzz app                    ',
-'Whether you’re looking to renovate or redecorate,',
+"Whether you're looking to renovate or redecorate,",
 'Has everything you need to improve your home.    ')
 
 $MicrosoftJackpotItems = @(
@@ -2529,7 +2549,7 @@ $MicrosoftMahjongItems = @(
 
 $WindowsMapsItems = @(
 '                    Maps app                     ',
-'Voice navigation & turn-by-turn driving, transit,',
+"Voice navigation & turn-by-turn driving, transit,",
 'and walking directions.                          ')
 
 $MessagingItems = @(
@@ -2550,7 +2570,7 @@ $MinecraftUWPItems = @(
 $MovieMomentsItems = @(
 '                Movie Moments app                ',
 'Trim videos to your favorite parts, highlight key',
-'moments with captions & effects, and set music.  ')
+"moments with captions & effects, and set music.  ")
 
 $NetflixItems = @(
 '                   Netflix app                   ',
@@ -2575,7 +2595,7 @@ $OneConnectItems = @(
 $PeopleItems = @(
 '                   People app                    ',
 'Check out what people are up to across services  ',
-'they use &  how you to connect to with them.     ')
+"they use &  how you to connect to with them.     ")
 
 $CommsPhoneItems = @(
 '                    Phone app                    ',
@@ -2619,7 +2639,7 @@ $TwitterItems = @(
 
 $VoiceRecorderItems = @(
 '               Voice Recorder app                ',
-'Record sounds, lectures, interviews, & events.   ',
+"Record sounds, lectures, interviews, & events.   ",
 'Mark key moments as you record.                  ')
 
 $WindowsStoreItems = @(' Windows Store',
@@ -2743,7 +2763,7 @@ $Pined_App = @(
     'Candy Crush Soda Saga',
     'xbox',
     'Groove music',
-    'movies & tv',
+    "movies & tv",
     'microsoft solitaire collection',
     'money',
     'get office',
@@ -2859,11 +2879,17 @@ Function LoadWinDefault {
 ##########
 
 Function RunScript {
+    DisplayOut "" 14 0
+    DisplayOut "------------------" 14 0
+    DisplayOut "-   Pre-Script   -" 14 0
+    DisplayOut "------------------" 14 0
+    DisplayOut "" 14 0
+	
     If ($CreateRestorePoint -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Creation of System Restore Point..." 15 0
     } ElseIf ($CreateRestorePoint -eq 1) {
-        DisplayOut "Creating System Restore Point Named 'Win10 Initial Setup Script'." 15 1
-        DisplayOut "Please Wait..." 15 1
+        DisplayOut "Creating System Restore Point Named 'Win10 Initial Setup Script'." 11 1
+        DisplayOut "Please Wait..." 11 1
         Checkpoint-Computer -Description "Win10 Initial Setup Script" | Out-Null
     }
 
@@ -3426,10 +3452,10 @@ Function RunScript {
     If ($BatteryUIBar -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Battery UI Bar..." 15 0
     } ElseIf ($BatteryUIBar -eq 1) {
-        DisplayOut "Enabling New Battery UI Bar..." 16 0
+        DisplayOut "Enabling New Battery UI Bar..." 11 0
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" -Name "UseWin32BatteryFlyout"
     } ElseIf ($BatteryUIBar -eq 2) {
-        DisplayOut "Enabling Old Battery UI Bar..." 16 0
+        DisplayOut "Enabling Old Battery UI Bar..." 12 0
         If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell")) {
             New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" | Out-Null
         }
@@ -3440,10 +3466,10 @@ Function RunScript {
     If ($ClockUIBar -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Clock UI Bar..." 15 0
     } ElseIf ($ClockUIBar -eq 1) {
-        DisplayOut "Enabling New Clock UI Bar..." 16 0
+        DisplayOut "Enabling New Clock UI Bar..." 11 0
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" -Name "UseWin32TrayClockExperience"
     } ElseIf ($ClockUIBar -eq 2) {
-        DisplayOut "Enabling Old Clock UI Bar..." 16 0
+        DisplayOut "Enabling Old Clock UI Bar..." 12 0
         If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell")) {
             New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" | Out-Null
         }
@@ -3454,10 +3480,10 @@ Function RunScript {
     If ($VolumeControlBar -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Volume Control Bar..." 15 0
     } ElseIf ($VolumeControlBar -eq 1) {
-        DisplayOut "Enabling New Volume Control Bar (Horizontal)..." 16 0
+        DisplayOut "Enabling New Volume Control Bar (Horizontal)..." 11 0
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\MTCUVC" -Name "EnableMtcUvc"
     } ElseIf ($VolumeControlBar -eq 2) {
-        DisplayOut "Enabling Classic Volume Control Bar (Vertical)..." 16 0
+        DisplayOut "Enabling Classic Volume Control Bar (Vertical)..." 12 0
         If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\MTCUVC")) {
             New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\MTCUVC" | Out-Null
         }
@@ -3526,10 +3552,10 @@ Function RunScript {
     If ($SecondsInClock -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Seconds in Taskbar Clock..." 15 0
     } ElseIf ($SecondsInClock -eq 1) {
-        DisplayOut "Showing Seconds in Taskbar Clock..." 16 0
+        DisplayOut "Showing Seconds in Taskbar Clock..." 11 0
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSecondsInSystemClock" -Type DWord -Value 1
     } ElseIf ($SecondsInClock -eq 2) {
-        DisplayOut "Hiding Seconds in Taskbar Clock..." 16 0
+        DisplayOut "Hiding Seconds in Taskbar Clock..." 12 0
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSecondsInSystemClock" -Type DWord -Value 0
     }
     
@@ -4455,7 +4481,6 @@ Function RunScript {
         DisplayOut "--------------------" 12 0
         DisplayOut "" 14 0
         for ($i=0; $i -ne $ServiceLen; $i++) {
-            write-host "Test = $i"
             $ServiceT = $ServicesList[$i][$Back_Viper]
             $ServiceName = $ServicesList[$i][0]
             $ServiceNameFull = GetServiceNameFull $ServiceName
