@@ -69,6 +69,10 @@ Examples: <br />
 **Q:** How long are you going to maintain the script? <br />
 **A:** No Clue.
 
+**Q:** Can I add an APP to Install/Hide/Uninstall, if so how? <br />
+**A:** Yes you can. You can add it in the script or in a setting file under APPS_AppsInstall, APPS_AppsHide, APPS_AppsUninstall.
+---------Please note you have to have the proper format and packagename for it to work.
+
 **Q:** Can you add *BLAH* to the script? <br />
 **A:** Mabye, Depends on what it is and how hard it would be to add. 
 
