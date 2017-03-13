@@ -1,4 +1,19 @@
 -----------------------------------------------------------------------------------
+1.5-Menu (03-12-2017) 
+
+Added option to show/hide when an item is skipped
+Added a check if running in Powershell or Powershell ISE (ISE is not supported)
+Renamed 'Pin To' to 'Pin To Start'
+Added Ability to Add/Remove 'Pin To Quick Access'
+Fixed some Items not displaying
+
+Added Ability to Show/Hide following icons to desktop:
+Network
+Recycle Bin
+User's Files 
+Control Panel
+
+-----------------------------------------------------------------------------------
 1.4-Menu (03-04-2017) 
 
 Added Black Viper's service settings (Win 10 Home/Pro ONLY)
