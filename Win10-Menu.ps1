@@ -14,7 +14,7 @@
 # Modded Script + Menu By
 #  Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script/
-# Version: 1.5-Menu, 03-12-2017
+# Version: 1.6-Menu, 03-14-2017
 #
 # Release Type: Stable
 ##########
@@ -171,6 +171,121 @@ If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
 
 ##########
 # Pre-Script -End
+##########
+
+##########
+# Needed Variable -Start
+##########
+
+# Define HKCR
+If (!(Test-Path "HKCR:")) {
+     New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null
+}
+
+# Define HKU
+If (!(Test-Path "HKU:")) {
+     New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_USERS | Out-Null
+}
+
+If ([System.Environment]::Is64BitProcess) {
+    $OSType = 64
+}
+
+$AppsList = @(
+    'Microsoft.3DBuilder',
+    'GAMELOFTSA.Asphalt8Airborne',
+    'Microsoft.BingFinance',
+    'Microsoft.BingNews',
+    'Microsoft.BingSports',
+    'Microsoft.BingTranslator',
+    'Microsoft.BingWeather',
+    'king.com.CandyCrushSodaSaga',
+    'Microsoft.CommsPhone',
+    'Microsoft.windowscommunicationsapps',
+    'Facebook.Facebook',
+    'D52A8D61.FarmVille2CountryEscape',
+    'Microsoft.FreshPaint',
+    'Microsoft.Getstarted',
+    '0D16BB98.Houzz',
+    'Microsoft.Messaging',
+    'Microsoft.MicrosoftJackpot',
+    'Microsoft.MicrosoftJigsaw',          
+    'MicrosoftMahjong',
+    'Microsoft.MicrosoftOfficeHub',
+    'Microsoft.MicrosoftSudoku',
+    'Microsoft.MinecraftUWP',   
+    'Microsoft.MovieMoments',
+    '4DF9E0F8.Netflix',
+    'Microsoft.Office.OneNote',
+    'Microsoft.Office.Sway',
+    'Microsoft.OneConnect',
+    'Microsoft.People',
+    'Microsoft.Windows.Photos',
+    'Microsoft.SkypeApp',
+    'Microsoft.SkypeWiFi',
+    'Microsoft.MicrosoftSolitaireCollection',
+    'Microsoft.MicrosoftStickyNotes',
+    'Microsoft.Studios.Wordament',
+    'Microsoft.Taptiles',
+    '9E2F88E3.Twitter',
+    'Microsoft.WindowsSoundRecorder',
+    'Microsoft.WindowsAlarms',
+    'Microsoft.WindowsCalculator',
+    'Microsoft.WindowsCamera',
+    'Microsoft.WindowsFeedback',
+    'Microsoft.WindowsFeedbackHub',
+    'Microsoft.WindowsMaps',
+    'Microsoft.WindowsPhone',
+    'Microsoft.WindowsStore',
+    'Microsoft.XboxApp',
+    'Microsoft.ZuneMusic',
+    'Microsoft.ZuneVideo'
+)
+
+# predefined Color Array
+$colors = @(
+    "black",        #0
+    "blue",         #1
+    "cyan",         #2
+    "darkblue",     #3
+    "darkcyan",     #4
+    "darkgray",     #5
+    "darkgreen",    #6
+    "darkmagenta",  #7
+    "darkred",      #8
+    "darkyellow",   #9
+    "gray",         #10
+    "green",        #11
+    "magenta",      #12
+    "red",          #13
+    "white",        #14
+    "yellow"        #15
+)
+
+$Pined_App = @(
+    'Mail',
+    'Store',
+    'Calendar',
+    'Microsoft Edge',
+    'Photos',
+    'Cortana',
+    'Weather',
+    'Phone Companion',
+    'Twitter',
+    'Skype Video',
+    'Candy Crush Soda Saga',
+    'xbox',
+    'Groove music',
+    "movies & tv",
+    'microsoft solitaire collection',
+    'money',
+    'get office',
+    'onenote',
+    'news'
+)
+
+##########
+# Needed Variable -End
 ##########
 
 ##########
@@ -785,16 +900,21 @@ function HUACMenu([String]$VariJ) {
   # Black Viper -Start
   ##########
 
-$BlackViperItems = @(
-"       Black Viper's Service Configurations      ",
-' Will change the services based on your choice.  ',
-" Settings based on Black Viper's Configurations  ",
-'0. Skip                                          ',
-'1. Default                                       ',
-'2. Safe                                          ',
-'3. Tweaked                                       ',
-"W. Go to Black Viper's Website                   ",
-'C. Cancel (Keeps Current Setting)                ')
+$BlackViperDisItems = @(" ") * 9
+$BlackViperDisItems[0] = "       Black Viper's Service Configurations      "
+If ($OSType -ne 64){
+    $BlackViperDisItems[1] = "Settings based on Black Viper's Configurations.  "
+    $BlackViperDisItems[2] = "Ment for x64, Use on x32 AT YOUR OWN RISK.       "
+} Else {
+    $BlackViperDisItems[1] = "                                                 "
+    $BlackViperDisItems[2] = "Settings based on Black Viper's Configurations.  "
+}
+$BlackViperDisItems[3] = '1. Default                                       '
+$BlackViperDisItems[4] = '2. Safe                                          '
+$BlackViperDisItems[5] = '3. Tweaked                                       '
+$BlackViperDisItems[6] = 'Q. Quit (No changes)                             '
+$BlackViperDisItems[7] = "M. Go to Madbomb122's Github                     "
+$BlackViperDisItems[8] = "B. Go to Black Viper's Website                   "
 
 $ServicesList = @(
 #(Service Name, Def-Home, Def-Pro , Safe, Tweaked)
@@ -886,7 +1006,7 @@ function Black_Viper_Input {
     $Black_Viper_Input = 'X'
     while($Black_Viper_Input -ne "Out"){
         Clear-Host
-        ChoicesDisplay $BlackViperItems $Back_Viper
+        ChoicesDisplay $BlackViperDisItems $Back_Viper
         If($Invalid -eq 1){
             Write-host ""
             Write-host "Invalid Input" -ForegroundColor Red -BackgroundColor Black -NoNewline
@@ -1191,7 +1311,8 @@ $ServiceTweaksSetMenuItems = @(
 '1. User Agent Control  ','6. Firewall            ',
 '2. Admin Shares        ','7. HomeGroups          ',
 '3. Windows Defender    ','8. Remote Desktop      ',
-'4. Remote Assistance   ','9. Black Viper Setting ',
+'4. Remote Assistance   ','                       ',
+#'4. Remote Assistance   ','9. Black Viper Setting ',
 '5. Sharing Mapped Drive','                       ',
 'B. Back to Script Setting Main Menu              ')
 
@@ -1203,8 +1324,8 @@ $ServiceTweaksSetMenuItm = (
 (5,"SharingMappedDrives",2,0),
 (6,"Firewall",2,0),
 (7,"HomeGroups",2,0),
-(8,"RemoteDesktop",2,0),
-(9,"Black_Viper_Input",3,0))
+(8,"RemoteDesktop",2,0))
+#(9,"Black_Viper_Input",3,0))
 
 $UACItems = @(
 '               User Agent Control                ',
@@ -2091,6 +2212,7 @@ $LinuxSubsystemItems = @(
   ##########
   # Metro Apss Menu -Start
   ##########
+  
 $APList = @(
     'APP_3DBuilder',
     'APP_Asphalt8Airborne',
@@ -2141,12 +2263,6 @@ $APList = @(
     'APP_ZuneMusic',
     'APP_ZuneVideo'
 )
-
-Get-Variable -scope script | ForEach-Object {
-    If($_.name -Match "^APP_*") {
-        $APList += $_.name
-    }
-}
 
 function AllMetroSet([Int]$Number){
     ForEach ($ApL in $APList) {
@@ -2566,119 +2682,6 @@ $XboxAppItems = @(
 ##########
 
 ##########
-# Needed Variable -Start
-##########
-
-# Define HKCR
-If (!(Test-Path "HKCR:")) {
-     New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null
-}
-
-# Define HKU
-If (!(Test-Path "HKU:")) {
-     New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_USERS | Out-Null
-}
-
-$AppsList = @(
-    'Microsoft.3DBuilder',
-    'GAMELOFTSA.Asphalt8Airborne',
-    'Microsoft.BingFinance',
-    'Microsoft.BingNews',
-    'Microsoft.BingSports',
-    'Microsoft.BingTranslator',
-    'Microsoft.BingWeather',
-    'king.com.CandyCrushSodaSaga',
-    'Microsoft.CommsPhone',
-    'Microsoft.windowscommunicationsapps',
-    'Facebook.Facebook',
-    'D52A8D61.FarmVille2CountryEscape',
-    'Microsoft.FreshPaint',
-    'Microsoft.Getstarted',
-    '0D16BB98.Houzz',
-    'Microsoft.Messaging',
-    'Microsoft.MicrosoftJackpot',
-    'Microsoft.MicrosoftJigsaw',          
-    'MicrosoftMahjong',
-    'Microsoft.MicrosoftOfficeHub',
-    'Microsoft.MicrosoftSudoku',
-    'Microsoft.MinecraftUWP',   
-    'Microsoft.MovieMoments',
-    '4DF9E0F8.Netflix',
-    'Microsoft.Office.OneNote',
-    'Microsoft.Office.Sway',
-    'Microsoft.OneConnect',
-    'Microsoft.People',
-    'Microsoft.Windows.Photos',
-    'Microsoft.SkypeApp',
-    'Microsoft.SkypeWiFi',
-    'Microsoft.MicrosoftSolitaireCollection',
-    'Microsoft.MicrosoftStickyNotes',
-    'Microsoft.Studios.Wordament',
-    'Microsoft.Taptiles',
-    '9E2F88E3.Twitter',
-    'Microsoft.WindowsSoundRecorder',
-    'Microsoft.WindowsAlarms',
-    'Microsoft.WindowsCalculator',
-    'Microsoft.WindowsCamera',
-    'Microsoft.WindowsFeedback',
-    'Microsoft.WindowsFeedbackHub',
-    'Microsoft.WindowsMaps',
-    'Microsoft.WindowsPhone',
-    'Microsoft.WindowsStore',
-    'Microsoft.XboxApp',
-    'Microsoft.ZuneMusic',
-    'Microsoft.ZuneVideo'
-)
-
-# predefined Color Array
-$colors = @(
-    "black",        #0
-    "blue",         #1
-    "cyan",         #2
-    "darkblue",     #3
-    "darkcyan",     #4
-    "darkgray",     #5
-    "darkgreen",    #6
-    "darkmagenta",  #7
-    "darkred",      #8
-    "darkyellow",   #9
-    "gray",         #10
-    "green",        #11
-    "magenta",      #12
-    "red",          #13
-    "white",        #14
-    "yellow"        #15
-)
-
-$Pined_App = @(
-    'Mail',
-    'Store',
-    'Calendar',
-    'Microsoft Edge',
-    'Photos',
-    'Cortana',
-    'Weather',
-    'Phone Companion',
-    'Twitter',
-    'Skype Video',
-    'Candy Crush Soda Saga',
-    'xbox',
-    'Groove music',
-    "movies & tv",
-    'microsoft solitaire collection',
-    'money',
-    'get office',
-    'onenote',
-    'news'
-)
-
-$CustomSet = 0
-
-##########
-# Needed Variable -End
-##########
-
-##########
 # Pre-Made Settings -Start
 ##########
 
@@ -2785,7 +2788,7 @@ Function RunScript {
     DisplayOut "-   Pre-Script   -" 14 0
     DisplayOut "------------------" 14 0
     DisplayOut "" 14 0
-	
+    
     If ($CreateRestorePoint -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Creation of System Restore Point..." 15 0
     } ElseIf ($CreateRestorePoint -eq 1) {
@@ -2820,12 +2823,16 @@ Function RunScript {
         DisplayOut "Enabling Telemetry..." 11 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 3
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 3
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 3
+        If($OSType -eq 64) {
+            Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 3
+        }
     } ElseIf ($Telemetry -eq 2) {
         DisplayOut "Disabling Telemetry..." 12 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0
+        If($OSType -eq 64) {
+            Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0
+        }
     }
 
     # Wi-Fi Sense
@@ -3274,7 +3281,7 @@ Function RunScript {
         Set-ItemProperty -Path "HKCR:\Microsoft.Website\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value ""
         Set-ItemProperty -Path "HKCR:\mscfile\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value ""
     }
-	
+    
     # Pin To Quick Access Context Menu
     If ($PinToQuickAccess -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Pin To Quick Access Context item..." 15 0
@@ -3293,7 +3300,7 @@ Function RunScript {
         Set-ItemProperty -Path "HKCR:\Folder\shell\pintohome\command"  -Name "DelegateExecute" -Type String -Value ""
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome"  -Name "MUIVerb" -Type String -Value ""
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome"  -Name "AppliesTo" -Type String -Value ""
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome\command]"  -Name "DelegateExecute" -Type String -Value ""		
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome\command]"  -Name "DelegateExecute" -Type String -Value ""        
     }
     
     # Share With Context Menu
@@ -3748,11 +3755,15 @@ Function RunScript {
     } ElseIf ($DesktopIconInThisPC -eq 1) {
         DisplayOut "Showing Desktop Icon in This PC..." 11 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
+        If($OSType -eq 64) {
+            Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
+        }
     } ElseIf ($DesktopIconInThisPC -eq 2) {
         DisplayOut "Hiding Desktop icon from This PC..." 12 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
+        If($OSType -eq 64) {
+            Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
+        }
     }
     
     # Documents Icon in This PC
@@ -3761,11 +3772,15 @@ Function RunScript {
     } ElseIf ($DocumentsIconInThisPC -eq 1) {
         DisplayOut "Showing Documents Icon in This PC..." 11 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{f42ee2d3-909f-4907-8871-4c22fc0bf756}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{f42ee2d3-909f-4907-8871-4c22fc0bf756}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
+        If($OSType -eq 64) {
+             Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{f42ee2d3-909f-4907-8871-4c22fc0bf756}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
+        }
     }ElseIf ($DocumentsIconInThisPC -eq 2) {
         DisplayOut "Hiding Documents icon from This PC..." 12 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{f42ee2d3-909f-4907-8871-4c22fc0bf756}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{f42ee2d3-909f-4907-8871-4c22fc0bf756}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
+        If($OSType -eq 64) {
+             Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{f42ee2d3-909f-4907-8871-4c22fc0bf756}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
+        }
     }
     
     # Downloads icon from This PC
@@ -3774,11 +3789,15 @@ Function RunScript {
     } ElseIf ($DownloadsIconInThisPC -eq 1) {
         DisplayOut "Showing Downloads Icon in This PC..." 11 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{7d83ee9b-2244-4e70-b1f5-5393042af1e4}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{7d83ee9b-2244-4e70-b1f5-5393042af1e4}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
+        If($OSType -eq 64) {
+            Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{7d83ee9b-2244-4e70-b1f5-5393042af1e4}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
+        }
     } ElseIf ($DownloadsIconInThisPC -eq 2) {
         DisplayOut "Hiding Downloads icon from This PC..." 12 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{7d83ee9b-2244-4e70-b1f5-5393042af1e4}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{7d83ee9b-2244-4e70-b1f5-5393042af1e4}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
+        If($OSType -eq 64) {
+            Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{7d83ee9b-2244-4e70-b1f5-5393042af1e4}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
+        }
     }
     
     # Music icon from This PC
@@ -3787,11 +3806,15 @@ Function RunScript {
     } ElseIf ($MusicIconInThisPC -eq 1) {
         DisplayOut "Showing Music Icon in This PC..." 11 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{a0c69a99-21c8-4671-8703-7934162fcf1d}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{a0c69a99-21c8-4671-8703-7934162fcf1d}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
+        If($OSType -eq 64) {
+            Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{a0c69a99-21c8-4671-8703-7934162fcf1d}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
+        }
     } ElseIf ($MusicIconInThisPC -eq 2) {
         DisplayOut "Hiding Music icon from This PC..." 12 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{a0c69a99-21c8-4671-8703-7934162fcf1d}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{a0c69a99-21c8-4671-8703-7934162fcf1d}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
+        If($OSType -eq 64) {
+            Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{a0c69a99-21c8-4671-8703-7934162fcf1d}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
+        }
     }
     
     # Pictures icon from This PC
@@ -3800,11 +3823,15 @@ Function RunScript {
     } ElseIf ($PicturesIconInThisPC -eq 1) {
         DisplayOut "Showing Pictures Icon in This PC..." 11 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{0ddd015d-b06c-45d5-8c4c-f59713854639}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{0ddd015d-b06c-45d5-8c4c-f59713854639}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
+        If($OSType -eq 64) {
+            Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{0ddd015d-b06c-45d5-8c4c-f59713854639}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
+        }
     } ElseIf ($PicturesIconInThisPC -eq 2) {
         DisplayOut "Hiding Pictures icon from This PC..." 12 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{0ddd015d-b06c-45d5-8c4c-f59713854639}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{0ddd015d-b06c-45d5-8c4c-f59713854639}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
+        If($OSType -eq 64) {
+            Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{0ddd015d-b06c-45d5-8c4c-f59713854639}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
+        }
     }
     
     # Hide Videos icon from This PC
@@ -3813,11 +3840,15 @@ Function RunScript {
     } ElseIf ($VideosIconInThisPC -eq 1) {
         DisplayOut "Showing Videos Icon in This PC..." 11 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{35286a68-3c57-41a1-bbb1-0eae73d76c95}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{35286a68-3c57-41a1-bbb1-0eae73d76c95}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
+        If($OSType -eq 64) {
+            Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{35286a68-3c57-41a1-bbb1-0eae73d76c95}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Show"
+        }
     } ElseIf ($VideosIconInThisPC -eq 2) {
         DisplayOut "Hiding Videos icon from This PC..." 12 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{35286a68-3c57-41a1-bbb1-0eae73d76c95}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{35286a68-3c57-41a1-bbb1-0eae73d76c95}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
+        If($OSType -eq 64) {
+            Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{35286a68-3c57-41a1-bbb1-0eae73d76c95}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
+        }
     }
     
     ##########
@@ -4365,7 +4396,7 @@ Function RunScript {
     ##########
     # Black Viper -Start
     ##########
-
+<#
     DisplayOut "" 14 0
     DisplayOut "--------------------------------------------" 14 0
     DisplayOut "-   Black Viper's Service Configurations   -" 14 0
@@ -4410,7 +4441,7 @@ Function RunScript {
         Write-Host "Win 10 Home and Pro Only"
         Write-Host ""
     }
-    
+#>
     ##########
     # Black Viper -End
     ##########
@@ -4613,7 +4644,7 @@ $Script:WorkFolders = 0           #0-Skip, 1-Installed*, 2-Uninstall
 $Script:LinuxSubsystem = 0        #0-Skip, 1-Installed, 2-Uninstall* (Anniversary Update)
 
 # Black Viper's Service Configurations
-$Script:Back_Viper = 0            #0-Skip, 1-Default, 2-Safe, 3-Tweaked
+#$Script:Back_Viper = 0            #0-Skip, 1-Default, 2-Safe, 3-Tweaked
 # Black Viper's Website
 # http://www.blackviper.com/service-configurations/black-vipers-windows-10-service-configurations/
 
