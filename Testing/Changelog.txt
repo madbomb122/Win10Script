@@ -4,6 +4,12 @@
 Nothing ATM
 
 -----------------------------------------------------------------------------------
+1.6-Menu (03-14-2017)
+
+Disabled Black Viper Until both creator's update is released and
+  when Black Viper finishes settings
+
+-----------------------------------------------------------------------------------
 1.5-Menu (03-12-2017) 
 
 Added option to show/hide when an item is skipped
