@@ -1,7 +1,13 @@
 @ECHO OFF
 Echo "Running Win10 Initial Setup Script -Menu version"
-::Add colons before the pause if you dont want a pause (or delete it)
-Pause 
+
+::Do not change unless you know what you are doing
+set Directory=%~dp0
+set ScriptFile=Win10-Menu.ps1
+
+::Change Mine.txt to your settingfile, 
+::Only matters if you are going to run script with setting
+set SettingFile=Mine.txt
 
 ::----------------------------------------------------------------------
 
@@ -13,21 +19,19 @@ Pause
 :: Format of File
 :: Description of "The Command"
 :: "The Command"
-:: Note(s) (If any)
+:: Note (If any)
 
 ::----------------------------------------------------------------------
 
 ::Run script with going into the Menu
-::PowerShell.exe -NoProfile -Command "& {Start-Process PowerShell.exe -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File %~dp0Win10-Menu.ps1' -Verb RunAs}"
+::PowerShell.exe -NoProfile -Command "& {Start-Process PowerShell.exe -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File Directory%\%ScriptFile%' -Verb RunAs}"
 
 ::Run script with Settings that are in the Script
-::PowerShell.exe -NoProfile -Command "& {Start-Process PowerShell.exe -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File %~dp0Win10-Menu.ps1' -Set Run -Verb RunAs}"
+::PowerShell.exe -NoProfile -Command "& {Start-Process PowerShell.exe -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File Directory%\%ScriptFile% -Set Run -Verb RunAs}"
 ::Note: Default Settings in script is to Skip, you have to change them
 
 ::Run script with Windows Default Settings
-::PowerShell.exe -NoProfile -Command "& {Start-Process PowerShell.exe -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File %~dp0Win10-Menu.ps1 -Set WD' -Verb RunAs}"
+::PowerShell.exe -NoProfile -Command "& {Start-Process PowerShell.exe -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File %Directory%\%ScriptFile% -Set WD' -Verb RunAs}"
 
-::Run script with Import of setting file Mine.txt
-::PowerShell.exe -NoProfile -Command "& {Start-Process PowerShell.exe -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File %~dp0Win10-Menu.ps1 -Set %~dp0Mine.txt' -Verb RunAs}"
-::Note: If your setting file is a different name make sure to change it from "Mine.txt" to your filename
-::Note: DOES NOT WORK ATM
+::Run script with Import of setting file
+::PowerShell.exe -NoProfile -Command "& {Start-Process PowerShell.exe -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File %Directory%\%ScriptFile% -Set %SettingFile%' -Verb RunAs}"
