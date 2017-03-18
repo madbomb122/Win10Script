@@ -57,7 +57,7 @@ Examples: <br />
 
 **Q:**: I've run the script and it did *BLAH*, can I undo it? <br />
 **A1:** Yes, Most things can easily be undone by going in the script and run it again with the deisred change. <br />
-**A2:** You also may beable to use system restore if you created a restore point (can be done from script)
+**A2:** System Restore can undo some of the changes, if you created a restore point (can be done from script)
 
 **Q:** The script messed up my computer. <br />
 **A:** The script is 'as is', any problems you have/had is not my problem.
@@ -68,7 +68,7 @@ Examples: <br />
 **Q:** How long are you going to maintain the script? <br />
 **A:** No Clue.
 
-**Q:** Can I add an APP to Install/Hide/Uninstall, if so how? <br />
+**Q:** Can I add an App to Install/Hide/Uninstall, if so how? <br />
 **A:** Yes you can. You can add it in the script file under APPS_AppsInstall, APPS_AppsHide, APPS_AppsUninstall. <br />
 ---------Please note you have to have the proper format and packagename for it to work.
 
