@@ -1,8 +1,17 @@
 -----------------------------------------------------------------------------------
+1.7-Menu (03-17-2017) 
+
+Fixed bug with using the bat file to run with setting file
+Removed Custom App Import in setting file (was causeing the apps to not Install/Hide/Uninstall)
+
+-----------------------------------------------------------------------------------
 1.6-Menu (03-14-2017)
 
 Disabled Black Viper Until both creator's update is released and
-  when Black Viper finishes settings
+  when Black Viper finishes settings.
+  
+Note: If you really want to use this feature please use script from my other repo for now
+https://github.com/madbomb122/BlackViperScript
 
 -----------------------------------------------------------------------------------
 1.5-Menu (03-12-2017) 
