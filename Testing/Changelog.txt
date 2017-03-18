@@ -7,6 +7,7 @@ Nothing ATM
 1.7-Menu (03-17-2017) 
 
 Fixed bug with using the bat file to run with setting file
+Fixed bug with add/remove pin to "quick access"
 Removed Custom App Import in setting file (was causeing the apps to not Install/Hide/Uninstall)
 
 -----------------------------------------------------------------------------------
