@@ -1,5 +1,6 @@
 # To Do/Done
-Nothing ATM
+
+-[] Ability to have script check for newer version (If I can figure out how to do it easyly)
 
 -------------------------------------------------------------------------------------------------------------
 
