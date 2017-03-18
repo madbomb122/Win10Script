@@ -17,7 +17,6 @@ Select option to run script <br />
 ## [](#header-2)Advanced Usage
 Use one of the following Methods 
 (Bat file provided can run script, look in bat file for insructions) <br />
-** Note: You cant use the '-run filename' ability in the bat file.. it loads nothing. I'm looking into it atm.
 
 Change the variables you want (Bottom of Script) then run script with: <br />
    -Set Run
