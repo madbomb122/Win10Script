@@ -14,7 +14,7 @@
 # Modded Script + Menu By
 #  Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script/
-# Version: 1.6-Menu, 03-14-2017
+# Version: 1.7-Menu, 03-17-2017
 #
 # Release Type: Testing
 ##########
@@ -98,7 +98,7 @@ Param([alias("Set")] [string] $SettingImp)
 # Version Info -Start
 ##########
 
-$CurrVer = "1.5 (03-12-17) "
+$CurrVer = "1.7 (03-17-17) "
 $RelType = "Testing"
 #$RelType = "Beta   "
 #$RelType = "Stable "
@@ -111,7 +111,10 @@ $RelType = "Testing"
 # Pre-Script -Start
 ##########
 
-# Pause function by
+$Global:filebase = $PSScriptRoot
+$ErrorActionPreference= 'silentlycontinue'
+
+# Pause Function by
 # https://adamstech.wordpress.com/2011/05/12/how-to-properly-pause-a-powershell-script/
 Function Pause ($Message = "Press any key to continue . . . ") {
     If ($psISE) {
@@ -160,12 +163,9 @@ If ($host.name -ne "ConsoleHost") {
     Exit
 }
 
-$Global:filebase = $PSScriptRoot
-$ErrorActionPreference= 'silentlycontinue'
-
 # Ask for elevated permissions if required
 If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
-    Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $args" -Verb RunAs
+    Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $SettingImp" -Verb RunAs
     Exit
 }
 
@@ -292,7 +292,7 @@ $Pined_App = @(
 # Multi Use Functions -Start
 ##########
 
-function TOSDisplay {
+Function TOSDisplay {
     Write-Host "                 Terms of Use                  " -ForegroundColor Green -BackgroundColor Black
     If($RelType -eq "Testing" -or $RelType -eq "Beta   "){
         Write-Host "                   WARNING!!                   " -ForegroundColor Red -BackgroundColor Black
@@ -308,7 +308,7 @@ function TOSDisplay {
     Write-Host "Do you Accept the Terms of Use? (Y)es/(N)o     " -ForegroundColor White -BackgroundColor Black    
 }
 
-function TOS {
+Function TOS {
     $TOS = 'X'
     while($TOS -ne "Out"){
         Clear-Host
@@ -331,16 +331,16 @@ function TOS {
 }
 
 # Used to Help remove the Automatic variables
-function cmpv {
-    Compare-Object (Get-Variable) $AutomaticVariables -Property Name -PassThru | Where -Property Name -ne "AutomaticVariables"
+Function cmpv {
+    Compare-Object (Get-Variable -Scope Script) $AutomaticVariables -Property Name -PassThru | Where -Property Name -ne "AutomaticVariables"
 }
 
-function Pin-App([string]$appname) {      
+Function Pin-App([string]$appname) {      
     ((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'Unpin from Start'} | %{$_.DoIt()}
 }
 
 # Function to Display in Color or NOT (for MENU ONLY)
-function DisplayOutMenu([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor,[int]$NewLine){
+Function DisplayOutMenu([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor,[int]$NewLine){
     If ($NewLine -eq 0){
         If($TxtColor -le 15 -and $ShowColor -eq 1){
              Write-Host -NoNewline $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor]
@@ -357,7 +357,7 @@ function DisplayOutMenu([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor,[int]
 }
 
 # Function to Display or Not Display OUTPUT
-function DisplayOut([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor){
+Function DisplayOut([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor){
     If($Verbros -eq 1){
         If($TxtColor -le 15 -and $ShowColor -eq 1){
              Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor]
@@ -367,7 +367,7 @@ function DisplayOut([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor){
     } 
 }
 
-function ChoicesMenu([String]$Vari, [Int]$NumberH, [Int]$NumberL) {
+Function ChoicesMenu([String]$Vari, [Int]$NumberH, [Int]$NumberL) {
     $VariJ = -join($Vari,"Items")
     $VariV = Get-Variable $Vari -valueOnly #Variable
     $VariA = Get-Variable $VariJ -valueOnly #Array
@@ -392,7 +392,7 @@ function ChoicesMenu([String]$Vari, [Int]$NumberH, [Int]$NumberL) {
     Return
 }
 
-function VariMenu([Array]$VariDisplay,[Array]$VariMenuItm) {
+Function VariMenu([Array]$VariDisplay,[Array]$VariMenuItm) {
     $VariMenu = 'X'
     while($VariMenu -ne "Out"){
         Clear-Host
@@ -426,7 +426,7 @@ function VariMenu([Array]$VariDisplay,[Array]$VariMenuItm) {
     Return
 }
 
-function OpenWebsite ([String]$Website){
+Function OpenWebsite ([String]$Website){
     $IE=new-object -com internetexplorer.application
     $IE.navigate2($Website)
     $IE.visible=$true
@@ -452,7 +452,7 @@ $ConfirmMenuItems2 = @(
 '  File Exists do you want to overwrite? (Y/N)    ',
 '0. Cancel/Back to Main Menu                      ')
 
-function ConfirmMenu([int]$Option) {
+Function ConfirmMenu([int]$Option) {
     $ConfirmMenu = 'X'
     while($ConfirmMenu -ne "Out"){
         Clear-Host
@@ -481,7 +481,7 @@ function ConfirmMenu([int]$Option) {
 #DisplayOutMenu([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor,[int]$NewLine)
 
 # Displays Menu items but has Seperators
-function MenuDisplay ([Array]$ToDisplay) {
+Function MenuDisplay ([Array]$ToDisplay) {
     TitleBottom $ToDisplay[0] 11
     DisplayOutMenu "|                         |                         |" 14 0 1
     for ($i=1; $i -lt $ToDisplay.length-1; $i++) {
@@ -497,7 +497,7 @@ function MenuDisplay ([Array]$ToDisplay) {
 # 1-2 are for description
 # For loop = Choices
 # $ChToDisplayVal = Current Value
-function ChoicesDisplay ([Array]$ChToDisplay, [Int]$ChToDisplayVal) {
+Function ChoicesDisplay ([Array]$ChToDisplay, [Int]$ChToDisplayVal) {
     TitleBottom $ChToDisplay[0] 11
     DisplayOutMenu "|                                                   |" 14 0 1
     DisplayOutMenu "| " 14 0 0 ;DisplayOutMenu $ChToDisplay[1] 2 0 0 ;DisplayOutMenu " |" 14 0 1
@@ -516,7 +516,7 @@ function ChoicesDisplay ([Array]$ChToDisplay, [Int]$ChToDisplayVal) {
 
 
 # Displays items but NO Seperators
-function VariableDisplay ([Array]$VarToDisplay) {
+Function VariableDisplay ([Array]$VarToDisplay) {
     TitleBottom $VarToDisplay[0] 11
     for ($i=1; $i -lt $VarToDisplay.length-1; $i++) {
         DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu $VarToDisplay[$i] 2 0 0 ;DisplayOutMenu "|" 14 0 1
@@ -525,7 +525,7 @@ function VariableDisplay ([Array]$VarToDisplay) {
 }
 
 # Displays Title of Menu but with color choices
-function TitleBottom ([String]$TitleA,[Int]$TitleB) {
+Function TitleBottom ([String]$TitleA,[Int]$TitleB) {
     DisplayOutMenu "|---------------------------------------------------|" 14 0 1
     If($TitleB -eq 16) {
         DisplayOutMenu "| " 14 0 0 ;DisplayOutMenu "Current Version: " 15 0 0 ;DisplayOutMenu $CurrVer 15 0 0 ;DisplayOutMenu " |" 14 0 0
@@ -541,7 +541,7 @@ function TitleBottom ([String]$TitleA,[Int]$TitleB) {
     DisplayOutMenu "|---------------------------------------------------|" 14 0 1
 }
 
-function Website {
+Function Website {
     DisplayOutMenu "|" 14 0 0 ;DisplayOutMenu "     https://github.com/madbomb122/Win10Script/    " 15 0 0 ;DisplayOutMenu "|" 14 0 1
     DisplayOutMenu "|---------------------------------------------------|" 14 0 1
 }
@@ -563,7 +563,7 @@ $MainMenuItems = @(
 '5. Script Options      ',"W. Madbomb's Github    ",
 'Q. Exit/Quit                                     ')
 
-function mainMenu {
+Function mainMenu {
     $mainMenu = 'X'
     while($mainMenu -ne "Out"){
         Clear-Host
@@ -610,7 +610,7 @@ $ScriptSettingsMainMenuItems = @(
 '6. Explorer            ','12. Misc/Photo Viewer  ',
 'B. Back to Main Menu                             ')
 
-function ScriptSettingsMM {
+Function ScriptSettingsMM {
     $ScriptSettingsMM = 'X'
     while($ScriptSettingsMM -ne "Out"){
         Clear-Host
@@ -662,7 +662,7 @@ $SaveSettingItems = @(
 '          Please Input Filename to Save.         ',
 '  0. Cancel/Back to Main Menu                    ')
 
-function LoadSetting {
+Function LoadSetting {
     $LoadSetting = 'X'
     while($LoadSetting -ne "Out"){
         Clear-Host
@@ -682,7 +682,6 @@ function LoadSetting {
         }
         If ($Switched -ne "True"){
             If (Test-Path $LoadSetting -PathType Leaf){
-                        write-host "If 2"
                 $Conf = ConfirmMenu 1
                 If($Conf -eq $true){
                     #Import-Clixml .\$LoadSetting | %{Set-Variable $_.Name $_.Value -Scope Script}
@@ -697,13 +696,13 @@ function LoadSetting {
     Return
 }
 
-function LoadSettingFile([String]$Filename) {
-    #Import-Clixml .\$Filename | %{Set-Variable $_.Name $_.Value -Scope Script}
-    Import-Csv .\$Filename | %{Set-Variable $_.Name $_.Value -Scope Script}
+Function LoadSettingFile([String]$Filename) {
+    #Import-Clixml $Filename | %{Set-Variable $_.Name $_.Value -Scope Script}
+    Import-Csv $Filename | %{Set-Variable $_.Name $_.Value -Scope Script}
     RunScript
 }
 
-function SaveSetting {
+Function SaveSetting {
     $SaveSetting = 'X'
     while($SaveSetting -ne "Out"){
         Clear-Host
@@ -716,11 +715,9 @@ function SaveSetting {
             If (Test-Path $SavePath -PathType Leaf){
                 $Conf = ConfirmMenu 2
                 If($Conf -eq $true){
-                #cmpv | Export-Clixml -LiteralPath $SavePath -force
-                cmpv | Export-Csv -LiteralPath $SavePath -encoding "unicode" -force
+                    cmpv | Export-Csv -LiteralPath $SavePath -encoding "unicode" -force
                 }
             } Else {
-                #cmpv | Export-Clixml -LiteralPath $SavePath -force
                 cmpv | Export-Csv -LiteralPath $SavePath -encoding "unicode" -force
             }
             $SaveSetting = "Out"
@@ -874,7 +871,7 @@ $CopyrightItems = @(
 '                                                 ',
 "Press 'Enter' to go back                         ")
 
-function HUACMenu([String]$VariJ) {
+Function HUACMenu([String]$VariJ) {
     $HUACMenu = 'X'
     $VariA = Get-Variable $VariJ -valueOnly #Array
     while($HUACMenu -ne "Out"){
@@ -1002,7 +999,7 @@ $ServicesTypeList = @(
     'automatic'  #4 -Atuo Delay
 )
 
-function Black_Viper_Input {
+Function Black_Viper_Input {
     $Black_Viper_Input = 'X'
     while($Black_Viper_Input -ne "Out"){
         Clear-Host
@@ -1024,7 +1021,7 @@ function Black_Viper_Input {
     Return
 }
 
-function GetServiceNameFull([String]$ServiceN){
+Function GetServiceNameFull([String]$ServiceN){
     $ServiceR = $ServiceN
     If($ServiceN -eq 'CDPUserSvc_'){
         $ServiceR = Get-Service | Where-Object {$_.Name -like "CDPUserSvc_*"}
@@ -1034,7 +1031,7 @@ function GetServiceNameFull([String]$ServiceN){
     Return $ServiceR
 }
 
-function ServiceCheck([string] $S_Name, [string]$S_Type, [string]$C_Type) {
+Function ServiceCheck([string] $S_Name, [string]$S_Type, [string]$C_Type) {
     [bool] $ReturnV = $False
     If (Get-WmiObject -Class Win32_Service -Filter "Name='$S_Name'" ) {
         If($S_Type -ne $C_Type){
@@ -1049,7 +1046,7 @@ function ServiceCheck([string] $S_Name, [string]$S_Type, [string]$C_Type) {
     Return $ReturnV
 }
 
-function Black_Viper_Set ([Int]$BV){
+Function Black_Viper_Set ([Int]$BV){
     If ($WinEdition -eq "Microsoft Windows 10 Home"){
         If ($BV -eq 1){
         } ElseIf ($BV -In 2..3){
@@ -1609,7 +1606,7 @@ $VolumeControlBarItems = @(
 $TaskViewButtonItems = @(
 '           Task View Button on Taskbar           ',
 '                                                 ',
-' Button  with similar function to Alt+Tab        ',
+' Button  with similar Function to Alt+Tab        ',
 '0. Skip                                          ',
 '1. Show*                                         ',
 '2. Hide                                          ',
@@ -2264,13 +2261,13 @@ $APList = @(
     'APP_ZuneVideo'
 )
 
-function AllMetroSet([Int]$Number){
+Function AllMetroSet([Int]$Number){
     ForEach ($ApL in $APList) {
         Set-Variable -Name $APList -Value $Number -Scope Script;
     }
 }
 
-function MetroMenu([Array]$VariDisplay, [Array]$MetroMenuItm) {
+Function MetroMenu([Array]$VariDisplay, [Array]$MetroMenuItm) {
     $MetroMenu = 'X'
     while($MetroMenu -ne "Out"){
         Clear-Host
@@ -2299,7 +2296,7 @@ function MetroMenu([Array]$VariDisplay, [Array]$MetroMenuItm) {
     Return
 }
 
-function ChoicesMenuMetro([String]$Vari, [Int]$MultiV) {
+Function ChoicesMenuMetro([String]$Vari, [Int]$MultiV) {
     If($MultiV -eq 0){
         $VariM = -join("APP_",$Vari)
         $VariV = Get-Variable $VariM -valueOnly #Variable
@@ -2341,7 +2338,7 @@ function ChoicesMenuMetro([String]$Vari, [Int]$MultiV) {
     Return
 }
 
-function ChoicesDisplayMetro ([Array]$ChToDisplayMetro, [Int]$ChToDisplayValMetro) {
+Function ChoicesDisplayMetro ([Array]$ChToDisplayMetro, [Int]$ChToDisplayValMetro) {
     TitleBottom $ChToDisplayMetro[0] 11
     DisplayOutMenu "|                                                   |" 14 0 1
     DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu $ChToDisplayMetro[1] 2 0 0 ;DisplayOutMenu "|" 14 0 1
@@ -3292,7 +3289,7 @@ Function RunScript {
         Set-ItemProperty -Path "HKCR:\Folder\shell\pintohome\command"  -Name "DelegateExecute" -Type String -Value "{b455f46e-e4af-4035-b0a4-cf18d2f6f28e}"
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome"  -Name "MUIVerb" -Type String -Value "@shell32.dll,-51377"
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome"  -Name "AppliesTo" -Type String -Value 'System.ParsingName:<>"::{679f85cb-0220-4080-b29b-5540cc05aab6}" AND System.ParsingName:<>"::{645FF040-5081-101B-9F08-00AA002F954E}" AND System.IsFolder:=System.StructuredQueryType.Boolean#True'
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome\command]"  -Name "DelegateExecute" -Type String -Value "{b455f46e-e4af-4035-b0a4-cf18d2f6f28e}"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome\command"  -Name "DelegateExecute" -Type String -Value "{b455f46e-e4af-4035-b0a4-cf18d2f6f28e}"
     } ElseIf ($PinToQuickAccess -eq 2) {
         DisplayOut "Disabling Pin To Quick Access Context item..." 12 0
         Set-ItemProperty -Path "HKCR:\Folder\shell\pintohome"  -Name "MUIVerb" -Type String -Value ""
@@ -3300,7 +3297,7 @@ Function RunScript {
         Set-ItemProperty -Path "HKCR:\Folder\shell\pintohome\command"  -Name "DelegateExecute" -Type String -Value ""
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome"  -Name "MUIVerb" -Type String -Value ""
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome"  -Name "AppliesTo" -Type String -Value ""
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome\command]"  -Name "DelegateExecute" -Type String -Value ""        
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome\command"  -Name "DelegateExecute" -Type String -Value ""        
     }
     
     # Share With Context Menu
@@ -4297,8 +4294,8 @@ Function RunScript {
     ##########
     
     # Sorts the apps to Install, Hide or Uninstall
-    $APPProcess = Get-Variable -Name "APP_*" -ValueOnly  -Scope Script
-
+    $APPProcess = Get-Variable -Name "APP_*" -ValueOnly -Scope Script
+    
     $A = 0
     ForEach ($AppV in $APPProcess) {
         If($AppV -eq 1){
@@ -4324,8 +4321,6 @@ Function RunScript {
     DisplayOut "" 14 0
     
     ForEach ($AppI in $APPS_AppsInstall) {
-        #$APPIDisplay = "Installing "+$AppI+"..."
-        #DisplayOut $APPIDisplay 11 0
         DisplayOut $AppI 11 0
         Add-AppxPackage -DisableDevelopmentMode -Register "$($(Get-AppXPackage -AllUsers "$AppI").InstallLocation)\AppXManifest.xml"
     }
@@ -4335,12 +4330,14 @@ Function RunScript {
     DisplayOut "" 14 0
     
     ForEach ($AppH in $APPS_AppsHide) {
-        #$APPHDisplay = "Hidinging "$AppH"..."
-        #DisplayOut $APPHDisplay 12 0
-        $ProvisionedPackage = Get-AppxProvisionedPackage -online | Where-Object {$_.displayName -eq $AppH}
+        $ProvisionedPackage = Get-AppxProvisionedPackage -online | Where {$_.displayName -eq $AppH}
         If ($ProvisionedPackage -ne $null) {
-            DisplayOut $AppH 12 0
+            $APPHDisplay = " "+ $AppH
+            DisplayOut $APPHDisplay 12 0
             Get-AppxPackage $AppH | Remove-AppxPackage
+        } Else {
+            $APPHDisplay = $AppH + "Isn't Installed"
+            DisplayOut $APPHDisplay 12 0
         }
     }
     
@@ -4350,22 +4347,20 @@ Function RunScript {
     DisplayOut "" 14 0
     
     ForEach ($AppU in $APPS_AppsUninstall) {
-        #$APPUDisplay = "Uninstalling "+$AppU+"..."
-        #DisplayOut $APPUDisplay 14 0
-        $ProvisionedPackage = Get-AppxProvisionedPackage -online | Where-Object {$_.displayName -eq $AppU}
+        $ProvisionedPackage = Get-AppxProvisionedPackage -online | Where {$_.displayName -eq $AppU}
         If ($ProvisionedPackage -ne $null) {
-            DisplayOut $AppU 14 0
+            $APPUDisplay = " "+ $AppH
+            DisplayOut $APPUDisplay 14 0
             $PackageFullName = (Get-AppxPackage $AppU).PackageFullName
             $ProPackageFullName = (Get-AppxProvisionedPackage -online | where {$_.Displayname -eq $AppU}).PackageName
         
             # Alt removal
             # DISM /Online /Remove-ProvisionedAppxPackage /PackageName:          
-            If ($PackageFullName) {
-                Remove-AppxPackage -package $PackageFullName
-            }
-            If ($ProPackageFullName) {
-                Remove-AppxProvisionedPackage -online -packagename $ProPackageFullName
-            }
+            Remove-AppxPackage -package $PackageFullName
+            Remove-AppxProvisionedPackage -online -packagename $ProPackageFullName
+        } Else {
+            $APPUDisplay = $AppU + "Isn't Installed"
+            DisplayOut $APPUDisplay 14 0
         }
     }
 
@@ -4476,7 +4471,7 @@ Function RunScript {
 
 # Used to get all values BEFORE any defined so
 # when exporting shows ALL defined after this point
-$AutomaticVariables = Get-Variable
+$AutomaticVariables = Get-Variable -scope Script
 
 # --------------------------------------------------------------------------
 
@@ -4651,13 +4646,12 @@ $Script:LinuxSubsystem = 0        #0-Skip, 1-Installed, 2-Uninstall* (Anniversar
 # Custom List of App to Install, Hide or Uninstall
 # I dunno if you can Install random apps with this script
 # Cant Import these ATM
-$Script:APPS_AppsInstall = @()    # Apps to Install
-$Script:APPS_AppsHide = @()       # Apps to Hide
-$Script:APPS_AppsUninstall = @()  # Apps to Uninstall
-#$Script:APPS_Example = @('Somecompany.Appname1','TerribleCompany.Appname2','SomeCrap.Appname3')
+$APPS_AppsInstall = @("")         # Apps to Install
+$APPS_AppsHide = @("")            # Apps to Hide
+$APPS_AppsUninstall = @("")       # Apps to Uninstall
+#$Script:APPS_Example = @('Somecompany.Appname1','TerribleCompany.Appname2','AppS.Appname3')
 # To get list of Packages Installed
 # DISM /Online /Get-ProvisionedAppxPackages | Select-string Packagename
-# 
 
 <# 
 App Uninstall will remove them to reinstall you can
@@ -4739,13 +4733,16 @@ $Script:APP_ZuneVideo = 0         # Groove Music app
 ##########
 
 If ($SettingImp -ne $null -and $SettingImp){
-    If (Test-Path $SettingImp -PathType Leaf){
-        LoadSettingFile($SettingImp)
+    $FileImp = $filebase + "\" + $SettingImp
+    If (Test-Path $FileImp -PathType Leaf){
+        LoadSettingFile $FileImp
     } ElseIf ($SettingImp.ToLower() -eq "wd" -or $SettingImp.ToLower() -eq "windefault"){
         LoadWinDefault
         RunScript
     } ElseIf ($SettingImp.ToLower() -eq "run"){
         RunScript
+    } Else {
+        TOS 
     }
 } ElseIf ($Term_of_Use -eq 1){
     TOS
