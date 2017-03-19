@@ -285,17 +285,17 @@ $Pined_App = @(
 # Multi Use Functions -Start
 ##########
 Function UpdateCheck {
-    If($Script_Ver_Check -eq 1) {
+    If($Version_Check -eq 1) {
         $VersionFile = $TempFolder + "\Temp.csv"
         $VersionURL = "https://raw.githubusercontent.com/madbomb122/Win10Script/master/Version/Version.csv"
         (New-Object System.Net.WebClient).DownloadFile($VersionURL, $VersionFile)
         $CSV_Ver = Import-Csv $VersionFile
         If($Release_Type -eq "Stable ") {
-            $WebScriptVer = $($CSV_Ver[1].Version)
+            $WebScriptVer = $($CSV_Ver[0].Version)
             $WebScriptFilePath = $filebase + "\Win10-Menu-Ver." + $WebScriptVer + ".ps1"
             $url = "https://raw.githubusercontent.com/madbomb122/Win10Script/master/Win10-Menu.ps1"
         } Else {
-            $WebScriptVer = $($CSV_Ver[0].Version)
+            $WebScriptVer = $($CSV_Ver[1].Version)
             $WebScriptFilePath = $filebase + "\Win10-Menu-Ver." +$WebScriptVer + "-Testing.ps1"
             $url = "https://raw.githubusercontent.com/madbomb122/Win10Script/master/Testing/Win10-Menu.ps1"
         }
@@ -773,7 +773,7 @@ $ScriptOptionMenuItems = @(
 '            Script Option Items Menu             ',
 '1. Create Restore Point','4. Show Color          ',
 '2. Restart when Done   ','5. Show Skipped Items  ',
-'3. Verbros             ','                       ',
+'3. Verbros             ','6. Check Script Update ',
 'B. Back to Main Menu                             ')
 
 $ScriptOptionMenuItm = (
@@ -781,7 +781,8 @@ $ScriptOptionMenuItm = (
 (2,"Restart",1,0),
 (3,"Verbros",1,0),
 (4,"ShowColor",1,0),
-(5,"ShowSkipped",1,0))
+(5,"ShowSkipped",1,0),
+(6,"Version_Check",1,0),)
 
 $CreateRestorePointItems = @(
 '              Create Restore Point               ',
@@ -821,6 +822,14 @@ $RestartItems = @(
 ' I recommend you restart computer.               ',
 '0. Dont Restart Computer                         ',
 '1. Restart Computer                              ',
+'C. Cancel (Keeps Current Setting)                ')
+
+$Version_CheckItems = @(
+'            Check for Script Updates             ',
+' If an update is found it will Auto download and ',
+" run that file, unless you use '-set Run'        ",
+'0. Dont Check for Updates (on script start)      ',
+'1. Check for Updates (on script start)           ',
 'C. Cancel (Keeps Current Setting)                ')
 
 ##########
@@ -4289,6 +4298,10 @@ $Script:CreateRestorePoint = 0    #0-Skip, 1-Create --(Restore point before scri
 
 #Skips Term of Use
 $Script:Term_of_Use = 1           #1-See ToS, Anything else = Accepts Term of Use
+
+#Update Check
+$Script:Version_Check = 0         #0-Dont Check for Update, 1-Check for Update (Will Auto Download and run newer version)
+#File will be named 'Win10-Menu-Ver.(Version HERE).ps1 (For non Test version)
 
 #Output Display
 $Script:Verbros = 1               #0-Dont Show output (Other than Errors), 1-Show output
