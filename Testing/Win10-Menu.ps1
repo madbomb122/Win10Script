@@ -1,3 +1,4 @@
+Param([alias("Set")] [string] $SettingImp)
 ##########
 # Win10 Initial Setup Script Settings with Menu
 # 
@@ -6,34 +7,28 @@
 # Website: https://github.com/Disassembler0/Win10-Initial-Setup-Script/
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
-# Service Configurations By
-#  Author: Black Viper
-# Website: http://www.blackviper.com/service-configurations/black-vipers-windows-10-service-configurations/
-# Version: Based on April 2017 Creators Update
-#
 # Modded Script + Menu By
 #  Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script/
-# Version: 1.7-Menu, 03-17-2017
 #
-# Release Type: Testing
+$Script_Version = 1.8 #(03-18-17)
+$Release_Type = "Testing"
 ##########
 
 <#
-    Copyright (c) 1999-2017 by Charles "Black Viper" Sparks -Black Viper Service Configurations 
     Copyright (c) 2017 Disassembler -Original Basic Version of Script
     Copyright (c) 2017 Madbomb122 -Modded + Menu Version of Script
-    
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #>
@@ -45,7 +40,7 @@
 
 .BASIC USAGE
     Use the Menu and set what you want then select to run the script
-    
+
 .ADVANCED USAGE
     Use one of the following Methods
 
@@ -92,16 +87,14 @@ Note: File has to be in the proper format or settings wont be imported
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-Param([alias("Set")] [string] $SettingImp)
 
 ##########
 # Version Info -Start
 ##########
 
-$CurrVer = "1.7 (03-17-17) "
-$RelType = "Testing"
-#$RelType = "Beta   "
-#$RelType = "Stable "
+#$Release_Type = "Testing"
+#$Release_Type = "Beta   "
+#$Release_Type = "Stable "
 
 ##########
 # Version Info -End
@@ -117,7 +110,7 @@ $ErrorActionPreference= 'silentlycontinue'
 # Pause Function by
 # https://adamstech.wordpress.com/2011/05/12/how-to-properly-pause-a-powershell-script/
 Function Pause ($Message = "Press any key to continue . . . ") {
-    If ($psISE) {
+    If($psISE) {
         $Shell = New-Object -ComObject "WScript.Shell"
         $Button = $Shell.Popup("Powershell ISE is not supported. Click OK to continue.", 0, "Error", 0)
         Return
@@ -291,10 +284,58 @@ $Pined_App = @(
 ##########
 # Multi Use Functions -Start
 ##########
+Function UpdateCheck {
+    If($Script_Ver_Check -eq 1) {
+        $VersionFile = $TempFolder + "\Temp.csv"
+        $VersionURL = "https://raw.githubusercontent.com/madbomb122/Win10Script/master/Version/Version.csv"
+        (New-Object System.Net.WebClient).DownloadFile($VersionURL, $VersionFile)
+        $CSV_Ver = Import-Csv $VersionFile
+        If($Release_Type -eq "Stable ") {
+            $WebScriptVer = $($CSV_Ver[1].Version)
+            $WebScriptFilePath = $filebase + "\Win10-Menu-Ver." + $WebScriptVer + ".ps1"
+            $url = "https://raw.githubusercontent.com/madbomb122/Win10Script/master/Win10-Menu.ps1"
+        } Else {
+            $WebScriptVer = $($CSV_Ver[0].Version)
+            $WebScriptFilePath = $filebase + "\Win10-Menu-Ver." +$WebScriptVer + "-Testing.ps1"
+            $url = "https://raw.githubusercontent.com/madbomb122/Win10Script/master/Testing/Win10-Menu.ps1"
+        }
+        If($WebScriptVer -gt $Script_Version) {
+            (New-Object System.Net.WebClient).DownloadFile($url, $WebScriptFilePath)
+            DownloadScriptFile $WebScriptFilePath
+            Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$WebScriptFilePath`" $args" -Verb RunAs
+            Exit
+        }
+    }
+}
+
+Function ScriptPreStart {    
+    If($SettingImp -ne $null -and $SettingImp) {
+        $FileImp = $filebase + "\" + $SettingImp
+        If(Test-Path $FileImp -PathType Leaf) {
+            LoadSettingFile $FileImp
+            UpdateCheck
+        } ElseIf ($SettingImp.ToLower() -eq "wd" -or $SettingImp.ToLower() -eq "windefault") {
+            UpdateCheck
+            LoadWinDefault
+            RunScript
+        } ElseIf ($SettingImp.ToLower() -eq "run") {
+            RunScript
+        } Else {
+            UpdateCheck
+            TOS 
+        }
+    } ElseIf ($Term_of_Use -eq 1) {
+        UpdateCheck
+        TOS
+    } ElseIf ($Term_of_Use -ne 1) {
+        UpdateCheck
+        mainMenu
+    }
+}
 
 Function TOSDisplay {
     Write-Host "                 Terms of Use                  " -ForegroundColor Green -BackgroundColor Black
-    If($RelType -eq "Testing" -or $RelType -eq "Beta   "){
+    If($Release_Type -eq "Testing" -or $Release_Type -eq "Beta   ") {
         Write-Host "                   WARNING!!                   " -ForegroundColor Red -BackgroundColor Black
         Write-Host "    This version is currently being Tested.    " -ForegroundColor Yellow -BackgroundColor Black 
     }
@@ -305,15 +346,15 @@ Function TOSDisplay {
     Write-Host "                                               " -ForegroundColor Black -BackgroundColor White
     Write-Host "Read License file for full Terms.              " -ForegroundColor Black -BackgroundColor White
     Write-Host "                                               " -ForegroundColor Black -BackgroundColor White
-    Write-Host "Do you Accept the Terms of Use? (Y)es/(N)o     " -ForegroundColor White -BackgroundColor Black    
+    Write-Host "Do you Accept the Terms of Use? (Y)es/(N)o     " -ForegroundColor White -BackgroundColor Black
 }
 
 Function TOS {
     $TOS = 'X'
-    while($TOS -ne "Out"){
+    while ($TOS -ne "Out") {
         Clear-Host
         TOSDisplay
-        If($Invalid -eq 1){
+        If($Invalid -eq 1) {
             Write-host ""
             Write-host "Invalid Input" -ForegroundColor Red -BackgroundColor Black -NoNewline
             $Invalid = 0
@@ -340,15 +381,15 @@ Function Pin-App([string]$appname) {
 }
 
 # Function to Display in Color or NOT (for MENU ONLY)
-Function DisplayOutMenu([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor,[int]$NewLine){
-    If ($NewLine -eq 0){
-        If($TxtColor -le 15 -and $ShowColor -eq 1){
+Function DisplayOutMenu([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor,[int]$NewLine) {
+    If($NewLine -eq 0) {
+        If($TxtColor -le 15 -and $ShowColor -eq 1) {
              Write-Host -NoNewline $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor]
         } Else {
              Write-Host -NoNewline $TxtToDisplay
         }
     } Else {
-        If($TxtColor -le 15 -and $ShowColor -eq 1){
+        If($TxtColor -le 15 -and $ShowColor -eq 1) {
              Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor]
         } Else {
              Write-Host $TxtToDisplay
@@ -357,9 +398,9 @@ Function DisplayOutMenu([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor,[int]
 }
 
 # Function to Display or Not Display OUTPUT
-Function DisplayOut([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor){
-    If($Verbros -eq 1){
-        If($TxtColor -le 15 -and $ShowColor -eq 1){
+Function DisplayOut([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor) {
+    If($Verbros -eq 1) {
+        If($TxtColor -le 15 -and $ShowColor -eq 1) {
              Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor]
         } Else {
              Write-Host $TxtToDisplay
@@ -372,18 +413,18 @@ Function ChoicesMenu([String]$Vari, [Int]$NumberH, [Int]$NumberL) {
     $VariV = Get-Variable $Vari -valueOnly #Variable
     $VariA = Get-Variable $VariJ -valueOnly #Array
     $ChoicesMenu = 'X'
-    while($ChoicesMenu -ne "Out"){
+    while ($ChoicesMenu -ne "Out") {
         Clear-Host
         ChoicesDisplay $VariA $VariV
-        If($Invalid -eq 1){
+        If($Invalid -eq 1) {
             Write-host ""
             Write-host "Invalid Selection" -ForegroundColor Red -BackgroundColor Black -NoNewline
             $Invalid = 0
         }
         $ChoicesMenu = Read-Host "`nChoice"
         switch -regex ($ChoicesMenu) {
-            0 {if($NumberL -eq $ChoicesMenu) {$ReturnV = $ChoicesMenu; $ChoicesMenu = "Out"} Else {$Invalid = 1}}
-            [1-4] {if($NumberH -ge $ChoicesMenu) {$ReturnV = $ChoicesMenu; $ChoicesMenu = "Out"} Else {$Invalid = 1}}
+            0 {If ($NumberL -eq $ChoicesMenu) {$ReturnV = $ChoicesMenu; $ChoicesMenu = "Out"} Else {$Invalid = 1}}
+            [1-4] {If ($NumberH -ge $ChoicesMenu) {$ReturnV = $ChoicesMenu; $ChoicesMenu = "Out"} Else {$Invalid = 1}}
             C {$ReturnV = $VariV; $ChoicesMenu = "Out"}
             default {$Invalid = 1}
         }
@@ -394,28 +435,23 @@ Function ChoicesMenu([String]$Vari, [Int]$NumberH, [Int]$NumberL) {
 
 Function VariMenu([Array]$VariDisplay,[Array]$VariMenuItm) {
     $VariMenu = 'X'
-    while($VariMenu -ne "Out"){
+    while ($VariMenu -ne "Out") {
         Clear-Host
         MenuDisplay $VariDisplay
-        If($Invalid -eq 1){
+        If($Invalid -eq 1) {
             Write-host ""
             Write-host "Invalid Selection" -ForegroundColor Red -BackgroundColor Black -NoNewline
             $Invalid = 0
         }
         $VariMenu = Read-Host "`nSelection"
         $ConInt = $VariMenu -as [int]
-        If($ConInt -is [int] -and $VariMenu -ne $null){
+        If($ConInt -is [int] -and $VariMenu -ne $null) {
             for ($i=0; $i -le $VariMenuItm.length; $i++) {
-                If($VariMenuItm[$i][0] -eq $ConInt){
-                    If(($VariMenuItm[$i][1]) -eq "Black_Viper_Input" -and $ConInt -eq 9){
-                        Black_Viper_Input
-                    } Else {
-                        ChoicesMenu ($VariMenuItm[$i][1]) ($VariMenuItm[$i][2]) ($VariMenuItm[$i][3])
-                        $i = $VariMenuItm.length +1
-                    }
+                If($VariMenuItm[$i][0] -eq $ConInt) {
+                    ChoicesMenu ($VariMenuItm[$i][1]) ($VariMenuItm[$i][2]) ($VariMenuItm[$i][3])
+                    $i = $VariMenuItm.length +1
                 }
             }
-
         } Else {
             switch ($VariMenu) {
                 B {$VariMenu = "Out"}
@@ -426,7 +462,7 @@ Function VariMenu([Array]$VariDisplay,[Array]$VariMenuItm) {
     Return
 }
 
-Function OpenWebsite ([String]$Website){
+Function OpenWebsite ([String]$Website) {
     $IE=new-object -com internetexplorer.application
     $IE.navigate2($Website)
     $IE.visible=$true
@@ -454,11 +490,11 @@ $ConfirmMenuItems2 = @(
 
 Function ConfirmMenu([int]$Option) {
     $ConfirmMenu = 'X'
-    while($ConfirmMenu -ne "Out"){
+    while ($ConfirmMenu -ne "Out") {
         Clear-Host
-        If ($Option -eq 1){
+        If($Option -eq 1) {
             VariableDisplay $ConfirmMenuItems1
-        } ElseIf ($Option -eq 2){
+        } ElseIf ($Option -eq 2) {
             VariableDisplay $ConfirmMenuItems2
         }
         $ConfirmMenu = Read-Host "`nSelection (Y/N)"
@@ -514,7 +550,6 @@ Function ChoicesDisplay ([Array]$ChToDisplay, [Int]$ChToDisplayVal) {
     Website
 }
 
-
 # Displays items but NO Seperators
 Function VariableDisplay ([Array]$VarToDisplay) {
     TitleBottom $VarToDisplay[0] 11
@@ -528,11 +563,11 @@ Function VariableDisplay ([Array]$VarToDisplay) {
 Function TitleBottom ([String]$TitleA,[Int]$TitleB) {
     DisplayOutMenu "|---------------------------------------------------|" 14 0 1
     If($TitleB -eq 16) {
-        DisplayOutMenu "| " 14 0 0 ;DisplayOutMenu "Current Version: " 15 0 0 ;DisplayOutMenu $CurrVer 15 0 0 ;DisplayOutMenu " |" 14 0 0
-        If($RelType -eq "Stable "){
-            DisplayOutMenu " Release:" 11 0 0 ;DisplayOutMenu $RelType 11 0 0 ;
+        DisplayOutMenu "| " 14 0 0 ;DisplayOutMenu "Current Version: " 15 0 0 ;DisplayOutMenu $Script_Version 15 0 0 ;DisplayOutMenu " |" 14 0 0
+        If($Release_Type -eq "Stable ") {
+            DisplayOutMenu " Release:" 11 0 0 ;DisplayOutMenu $Release_Type 11 0 0 ;
         } Else {
-            DisplayOutMenu " Release:" 15 0 0 ;DisplayOutMenu $RelType 15 0 0 ;
+            DisplayOutMenu " Release:" 15 0 0 ;DisplayOutMenu $Release_Type 15 0 0 ;
         }
         DisplayOutMenu "|" 14 0 1
     } Else {
@@ -565,10 +600,10 @@ $MainMenuItems = @(
 
 Function mainMenu {
     $mainMenu = 'X'
-    while($mainMenu -ne "Out"){
+    while ($mainMenu -ne "Out") {
         Clear-Host
         MenuDisplay $MainMenuItems 0
-        If($Invalid -eq 1){
+        If($Invalid -eq 1) {
             Write-host ""
             Write-host "Invalid Selection" -ForegroundColor Red -BackgroundColor Black -NoNewline
             $Invalid = 0
@@ -612,10 +647,10 @@ $ScriptSettingsMainMenuItems = @(
 
 Function ScriptSettingsMM {
     $ScriptSettingsMM = 'X'
-    while($ScriptSettingsMM -ne "Out"){
+    while ($ScriptSettingsMM -ne "Out") {
         Clear-Host
         MenuDisplay $ScriptSettingsMainMenuItems
-        If($Invalid -eq 1){
+        If($Invalid -eq 1) {
             Write-host ""
             Write-host "Invalid Selection" -ForegroundColor Red -BackgroundColor Black -NoNewline
             $Invalid = 0
@@ -664,10 +699,10 @@ $SaveSettingItems = @(
 
 Function LoadSetting {
     $LoadSetting = 'X'
-    while($LoadSetting -ne "Out"){
+    while ($LoadSetting -ne "Out") {
         Clear-Host
         VariableDisplay $LoadFileItems
-        If($Invalid -eq 1){
+        If($Invalid -eq 1) {
             Write-host ""
             Write-host "No file with the name " $LoadSetting -ForegroundColor Red -BackgroundColor Black -NoNewline
             $Invalid = 0
@@ -680,10 +715,10 @@ Function LoadSetting {
             WinDefault {LoadWinDefault; $Switched = "True"; write-host "windef"}
             Default {$Switched = "False"; write-host "def"}
         }
-        If ($Switched -ne "True"){
-            If (Test-Path $LoadSetting -PathType Leaf){
+        If($Switched -ne "True") {
+            If(Test-Path $LoadSetting -PathType Leaf) {
                 $Conf = ConfirmMenu 1
-                If($Conf -eq $true){
+                If($Conf -eq $true) {
                     #Import-Clixml .\$LoadSetting | %{Set-Variable $_.Name $_.Value -Scope Script}
                     Import-Csv .\$LoadSetting | %{Set-Variable $_.Name $_.Value -Scope Script}
                     $LoadSetting ="Out"
@@ -704,17 +739,17 @@ Function LoadSettingFile([String]$Filename) {
 
 Function SaveSetting {
     $SaveSetting = 'X'
-    while($SaveSetting -ne "Out"){
+    while ($SaveSetting -ne "Out") {
         Clear-Host
         VariableDisplay $SaveSettingItems
         $SaveSetting = Read-Host "`nFilename"
-        If ($SaveSetting -eq $null -or $SaveSetting -eq 0){
+        If($SaveSetting -eq $null -or $SaveSetting -eq 0) {
             $SaveSetting = "Out"
         } Else {
             $SavePath = $filebase+"\"+$SaveSetting
-            If (Test-Path $SavePath -PathType Leaf){
+            If(Test-Path $SavePath -PathType Leaf) {
                 $Conf = ConfirmMenu 2
-                If($Conf -eq $true){
+                If($Conf -eq $true) {
                     cmpv | Export-Csv -LiteralPath $SavePath -encoding "unicode" -force
                 }
             } Else {
@@ -835,16 +870,10 @@ $AboutItems = @(
 '                                                 ',
 ' Original Basic Script was made by Disassembler  ',
 '    https://github.com/Disassembler0/            ',
-'                                                 ',
-' Service Configurations by Black Viper           ',
-'    http://www.blackviper.com/                   ',
 "Press 'Enter' to go back                         ")
 
 $CopyrightItems = @(
 '                    Copyright                    ',
-'                                                 ',
-' Copyright (c) 1999-2017 by Charles "Black Viper"',
-'    Sparks -Black Viper Service Configurations   ',
 '                                                 ',
 ' Copyright (c) 2017 Disassembler -Original       ',
 '                                                 ',
@@ -874,7 +903,7 @@ $CopyrightItems = @(
 Function HUACMenu([String]$VariJ) {
     $HUACMenu = 'X'
     $VariA = Get-Variable $VariJ -valueOnly #Array
-    while($HUACMenu -ne "Out"){
+    while ($HUACMenu -ne "Out") {
         Clear-Host
         VariableDisplay $VariA
         $HUACMenu = Read-Host "`nPress 'Enter' to continue"
@@ -892,181 +921,6 @@ Function HUACMenu([String]$VariJ) {
 ##########
 # Script Settings Sub Menu -Start
 ##########
-
-  ##########
-  # Black Viper -Start
-  ##########
-
-$BlackViperDisItems = @(" ") * 9
-$BlackViperDisItems[0] = "       Black Viper's Service Configurations      "
-If ($OSType -ne 64){
-    $BlackViperDisItems[1] = "Settings based on Black Viper's Configurations.  "
-    $BlackViperDisItems[2] = "Ment for x64, Use on x32 AT YOUR OWN RISK.       "
-} Else {
-    $BlackViperDisItems[1] = "                                                 "
-    $BlackViperDisItems[2] = "Settings based on Black Viper's Configurations.  "
-}
-$BlackViperDisItems[3] = '1. Default                                       '
-$BlackViperDisItems[4] = '2. Safe                                          '
-$BlackViperDisItems[5] = '3. Tweaked                                       '
-$BlackViperDisItems[6] = 'Q. Quit (No changes)                             '
-$BlackViperDisItems[7] = "M. Go to Madbomb122's Github                     "
-$BlackViperDisItems[8] = "B. Go to Black Viper's Website                   "
-
-$ServicesList = @(
-#(Service Name, Def-Home, Def-Pro , Safe, Tweaked)
-('AJRouter',2,2,2,1),
-('ALG',2,2,2,1),
-('BthHFSrv',2,2,2,1),
-('bthserv',2,2,2,1),
-('CDPUserSvc_',3,3,2,2),
-('CertPropSvc',2,2,2,1),
-('CscService',0,2,1,1),
-('diagnosticshub.standardcollector.service',2,2,1,1),
-('dmwappushsvc',2,2,1,1),
-('DusmSvc',3,3,3,1),
-#('EntAppSvc',2,2,1,1), -Cant change Setting
-('Fax',2,2,1,1),
-('FrameServer',2,2,1,1),
-('hkmsvc',0,2,2,1),
-('HvHost',2,2,1,1),
-('icssvc',2,2,1,1),
-('iphlpsvc',3,3,3,1),
-('IpxlatCfgSvc',2,2,2,1),
-('irmon',2,2,1,1),
-('lfsvc',2,2,1,1),
-('MapsBroker',4,4,1,1),
-('MSiSCSI',2,2,1,1),
-('NaturalAuthentication',2,2,2,1),
-('NcbService',2,2,2,1),
-('NcdAutoSetup',2,2,2,1),
-('Netlogon',2,2,2,1),
-('NetTcpPortSharing',2,2,1,1),
-('PeerDistSvc',0,2,1,1),
-('PhoneSvc',2,2,1,1),
-('PimIndexMaintenanceSvc_',2,2,1,1),
-('RetailDemo',2,2,1,1),
-('RmSvc',2,2,1,1),
-('RpcLocator',2,2,1,1),
-('ScDeviceEnum',2,2,1,1),
-('SCPolicySvc',2,2,1,1),
-('SEMgrSvc',2,2,1,1),
-('SensorDataService',2,2,1,1),
-('SensorService',2,2,1,1),
-('SensrSvc',2,2,1,1),
-('SessionEnv',2,2,2,1),
-('SharedAccess',2,2,1,1),
-('SmsRouter',2,2,1,1),
-('SNMPTRAP',2,2,1,1),
-('spectrum',2,2,2,1),
-('StorSvc',2,2,2,1),
-('TabletInputService',2,2,1,1),
-('TermService',2,2,2,1),
-#('tiledatamodelsvc',3,3,3,1), -Cant change Setting
-('TrkWks',3,3,3,1),
-('UmRdpService',2,2,2,1),
-('vmicguestinterface',2,2,1,1),
-('vmicheartbeat',2,2,1,1),
-('vmickvpexchange',2,2,1,1),
-('vmicrdv',2,2,1,1),
-('vmicshutdown',2,2,1,1),
-('vmictimesync',2,2,1,1),
-('vmicvmsession',2,2,1,1),
-('vmicvss',2,2,1,1),
-('WbioSrvc',2,2,2,1),
-('wcncsvc',2,2,2,1),
-('WebClient',2,2,2,1),
-('WFDSConSvc',2,2,1,1),
-('WinRM',2,2,1,1),
-('wisvc',2,2,1,1),
-('wlpasvc',2,2,2,1),
-('WMPNetworkSvc',2,2,1,1),
-('Wms',0,3,1,1),
-('WmsRepair',0,3,1,1),
-('workfolderssvc',2,2,1,1),
-('WwanSvc',2,2,1,1),
-('XblAuthManager',2,2,1,1),
-('XblGameSave',2,2,1,1),
-('XboxNetApiSvc',2,2,1,1))
-
-$ServiceLen = $ServicesList.length
-
-$ServicesTypeList = @(
-    '',          #0 -None
-    'disabled',  #1 -Disable
-    'manual',    #2 -Manual
-    'automatic', #3 -Auto Normal
-    'automatic'  #4 -Atuo Delay
-)
-
-Function Black_Viper_Input {
-    $Black_Viper_Input = 'X'
-    while($Black_Viper_Input -ne "Out"){
-        Clear-Host
-        ChoicesDisplay $BlackViperDisItems $Back_Viper
-        If($Invalid -eq 1){
-            Write-host ""
-            Write-host "Invalid Input" -ForegroundColor Red -BackgroundColor Black -NoNewline
-            $Invalid = 0
-        }
-        $Black_Viper_Input = Read-Host "`nChoice"
-        switch -regex ($Black_Viper_Input) {
-            [0-3] {$ReturnV = $Black_Viper_Input; $Black_Viper_Input = "Out"}
-            W {OpenWebsite "http://www.blackviper.com/"}
-            B {$Black_Viper_Input = "Out"}
-            default {$Invalid = 1}
-        }
-    }
-    Set-Variable -Name "Back_Viper" -Value $ReturnV -Scope Script
-    Return
-}
-
-Function GetServiceNameFull([String]$ServiceN){
-    $ServiceR = $ServiceN
-    If($ServiceN -eq 'CDPUserSvc_'){
-        $ServiceR = Get-Service | Where-Object {$_.Name -like "CDPUserSvc_*"}
-    } ElseIf($ServiceN -eq 'PimIndexMaintenanceSvc_'){
-        $ServiceR = Get-Service | Where-Object {$_.Name -like "PimIndexMaintenanceSvc_*"}
-    }
-    Return $ServiceR
-}
-
-Function ServiceCheck([string] $S_Name, [string]$S_Type, [string]$C_Type) {
-    [bool] $ReturnV = $False
-    If (Get-WmiObject -Class Win32_Service -Filter "Name='$S_Name'" ) {
-        If($S_Type -ne $C_Type){
-            $ReturnV = $True
-            If($S_Name -eq 'lfsvc'){
-                #Has to be removed or cant change service 
-                # from disabled to anything else (Known Bug)
-                Remove-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Services\lfsvc\TriggerInfo\3"  -recurse  -Force
-            }
-        }
-    }
-    Return $ReturnV
-}
-
-Function Black_Viper_Set ([Int]$BV){
-    If ($WinEdition -eq "Microsoft Windows 10 Home"){
-        If ($BV -eq 1){
-        } ElseIf ($BV -In 2..3){
-            $BV++
-        }
-    } ElseIf($WinEdition -eq "Microsoft Windows 10 Pro"){
-        If ($BV -eq 1){
-            $BV++
-        } ElseIf ($BV -In 2..3){
-            $BV++
-        }
-    } Else {
-        $BV = 9
-    }
-    Return $BV
-}
-
-  ##########
-  # Black Viper -End
-  ##########
 
   ##########
   # Privacy Menu -Start
@@ -1298,19 +1152,17 @@ $RestartOnUpdateItems = @(
   ##########
   # Windows Update Menu -End
   ##########
- 
+
   ##########
   # Service Tweaks Menu -Start
   ##########
 
 $ServiceTweaksSetMenuItems = @(
 '          Service Tweaks Settings Menu           ',
-'1. User Agent Control  ','6. Firewall            ',
-'2. Admin Shares        ','7. HomeGroups          ',
-'3. Windows Defender    ','8. Remote Desktop      ',
-'4. Remote Assistance   ','                       ',
-#'4. Remote Assistance   ','9. Black Viper Setting ',
-'5. Sharing Mapped Drive','                       ',
+'1. User Agent Control  ','5. Sharing Mapped Drive',
+'2. Admin Shares        ','6. Firewall            ',
+'3. Windows Defender    ','7. HomeGroups          ',
+'4. Remote Assistance   ','8. Remote Desktop      ',
 'B. Back to Script Setting Main Menu              ')
 
 $ServiceTweaksSetMenuItm = (
@@ -1322,7 +1174,6 @@ $ServiceTweaksSetMenuItm = (
 (6,"Firewall",2,0),
 (7,"HomeGroups",2,0),
 (8,"RemoteDesktop",2,0))
-#(9,"Black_Viper_Input",3,0))
 
 $UACItems = @(
 '               User Agent Control                ',
@@ -1401,7 +1252,7 @@ $RemoteDesktopItems = @(
   ##########
   # Service Tweaks Menu -End
   ##########
-  
+
   ##########
   # Context Menu -Start
   ##########
@@ -1489,7 +1340,7 @@ $SendToItems = @(
   ##########
   # Context Menu -End
   ##########
-  
+
   ##########
   # Start Menu -Start
   ##########
@@ -1506,8 +1357,7 @@ $StartMenuSetMenuItm = (
 (2,"StartSuggestions",2,0),
 (3,"UnpinItems",1,0),
 (4,"MostUsedAppStartMenu",2,0),
-(5,"RecentItemsFrequent",2,0)
-)
+(5,"RecentItemsFrequent",2,0))
 
 $StartMenuWebSearchItems = @(
 '              Start Menu Web Search              ',
@@ -1556,7 +1406,7 @@ $RecentItemsFrequentItems = @(
   ##########
   # Start Menu -End
   ##########
-  
+
   ##########
   # Taskbar Menu -Start
   ##########
@@ -1584,7 +1434,7 @@ $TaskbarSetMenuItm = (
 (10,"TrayIcons",2,0),
 (11,"LastActiveClick",2,0),
 (12,"TaskbarButtOnDisplay",3,0))
- 
+
 $BatteryUIBarItems = @(
 '          Battery UI Flyout on Taskbar           ',
 '                                                 ',
@@ -1698,7 +1548,7 @@ $TaskbarButtOnDisplayItems = @(
   ##########
   # Taskbar Menu -End
   ##########
-  
+
   ##########
   # Explorer Menu -Start
   ##########
@@ -1839,7 +1689,7 @@ $PidInTitleBarItems = @(
   ##########
   # Explorer Menu -End
   ##########
-  
+
   ##########
   # 'This PC' Menu -Start
   ##########
@@ -1970,7 +1820,7 @@ $ControlPanelOnDesktopItems = @(
   ##########
   # 'This PC' Menu -End
   ##########
-  
+
   ##########
   # Lock Screen Menu -Start
   ##########
@@ -2016,7 +1866,7 @@ $CameraOnLockScreenItems = @(
   ##########
   # Lock Screen Menu -End
   ##########
-  
+
   ##########
   # Misc/Photo Viewer Menu -Start
   ##########
@@ -2128,7 +1978,7 @@ $PVOpenWithMenuItems = @(
   ##########
   # Misc/Photo Viewer Menu -End
   ##########
-  
+
   ##########
   # Features Menu -Start
   ##########
@@ -2205,11 +2055,11 @@ $LinuxSubsystemItems = @(
   ##########
   # Features Menu -End
   ##########
-  
+
   ##########
   # Metro Apss Menu -Start
   ##########
-  
+
 $APList = @(
     'APP_3DBuilder',
     'APP_Asphalt8Airborne',
@@ -2261,7 +2111,7 @@ $APList = @(
     'APP_ZuneVideo'
 )
 
-Function AllMetroSet([Int]$Number){
+Function AllMetroSet([Int]$Number) {
     ForEach ($ApL in $APList) {
         Set-Variable -Name $APList -Value $Number -Scope Script;
     }
@@ -2269,19 +2119,19 @@ Function AllMetroSet([Int]$Number){
 
 Function MetroMenu([Array]$VariDisplay, [Array]$MetroMenuItm) {
     $MetroMenu = 'X'
-    while($MetroMenu -ne "Out"){
+    while ($MetroMenu -ne "Out") {
         Clear-Host
         MenuDisplay $VariDisplay
-        If($Invalid -eq 1){
+        If($Invalid -eq 1) {
             Write-host ""
             Write-host "Invalid Selection" -ForegroundColor Red -BackgroundColor Black -NoNewline
             $Invalid = 0
         }
         $MetroMenu = Read-Host "`nSelection"
         $ConInt = $MetroMenu -as [int]
-        If($ConInt -is [int] -and $MetroMenu -ne $null){
+        If($ConInt -is [int] -and $MetroMenu -ne $null) {
             for ($i=0; $i -le $MetroMenuItm.length; $i++) {
-                If($MetroMenuItm[$i][0] -eq $ConInt){
+                If($MetroMenuItm[$i][0] -eq $ConInt) {
                     ChoicesMenuMetro ($MetroMenuItm[$i][1]) ($MetroMenuItm[$i][2])
                     $i = $MetroMenuItm.length +1
                 }
@@ -2297,25 +2147,25 @@ Function MetroMenu([Array]$VariDisplay, [Array]$MetroMenuItm) {
 }
 
 Function ChoicesMenuMetro([String]$Vari, [Int]$MultiV) {
-    If($MultiV -eq 0){
+    If($MultiV -eq 0) {
         $VariM = -join("APP_",$Vari)
         $VariV = Get-Variable $VariM -valueOnly #Variable
-    } ElseIf($MultiV -eq 1){
+    } ElseIf ($MultiV -eq 1) {
         $VariM = -join("APP_",$Vari)
         $Vari1 = -join($VariM,"1")
         $Vari2 = -join($VariM,"2")
         $VariV = Get-Variable $Vari1 -valueOnly #Variable
-    } ElseIf($MultiV -eq 2){
+    } ElseIf ($MultiV -eq 2) {
         $VariM = $Vari
         $VariV = "9"
     }
     $VariJ = -join($Vari,"Items")
     $VariA = Get-Variable $VariJ -valueOnly #Array
     $ChoicesMenuMetro = 'X'
-    while($ChoicesMenuMetro -ne "Out"){
+    while ($ChoicesMenuMetro -ne "Out") {
         Clear-Host
         ChoicesDisplayMetro $VariA $VariV
-        If($Invalid -eq 1){
+        If($Invalid -eq 1) {
             Write-host ""
             Write-host "Invalid Selection" -ForegroundColor Red -BackgroundColor Black -NoNewline
             $Invalid = 0
@@ -2327,12 +2177,12 @@ Function ChoicesMenuMetro([String]$Vari, [Int]$MultiV) {
             default {$Invalid = 1}
         }
     }
-    If($MultiV -eq 0){
+    If($MultiV -eq 0) {
         Set-Variable -Name $VariM -Value $ReturnV -Scope Script
-    } ElseIf($MultiV -eq 1){
+    } ElseIf ($MultiV -eq 1) {
         Set-Variable -Name $Vari1 -Value $ReturnV -Scope Script
         Set-Variable -Name $Vari2 -Value $ReturnV -Scope Script
-    } ElseIf($MultiV -eq 2 -and $ReturnV -ne "9"){
+    } ElseIf ($MultiV -eq 2 -and $ReturnV -ne "9") {
         AllMetroSet $ReturnV
     }
     Return
@@ -2351,7 +2201,7 @@ Function ChoicesDisplayMetro ([Array]$ChToDisplayMetro, [Int]$ChToDisplayValMetr
     DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu "2. Hide (Current User Only)                      " 2 0 0 ;DisplayOutMenu "|" 14 0 1
     DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu "3. Uninstall (All users) -Read Note Bellow       " 2 0 0 ;DisplayOutMenu "|" 14 0 1
     DisplayOutMenu "|                                                   |" 14 0 1
-    If($ChToDisplayValMetro -ne "9"){
+    If($ChToDisplayValMetro -ne "9") {
         DisplayOutMenu "|  " 14 0 0 ;DisplayOutMenu "Current Value: " 13 0 0 ;DisplayOutMenu $ChToDisplayValMetro 13 0 0 ;DisplayOutMenu "                                 |" 14 0 1
     }
     DisplayOutMenu "|---------------------------------------------------|" 14 0 1
@@ -2768,7 +2618,6 @@ Function LoadWinDefault {
     $WorkFolders = 1
     $LinuxSubsystem = 2
     $RemoteUACAcctToken = 2
-    $Back_Viper = 1
 }
 
 ##########
@@ -2786,7 +2635,7 @@ Function RunScript {
     DisplayOut "------------------" 14 0
     DisplayOut "" 14 0
     
-    If ($CreateRestorePoint -eq 0 -and $ShowSkipped -eq 1) {
+    If($CreateRestorePoint -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Creation of System Restore Point..." 15 0
     } ElseIf ($CreateRestorePoint -eq 1) {
         DisplayOut "Creating System Restore Point Named 'Win10 Initial Setup Script'." 11 1
@@ -2802,11 +2651,11 @@ Function RunScript {
     # 14393 = anniversary update
     # 10586 = first major update
     # 10240 = first release
-    
+
     ##########
     # Privacy Settings -Start
     ##########
-    
+
     DisplayOut "" 14 0
     DisplayOut "------------------------" 14 0
     DisplayOut "-   Privacy Settings   -" 14 0
@@ -2814,7 +2663,7 @@ Function RunScript {
     DisplayOut "" 14 0
 
     # Telemetry
-    If ($Telemetry -eq 0 -and $ShowSkipped -eq 1) {
+    If($Telemetry -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Telemetry..." 15 0
     } ElseIf ($Telemetry -eq 1) {
         DisplayOut "Enabling Telemetry..." 11 0
@@ -2833,7 +2682,7 @@ Function RunScript {
     }
 
     # Wi-Fi Sense
-    If ($WiFiSense -eq 0 -and $ShowSkipped -eq 1) {
+    If($WiFiSense -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Wi-Fi Sense..." 15 0
     } ElseIf ($WiFiSense -eq 1) {
         DisplayOut "Enabling Wi-Fi Sense..." 11 0
@@ -2841,7 +2690,7 @@ Function RunScript {
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi\AllowAutoConnectToWiFiSenseHotspots" -Name "Value" -Type DWord -Value 1
     } ElseIf ($WiFiSense -eq 2) {
         DisplayOut "Disabling Wi-Fi Sense..." 12 0
-        If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi\AllowWiFiHotSpotReporting")) {
+        If(!(Test-Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi\AllowWiFiHotSpotReporting")) {
             New-Item -Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi\AllowWiFiHotSpotReporting" -Force | Out-Null
         }
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi\AllowWiFiHotSpotReporting" -Name "Value" -Type DWord -Value 0
@@ -2849,7 +2698,7 @@ Function RunScript {
     }
 
     # SmartScreen Filter
-    If ($SmartScreen -eq 0 -and $ShowSkipped -eq 1) {
+    If($SmartScreen -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping SmartScreen Filter..." 15 0
     } ElseIf ($SmartScreen -eq 1) {
         DisplayOut "Enabling SmartScreen Filter..." 11 0
@@ -2862,7 +2711,7 @@ Function RunScript {
     }    
 
     # Location Tracking
-    If ($LocationTracking -eq 0 -and $ShowSkipped -eq 1) {
+    If($LocationTracking -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Location Tracking..." 15 0
     } ElseIf ($LocationTracking -eq 1) {
         DisplayOut "Enabling Location Tracking..." 11 0
@@ -2875,35 +2724,35 @@ Function RunScript {
     }
 
     # Disable Feedback
-    If ($Feedback -eq 0 -and $ShowSkipped -eq 1) {
+    If($Feedback -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Feedback..." 15 0
     } ElseIf ($Feedback -eq 1) {
         DisplayOut "Enabling Feedback..." 11 0
         Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Siuf\Rules" -Name "NumberOfSIUFInPeriod"
     } ElseIf ($Feedback -eq 2) {
         DisplayOut "Disabling Feedback..." 12 0
-        If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Siuf\Rules")) {
+        If(!(Test-Path "HKCU:\SOFTWARE\Microsoft\Siuf\Rules")) {
             New-Item -Path "HKCU:\SOFTWARE\Microsoft\Siuf\Rules" -Force | Out-Null
         }
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Siuf\Rules" -Name "NumberOfSIUFInPeriod" -Type DWord -Value 0
     }
 
     # Disable Advertising ID
-    If ($AdvertisingID -eq 0 -and $ShowSkipped -eq 1) {
+    If($AdvertisingID -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Advertising ID..." 15 0
     } ElseIf ($AdvertisingID -eq 1) {
         DisplayOut "Enabling Advertising ID..." 11 0
         Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo" -Name "Enabled"
     } ElseIf ($AdvertisingID -eq 2) {
         DisplayOut "Disabling Advertising ID..." 12 0
-        If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo")) {
+        If(!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo")) {
             New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo" | Out-Null
         }
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo" -Name "Enabled" -Type DWord -Value 0
     }
-    
+
     # Cortana
-    If ($Cortana -eq 0 -and $ShowSkipped -eq 1) {
+    If($Cortana -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Cortana..." 15 0
     } ElseIf ($Cortana -eq 1) {
         DisplayOut "Enabling Cortana..." 11 0
@@ -2913,37 +2762,37 @@ Function RunScript {
         Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization\TrainedDataStore" -Name "HarvestContacts"
     } ElseIf ($Cortana -eq 2) {
         DisplayOut "Disabling Cortana..." 12 0
-        If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Personalization\Settings")) {
+        If(!(Test-Path "HKCU:\SOFTWARE\Microsoft\Personalization\Settings")) {
             New-Item -Path "HKCU:\SOFTWARE\Microsoft\Personalization\Settings" -Force | Out-Null
         }
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Personalization\Settings" -Name "AcceptedPrivacyPolicy" -Type DWord -Value 0
-        If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization")) {
+        If(!(Test-Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization")) {
             New-Item -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization" -Force | Out-Null
         }
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization" -Name "RestrictImplicitTextCollection" -Type DWord -Value 1
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization" -Name "RestrictImplicitInkCollection" -Type DWord -Value 1
-        If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization\TrainedDataStore")) {
+        If(!(Test-Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization\TrainedDataStore")) {
             New-Item -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization\TrainedDataStore" -Force | Out-Null
         }
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization\TrainedDataStore" -Name "HarvestContacts" -Type DWord -Value 0
     }
-    
+
     # Cortana Search
-    If ($CortanaSearch -eq 0 -and $ShowSkipped -eq 1) {
+    If($CortanaSearch -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Cortana Search..." 15 0
     } ElseIf ($CortanaSearch -eq 1) {
         DisplayOut "Enabling Cortana Search..." 11 0
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana"
     } ElseIf ($CortanaSearch -eq 2) {
         DisplayOut "Disabling Cortana Search..." 12 0
-        If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search")) {
+        If(!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search")) {
             New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Force | Out-Null
         }
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana" -Type DWord -Value 0
     }
-    
+
     # Error Reporting
-    If ($ErrorReporting -eq 0 -and $ShowSkipped -eq 1) {
+    If($ErrorReporting -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Error Reporting..." 15 0
     } ElseIf ($ErrorReporting -eq 1) {
         DisplayOut "Enabling Error Reporting..." 11 0
@@ -2952,9 +2801,9 @@ Function RunScript {
         DisplayOut "Disabling Error Reporting..." 12 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\Windows Error Reporting" -Name "Disabled" -Type DWord -Value 1
     }
-    
+
     # AutoLogger file and restrict directory
-    If ($AutoLoggerFile -eq 0 -and $ShowSkipped -eq 1) {
+    If($AutoLoggerFile -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping AutoLogger..." 15 0
     } ElseIf ($AutoLoggerFile -eq 1) {
         DisplayOut "Unrestricting AutoLogger Directory..." 11 0
@@ -2963,14 +2812,14 @@ Function RunScript {
     } ElseIf ($AutoLoggerFile -eq 2) {
         DisplayOut "Removing AutoLogger File and Festricting Directory..." 12 0
         $autoLoggerDir = "$env:PROGRAMDATA\Microsoft\Diagnosis\ETLLogs\AutoLogger"
-        If (Test-Path "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl") {
+        If(Test-Path "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl") {
             Remove-Item "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl"
         }
         icacls $autoLoggerDir /deny SYSTEM:`(OI`)`(CI`)F | Out-Null
     }
-    
+
     # Diagnostics Tracking Service
-    If ($DiagTrack -eq 0 -and $ShowSkipped -eq 1) {
+    If($DiagTrack -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Diagnostics Tracking..." 15 0
     } ElseIf ($DiagTrack -eq 1) {
         DisplayOut "Enabling and Starting Diagnostics Tracking Service..." 11 0
@@ -2981,9 +2830,9 @@ Function RunScript {
         Stop-Service "DiagTrack"
         Set-Service "DiagTrack" -StartupType Disabled
     }
-    
+
     # WAP Push Service
-    If ($WAPPush -eq 0 -and $ShowSkipped -eq 1) {
+    If($WAPPush -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping WAP Push..." 15 0
     } ElseIf ($WAPPush -eq 1) {
         DisplayOut "Enabling and Starting WAP Push Service..." 11 0
@@ -2995,9 +2844,9 @@ Function RunScript {
         Stop-Service "dmwappushservice"
         Set-Service "dmwappushservice" -StartupType Disabled
     }
-    
+
     # App Auto Download
-    If ($AppAutoDownload -eq 0 -and $ShowSkipped -eq 1) {
+    If($AppAutoDownload -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping App Auto Download..." 15 0
     } ElseIf ($AppAutoDownload -eq 1) {
         DisplayOut "Enabling App Auto Download..." 11 0
@@ -3006,28 +2855,28 @@ Function RunScript {
     } ElseIf ($AppAutoDownload -eq 2) {
         DisplayOut "Disabling App Auto Download..." 12 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsStore\WindowsUpdate" -Name "AutoDownload" -Type DWord -Value 2
-        If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent")) {
+        If(!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent")) {
             New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent" -Force | Out-Null
         }
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent" -Name "DisableWindowsConsumerFeatures" -Type DWord -Value 1
     }
-    
+
     ##########
     # Privacy Settings -End
     ##########
-    
+
     ##########
     # Windows Update -Start
     ##########
-    
+
     DisplayOut "" 14 0
     DisplayOut "-------------------------------" 14 0
     DisplayOut "-   Windows Update Settings   -" 14 0
     DisplayOut "-------------------------------" 14 0
     DisplayOut "" 14 0
-    
+
     # Check for Windows Update
-    If ($CheckForWinUpdate -eq 0 -and $ShowSkipped -eq 1) {
+    If($CheckForWinUpdate -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Check for Windows Update..." 15 0
     } ElseIf ($CheckForWinUpdate -eq 1) {
         DisplayOut "Enabling Check for Windows Update..." 11 0
@@ -3036,31 +2885,31 @@ Function RunScript {
         DisplayOut "Disabling Check for Windows Update..." 12 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "SetDisableUXWUAccess" -Type DWord -Value 1
     }
-    
+
     # Windows Update Check Type
-    If ($WinUpdateType -eq 0 -and $ShowSkipped -eq 1) {
+    If($WinUpdateType -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Windows Update Check Type..." 15 0
     } ElseIf ($WinUpdateType -In 1..4) {
-        If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU")) {
+        If(!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU")) {
             New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" | Out-Null
         }
-        If ($WinUpdateType -eq 1){
+        If($WinUpdateType -eq 1) {
             DisplayOut "Notify for windows update download and notify for install..." 16 0
             Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 2
-        } ElseIf ($WinUpdateType -eq 2){
+        } ElseIf ($WinUpdateType -eq 2) {
             DisplayOut "Auto Download for windows update download and notify for install..." 16 0
             Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 3
-        } ElseIf ($WinUpdateType -eq 3){
+        } ElseIf ($WinUpdateType -eq 3) {
             DisplayOut "Auto Download for windows update download and schedule for install..." 16 0
             Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 4
-        } ElseIf ($WinUpdateType -eq 4){
+        } ElseIf ($WinUpdateType -eq 4) {
             DisplayOut "Windows update allow local admin to choose setting..." 16 0
             Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "AUOptions" -Type DWord -Value 5
         }
     }
-    
+
     # Windows Update P2P
-    If ($WinUpdateDownload -eq 0 -and $ShowSkipped -eq 1) {
+    If($WinUpdateDownload -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Windows Update P2P..." 15 0
     } ElseIf ($WinUpdateDownload -eq 1) {
         DisplayOut "Unrestricting Windows Update P2P to internet..." 16 0
@@ -3069,36 +2918,35 @@ Function RunScript {
     } ElseIf ($WinUpdateDownload -eq 2) {
         DisplayOut "Restricting Windows Update P2P only to local network..." 16 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config" -Name "DODownloadMode" -Type DWord -Value 1
-        If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization")) {
+        If(!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization")) {
             New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization" | Out-Null
         }
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization" -Name "SystemSettingsDownloadMode" -Type DWord -Value 3
     } ElseIf ($WinUpdateDownload -eq 3) {
         DisplayOut "Disabling Windows Update P2P..." 12 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Config" -Name "DODownloadMode" -Type DWord -Value 0
-        If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization")) {
+        If(!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization")) {
             New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization" | Out-Null
         }
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization" -Name "SystemSettingsDownloadMode" -Type DWord -Value 3
     }
-    
+
     ##########
     # Windows Update -End
     ##########
-    
+
     ##########
     # Service Tweaks -Start
     ##########
-    
+
     DisplayOut "" 14 0
     DisplayOut "----------------------" 14 0
     DisplayOut "-   Service Tweaks   -" 14 0
     DisplayOut "----------------------" 14 0
     DisplayOut "" 14 0
-    
-    
+
     # UAC level
-    If ($UAC -eq 0 -and $ShowSkipped -eq 1) {
+    If($UAC -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping UAC Level..." 15 0
     } ElseIf ($UAC -eq 1) {
         DisplayOut "Lowering UAC level..." 16 0
@@ -3113,9 +2961,9 @@ Function RunScript {
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" -Type DWord -Value 2
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "PromptOnSecureDesktop" -Type DWord -Value 1
     }
-    
+
     # Sharing mapped drives between users
-    If ($SharingMappedDrives -eq 0 -and $ShowSkipped -eq 1) {
+    If($SharingMappedDrives -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Sharing Mapped Drives between Users..." 15 0
     } ElseIf ($SharingMappedDrives -eq 1) {
         DisplayOut "Enabling Sharing Mapped Drives between Users..." 11 0
@@ -3124,9 +2972,9 @@ Function RunScript {
         DisplayOut "Disabling Sharing Mapped Drives between Users..." 12 0
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "EnableLinkedConnections"
     }
-    
+
     # Administrative shares
-    If ($AdminShares -eq 0 -and $ShowSkipped -eq 1) {
+    If($AdminShares -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Hidden Administrative Shares..." 15 0
     } ElseIf ($AdminShares -eq 1) {
         DisplayOut "Enabling Hidden Administrative Shares..." 11 0
@@ -3135,9 +2983,9 @@ Function RunScript {
         DisplayOut "Disabling Hidden Administrative Shares..." 12 0
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name "AutoShareWks" -Type DWord -Value 0
     }
-    
+
     # Firewall
-    If ($Firewall -eq 0 -and $ShowSkipped -eq 1) {
+    If($Firewall -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Firewall..." 15 0
     } ElseIf ($Firewall -eq 1) {
         DisplayOut "Enabling Firewall..." 11 0
@@ -3146,9 +2994,9 @@ Function RunScript {
         DisplayOut "Disabling Firewall..." 12 0
         Set-NetFirewallProfile -Profile * -Enabled False
     }
-    
+
     # Windows Defender
-    If ($WinDefender -eq 0 -and $ShowSkipped -eq 1) {
+    If($WinDefender -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Windows Defender..." 15 0
     } ElseIf ($WinDefender -eq 1) {
         DisplayOut "Enabling Windows Defender..." 11 0
@@ -3159,9 +3007,9 @@ Function RunScript {
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name "DisableAntiSpyware" -Type DWord -Value 1
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "WindowsDefender"
     }
-    
+
     # Home Groups services
-    If ($HomeGroups -eq 0 -and $ShowSkipped -eq 1) {
+    If($HomeGroups -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Home Groups Services..." 15 0
     } ElseIf ($HomeGroups -eq 1) {
         DisplayOut "Enabling Home Groups Services..." 11 0
@@ -3175,9 +3023,9 @@ Function RunScript {
         Stop-Service "HomeGroupProvider"
         Set-Service "HomeGroupProvider" -StartupType Disabled
     }
-    
+
     # Remote Assistance
-    If ($RemoteAssistance -eq 0 -and $ShowSkipped -eq 1) {
+    If($RemoteAssistance -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Remote Assistance..." 15 0
     } ElseIf ($RemoteAssistance -eq 1) {
         DisplayOut "Enabling Remote Assistance..." 11 0
@@ -3186,9 +3034,9 @@ Function RunScript {
         DisplayOut "Disabling Remote Assistance..." 12 0
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Remote Assistance" -Name "fAllowToGetHelp" -Type DWord -Value 0
     }
-    
+
     # Enable Remote Desktop w/o Network Level Authentication
-    If ($RemoteDesktop -eq 0 -and $ShowSkipped -eq 1) {
+    If($RemoteDesktop -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Remote Desktop..." 15 0
     } ElseIf ($RemoteDesktop -eq 1) {
         DisplayOut "Enabling Remote Desktop w/o Network Level Authentication..." 11 0
@@ -3199,37 +3047,37 @@ Function RunScript {
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" -Type DWord -Value 1
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" -Name "UserAuthentication" -Type DWord -Value 1
     }
-    
+
     ##########
     # Service Tweaks -End
     ##########
-    
+
     ##########
     # Context Menu Items -Start
     ##########
-    
+
     DisplayOut "" 14 0
     DisplayOut "--------------------------" 14 0
     DisplayOut "-   Context Menu Items   -" 14 0
     DisplayOut "--------------------------" 14 0
     DisplayOut "" 14 0
-    
+
     # Cast to Device Context
-    If ($CastToDevice -eq 0 -and $ShowSkipped -eq 1) {
+    If($CastToDevice -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Cast to Device Context item..." 15 0
     } ElseIf ($CastToDevice -eq 1) {
         DisplayOut "Enabling Cast to Device Context item..." 11 0
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked" -Name "{7AD84985-87B4-4a16-BE58-8B72A5B390F7}"
     } ElseIf ($CastToDevice -eq 2) {
         DisplayOut "Disabling Cast to Device Context item..." 12 0
-        If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked")) {
+        If(!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked")) {
             New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked" | Out-Null
         }
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked" -Name "{7AD84985-87B4-4a16-BE58-8B72A5B390F7}"
     }
-    
+
     # Previous Versions Context Menu
-    If ($PreviousVersions -eq 0 -and $ShowSkipped -eq 1) {
+    If($PreviousVersions -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Previous Versions Context item..." 15 0
     } ElseIf ($PreviousVersions -eq 1) {
         DisplayOut "Enabling Previous Versions Context item..." 11 0
@@ -3244,9 +3092,9 @@ Function RunScript {
         Remove-Item -Path "HKCR:\Directory\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Recurse
         Remove-Item -Path "HKCR:\Drive\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Recurse
     }
-    
+
     # Include in Library Context Menu
-    If ($IncludeinLibrary -eq 0 -and $ShowSkipped -eq 1) {
+    If($IncludeinLibrary -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Include in Library Context item..." 15 0
     } ElseIf ($IncludeinLibrary -eq 1) {
         DisplayOut "Enabling Include in Library Context item..." 11 0
@@ -3255,9 +3103,9 @@ Function RunScript {
         DisplayOut "Disabling Include in Library..." 12 0
         Set-ItemProperty -Path "HKCR:\Folder\ShellEx\ContextMenuHandlers\Library Location" -Name "(Default)" -Type String -Value ""
     }
-    
+
     # Pin To Start Context Menu
-    If ($PinToStart -eq 0 -and $ShowSkipped -eq 1) {
+    If($PinToStart -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Pin To Start Context item..." 15 0
     } ElseIf ($PinToStart -eq 1) {
         DisplayOut "Enabling Pin To Start Context item..." 11 0
@@ -3278,9 +3126,9 @@ Function RunScript {
         Set-ItemProperty -Path "HKCR:\Microsoft.Website\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value ""
         Set-ItemProperty -Path "HKCR:\mscfile\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value ""
     }
-    
+
     # Pin To Quick Access Context Menu
-    If ($PinToQuickAccess -eq 0 -and $ShowSkipped -eq 1) {
+    If($PinToQuickAccess -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Pin To Quick Access Context item..." 15 0
     } ElseIf ($PinToQuickAccess -eq 1) {
         DisplayOut "Enabling Pin To Quick Access Context item..." 11 0
@@ -3299,9 +3147,9 @@ Function RunScript {
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome"  -Name "AppliesTo" -Type String -Value ""
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome\command"  -Name "DelegateExecute" -Type String -Value ""        
     }
-    
+
     # Share With Context Menu
-    If ($ShareWith -eq 0 -and $ShowSkipped -eq 1) {
+    If($ShareWith -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Share With Context item..." 15 0
     } ElseIf ($ShareWith -eq 1) {
         DisplayOut "Enabling Share With Context item..." 11 0
@@ -3322,81 +3170,81 @@ Function RunScript {
         Set-ItemProperty -Path "HKCR:\Drive\shellex\ContextMenuHandlers\Sharing" -Name "(Default)" -Type String -Value ""
         Set-ItemProperty -Path "HKCR:\LibraryFolder\background\shellex\ContextMenuHandlers\Sharing" -Name "(Default)" -Type String -Value ""
     }
-    
+
     # Send To Context Menu
-    If ($SendTo -eq 0 -and $ShowSkipped -eq 1) {
+    If($SendTo -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Send To Context item..." 15 0
     } ElseIf ($SendTo -eq 1) {
         DisplayOut "Enabling Send To Context item..." 11 0
-        If (!(Test-Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo")) {
+        If(!(Test-Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo")) {
             New-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo"
         }
         Set-ItemProperty -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" -Name "(Default)" -Type String -Value "{7BA4C740-9E81-11CF-99D3-00AA004AE837}" | Out-Null
     } ElseIf ($SendTo -eq 2) {
         DisplayOut "Disabling Send To Context item..." 12 0
-        If (Test-Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo") {
+        If(Test-Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo") {
             Remove-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo"
         }
     }
-    
+
     ##########
     # Context Menu Items -End
     ##########
-    
+
     ##########
     # Task Bar Items -Start
     ##########
-    
+
     DisplayOut "" 14 0
     DisplayOut "----------------------" 14 0
     DisplayOut "-   Task Bar Items   -" 14 0
     DisplayOut "----------------------" 14 0
     DisplayOut "" 14 0
-    
+
     # Battery UI Bar
-    If ($BatteryUIBar -eq 0 -and $ShowSkipped -eq 1) {
+    If($BatteryUIBar -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Battery UI Bar..." 15 0
     } ElseIf ($BatteryUIBar -eq 1) {
         DisplayOut "Enabling New Battery UI Bar..." 11 0
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" -Name "UseWin32BatteryFlyout"
     } ElseIf ($BatteryUIBar -eq 2) {
         DisplayOut "Enabling Old Battery UI Bar..." 12 0
-        If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell")) {
+        If(!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell")) {
             New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" | Out-Null
         }
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" -Name "UseWin32BatteryFlyout" -Type DWord -Value 1
     }
-    
+
     # Clock UI Bar
-    If ($ClockUIBar -eq 0 -and $ShowSkipped -eq 1) {
+    If($ClockUIBar -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Clock UI Bar..." 15 0
     } ElseIf ($ClockUIBar -eq 1) {
         DisplayOut "Enabling New Clock UI Bar..." 11 0
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" -Name "UseWin32TrayClockExperience"
     } ElseIf ($ClockUIBar -eq 2) {
         DisplayOut "Enabling Old Clock UI Bar..." 12 0
-        If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell")) {
+        If(!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell")) {
             New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" | Out-Null
         }
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" -Name "UseWin32TrayClockExperience" -Type DWord -Value 1
     }
          
     # Volume Control Bar
-    If ($VolumeControlBar -eq 0 -and $ShowSkipped -eq 1) {
+    If($VolumeControlBar -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Volume Control Bar..." 15 0
     } ElseIf ($VolumeControlBar -eq 1) {
         DisplayOut "Enabling New Volume Control Bar (Horizontal)..." 11 0
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\MTCUVC" -Name "EnableMtcUvc"
     } ElseIf ($VolumeControlBar -eq 2) {
         DisplayOut "Enabling Classic Volume Control Bar (Vertical)..." 12 0
-        If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\MTCUVC")) {
+        If(!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\MTCUVC")) {
             New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\MTCUVC" | Out-Null
         }
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\MTCUVC" -Name "EnableMtcUvc" -Type DWord -Value 0
     }
-    
+
     # Taskbar Search button / box
-    If ($TaskbarSearchBox -eq 0 -and $ShowSkipped -eq 1) {
+    If($TaskbarSearchBox -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Taskbar Search box / button..." 15 0
     } ElseIf ($TaskbarSearchBox -eq 1) {
         DisplayOut "Showing Taskbar Search box / button..." 11 0
@@ -3405,9 +3253,9 @@ Function RunScript {
         DisplayOut "Hiding Taskbar Search box / button..." 12 0
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "SearchboxTaskbarMode" -Type DWord -Value 0
     }
-    
+
     # Task View button
-    If ($TaskViewButton -eq 0 -and $ShowSkipped -eq 1) {
+    If($TaskViewButton -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Task View button..." 15 0
     } ElseIf ($TaskViewButton -eq 1) {
         DisplayOut "Showing Task View button..." 11 0
@@ -3416,9 +3264,9 @@ Function RunScript {
         DisplayOut "Hiding Task View button..." 12 0
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -Type DWord -Value 0
     }
-    
+
     # Taskbar Icon Size
-    If ($TaskbarIconSize -eq 0 -and $ShowSkipped -eq 1) {
+    If($TaskbarIconSize -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Icon Size in Taskbar..." 15 0
     } ElseIf ($TaskbarIconSize -eq 1) {
         DisplayOut "Showing Normal Icon Size in Taskbar..." 11 0
@@ -3427,9 +3275,9 @@ Function RunScript {
         DisplayOut "Showing Smaller Icons in Taskbar..." 12 0
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarSmallIcons" -Type DWord -Value 1
     }
-    
+
     # Taskbar Item Grouping
-    If ($TaskbarGrouping -eq 0 -and $ShowSkipped -eq 1) {
+    If($TaskbarGrouping -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Taskbar Item Grouping..." 15 0
     } ElseIf ($TaskbarGrouping -eq 1) {
         DisplayOut "Never Group Taskbar Items..." 16 0
@@ -3441,9 +3289,9 @@ Function RunScript {
         DisplayOut "When Needed Group Taskbar Items..." 16 0
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarGlomLevel" -Type DWord -Value 1
     }
-    
+
     # Tray icons
-    If ($TrayIcons -eq 0 -and $ShowSkipped -eq 1) {
+    If($TrayIcons -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Tray icons..." 15 0
     } ElseIf ($TrayIcons -eq 1) {
         DisplayOut "Showing All Tray Icons..." 11 0
@@ -3452,9 +3300,9 @@ Function RunScript {
         DisplayOut "Hiding Tray Icons..." 12 0
         Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "EnableAutoTray"
     }
-    
+
     # Seconds in Taskbar Clock
-    If ($SecondsInClock -eq 0 -and $ShowSkipped -eq 1) {
+    If($SecondsInClock -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Seconds in Taskbar Clock..." 15 0
     } ElseIf ($SecondsInClock -eq 1) {
         DisplayOut "Showing Seconds in Taskbar Clock..." 11 0
@@ -3463,9 +3311,9 @@ Function RunScript {
         DisplayOut "Hiding Seconds in Taskbar Clock..." 12 0
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSecondsInSystemClock" -Type DWord -Value 0
     }
-    
+
     # Last Active Click
-    If ($LastActiveClick -eq 0 -and $ShowSkipped -eq 1) {
+    If($LastActiveClick -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Last Active Click..." 15 0
     } ElseIf ($LastActiveClick -eq 1) {
         DisplayOut "Enabling Last Active Click..." 11 0
@@ -3474,9 +3322,9 @@ Function RunScript {
         DisplayOut "Disabling Last Active Click..." 12 0
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LastActiveClick" -Type DWord -Value 0
     }
-    
+
     # Taskbar on multiple displays
-    If ($TaskBarOnMultiDisplay -eq 0 -and $ShowSkipped -eq 1) {
+    If($TaskBarOnMultiDisplay -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Taskbar on Multiple Displays..." 15 0
     } ElseIf ($TaskBarOnMultiDisplay -eq 1) {
         DisplayOut "Showing Taskbar on Multiple Displays..." 11 0
@@ -3485,9 +3333,9 @@ Function RunScript {
         DisplayOut "Hiding Taskbar on Multiple Displays..." 12 0
         Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarEnabled" -Type DWord -Value 0
     }
-    
+
     # Taskbar on multiple displays
-    If ($TaskbarButtOnDisplay -eq 0 -and $ShowSkipped -eq 1) {
+    If($TaskbarButtOnDisplay -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Taskbar Buttons on Multiple Displays..." 15 0
     } ElseIf ($TaskbarButtOnDisplay -eq 1) {
         DisplayOut "Showing Taskbar Buttons on All Taskbars..." 16 0
@@ -3499,23 +3347,23 @@ Function RunScript {
         DisplayOut "Showing Taskbar Buttons on Main Taskbar and where Window is open..." 16 0
         Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarMode" -Type DWord -Value 1
     }
-    
+
     ##########
     # Task Bar Items -End
     ##########
-    
+
     ##########
     # Star Menu Items -Start
     ##########
-    
+
     DisplayOut "" 14 0
     DisplayOut "-----------------------" 14 0
     DisplayOut "-   Star Menu Items   -" 14 0
     DisplayOut "-----------------------" 14 0
     DisplayOut "" 14 0
-    
+
     # Web Search in Start Menu
-    If ($StartMenuWebSearch -eq 0 -and $ShowSkipped -eq 1) {
+    If($StartMenuWebSearch -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Bing Search in Start Menu..." 15 0
     } ElseIf ($StartMenuWebSearch -eq 1) {
         DisplayOut "Enabling Bing Search in Start Menu..." 11 0
@@ -3524,14 +3372,14 @@ Function RunScript {
     } ElseIf ($StartMenuWebSearch -eq 2) {
         DisplayOut "Disabling Bing Search in Start Menu..." 12 0
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "BingSearchEnabled" -Type DWord -Value 0
-        If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search")) {
+        If(!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search")) {
             New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Force | Out-Null
         }
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "DisableWebSearch" -Type DWord -Value 1
     }
-    
+
     # Start Menu suggestions
-    If ($StartSuggestions -eq 0 -and $ShowSkipped -eq 1) {
+    If($StartSuggestions -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Start Menu Suggestions..." 15 0
     } ElseIf ($StartSuggestions -eq 1) {
         DisplayOut "Enabling Start Menu Suggestions..." 11 0
@@ -3542,9 +3390,9 @@ Function RunScript {
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SystemPaneSuggestionsEnabled" -Type DWord -Value 0
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SilentInstalledAppsEnabled" -Type DWord -Value 0
     }
-    
+
     # Most used apps in Start menu
-    If ($MostUsedAppStartMenu -eq 0 -and $ShowSkipped -eq 1) {
+    If($MostUsedAppStartMenu -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Most used Apps in Start Menu..." 15 0
     } ElseIf ($MostUsedAppStartMenu -eq 1) {
         DisplayOut "Showing Most used Apps in Start Menu..." 11 0
@@ -3553,40 +3401,40 @@ Function RunScript {
         DisplayOut "Hiding Most used Apps in Start Menu..." 12 0
         Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackProgs" -Type DWord -Value 0
     }
-    
+
     # Recent Items and Frequent Places
-    If ($RecentItemsFrequent -eq 0 -and $ShowSkipped -eq 1) {
+    If($RecentItemsFrequent -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Recent Items and Frequent Places..." 15 0
     } ElseIf ($RecentItemsFrequent -eq 1) {
         DisplayOut "Enabling Recent Items and Frequent Places..." 11 0
-        If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu")) {
+        If(!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu")) {
             New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" | Out-Null
         }
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "Start_TrackDocs" -Type DWord -Value 1
     } ElseIf ($RecentItemsFrequent -eq 2) {
         DisplayOut "Disabling Recent Items and Frequent Places..." 12 0
-        If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu")) {
+        If(!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu")) {
             New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" | Out-Null
         }
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "Start_TrackDocs" -Type DWord -Value 0
     }
-    
+
     ##########
     # Star Menu Items -End
     ##########
-    
+
     ##########
     # Explorer Items -Start
     ##########
-    
+
     DisplayOut "" 14 0
     DisplayOut "----------------------" 14 0
     DisplayOut "-   Explorer Items   -" 14 0
     DisplayOut "----------------------" 14 0
     DisplayOut "" 14 0
-    
+
     # Process ID on Title Bar
-    If ($PidInTitleBar -eq 0 -and $ShowSkipped -eq 1) {
+    If($PidInTitleBar -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Process ID on Title Bar..." 15 0
     } ElseIf ($PidInTitleBar -eq 1) {
         DisplayOut "Showing Process ID on Title Bar..." 11 0
@@ -3595,9 +3443,9 @@ Function RunScript {
         DisplayOut "Hiding Process ID on Title Bar..." 12 0
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowPidInTitle"
     }
-    
+
     # Aero Snap
-    If ($AeroSnap -eq 0 -and $ShowSkipped -eq 1) {
+    If($AeroSnap -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Aero Snap..." 15 0
     } ElseIf ($AeroSnap -eq 1) {
         DisplayOut "Enabling Aero Snap..." 11 0
@@ -3606,23 +3454,23 @@ Function RunScript {
         DisplayOut "Disabling Aero Snap..." 12 0
         Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "WindowArrangementActive" -Type DWord -Value 0
     }
-    
+
     # Aero Shake
-    If ($AeroShake -eq 0 -and $ShowSkipped -eq 1) {
+    If($AeroShake -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Aero Shake..." 15 0
     } ElseIf ($AeroShake -eq 1) {
         DisplayOut "Enabling Aero Shake..." 11 0
         Remove-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" -Name "NoWindowMinimizingShortcuts"
     } ElseIf ($AeroShake -eq 2) {
         DisplayOut "Disabling Aero Shake..." 12 0
-        If (!(Test-Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer")) {
+        If(!(Test-Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer")) {
             New-Item -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" | Out-Null
         }
         Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" -Name "NoWindowMinimizingShortcuts" -Type DWord -Value 1
     }
-    
+
     # File extensions
-    If ($KnownExtensions -eq 0 -and $ShowSkipped -eq 1) {
+    If($KnownExtensions -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Known File Extensions..." 15 0
     } ElseIf ($KnownExtensions -eq 1) {
         DisplayOut "Showing Known File Extensions..." 11 0
@@ -3631,9 +3479,9 @@ Function RunScript {
         DisplayOut "Hiding Known File Extensions..." 12 0
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Type DWord -Value 1
     }
-    
+
     # Hidden files
-    If ($HiddenFiles -eq 0 -and $ShowSkipped -eq 1) {
+    If($HiddenFiles -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Hidden Files..." 15 0
     } ElseIf ($HiddenFiles -eq 1) {
         DisplayOut "Showing Hidden Files..." 11 0
@@ -3642,9 +3490,9 @@ Function RunScript {
         DisplayOut "Hiding Hidden Files..." 12 0
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Hidden" -Type DWord -Value 2
     }
-    
+
     # System files
-    If ($SystemFiles -eq 0 -and $ShowSkipped -eq 1) {
+    If($SystemFiles -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping System Files..." 15 0
     } ElseIf ($SystemFiles -eq 1) {
         DisplayOut "Showing System Files..." 11 0
@@ -3653,9 +3501,9 @@ Function RunScript {
         DisplayOut "Hiding System fFiles..." 12 0
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSuperHidden" -Type DWord -Value 0
     }
-    
+
     # Change default Explorer view
-    If ($ExplorerOpenLoc -eq 0 -and $ShowSkipped -eq 1) {
+    If($ExplorerOpenLoc -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Default Explorer view to Quick Access..." 15 0
     } ElseIf ($ExplorerOpenLoc -eq 1) {
         DisplayOut "Changing Default Explorer view to Quick Access..." 16 0
@@ -3664,9 +3512,9 @@ Function RunScript {
         DisplayOut "Changing Default Explorer view to This PC..." 16 0
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LaunchTo" -Type DWord -Value 1
     }
-    
+
     # Recent Files in Quick Access
-    If ($RecentFileQikAcc -eq 0 -and $ShowSkipped -eq 1) {
+    If($RecentFileQikAcc -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Recent Files in Quick Access..." 15 0
     } ElseIf ($RecentFileQikAcc -eq 1) {
         DisplayOut "Showing Recent Files in Quick Access..." 11 0
@@ -3684,9 +3532,9 @@ Function RunScript {
         Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Recurse
         Remove-Item -Path "HKLM:SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Recurse
     }
-    
+
     # Frequent folders in Quick_access
-    If ($FrequentFoldersQikAcc -eq 0 -and $ShowSkipped -eq 1) {
+    If($FrequentFoldersQikAcc -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Frequent Folders in Quick Access..." 15 0
     } ElseIf ($FrequentFoldersQikAcc -eq 1) {
         DisplayOut "Showing Frequent Folders in Quick Access..." 11 0
@@ -3695,9 +3543,9 @@ Function RunScript {
         DisplayOut "Hiding Frequent Folders in Quick Access..." 12 0
         Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowFrequent" -Type DWord -Value 0
     }
-    
+
     # Window Content while Dragging
-    If ($WinContentWhileDrag -eq 0 -and $ShowSkipped -eq 1) {
+    If($WinContentWhileDrag -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Window Content while Dragging..." 15 0
     } ElseIf ($WinContentWhileDrag -eq 1) {
         DisplayOut "Showing Window Content while Dragging..." 11 0
@@ -3706,9 +3554,9 @@ Function RunScript {
         DisplayOut "Hiding Window Content while Dragging..." 12 0
         Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "DragFullWindows" -Type DWord -Value 0
     }
-    
+
     # Autoplay
-    If ($Autoplay -eq 0 -and $ShowSkipped -eq 1) {
+    If($Autoplay -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Autoplay..." 15 0
     } ElseIf ($Autoplay -eq 1) {
         DisplayOut "Enabling Autoplay..." 11 0
@@ -3717,37 +3565,37 @@ Function RunScript {
         DisplayOut "Disabling Autoplay..." 12 0
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers" -Name "DisableAutoplay" -Type DWord -Value 1
     }
-    
+
     # Autorun for all drives
-    If ($Autorun -eq 0 -and $ShowSkipped -eq 1) {
+    If($Autorun -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Autorun for all Drives..." 15 0
     } ElseIf ($Autorun -eq 1) {
         DisplayOut "Enabling Autorun for all Drives..." 11 0
         Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun"
     } ElseIf ($Autorun -eq 2) {
         DisplayOut "Disabling Autorun for all Drives..." 12 0
-        If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer")) {
+        If(!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer")) {
             New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" | Out-Null
         }
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun" -Type DWord -Value 255
     }
-    
+
     ##########
     # Explorer Items -End
     ##########
-    
+
     ##########
     # 'This PC' items -Start
     ##########
-    
+
     DisplayOut "" 14 0
     DisplayOut "-----------------------" 14 0
     DisplayOut "-   'This PC' Items   -" 14 0
     DisplayOut "-----------------------" 14 0
     DisplayOut "" 14 0
-    
+
     # Desktop Icon in This PC
-    If ($DesktopIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
+    If($DesktopIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Desktop Icon in This PC..." 15 0
     } ElseIf ($DesktopIconInThisPC -eq 1) {
         DisplayOut "Showing Desktop Icon in This PC..." 11 0
@@ -3762,9 +3610,9 @@ Function RunScript {
             Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
         }
     }
-    
+
     # Documents Icon in This PC
-    If ($DocumentsIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
+    If($DocumentsIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Documents Icon in This PC..." 15 0
     } ElseIf ($DocumentsIconInThisPC -eq 1) {
         DisplayOut "Showing Documents Icon in This PC..." 11 0
@@ -3779,9 +3627,9 @@ Function RunScript {
              Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{f42ee2d3-909f-4907-8871-4c22fc0bf756}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
         }
     }
-    
+
     # Downloads icon from This PC
-    If ($DownloadsIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
+    If($DownloadsIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Downloads Icon in This PC..." 15 0
     } ElseIf ($DownloadsIconInThisPC -eq 1) {
         DisplayOut "Showing Downloads Icon in This PC..." 11 0
@@ -3796,9 +3644,9 @@ Function RunScript {
             Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{7d83ee9b-2244-4e70-b1f5-5393042af1e4}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
         }
     }
-    
+
     # Music icon from This PC
-    If ($MusicIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
+    If($MusicIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Music Icon in This PC..." 15 0
     } ElseIf ($MusicIconInThisPC -eq 1) {
         DisplayOut "Showing Music Icon in This PC..." 11 0
@@ -3813,9 +3661,9 @@ Function RunScript {
             Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{a0c69a99-21c8-4671-8703-7934162fcf1d}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
         }
     }
-    
+
     # Pictures icon from This PC
-    If ($PicturesIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
+    If($PicturesIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Pictures Icon in This PC..." 15 0
     } ElseIf ($PicturesIconInThisPC -eq 1) {
         DisplayOut "Showing Pictures Icon in This PC..." 11 0
@@ -3830,9 +3678,9 @@ Function RunScript {
             Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{0ddd015d-b06c-45d5-8c4c-f59713854639}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
         }
     }
-    
+
     # Hide Videos icon from This PC
-    If ($VideosIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
+    If($VideosIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Videos Icon in This PC..." 15 0
     } ElseIf ($VideosIconInThisPC -eq 1) {
         DisplayOut "Showing Videos Icon in This PC..." 11 0
@@ -3847,7 +3695,7 @@ Function RunScript {
             Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{35286a68-3c57-41a1-bbb1-0eae73d76c95}\PropertyBag" -Name "ThisPCPolicy" -Type String -Value "Hide"
         }
     }
-    
+
     ##########
     # 'This PC' items -End
     ##########
@@ -3855,19 +3703,19 @@ Function RunScript {
     ##########
     # Desktop items -Start
     ##########
-    
+
     DisplayOut "" 14 0
     DisplayOut "---------------------" 14 0
     DisplayOut "-   Desktop Items   -" 14 0
     DisplayOut "---------------------" 14 0
     DisplayOut "" 14 0
-    
-    If (!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu")) {
+
+    If(!(Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu")) {
         New-Item -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" | Out-Null
     }
-    
+
     # This PC Icon on desktop
-    If ($ThisPCOnDesktop -eq 0 -and $ShowSkipped -eq 1) {
+    If($ThisPCOnDesktop -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping This PC Icon on Desktop..." 15 0
     } ElseIf ($ThisPCOnDesktop -eq 1) {
         DisplayOut "Showing This PC Shortcut on Desktop..." 11 0
@@ -3878,9 +3726,9 @@ Function RunScript {
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type DWord -Value 1
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type DWord -Value 1
     }
-    
+
     # Network Icon on desktop
-    If ($NetworkOnDesktop -eq 0 -and $ShowSkipped -eq 1) {
+    If($NetworkOnDesktop -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Network Icon on Desktop..." 15 0
     } ElseIf ($NetworkOnDesktop -eq 1) {
         DisplayOut "Showing Network Icon on Desktop..." 11 0
@@ -3893,7 +3741,7 @@ Function RunScript {
     }
 
     # Recycle Bin Icon on desktop
-    If ($RecycleBinOnDesktop -eq 0 -and $ShowSkipped -eq 1) {
+    If($RecycleBinOnDesktop -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Recycle Bin Icon on Desktop..." 15 0
     } ElseIf ($RecycleBinOnDesktop -eq 1) {
         DisplayOut "Showing Recycle Bin Icon on Desktop..." 11 0
@@ -3906,7 +3754,7 @@ Function RunScript {
     }
 
     # Recycle Bin Icon on desktop
-    If ($UsersFileOnDesktop -eq 0 -and $ShowSkipped -eq 1) {
+    If($UsersFileOnDesktop -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Recycle Bin Icon on Desktop..." 15 0
     } ElseIf ($UsersFileOnDesktop -eq 1) {
         DisplayOut "Showing Recycle Bin Icon on Desktop..." 11 0
@@ -3919,7 +3767,7 @@ Function RunScript {
     }
 
     # Control Panel Icon on desktop
-    If ($ControlPanelOnDesktop -eq 0 -and $ShowSkipped -eq 1) {
+    If($ControlPanelOnDesktop -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Control Panel Icon on Desktop..." 15 0
     } ElseIf ($ControlPanelOnDesktop -eq 1) {
         DisplayOut "Showing Control Panel Icon on Desktop..." 11 0
@@ -3938,15 +3786,15 @@ Function RunScript {
     ##########
     # Photo Viewer Settings -Start
     ##########
- 
+
     DisplayOut "" 14 0
     DisplayOut "-----------------------------" 14 0
     DisplayOut "-   Photo Viewer Settings   -" 14 0
     DisplayOut "-----------------------------" 14 0
     DisplayOut "" 14 0
-    
+
     # Photo Viewer association for bmp, gif, jpg, png and tif
-    If ($PVFileAssociation -eq 0 -and $ShowSkipped -eq 1) {
+    If($PVFileAssociation -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Photo Viewer File Association..." 15 0
     } ElseIf ($PVFileAssociation -eq 1) {
         DisplayOut "Setting Photo Viewer File Association for bmp, gif, jpg, png and tif..." 11 0
@@ -3958,23 +3806,23 @@ Function RunScript {
         }
     } ElseIf ($PVFileAssociation -eq 2) {
         DisplayOut "Unsetting Photo Viewer File Association for bmp, gif, jpg, png and tif..." 12 0
-        If (Test-Path "HKCR:\Paint.Picture\shell\open") {
+        If(Test-Path "HKCR:\Paint.Picture\shell\open") {
             Remove-Item -Path "HKCR:\Paint.Picture\shell\open" -Recurse
         }
         Remove-ItemProperty -Path "HKCR:\giffile\shell\open" -Name "MuiVerb"
         Set-ItemProperty -Path "HKCR:\giffile\shell\open" -Name "CommandId" -Type String -Value "IE.File"
         Set-ItemProperty -Path "HKCR:\giffile\shell\open\command" -Name "(Default)" -Type String -Value "`"$env:SystemDrive\Program Files\Internet Explorer\iexplore.exe`" %1"
         Set-ItemProperty -Path "HKCR:\giffile\shell\open\command" -Name "DelegateExecute" -Type String -Value "{17FE9752-0B5A-4665-84CD-569794602F5C}"
-        If (Test-Path "HKCR:\jpegfile\shell\open") { 
+        If(Test-Path "HKCR:\jpegfile\shell\open") { 
             Remove-Item -Path "HKCR:\jpegfile\shell\open" -Recurse
         }
-        If (Test-Path "HKCR:\jpegfile\shell\open") { 
+        If(Test-Path "HKCR:\jpegfile\shell\open") { 
             Remove-Item -Path "HKCR:\pngfile\shell\open" -Recurse
         }
     } 
-    
+
     # Add Photo Viewer to "Open with..."
-    If ($PVOpenWithMenu -eq 0 -and $ShowSkipped -eq 1) {
+    If($PVOpenWithMenu -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Photo Viewer Open with Menu..." 15 0
     } ElseIf ($PVOpenWithMenu -eq 1) {
         DisplayOut "Adding Photo Viewer to Open with Menu..." 11 0
@@ -3985,46 +3833,46 @@ Function RunScript {
         Set-ItemProperty -Path "HKCR:\Applications\photoviewer.dll\shell\open\DropTarget" -Name "Clsid" -Type String -Value "{FFE2A43C-56B9-4bf5-9A79-CC6D4285608A}"
     } ElseIf ($PVOpenWithMenu -eq 2) {
         DisplayOut "Removing Photo Viewer from Open with Menu..." 12 0
-        If (Test-Path "HKCR:\Applications\photoviewer.dll\shell\open") {
+        If(Test-Path "HKCR:\Applications\photoviewer.dll\shell\open") {
             Remove-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open" -Recurse
         }
     }
-    
+
     ##########
     # Photo Viewer Settings -End
     ##########
-    
+
     ##########
     # Lockscreen Items -Start
     ##########
-    
+
     DisplayOut "" 14 0
     DisplayOut "------------------------" 14 0
     DisplayOut "-   Lockscreen Items   -" 14 0
     DisplayOut "------------------------" 14 0
     DisplayOut "" 14 0
-    
+
     # Lock screen
-    If ($LockScreen -eq 0 -and $ShowSkipped -eq 1) {
+    If($LockScreen -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Lock Screen..." 15 0
     } ElseIf ($LockScreen -eq 1) {
-        If ($BuildVer -eq 10240 -or $BuildVer -eq 10586){
+        If($BuildVer -eq 10240 -or $BuildVer -eq 10586) {
             DisplayOut "Enabling Lock Screen..." 11 0
             Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreen"
-        } ElseIf ($BuildVer -eq 14393){
+        } ElseIf ($BuildVer -eq 14393) {
             DisplayOut "Enabling Lock screen (removing scheduler workaround)..." 11 0
             Unregister-ScheduledTask -TaskName "Disable LockScreen" -Confirm:$false
         } Else {
             DisplayOut "Unable to Disable Lock screen..." 12 0
         }
     } ElseIf ($LockScreen -eq 2) {
-        If ($BuildVer -eq 10240 -or $BuildVer -eq 10586){
+        If($BuildVer -eq 10240 -or $BuildVer -eq 10586) {
             DisplayOut "Disabling Lock Screen..." 12 0
-            If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization")) {
+            If(!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization")) {
                 New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" | Out-Null
             }
             Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreen" -Type DWord -Value 1
-        } ElseIf ($BuildVer -eq 14393){
+        } ElseIf ($BuildVer -eq 14393) {
             DisplayOut "Disabling Lock screen using scheduler workaround..." 12 0
             $service = New-Object -com Schedule.Service
             $service.Connect()
@@ -4041,9 +3889,9 @@ Function RunScript {
             DisplayOut "Unable to Disable Lock screen..." 12 0
         }
     }
-    
+
     # Power Menu on Lock Screen
-    If ($PowerMenuLockScreen -eq 0 -and $ShowSkipped -eq 1) {
+    If($PowerMenuLockScreen -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Power Menu on Lock Screen..." 15 0
     } ElseIf ($PowerMenuLockScreen -eq 1) {
         DisplayOut "Showing Power Menu on Lock Screen..." 11 0
@@ -4052,37 +3900,37 @@ Function RunScript {
         DisplayOut "Hiding Power Menu on Lock Screen..." 12 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "shutdownwithoutlogon" -Type DWord -Value 0
     }
-    
+
     # Camera at Lockscreen
-    If ($CameraOnLockscreen -eq 0 -and $ShowSkipped -eq 1) {
+    If($CameraOnLockscreen -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Camera at Lockscreen..." 15 0
     } ElseIf ($CameraOnLockscreen -eq 1) {
         DisplayOut "Enabling Camera at Lockscreen..." 11 0
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreenCamera"
     } ElseIf ($CameraOnLockscreen -eq 2) {
         DisplayOut "Disabling Camera at Lockscreen..." 12 0
-        If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization")) {
+        If(!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization")) {
             New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" | Out-Null
         }
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreenCamera" -Type DWord -Value 1
     }
-    
+
     ##########
     # Lockscreen Items -End
     ##########
-    
+
     ##########
     # Misc Items -Start
     ##########
-    
+
     DisplayOut "" 14 0
     DisplayOut "------------------" 14 0
     DisplayOut "-   Misc Items   -" 14 0
     DisplayOut "------------------" 14 0
     DisplayOut "" 14 0
-    
+
     # Action Center
-    If ($ActionCenter -eq 0 -and $ShowSkipped -eq 1) {
+    If($ActionCenter -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Action Center..." 15 0
     } ElseIf ($ActionCenter -eq 1) {
         DisplayOut "Enabling Action Center..." 11 0
@@ -4090,15 +3938,15 @@ Function RunScript {
         Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled"
     } ElseIf ($ActionCenter -eq 2) {
         DisplayOut "Disabling Action Center..." 12 0
-        If (!(Test-Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer")) {
+        If(!(Test-Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer")) {
             New-Item -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" | Out-Null
         }
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "DisableNotificationCenter" -Type DWord -Value 1
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Type DWord -Value 0
     }
-    
+
     # Sticky keys prompt
-    If ($StickyKeyPrompt -eq 0 -and $ShowSkipped -eq 1) {
+    If($StickyKeyPrompt -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Sticky Keys Prompt..." 15 0
     } ElseIf ($StickyKeyPrompt -eq 1) {
         DisplayOut "Enabling Sticky Keys Prompt..." 11 0
@@ -4107,9 +3955,9 @@ Function RunScript {
         DisplayOut "Disabling Sticky Keys Prompt..." 12 0
         Set-ItemProperty -Path "HKCU:\Control Panel\Accessibility\StickyKeys" -Name "Flags" -Type String -Value "506"
     }
-    
+
     # Num Lock after startup
-    If ($NumblockOnStart -eq 0 -and $ShowSkipped -eq 1) {
+    If($NumblockOnStart -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Num Lock after startup..." 15 0
     } ElseIf ($NumblockOnStart -eq 1) {
         DisplayOut "Enabling Num Lock after startup..." 11 0
@@ -4118,9 +3966,9 @@ Function RunScript {
         DisplayOut "Disabling Num Lock after startup..." 12 0
         Set-ItemProperty -Path "HKU:\.DEFAULT\Control Panel\Keyboard" -Name "InitialKeyboardIndicators" -Type DWord -Value 2147483648
     }
-    
+
     # Enable F8 boot menu options
-    If ($F8BootMenu -eq 0 -and $ShowSkipped -eq 1) {
+    If($F8BootMenu -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping F8 boot menu options..." 15 0
     } ElseIf ($F8BootMenu -eq 1) {
         DisplayOut "Enabling F8 boot menu options..." 11 0
@@ -4129,9 +3977,9 @@ Function RunScript {
         DisplayOut "Disabling F8 boot menu options..." 12 0
         bcdedit /set `{current`} bootmenupolicy Standard | Out-Null
     }
-    
+
     # Remote UAC Local Account Token Filter
-    If ($RemoteUACAcctToken -eq 0 -and $ShowSkipped -eq 1) {
+    If($RemoteUACAcctToken -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Remote UAC Local Account Token Filter..." 15 0
     } ElseIf ($RemoteUACAcctToken -eq 1) {
         DisplayOut "Enabling Remote UAC Local Account Token Filter..." 11 0
@@ -4140,9 +3988,9 @@ Function RunScript {
         DisplayOut "Disabling  Remote UAC Local Account Token Filter..." 12 0
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "LocalAccountTokenFilterPolicy"
     }
-    
+
     # Hibernate Option
-    If ($HibernatePower -eq 0 -and $ShowSkipped -eq 1) {
+    If($HibernatePower -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Hibernate Option..." 15 0
     } ElseIf ($HibernatePower -eq 1) {
         DisplayOut "Enabling Hibernate Option..." 11 0
@@ -4151,13 +3999,13 @@ Function RunScript {
         DisplayOut "Disabling Hibernate Option..." 12 0
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power" -Name "HibernateEnabled" -Type DWord -Value 0
     }
-    
+
     # Sleep Option
-    If ($SleepPower -eq 0 -and $ShowSkipped -eq 1) {
+    If($SleepPower -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Sleep Option..." 15 0
     } ElseIf ($SleepPower -eq 1) {
         DisplayOut "Enabling Sleep Option..." 11 0
-        If (!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings")) {
+        If(!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings")) {
             New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" | Out-Null
         }
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" -Name "ShowSleepOption" -Type DWord -Value 1
@@ -4165,37 +4013,37 @@ Function RunScript {
         DisplayOut "Disabling Sleep Option..." 12 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" -Name "ShowSleepOption" -Type DWord -Value 0
     }
-    
+
     ##########
     # Misc Items -End
     ##########
-    
+
     ##########
     # Application Items -Start
     ##########
-    
+
     DisplayOut "" 14 0
     DisplayOut "-------------------------" 14 0
     DisplayOut "-   Application Items   -" 14 0
     DisplayOut "-------------------------" 14 0
     DisplayOut "" 14 0
-    
+
     # OneDrive
-    If ($OneDrive -eq 0 -and $ShowSkipped -eq 1) {
+    If($OneDrive -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping OneDrive..." 15 0
     } ElseIf ($OneDrive -eq 1) {
         DisplayOut "Enabling OneDrive..." 11 0
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" -Name "DisableFileSyncNGSC"
     } ElseIf ($OneDrive -eq 2) {
         DisplayOut "Disabling OneDrive..." 12 0
-        If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive")) {
+        If(!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive")) {
             New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" | Out-Null
         }
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" -Name "DisableFileSyncNGSC" -Type DWord -Value 1
     }
     
     # OneDrive Install
-    If ($OneDriveInstall -eq 0 -and $ShowSkipped -eq 1) {
+    If($OneDriveInstall -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping OneDrive Installing..." 15 0
     } ElseIf ($OneDriveInstall -eq 1) {
         DisplayOut "Installing OneDrive..." 11 0
@@ -4221,15 +4069,15 @@ Function RunScript {
         Remove-Item "$env:USERPROFILE\OneDrive" -Force -Recurse
         Remove-Item "$env:LOCALAPPDATA\Microsoft\OneDrive" -Force -Recurse
         Remove-Item "$env:PROGRAMDATA\Microsoft OneDrive" -Force -Recurse
-        If (Test-Path "$env:SYSTEMDRIVE\OneDriveTemp") {
+        If(Test-Path "$env:SYSTEMDRIVE\OneDriveTemp") {
             Remove-Item "$env:SYSTEMDRIVE\OneDriveTemp" -Force -Recurse
         }
         Remove-Item -Path "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Recurse
         Remove-Item -Path "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Recurse
     }
-    
+
     # Xbox DVR
-    If ($XboxDVR -eq 0 -and $ShowSkipped -eq 1) {
+    If($XboxDVR -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Xbox DVR..." 15 0
     } ElseIf ($XboxDVR -eq 1) {
         DisplayOut "Enabling Xbox DVR..." 11 0
@@ -4238,14 +4086,14 @@ Function RunScript {
     } ElseIf ($XboxDVR -eq 2) {
         DisplayOut "Disabling Xbox DVR..." 12 0
         Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Type DWord -Value 0
-        If (!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR")) {
+        If(!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR")) {
             New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR" | Out-Null
         }
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR" -Name "AllowGameDVR" -Type DWord -Value 0
     }
-    
+
     # Windows Media Player
-    If ($MediaPlayer -eq 0 -and $ShowSkipped -eq 1) {
+    If($MediaPlayer -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Windows Media Player..." 15 0
     } ElseIf ($MediaPlayer -eq 1) {
         DisplayOut "Installing Windows Media Player..." 11 0
@@ -4254,9 +4102,9 @@ Function RunScript {
         DisplayOut "Uninstalling Windows Media Player..." 14 0
         dism /online /Disable-Feature /FeatureName:MediaPlayback /Quiet /NoRestart
     }
-    
+
     # Work Folders Client
-    If ($WorkFolders -eq 0 -and $ShowSkipped -eq 1) {
+    If($WorkFolders -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Work Folders Client..." 15 0
     } ElseIf ($WorkFolders -eq 1) {
         DisplayOut "Installing Work Folders Client..." 11 0
@@ -4265,10 +4113,10 @@ Function RunScript {
         DisplayOut "Uninstalling Work Folders Client..." 14 0
         dism /online /Disable-Feature /FeatureName:WorkFolders-Client /Quiet /NoRestart
     }
-    
+
     # Install Linux Subsystem - Applicable to RS1 or newer
-    If ($BuildVer -ge 14393) {
-        If ($LinuxSubsystem -eq 0 -and $ShowSkipped -eq 1) {
+    If($BuildVer -ge 14393) {
+        If($LinuxSubsystem -eq 0 -and $ShowSkipped -eq 1) {
             DisplayOut "Skipping Linux Subsystem..." 15 0
         } ElseIf ($LinuxSubsystem -eq 1) {
             DisplayOut "Installing Linux Subsystem..." 11 0
@@ -4284,42 +4132,42 @@ Function RunScript {
     } ElseIf ($LinuxSubsystem -ne 0) {
         DisplayOut "Windows 10 Build isn't new enough for Linux Subsystem..." 14 0
     }
-    
+
     ##########
     # Application Items -end
     ##########
-    
+
     ##########
     # Metro App Items -Start
     ##########
-    
+
     # Sorts the apps to Install, Hide or Uninstall
     $APPProcess = Get-Variable -Name "APP_*" -ValueOnly -Scope Script
-    
+
     $A = 0
     ForEach ($AppV in $APPProcess) {
-        If($AppV -eq 1){
+        If($AppV -eq 1) {
             $APPS_AppsInstall+=$AppsList[$A]
-        } Elseif($AppV -eq 2){
+        } ElseIf ($AppV -eq 2) {
             $APPS_AppsHide+=$AppsList[$A]
-        } Elseif($AppV -eq 3){
+        } ElseIf ($AppV -eq 3) {
             $APPS_AppsUninstall+=$AppsList[$A]
         }
         $A++
     }
-    
+
     DisplayOut "" 14 0
     DisplayOut "-----------------------" 14 0
     DisplayOut "-   Metro App Items   -" 14 0
     DisplayOut "-----------------------" 14 0
     DisplayOut "" 14 0
-    
+
     # Default Microsoft applications (Bloatware)
     DisplayOut "" 14 0
     DisplayOut "Installing Apps..." 11 0
     DisplayOut "------------------" 11 0
     DisplayOut "" 14 0
-    
+
     ForEach ($AppI in $APPS_AppsInstall) {
         DisplayOut $AppI 11 0
         Add-AppxPackage -DisableDevelopmentMode -Register "$($(Get-AppXPackage -AllUsers "$AppI").InstallLocation)\AppXManifest.xml"
@@ -4328,10 +4176,10 @@ Function RunScript {
     DisplayOut "Hidinging Apps..." 12 0
     DisplayOut "-----------------" 12 0
     DisplayOut "" 14 0
-    
+
     ForEach ($AppH in $APPS_AppsHide) {
         $ProvisionedPackage = Get-AppxProvisionedPackage -online | Where {$_.displayName -eq $AppH}
-        If ($ProvisionedPackage -ne $null) {
+        If($ProvisionedPackage -ne $null) {
             $APPHDisplay = " "+ $AppH
             DisplayOut $APPHDisplay 12 0
             Get-AppxPackage $AppH | Remove-AppxPackage
@@ -4340,15 +4188,15 @@ Function RunScript {
             DisplayOut $APPHDisplay 12 0
         }
     }
-    
+
     DisplayOut "" 14 0
     DisplayOut "Uninstalling Apps..." 14 0
     DisplayOut "--------------------" 14 0
     DisplayOut "" 14 0
-    
+
     ForEach ($AppU in $APPS_AppsUninstall) {
         $ProvisionedPackage = Get-AppxProvisionedPackage -online | Where {$_.displayName -eq $AppU}
-        If ($ProvisionedPackage -ne $null) {
+        If($ProvisionedPackage -ne $null) {
             $APPUDisplay = " "+ $AppH
             DisplayOut $APPUDisplay 14 0
             $PackageFullName = (Get-AppxPackage $AppU).PackageFullName
@@ -4367,14 +4215,14 @@ Function RunScript {
     ##########
     # Metro App Items -End
     ##########
-    
+
     ##########
     # Unpin App Items -Start
     ##########
-    
-    If ($Unpin -eq 0 -and $ShowSkipped -eq 1) {
+
+    If($Unpin -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Unpinning Items..." 15 0
-    } ElseIf ($Unpin -eq 1){
+    } ElseIf ($Unpin -eq 1) {
         DisplayOut "" 12 0
         DisplayOut "Unpinning Items..." 12 0
         DisplayOut "------------------" 12 0
@@ -4387,62 +4235,9 @@ Function RunScript {
     ##########
     # Unpin App Items -End
     ##########
-  
-    ##########
-    # Black Viper -Start
-    ##########
-<#
-    DisplayOut "" 14 0
-    DisplayOut "--------------------------------------------" 14 0
-    DisplayOut "-   Black Viper's Service Configurations   -" 14 0
-    DisplayOut "--------------------------------------------" 14 0
-    DisplayOut "" 14 0
-    
-    $Back_Viper = Black_Viper_Set $Back_Viper
-    
-    If ($Back_Viper -eq 0 -and $ShowSkipped -eq 1) {
-        DisplayOut "Skipping Black Viper's Service Configurations..." 15 0
-    } ElseIf($Back_Viper -In 1..4) {    
-        DisplayOut "" 14 0
-        DisplayOut "Changing Services..." 12 0
-        DisplayOut "--------------------" 12 0
-        DisplayOut "" 14 0
-        for ($i=0; $i -ne $ServiceLen; $i++) {
-            $ServiceT = $ServicesList[$i][$Back_Viper]
-            $ServiceName = $ServicesList[$i][0]
-            $ServiceNameFull = GetServiceNameFull $ServiceName
-            $ServiceType = $ServicesTypeList[$ServiceT]
-            $ServiceCurrType = (Get-Service $ServiceNameFull).StartType
-            If ((ServiceCheck $ServiceNameFull $ServiceType $ServiceCurrType) -eq $True){
-                $DispTemp = "$ServiceNameFull - $ServiceCurrType -> $ServiceType"
-                If($ServiceT -In 1..3){
-                    DisplayOut $DispTemp  11 0
-                    Set-Service $ServiceNameFull -StartupType $ServiceType
-                } ElseIf($ServiceT -eq 4){
-                    $DispTemp = "$DispTemp (Delayed Start)"
-                    DisplayOut $DispTemp  11 0
-                    Set-Service $ServiceNameFull -StartupType $ServiceType
-                    $RegPath = "HKLM\System\CurrentControlSet\Services\"+($ServiceNameFull)
-                    Set-ItemProperty -Path $RegPath -Name "DelayedAutostart" -Type DWORD -Value 1
-                }
-            } Else {
-                $DispTemp = "$ServiceNameFull is already $ServiceType"
-                DisplayOut $DispTemp  15 0
-            }
-        }
-    } ElseIf($Back_Viper -eq 9) {
-        Write-Host ""
-        Write-Host "Not a Valid OS for Black Viper's Service Configurations." -ForegroundColor Red -BackgroundColor Black
-        Write-Host "Win 10 Home and Pro Only"
-        Write-Host ""
-    }
-#>
-    ##########
-    # Black Viper -End
-    ##########
-    
+
     Remove-Variable -Name filebase -scope global
-    If ($Restart -eq 1 -and $RelType -eq "Stable ") {
+    If($Restart -eq 1 -and $Release_Type -eq "Stable ") {
         Clear-Host
         Write-Host ""
         $Seconds = 10
@@ -4450,14 +4245,14 @@ Function RunScript {
         $Message = "Restarting in"
         Start-Sleep -Seconds 1
         ForEach ($Count in (1..$Seconds)) {
-            If($Count -ne 0){
+            If($Count -ne 0) {
                 Write-Host $Message" $($Seconds - $Count)" -ForegroundColor Yellow -BackgroundColor Black
                 Start-Sleep -Seconds 1
             }
         }
         Write-Host "Restarting Computer..." -ForegroundColor Red -BackgroundColor Black
         Restart-Computer
-    } ElseIf ($RelType -eq "Stable ") {
+    } ElseIf ($Release_Type -eq "Stable ") {
         Write-Host "Goodbye..."
         Exit
     } Else {
@@ -4638,11 +4433,6 @@ $Script:MediaPlayer = 0           #0-Skip, 1-Installed*, 2-Uninstall
 $Script:WorkFolders = 0           #0-Skip, 1-Installed*, 2-Uninstall
 $Script:LinuxSubsystem = 0        #0-Skip, 1-Installed, 2-Uninstall* (Anniversary Update)
 
-# Black Viper's Service Configurations
-#$Script:Back_Viper = 0            #0-Skip, 1-Default, 2-Safe, 3-Tweaked
-# Black Viper's Website
-# http://www.blackviper.com/service-configurations/black-vipers-windows-10-service-configurations/
-
 # Custom List of App to Install, Hide or Uninstall
 # I dunno if you can Install random apps with this script
 # Cant Import these ATM
@@ -4716,7 +4506,6 @@ $Script:APP_XboxApp = 0           # Xbox app
 $Script:APP_ZuneMusic = 0         # Groove Music app
 $Script:APP_ZuneVideo = 0         # Groove Music app
 
-
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## !!!!!!                                                !!!!!!
@@ -4728,28 +4517,5 @@ $Script:APP_ZuneVideo = 0         # Groove Music app
 
 # --------------------------------------------------------------------------
 
-##########
-# Script -Start
-##########
-
-If ($SettingImp -ne $null -and $SettingImp){
-    $FileImp = $filebase + "\" + $SettingImp
-    If (Test-Path $FileImp -PathType Leaf){
-        LoadSettingFile $FileImp
-    } ElseIf ($SettingImp.ToLower() -eq "wd" -or $SettingImp.ToLower() -eq "windefault"){
-        LoadWinDefault
-        RunScript
-    } ElseIf ($SettingImp.ToLower() -eq "run"){
-        RunScript
-    } Else {
-        TOS 
-    }
-} ElseIf ($Term_of_Use -eq 1){
-    TOS
-} ElseIf ($Term_of_Use -ne 1){
-    mainMenu
-}
-
-##########
-# Script -End
-##########
+#Starts the script (Do not change)
+ScriptPreStart
