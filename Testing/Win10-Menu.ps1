@@ -11,7 +11,7 @@ Param([alias("Set")] [string] $SettingImp)
 #  Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script/
 #
-$Script_Version = 1.8 #(03-18-17)
+$Script_Version = 1.8 #(03-19-17)
 $Release_Type = "Testing"
 ##########
 
