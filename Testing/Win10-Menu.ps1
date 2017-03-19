@@ -106,6 +106,7 @@ Note: File has to be in the proper format or settings wont be imported
 
 $Global:filebase = $PSScriptRoot
 $ErrorActionPreference= 'silentlycontinue'
+$TempFolder = $env:Temp
 
 # Pause Function by
 # https://adamstech.wordpress.com/2011/05/12/how-to-properly-pause-a-powershell-script/
@@ -782,7 +783,7 @@ $ScriptOptionMenuItm = (
 (3,"Verbros",1,0),
 (4,"ShowColor",1,0),
 (5,"ShowSkipped",1,0),
-(6,"Version_Check",1,0),)
+(6,"Version_Check",1,0))
 
 $CreateRestorePointItems = @(
 '              Create Restore Point               ',
