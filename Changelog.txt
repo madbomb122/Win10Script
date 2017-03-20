@@ -1,4 +1,13 @@
 -----------------------------------------------------------------------------------
+1.8-Menu (03-19-2017) 
+
+Added Script update check option
+
+Decided to remove Black Viper Service configuration from this script.. May re-add at some point
+Please use the script for just the Black Viper Service configuration @
+https://github.com/madbomb122/BlackViperScript
+
+-----------------------------------------------------------------------------------
 1.7-Menu (03-17-2017) 
 
 Fixed bug with using the bat file to run with setting file
@@ -8,11 +17,7 @@ Removed Custom App Import in setting file (was causeing the apps to not Install/
 -----------------------------------------------------------------------------------
 1.6-Menu (03-14-2017)
 
-Disabled Black Viper Until both creator's update is released and
-  when Black Viper finishes settings.
-  
-Note: If you really want to use this feature please use script from my other repo for now
-https://github.com/madbomb122/BlackViperScript
+Disabled Black Viper Service configuration
 
 -----------------------------------------------------------------------------------
 1.5-Menu (03-12-2017) 
