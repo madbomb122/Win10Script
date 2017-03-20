@@ -108,55 +108,6 @@ $Global:filebase = $PSScriptRoot
 $ErrorActionPreference= 'silentlycontinue'
 $TempFolder = $env:Temp
 
-# Pause Function by
-# https://adamstech.wordpress.com/2011/05/12/how-to-properly-pause-a-powershell-script/
-Function Pause ($Message = "Press any key to continue . . . ") {
-    If($psISE) {
-        $Shell = New-Object -ComObject "WScript.Shell"
-        $Button = $Shell.Popup("Powershell ISE is not supported. Click OK to continue.", 0, "Error", 0)
-        Return
-    }
-    Write-Host -NoNewline $Message
-    $Ignore =
-        16,  # Shift (left or right)
-        17,  # Ctrl (left or right)
-        18,  # Alt (left or right)
-        20,  # Caps lock
-        91,  # Windows key (left)
-        92,  # Windows key (right)
-        93,  # Menu key
-        144, # Num lock
-        145, # Scroll lock
-        166, # Back
-        167, # Forward
-        168, # Refresh
-        169, # Stop
-        170, # Search
-        171, # Favorites
-        172, # Start/Home
-        173, # Mute
-        174, # Volume Down
-        175, # Volume Up
-        176, # Next Track
-        177, # Previous Track
-        178, # Stop Media
-        179, # Play
-        180, # Mail
-        181, # Select Media
-        182, # Application 1
-        183  # Application 2
-    While ($KeyInfo.VirtualKeyCode -Eq $Null -Or $Ignore -Contains $KeyInfo.VirtualKeyCode) {
-        $KeyInfo = $Host.UI.RawUI.ReadKey("NoEcho, IncludeKeyDown")
-    }
-    Write-Host
-}
-
-If ($host.name -ne "ConsoleHost") {
-    Write-Host "This Script cannot be ran in Powershell ISE" -ForegroundColor Red -BackgroundColor Black
-    Pause
-    Exit
-}
-
 # Ask for elevated permissions if required
 If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
     Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $SettingImp" -Verb RunAs
@@ -4207,7 +4158,7 @@ Function RunScript {
     ForEach ($AppU in $APPS_AppsUninstall) {
         $ProvisionedPackage = Get-AppxProvisionedPackage -online | Where {$_.displayName -eq $AppU}
         If($ProvisionedPackage -ne $null) {
-            $APPUDisplay = " "+ $AppH
+            $APPUDisplay = " "+ $AppU
             DisplayOut $APPUDisplay 14 0
             $PackageFullName = (Get-AppxPackage $AppU).PackageFullName
             $ProPackageFullName = (Get-AppxProvisionedPackage -online | where {$_.Displayname -eq $AppU}).PackageName
@@ -4376,7 +4327,7 @@ $Script:TrayIcons = 0             #0-Skip, 1-Auto*, 2-Always Show
 $Script:SecondsInClock = 0        #0-Skip, 1-Show, 2-Hide*
 $Script:LastActiveClick = 0       #0-Skip, 1-Enable, 2-Disable* --(Makes Taskbar Buttons Open the Last Active Window)
 $Script:TaskBarOnMultiDisplay = 0 #0-Skip, 1-Enable*, 2-Disable
-$Script:TaskbarButtOnDisplay = 0  #0-Skip, 1-All, 2-where window is open, 3-Main and where window is open
+$Script:TaskBarButtOnDisplay = 0  #0-Skip, 1-All, 2-where window is open, 3-Main and where window is open
 
 #Star Menu Items
 # Function  = Option              #Choices (* Indicates Windows Default)
@@ -4454,11 +4405,12 @@ $APPS_AppsInstall = @("")         # Apps to Install
 $APPS_AppsHide = @("")            # Apps to Hide
 $APPS_AppsUninstall = @("")       # Apps to Uninstall
 #$Script:APPS_Example = @('Somecompany.Appname1','TerribleCompany.Appname2','AppS.Appname3')
-# To get list of Packages Installed
+# To get list of Packages Installed (in powershell)
 # DISM /Online /Get-ProvisionedAppxPackages | Select-string Packagename
 
-<# 
+<#          -----> NOTE!!!! <-----
 App Uninstall will remove them to reinstall you can
+
 1. Install some from Windows Store
 2. Restore the files using installation medium as follows
 New-Item C:\Mnt -Type Directory | Out-Null
