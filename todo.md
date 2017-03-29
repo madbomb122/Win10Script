@@ -1,8 +1,9 @@
 # To Do/Done
 
--[] Ability to have script check for newer version (If I can figure out how to do it easyly)
+-[X] Ability to have script check for newer version
+
 
 -------------------------------------------------------------------------------------------------------------
 
 # Working On/Testing
-Nothing ATM
+-[ ] Undo the change in Win+X menu in the upcoming creator's update (setting -> control panel, and Powershell -> Command Prompt)
