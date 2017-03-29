@@ -1,37 +1,41 @@
 @ECHO OFF
-Echo "Running Win10 Initial Setup Script -Menu version"
-
-::Do not change unless you know what you are doing
-set Directory=%~dp0
-set ScriptFile=Win10-Menu.ps1
-
-::Change Mine.txt to your settingfile, 
-::Only matters if you are going to run script with setting
-set SettingFile=Mine.txt
-
-::----------------------------------------------------------------------
 
 :: Instructions
-:: Remove the 2 Colons infront of "The Command" you want to run
-:: Bat file MUST be in same directory as script
-:: Setting file MUST be in same directory as script
+:: Bat, Script & Setting File (if used) MUST be in same Folder
+:: Change RunOption to = what you want to run (just the number)
 
-:: Format of File
-:: Description of "The Command"
-:: "The Command"
-:: Note (If any)
+set Run_Option=1
+:: 1 = Run with Menu
+:: 2 = Run with Settings in Script File
+:: 3 = Run with Windows Default (Default Settings in script is to Skip, you have to change them)
+:: 4 = Run with Setting file (Change file name bellow)
 
+:: Change Mine.xml to your setting file (if you have one)
+set Setting_File=Mine.xml
+set Script_File=Win10-Menu.ps1
+
+:: Do not change unless you know what you are doing
+set Script_Directory=%~dp0
+set Script_Path=%Script_Directory%%Script_File%
+
+
+:: DO NOT CHANGE ANYTHING PAST THIS LINE
 ::----------------------------------------------------------------------
+set Use_Arg=yes
 
-::Run script with going into the Menu
-::PowerShell.exe -NoProfile -Command "& {Start-Process PowerShell.exe -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File Directory%\%ScriptFile%' -Verb RunAs}"
+if /i %Run_Option%==1 set Use_Arg=no
+if /i %Run_Option%==2 set Arg=Run
+if /i %Run_Option%==3 set Arg=WD
+if /i %Run_Option%==4 set Arg=%Setting_File%
 
-::Run script with Settings that are in the Script
-::PowerShell.exe -NoProfile -Command "& {Start-Process PowerShell.exe -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File Directory%\%ScriptFile% -Set Run -Verb RunAs}"
-::Note: Default Settings in script is to Skip, you have to change them
+SETLOCAL ENABLEDELAYEDEXPANSION
+if /i %Use_Arg%==no (
+    powershell.exe -noprofile -ExecutionPolicy Bypass -command "&{start-process powershell -ArgumentList '-NoProfile -ExecutionPolicy Bypass -file \"!Script_Path!\"' -verb RunAs}"
+)
+ENDLOCAL DISABLEDELAYEDEXPANSION
 
-::Run script with Windows Default Settings
-::PowerShell.exe -NoProfile -Command "& {Start-Process PowerShell.exe -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File %Directory%\%ScriptFile% -Set WD' -Verb RunAs}"
-
-::Run script with Import of setting file
-::PowerShell.exe -NoProfile -Command "& {Start-Process PowerShell.exe -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File %Directory%\%ScriptFile% -Set %SettingFile%' -Verb RunAs}"
+SETLOCAL ENABLEDELAYEDEXPANSION
+if /i %Use_Arg%==yes (
+    PowerShell -NoProfile -ExecutionPolicy Bypass -Command "& {Start-Process PowerShell -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File \"!Script_Path!\" -Set \"!Arg!\"' -Verb RunAs}";
+)
+ENDLOCAL DISABLEDELAYEDEXPANSION
