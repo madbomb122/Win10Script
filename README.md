@@ -65,9 +65,6 @@ Examples: <br />
 **Q:** Can I use the script or modify it for my/my company's needs? <br />
 **A:** Sure. Just don't forget to include copyright notice as per the license requirements, and leave any Copyright in script too.
 
-**Q:** How long are you going to maintain the script? <br />
-**A:** No Clue.
-
 **Q:** Can I add an App to Install/Hide/Uninstall, if so how? <br />
 **A:** Yes you can. You can add it in the script file under APPS_AppsInstall, APPS_AppsHide, APPS_AppsUninstall. <br />
 ---------Please note you have to have the proper format and packagename for it to work.
@@ -81,5 +78,5 @@ Examples: <br />
 **Q:** Are you planning to add *BLAH* to the script? <br />
 **A:** Check the todo list, anything i am planning to do or thinking of doing will be there.
 
-**Q:** Are you going to update the Black Viper's Service Configurations when it's updated? <br />
-**A:** Yes, if I see that it has changed. (assuming I am still maintaining this script)
+**Q:** How long are you going to maintain the script? <br />
+**A:** No Clue.
