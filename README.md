@@ -49,7 +49,7 @@ Examples: <br />
 **Q:** The script window closes or gives an error saying script is blocked, what do i do? <br />
 **A:** By default windows blocks ps1 scripts, you can use one of the following <br />
          1. Use the bat file to run the script (recommended) <br />
-         2. Run this command on an admin powershell console `Set-ExecutionPolicy -ExecutionPolicy  Bypass` (not recommended) <br />
+         2. On an admin powershell console `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unrestricted` <br />
 
 **Q:** Can I run the script safely? <br />
 **A:** The script itself is safe, however some setting it can change may compromise your computer.
