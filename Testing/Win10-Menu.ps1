@@ -12,7 +12,7 @@ Param([alias("Set")] [string] $SettingImp)
 # Website: https://github.com/madbomb122/Win10Script/
 #
 $Script_Version = 1.9
-$Script_Date = "04-07-17"
+$Script_Date = "04-??-17"
 #$Release_Type = "Stable "
 $Release_Type = "Testing"
 ##########
