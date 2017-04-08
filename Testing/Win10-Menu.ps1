@@ -38,8 +38,8 @@ $Release_Type = "Testing"
 <#----------------------------------------------------------------------------
 .Prerequisite to run script
     System: Windows 10
-	Files: This script
-	
+    Files: This script
+    
 .DESCRIPTION
     Makes it easier to setup an existing or new install with moded setting
 
