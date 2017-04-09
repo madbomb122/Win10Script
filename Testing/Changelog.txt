@@ -6,9 +6,11 @@ NOTHIN ATM
 -----------------------------------------------------------------------------------
 1.9-Menu (04-08-2017) 
 
+Added some updates to settings for creator's update
 Changed TOS Display look
 Added Internet Check if script checks for update
 Various display changes
+Ability to name restore point (in script file only ATM)
 
 Added Ability to add/remove following apps
 3D Viewer
