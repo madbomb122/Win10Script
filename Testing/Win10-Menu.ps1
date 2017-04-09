@@ -567,6 +567,7 @@ Function MenuDisplay ([Array]$ToDisplay) {
     }
     DisplayOutMenu "|                         |                         |" 14 0 1
     TitleBottom $ToDisplay[$ToDisplay.length-1] 13
+    TitleBottom "" 16
     Website
 }
 
@@ -588,7 +589,6 @@ Function ChoicesDisplay ([Array]$ChToDisplay, [Int]$ChToDisplayVal) {
     DisplayOutMenu "|                                                   |" 14 0 1
     DisplayOutMenu "| " 14 0 0 ;DisplayOutMenu "Current Value: " 13 0 0 ;DisplayOutMenu $ChToDisplayVal 13 0 0 ;DisplayOutMenu "                                  |" 14 0 1
     TitleBottom $ChToDisplay[$ChToDisplay.length-1] 13
-    Website
 }
 
 # Displays items but NO Seperators
@@ -597,21 +597,22 @@ Function VariableDisplay ([Array]$VarToDisplay) {
     For($i=1; $i -lt $VarToDisplay.length-1; $i++) {
         DisplayOutMenu "| " 14 0 0 ;DisplayOutMenu $VarToDisplay[$i] 2 0 0 ;DisplayOutMenu " |" 14 0 1
     }
-    TitleBottom $VarToDisplay[$VarToDisplay.length-1] 16
+    TitleBottom $VarToDisplay[$VarToDisplay.length-1] 13
 }
 
 # Displays Title of Menu but with color choices
 Function TitleBottom ([String]$TitleA,[Int]$TitleB) {
-    DisplayOutMenu "|---------------------------------------------------|" 14 0 1
     If($TitleB -eq 16) {
-        DisplayOutMenu "| " 14 0 0 ;DisplayOutMenu "Current Version: " 15 0 0 ;DisplayOutMenu $VersionDisplay 15 0 0 ;DisplayOutMenu " |" 14 0 0
         If($Release_Type -eq "Stable ") {
-            DisplayOutMenu " Release: " 11 0 0 ;DisplayOutMenu $Release_Type 11 0 0 ;
+            DisplayOutMenu "| " 14 0 0 ;DisplayOutMenu "Current Version: " 15 0 0 ;DisplayOutMenu $VersionDisplay 11 0 0 ;DisplayOutMenu " |" 14 0 0
+            DisplayOutMenu " Release: " 15 0 0 ;DisplayOutMenu $Release_Type 11 0 0 ;
         } Else {
-            DisplayOutMenu " Release: " 15 0 0 ;DisplayOutMenu $Release_Type 15 0 0 ;
+            DisplayOutMenu "| " 14 0 0 ;DisplayOutMenu "Current Version: " 15 0 0 ;DisplayOutMenu $VersionDisplay 13 0 0 ;DisplayOutMenu " |" 14 0 0
+            DisplayOutMenu " Release: " 15 0 0 ;DisplayOutMenu $Release_Type 13 0 0 ;
         }
         DisplayOutMenu "|" 14 0 1
     } Else {
+        DisplayOutMenu "|---------------------------------------------------|" 14 0 1
         DisplayOutMenu "| " 14 0 0 ;DisplayOutMenu $TitleA $TitleB 0 0 ;DisplayOutMenu " |" 14 0 1
     }
     DisplayOutMenu "|---------------------------------------------------|" 14 0 1
