@@ -1,4 +1,34 @@
 -----------------------------------------------------------------------------------
+1.9-Menu (04-08-2017) 
+
+Changed TOS Display look
+Added Internet Check if script checks for update
+Various display changes
+
+Added Ability to add/remove following apps
+3D Viewer
+
+Removed Ability to add/remove following apps
+Asphalt 8
+Bing Finance
+Bing News
+Bing Sports
+Bing Translator
+Candy Cursh
+Facebook
+Farm Ville
+Fresh Paint
+Houzza
+Microsoft Jackpot
+Microsoft Jigsaw
+Microsoft Mahjong
+Microsoft Sudoku
+Minecraft
+Studios Wordament
+Taptiles
+Twitter
+
+-----------------------------------------------------------------------------------
 1.8-Menu (03-19-2017) 
 
 Added Script update check option
@@ -94,7 +124,7 @@ APP_MicrosoftOfficeHub  to APP_MicrosoftOffHub
 
 Added 1 New Setting Items:
   Windows Update Check Type
-  
+
 Also a few minor bug fixes
 
 -----------------------------------------------------------------------------------
@@ -127,7 +157,7 @@ Added 4 New Setting Items:
   Classic Clock UI (for the taskbar flyout)
   Classic Battery UI (for the taskbar flyout)
   Recent Items and Frequent Places (in start menu)
-  
+
 Added More Colors for Tiles (But disabled till i figure problem out)
 
 Renamed 2 Items:
@@ -185,14 +215,14 @@ Added 6 New Setting for Context Menu: (add/remove)
   Pin To
   Share With
   Send To
-  
+
 Added 5 New Settings:
   Volume Control Bar to classic/new
   Pid In Title Bar
   Aero Resize
   Aero Shake
   App Auto Download
-  
+
 Added options for a few of the items that had more than once choice
 Added ability to Remove the bloatware instead of just hiding it
 
