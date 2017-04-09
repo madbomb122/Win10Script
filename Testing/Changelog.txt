@@ -7,7 +7,6 @@ Various display changes
 
 Added Ability to add/remove following apps
 3D Viewer
-Holo Lens items
 
 Removed Ability to add/remove following apps
 Asphalt 8
