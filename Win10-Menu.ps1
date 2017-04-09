@@ -1,6 +1,6 @@
 Param([alias("Set")] [string] $SettingImp)
 ##########
-# Win10 Initial Setup Script Settings with Menu
+# Win10 Setup Script Settings with Menu
 #
 # Original Basic Script By
 #  Author: Disassembler
@@ -2611,9 +2611,9 @@ Function RunScript {
     If($CreateRestorePoint -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Creation of System Restore Point..." 15 0
     } ElseIf($CreateRestorePoint -eq 1) {
-        DisplayOut "Creating System Restore Point Named 'Win10 Initial Setup Script'." 11 1
+        DisplayOut "Creating System Restore Point Named '$RestorePointName'" 11 1
         DisplayOut "Please Wait..." 11 1
-        Checkpoint-Computer -Description "Win10 Initial Setup Script" | Out-Null
+        Checkpoint-Computer -Description $RestorePointName | Out-Null
     }
 
     $WinEdition = gwmi win32_operatingsystem | % caption
@@ -2621,6 +2621,8 @@ Function RunScript {
     #Home = Microsoft Windows 10 Home 
 
     $BuildVer = [environment]::OSVersion.Version.build
+    $CreatorUpdateBuild = 15063
+    # 15063 = Creator's Update
     # 14393 = anniversary update
     # 10586 = first major update
     # 10240 = first release
@@ -2677,10 +2679,20 @@ Function RunScript {
         DisplayOut "Enabling SmartScreen Filter..." 11 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "SmartScreenEnabled" -Type String -Value "RequireAdmin"
         Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppHost" -Name "EnableWebContentEvaluation"
+        If($BuildVer -ge $CreatorUpdateBuild) {
+            $AddPath = (Get-AppxPackage -AllUsers "Microsoft.MicrosoftEdge").PackageFamilyName
+            Remove-ItemProperty -Path "HKCU:\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\$AddPath\MicrosoftEdge\PhishingFilter" -Name "EnabledV9" -ErrorAction SilentlyContinue
+            Remove-ItemProperty -Path "HKCU:\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\$AddPath\MicrosoftEdge\PhishingFilter" -Name "PreventOverride" -ErrorAction SilentlyContinue
+        }
     } ElseIf($SmartScreen -eq 2) {
         DisplayOut "Disabling SmartScreen Filter..." 12 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "SmartScreenEnabled" -Type String -Value "Off"
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppHost" -Name "EnableWebContentEvaluation" -Type DWord -Value 0
+        If($BuildVer -ge $CreatorUpdateBuild) {
+            $AddPath = (Get-AppxPackage -AllUsers "Microsoft.MicrosoftEdge").PackageFamilyName
+            Set-ItemProperty -Path "HKCU:\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\$AddPath\MicrosoftEdge\PhishingFilter" -Name "EnabledV9" -Type DWord -Value 0
+            Set-ItemProperty -Path "HKCU:\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\$AddPath\MicrosoftEdge\PhishingFilter" -Name "PreventOverride" -Type DWord -Value 0
+        }
     }    
 
     # Location Tracking
@@ -2974,11 +2986,16 @@ Function RunScript {
     } ElseIf($WinDefender -eq 1) {
         DisplayOut "Enabling Windows Defender..." 11 0
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name "DisableAntiSpyware"
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "WindowsDefender" -Type ExpandString -Value "`"%ProgramFiles%\Windows Defender\MSASCuiL.exe`""
+        If($BuildVer-lt $CreatorUpdateBuild) {
+            Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "WindowsDefender" -Type ExpandString -Value "`"%ProgramFiles%\Windows Defender\MSASCuiL.exe`""
+        } Else {
+            Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "SecurityHealth" -Type ExpandString -Value "`"%ProgramFiles%\Windows Defender\MSASCuiL.exe`""
+        }
     } ElseIf($WinDefender -eq 2) {
         DisplayOut "Disabling Windows Defender..." 12 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name "DisableAntiSpyware" -Type DWord -Value 1
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "WindowsDefender"
+        Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "SecurityHealth"
     }
 
     # Home Groups services
@@ -4019,11 +4036,13 @@ Function RunScript {
     } ElseIf($OneDrive -eq 1) {
         DisplayOut "Enabling OneDrive..." 11 0
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" -Name "DisableFileSyncNGSC"
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSyncProviderNotifications" -Type DWord -Value 0
     } ElseIf($OneDrive -eq 2) {
         DisplayOut "Disabling OneDrive..." 12 0
         If(!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive")) {
             New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" | Out-Null
         }
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSyncProviderNotifications" -Type DWord -Value 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" -Name "DisableFileSyncNGSC" -Type DWord -Value 1
     }
     
@@ -4272,6 +4291,7 @@ $AutomaticVariables = Get-Variable -scope Script
 
 # Can ONLY create 1 per 24 hours with this script (Will give an error)
 $Script:CreateRestorePoint = 0    #0-Skip, 1-Create --(Restore point before script runs)
+$Script:RestorePointName = "Win10 Initial Setup Script"
 
 #Skips Term of Use
 $Script:Term_of_Use = 1           #1-See ToS, Anything else = Accepts Term of Use
@@ -4294,7 +4314,7 @@ $Script:WinDefault = 2            #1-Yes*, 2-No
 # ALL Values Above this one, All Metro Apps and OneDriveInstall (Will use what you set)
 
 #Privacy Settings
-# Function  = Option              #Choices (* Indicates Windows Default)
+# Function = Option               #Choices (* Indicates Windows Default)
 $Script:Telemetry = 0             #0-Skip, 1-Enable*, 2-Disable
 $Script:WiFiSense = 0             #0-Skip, 1-Enable*, 2-Disable
 $Script:SmartScreen = 0           #0-Skip, 1-Enable*, 2-Disable --(phishing and malware filter for soe MS Apps/Prog)
@@ -4309,7 +4329,7 @@ $Script:DiagTrack = 0             #0-Skip, 1-Enable*, 2-Disable
 $Script:WAPPush = 0               #0-Skip, 1-Enable*, 2-Disable --(type of text message that contains a direct link to a particular Web page)
 
 #Windows Update
-# Function  = Option              #Choices (* Indicates Windows Default)
+# Function = Option               #Choices (* Indicates Windows Default)
 $Script:CheckForWinUpdate = 0     #0-Skip, 1-Enable*, 2-Disable
 $Script:WinUpdateType = 0         #0-Skip, 1-Notify, 2-Auto DL, 3-Auto DL+Install*, 4-Local admin chose --(May not work with Home version)
 $Script:WinUpdateDownload = 0     #0-Skip, 1-P2P*, 2-Local Only, 3-Disable
@@ -4319,7 +4339,7 @@ $Script:RestartOnUpdate = 0       #0-Skip, 1-Enable*, 2-Disable
 $Script:AppAutoDownload = 0       #0-Skip, 1-Enable*, 2-Disable
 
 #Service Tweaks
-# Function  = Option              #Choices (* Indicates Windows Default)
+# Function = Option               #Choices (* Indicates Windows Default)
 $Script:UAC = 0                   #0-Skip, 1-Lower, 2-Normal*, 3-Higher
 $Script:SharingMappedDrives = 0   #0-Skip, 1-Enable, 2-Disable* --(Sharing mapped drives between users)
 $Script:AdminShares = 0           #0-Skip, 1-Enable*, 2-Disable --(Default admin shares for each drive)
@@ -4330,7 +4350,7 @@ $Script:RemoteAssistance = 0      #0-Skip, 1-Enable*, 2-Disable
 $Script:RemoteDesktop = 0         #0-Skip, 1-Enable, 2-Disable* --(Remote Desktop w/o Network Level Authentication)
  
 #Context Menu Items
-# Function  = Option              #Choices (* Indicates Windows Default)
+# Function = Option               #Choices (* Indicates Windows Default)
 $Script:CastToDevice = 0          #0-Skip, 1-Enable*, 2-Disable
 $Script:PreviousVersions = 0      #0-Skip, 1-Enable*, 2-Disable
 $Script:IncludeinLibrary = 0      #0-Skip, 1-Enable*, 2-Disable
@@ -4340,7 +4360,7 @@ $Script:ShareWith = 0             #0-Skip, 1-Enable*, 2-Disable
 $Script:SendTo = 0                #0-Skip, 1-Enable*, 2-Disable
 
 #Task Bar Items
-# Function  = Option              #Choices (* Indicates Windows Default)
+# Function = Option               #Choices (* Indicates Windows Default)
 $Script:BatteryUIBar = 0          #0-Skip, 1-New*, 2-Classic --(Classic is Win 7 version)
 $Script:ClockUIBar = 0            #0-Skip, 1-New*, 2-Classic --(Classic is Win 7 version)
 $Script:VolumeControlBar = 0      #0-Skip, 1-New(Horizontal)*, 2-Classic(Vertical) --(Classic is Win 7 version)
@@ -4355,14 +4375,14 @@ $Script:TaskBarOnMultiDisplay = 0 #0-Skip, 1-Enable*, 2-Disable
 $Script:TaskBarButtOnDisplay = 0  #0-Skip, 1-All, 2-where window is open, 3-Main and where window is open
 
 #Star Menu Items
-# Function  = Option              #Choices (* Indicates Windows Default)
+# Function = Option               #Choices (* Indicates Windows Default)
 $Script:StartMenuWebSearch = 0    #0-Skip, 1-Enable*, 2-Disable
 $Script:StartSuggestions = 0      #0-Skip, 1-Enable*, 2-Disable --(The Suggested Apps in Start Menu)
 $Script:MostUsedAppStartMenu = 0  #0-Skip, 1-Show*, 2-Hide
 $Script:RecentItemsFrequent = 0   #0-Skip, 1-Enable*, 2-Disable --(In Start Menu)
 
 #Explorer Items
-# Function  = Option              #Choices (* Indicates Windows Default)
+# Function = Option               #Choices (* Indicates Windows Default)
 $Script:Autoplay = 0              #0-Skip, 1-Enable*, 2-Disable
 $Script:Autorun = 0               #0-Skip, 1-Enable*, 2-Disable
 $Script:PidInTitleBar = 0         #0-Skip, 1-Show, 2-Hide* --(PID = Processor ID)
@@ -4378,7 +4398,7 @@ $Script:WinContentWhileDrag = 0   #0-Skip, 1-Show*, 2-Hide
 $Script:StoreOpenWith = 0         #0-Skip, 1-Enable*, 2-Disable
 
 #'This PC' Items
-# Function  = Option              #Choices (* Indicates Windows Default)
+# Function = Option               #Choices (* Indicates Windows Default)
 $Script:DesktopIconInThisPC = 0   #0-Skip, 1-Show*, 2-Hide
 $Script:DocumentsIconInThisPC = 0 #0-Skip, 1-Show*, 2-Hide
 $Script:DownloadsIconInThisPC = 0 #0-Skip, 1-Show*, 2-Hide
@@ -4387,7 +4407,7 @@ $Script:PicturesIconInThisPC = 0  #0-Skip, 1-Show*, 2-Hide
 $Script:VideosIconInThisPC = 0    #0-Skip, 1-Show*, 2-Hide
 
 #Desktop Items
-# Function  = Option              #Choices (* Indicates Windows Default)
+# Function = Option               #Choices (* Indicates Windows Default)
 $Script:ThisPCOnDesktop = 0       #0-Skip, 1-Show, 2-Hide*
 $Script:NetworkOnDesktop = 0      #0-Skip, 1-Show, 2-Hide*
 $Script:RecycleBinOnDesktop = 0   #0-Skip, 1-Show, 2-Hide*
@@ -4395,13 +4415,13 @@ $Script:UsersFileOnDesktop = 0    #0-Skip, 1-Show, 2-Hide*
 $Script:ControlPanelOnDesktop = 0 #0-Skip, 1-Show, 2-Hide*
 
 #Lock Screen
-# Function  = Option              #Choices (* Indicates Windows Default)
+# Function = Option               #Choices (* Indicates Windows Default)
 $Script:LockScreen = 0            #0-Skip, 1-Enable*, 2-Disable
 $Script:PowerMenuLockScreen = 0   #0-Skip, 1-Show*, 2-Hide
 $Script:CameraOnLockScreen = 0    #0-Skip, 1-Enable*, 2-Disable
 
 #Misc items
-# Function  = Option              #Choices (* Indicates Windows Default)
+# Function = Option               #Choices (* Indicates Windows Default)
 $Script:ActionCenter = 0          #0-Skip, 1-Enable*, 2-Disable
 $Script:StickyKeyPrompt = 0       #0-Skip, 1-Enable*, 2-Disable
 $Script:NumblockOnStart = 0       #0-Skip, 1-Enable, 2-Disable*
@@ -4411,12 +4431,12 @@ $Script:HibernatePower = 0        #0-Skip, 1-Enable, 2-Disable --(Hibernate Powe
 $Script:SleepPower = 0            #0-Skip, 1-Enable*, 2-Disable --(Sleep Power Option)
 
 # Photo Viewer Settings
-# Function  = Option              #Choices (* Indicates Windows Default)
+# Function = Option               #Choices (* Indicates Windows Default)
 $Script:PVFileAssociation = 0     #0-Skip, 1-Enable, 2-Disable*
 $Script:PVOpenWithMenu = 0        #0-Skip, 1-Enable, 2-Disable*
 
 # Remove unwanted applications
-# Function  = Option              #Choices (* Indicates Windows Default)
+# Function = Option               #Choices (* Indicates Windows Default)
 $Script:OneDrive = 0              #0-Skip, 1-Enable*, 2-Disable
 $Script:OneDriveInstall = 0       #0-Skip, 1-Installed*, 2-Uninstall
 $Script:XboxDVR = 0               #0-Skip, 1-Enable*, 2-Disable
@@ -4427,9 +4447,9 @@ $Script:LinuxSubsystem = 0        #0-Skip, 1-Installed, 2-Uninstall* (Anniversar
 # Custom List of App to Install, Hide or Uninstall
 # I dunno if you can Install random apps with this script
 # Cant Import these ATM
-$APPS_AppsInstall = @()         # Apps to Install
-$APPS_AppsHide = @()            # Apps to Hide
-$APPS_AppsUninstall = @()       # Apps to Uninstall
+$APPS_AppsInstall = @()          # Apps to Install
+$APPS_AppsHide = @()             # Apps to Hide
+$APPS_AppsUninstall = @()        # Apps to Uninstall
 #$Script:APPS_Example = @('Somecompany.Appname1','TerribleCompany.Appname2','AppS.Appname3')
 # To get list of Packages Installed (in powershell)
 # DISM /Online /Get-ProvisionedAppxPackages | Select-string Packagename
@@ -4448,7 +4468,7 @@ Remove-Item -Path C:\Mnt -Recurse
 
 # Metro Apps
 # By Default Most of these are installed
-# Function  = Option       # 0-Skip, 1-Unhide, 2- Hide, 3-Uninstall (!!Read Note Above)
+# Function  = Option  # 0-Skip, 1-Unhide, 2- Hide, 3-Uninstall (!!Read Note Above)
 $Script:APP_3DBuilder = 0         # 3DBuilder app
 $Script:APP_3DViewer = 0          # 3DViewer app
 $Script:APP_BingWeather = 0       # Bing Weather app
@@ -4464,22 +4484,22 @@ $Script:APP_OfficeSway = 0        # Office Sway app
 $Script:APP_OneConnect = 0        # One Connect
 $Script:APP_People = 0            # People app
 $Script:APP_Photos = 0            # Photos app
-$Script:APP_SkypeApp1 = 0         # Skype App
-$Script:APP_SkypeApp2 = 0         # Skype App
+$Script:APP_SkypeApp1 = 0         # Microsoft.SkypeApp
+$Script:APP_SkypeApp2 = 0         # Microsoft.SkypeWiFi
 $Script:APP_SolitaireCollect = 0  # Microsoft Solitaire
 $Script:APP_StickyNotes = 0       # Sticky Notes app
 $Script:APP_VoiceRecorder = 0     # Voice Recorder app
 $Script:APP_WindowsAlarms = 0     # Alarms and Clock app
 $Script:APP_WindowsCalculator = 0 # Calculator app
 $Script:APP_WindowsCamera = 0     # Camera app
-$Script:APP_WindowsFeedbak1 = 0   # Feedback Hub
-$Script:APP_WindowsFeedbak2 = 0   # Feedback Hub
+$Script:APP_WindowsFeedbak1 = 0   # Microsoft.WindowsFeedback
+$Script:APP_WindowsFeedbak2 = 0   # Microsoft.WindowsFeedbackHub
 $Script:APP_WindowsMaps = 0       # Maps app
 $Script:APP_WindowsPhone = 0      # Phone Companion app
 $Script:APP_WindowsStore = 0      # Windows Store
 $Script:APP_XboxApp = 0           # Xbox app
 $Script:APP_ZuneMusic = 0         # Groove Music app
-$Script:APP_ZuneVideo = 0         # Groove Music app
+$Script:APP_ZuneVideo = 0         # Groove Video app
 
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
