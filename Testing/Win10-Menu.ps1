@@ -12,7 +12,7 @@ Param([alias("Set")] [string] $SettingImp)
 # Website: https://github.com/madbomb122/Win10Script/
 #
 $Script_Version = 1.9
-$Script_Date = "04-??-17"
+$Script_Date = "04-08-17"
 #$Release_Type = "Stable "
 $Release_Type = "Testing"
 ##########
@@ -109,7 +109,7 @@ Note: File has to be in the proper format or settings wont be imported
 ##########
 
 $Global:filebase = $PSScriptRoot
-$ErrorActionPreference= 'silentlycontinue'
+#$ErrorActionPreference= 'silentlycontinue'
 $TempFolder = $env:Temp
 
 # Ask for elevated permissions if required
@@ -144,15 +144,11 @@ $VersionDisplay = "$Script_Version" + " (" + $Script_Date + ")"
 
 $AppsList = @(
     'Microsoft.3DBuilder',
-    'Microsoft.Microsoft3DViewer ',
+    'Microsoft.Microsoft3DViewer',
     'Microsoft.BingWeather',
     'Microsoft.CommsPhone',
     'Microsoft.windowscommunicationsapps',
     'Microsoft.Getstarted',
-    'HoloCamera',
-    'HoloItemPlayerApp',
-    'HoloShell',
-    'Microsoft.Windows.HolographicFirstRun',
     'Microsoft.Messaging',
     'Microsoft.MicrosoftOfficeHub',
     'Microsoft.MovieMoments',
@@ -511,6 +507,10 @@ Function VariMenu ([Array]$VariDisplay,[Array]$VariMenuItm) {
     Return
 }
 
+Function Openwebsite ([String]$Url) {
+    [System.Diagnostics.Process]::Start($Url)
+}
+
 ##########
 # Multi Use Functions -End
 ##########
@@ -635,7 +635,7 @@ $MainMenuItems = @(
 '1. Run Script          ','H. How to Use Script   ',
 '2. Script Settings     ','C. Copyright           ',
 '3. Load Setting        ','A. About/Version       ',
-'4. Save Setting        ',"W. Madbomb's Github    ",
+'4. Save Setting        ',"M. Madbomb's Github    ",
 '5. Options             ','U. Update Check        ',
 'Q. Exit/Quit                                     ')
 
@@ -660,7 +660,7 @@ Function mainMenu {
             H {HUACMenu "UsageItems"} #How to Use
             A {HUACMenu "AboutItems"}  #About/Version
             C {HUACMenu "CopyrightItems"}  #Copyright
-            W {[System.Diagnostics.Process]::Start("https://github.com/madbomb122/Win10Script"} #My Website
+            M {Openwebsite "https://github.com/madbomb122/"} #My Website
             Q {Exit} #/Exit/Quit
             default {$Invalid = 1}
         }
@@ -2123,10 +2123,6 @@ $APList = @(
     'APP_CommsPhone',
     'APP_Communications',
     'APP_Getstarted',
-    'APP_HoloLens1',
-    'APP_HoloLens2',
-    'APP_HoloLens3',
-    'APP_HoloLens4',
     'APP_Messaging',
     'APP_MicrosoftOffHub',
     'APP_MovieMoments',
@@ -2202,8 +2198,8 @@ Function ChoicesMenuMetro ([String]$Vari, [Int]$MultiV) {
         $VariM = -join("APP_",$Vari)
         $Vari1 = -join($VariM,"1")
         $Vari2 = -join($VariM,"2")
-        $Vari2 = -join($VariM,"3")
-        $Vari2 = -join($VariM,"4")
+        $Vari3 = -join($VariM,"3")
+        $Vari4 = -join($VariM,"4")
         $VariV = Get-Variable $Vari1 -valueOnly #Variable
     } ElseIf($MultiV -eq 9) {
         $VariM = $Vari
@@ -2272,21 +2268,21 @@ Function ChoicesDisplayMetro ([Array]$ChToDisplayMetro, [Int]$ChToDisplayValMetr
 
 $MetroAppsMenuItems = @(
 '              Metro Apps Items Menu              ',
-'1. ALL Metro Apps      ','16. Microsoft Solitaire',
-'2. 3D Viewer apps      ','17. Movie Moments app  ',
-'3. 3DBuilder app       ','18. Netflix app        ',
-'4. Alarms & Clock app  ','19. Office OneNote app ',
-'5. Bing Weather app    ','20. Office Sway app    ',
-'6. Calculator app      ','21. One Connect        ',
-'7. Calendar & Mail app ','22. People app         ',
-'8. Camera app          ','23. Phone app          ',
-'9. Feedback Hub        ','24. Phone Companion app',
-'10. Get Office Link    ','25. Photos app         ',
-'11. Get Started link   ','26. Skype App          ',
-'12. Groove Music app   ','27. Sticky Notes app   ',
-'13. Holo Lens apps     ','28. Voice Recorder app ',
-'14. Maps app           ','29. Windows Store      ',
-'15. Messaging app      ','30. Xbox app           ',
+' 1. ALL Metro Apps     ','16. Movie Moments app  ',
+' 2. 3D Viewer apps     ','17. Netflix app        ',
+' 3. 3DBuilder app      ','18. Office OneNote app ',
+' 4. Alarms & Clock app ','19. Office Sway app    ',
+' 5. Bing Weather app   ','20. One Connect        ',
+' 6. Calculator app     ','21. People app         ',
+' 7. Calendar & Mail app','22. Phone app          ',
+' 8. Camera app         ','23. Phone Companion app',
+' 9. Feedback Hub       ','24. Photos app         ',
+'10. Get Office Link    ','25. Skype App          ',
+'11. Get Started link   ','26. Sticky Notes app   ',
+'12. Groove Music app   ','27. Voice Recorder app ',
+'13. Maps app           ','28. Windows Store      ',
+'14. Messaging app      ','29. Xbox app           ',
+'15. Microsoft Solitaire','                       ',
 'B. Back to Script Setting Main Menu              ')
 
 $MetroAppsMenuItm= @(
@@ -2302,24 +2298,23 @@ $MetroAppsMenuItm= @(
 (10,'MicrosoftOffHub',0),
 (11,'Getstarted',0),
 (12,'ZuneMusic',1),
-(13,'HoloLens',3),
-(14,'WindowsMaps',0),
-(15,'Messaging',0),
-(16,'SolitaireCollect',0),
-(17,'MovieMoments',0),
-(18,'Netflix',0),
-(19,'OfficeOneNote',0),
-(20,'OfficeSway',0),
-(21,'OneConnect',0),
-(22,'People',0),
-(23,'CommsPhone',0),
-(24,'WindowsPhone',0),
-(25,'Photos',0),
-(26,'SkypeApp',1),
-(27,'StickyNotes',0),
-(28,'VoiceRecorder',0),
-(29,'WindowsStore',0),
-(30,'XboxApp',0))
+(13,'WindowsMaps',0),
+(14,'Messaging',0),
+(15,'SolitaireCollect',0),
+(16,'MovieMoments',0),
+(17,'Netflix',0),
+(18,'OfficeOneNote',0),
+(19,'OfficeSway',0),
+(20,'OneConnect',0),
+(21,'People',0),
+(22,'CommsPhone',0),
+(23,'WindowsPhone',0),
+(24,'Photos',0),
+(25,'SkypeApp',1),
+(26,'StickyNotes',0),
+(27,'VoiceRecorder',0),
+(28,'WindowsStore',0),
+(29,'XboxApp',0))
 
 
 $ALL_METRO_APPSItems = @(
@@ -2381,11 +2376,6 @@ $ZuneMusicItems = @(
 '                Groove Music app                 ',
 'Enjoy all your music on Windows, iOS and Android ',
 'devices with Groove.                             ')
-
-$HoloLensItems = @(
-'                 Holo Lens apps                  ',
-'Various Holo Lens Apps                           ',
-'                                                 ')
 
 $WindowsMapsItems = @(
 '                    Maps app                     ',
@@ -4165,7 +4155,12 @@ Function RunScript {
 
     ForEach($AppI in $APPS_AppsInstall) {
         DisplayOut $AppI 11 0
-        Add-AppxPackage -DisableDevelopmentMode -Register "$($(Get-AppXPackage -AllUsers "$AppI").InstallLocation)\AppXManifest.xml" | Out-null
+        If($AppI -ne $null -or $AppI -ne "") {
+                    Add-AppxPackage -DisableDevelopmentMode -Register "$($(Get-AppXPackage -AllUsers $AppI).InstallLocation)\AppXManifest.xml" | Out-null
+        } ElseIf($Release_Type -ne "Stable ") {
+            DisplayOut "Error, can't Install $AppI" 12 0
+        }
+
     }
     DisplayOut "" 14 0
     DisplayOut "Hidinging Apps..." 12 0
@@ -4174,7 +4169,7 @@ Function RunScript {
 
     ForEach($AppH in $APPS_AppsHide) {
         $ProvisionedPackage = Get-AppxProvisionedPackage -online | Where {$_.displayName -eq $AppH}
-        If($ProvisionedPackage -ne $null) {
+        If($ProvisionedPackage -ne $null -or $AppH -ne "") {
             DisplayOut $AppH 12 0
             Get-AppxPackage $AppH | Remove-AppxPackage | Out-null
         } ElseIf($Release_Type -ne "Stable ") {
@@ -4189,7 +4184,7 @@ Function RunScript {
 
     ForEach($AppU in $APPS_AppsUninstall) {
         $ProvisionedPackage = Get-AppxProvisionedPackage -online | Where {$_.displayName -eq $AppU}
-        If($ProvisionedPackage -ne $null) {
+        If($ProvisionedPackage -ne $null -or $AppU -ne "") {
             DisplayOut $AppU 14 0
             $PackageFullName = (Get-AppxPackage $AppU).PackageFullName
             $ProPackageFullName = (Get-AppxProvisionedPackage -online | where {$_.Displayname -eq $AppU}).PackageName
@@ -4247,7 +4242,7 @@ Function RunScript {
         Write-Host "Goodbye..."
         Exit
     } Else {
-        Read-Host -Prompt "Press any key to continue"
+        Read-Host -Prompt "Press any key to Go back to Menu"
     }
 }
 
@@ -4432,9 +4427,9 @@ $Script:LinuxSubsystem = 0        #0-Skip, 1-Installed, 2-Uninstall* (Anniversar
 # Custom List of App to Install, Hide or Uninstall
 # I dunno if you can Install random apps with this script
 # Cant Import these ATM
-$APPS_AppsInstall = @("")         # Apps to Install
-$APPS_AppsHide = @("")            # Apps to Hide
-$APPS_AppsUninstall = @("")       # Apps to Uninstall
+$APPS_AppsInstall = @()         # Apps to Install
+$APPS_AppsHide = @()            # Apps to Hide
+$APPS_AppsUninstall = @()       # Apps to Uninstall
 #$Script:APPS_Example = @('Somecompany.Appname1','TerribleCompany.Appname2','AppS.Appname3')
 # To get list of Packages Installed (in powershell)
 # DISM /Online /Get-ProvisionedAppxPackages | Select-string Packagename
@@ -4460,10 +4455,6 @@ $Script:APP_BingWeather = 0       # Bing Weather app
 $Script:APP_CommsPhone = 0        # Phone app
 $Script:APP_Communications = 0    # Calendar & Mail app
 $Script:APP_Getstarted = 0        # Get Started link
-$Script:APP_HoloLens1 = 0         # HoloCamera
-$Script:APP_HoloLens2 = 0         # HoloItemPlayerApp
-$Script:APP_HoloLens3 = 0         # HoloShell
-$Script:APP_HoloLens4 = 0         # Microsoft.Windows.HolographicFirstRun
 $Script:APP_Messaging = 0         # Messaging app
 $Script:APP_MicrosoftOffHub = 0   # Get Office Link
 $Script:APP_MovieMoments = 0      # Movie Moments app
