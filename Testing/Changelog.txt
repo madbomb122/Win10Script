@@ -1,7 +1,10 @@
 -----------------------------------------------------------------------------------
-?.?-Menu (04-??-2017) 
+2.0-Menu (04-??-2017) 
 
-NOTHIN ATM
+Internal Script Changes
+Fixed "Users File Icon on Desktop" showing as "Recycle Bin Icon on Desktop"
+Fixed "Removeing Recent Files in Quick Access" set incorrectly
+Fixed "Disabling Cast to Device Context" set incorrectly
 
 -----------------------------------------------------------------------------------
 1.9-Menu (04-08-2017) 
