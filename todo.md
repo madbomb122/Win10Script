@@ -6,4 +6,5 @@
 -------------------------------------------------------------------------------------------------------------
 
 # Working On/Testing
-- [ ] Undo the change in Win+X menu in the upcoming creator's update (setting -> control panel, and Powershell -> Command Prompt)
+- [X] Undo the change in Win+X menu in the upcoming creator's update (Powershell -> Command Prompt)
+- [ ] Undo the change in Win+X menu in the upcoming creator's update (setting -> control panel)
