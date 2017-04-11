@@ -126,20 +126,6 @@ If(!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::
 # Needed Variable -Start
 ##########
 
-# Define HKCR
-If(!(Test-Path "HKCR:")) {
-     New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null
-}
-
-# Define HKU
-If(!(Test-Path "HKU:")) {
-     New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_USERS | Out-Null
-}
-
-If([System.Environment]::Is64BitProcess) {
-    $OSType = 64
-}
-
 $VersionDisplay = "$Script_Version" + " (" + $Script_Date + ")"
 
 $AppsList = @(
@@ -1629,7 +1615,7 @@ $ExplorerSetMenuItems = @(
 '4. Hidden Files        ','11. Autoplay           ',
 '5. Aero Snape          ','12. Pid in Title Bar   ',
 '6. Aero Shake          ','13. Store Open With Unk',
-'7. Content While Drag  ','                       ',
+'7. Content While Drag  ','14. WinX PowerShell-CMD',
 'B. Back to Script Setting Main Menu              ')
 
 $ExplorerSetMenuItm = @(
@@ -1645,7 +1631,8 @@ $ExplorerSetMenuItm = @(
 (10,"Autorun",2,0),
 (11,"Autoplay",2,0),
 (12,"PidInTitleBar",2,0),
-(13,"StoreOpenWith",2,0))
+(13,"StoreOpenWith",2,0),
+(14,"WinXPowerShell",2,0))
 
 $FrequentFoldersQikAccItems = @(
 '         Frequent Items in Quick Access          ',
@@ -1763,6 +1750,15 @@ $StoreOpenWithItems = @(
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
+$ArrayLine[5]) #Back/Cancel
+
+$WinXPowerShellItems = @(
+'       Win+X PowerShell -> Command Prompt        ',
+$ArrayLine[7], #Blank
+$ArrayLine[7], #Blank
+$ArrayLine[0], #Skip
+' 1. Powershell on Win+X instead of Command Prompt',
+' 2. Command Prompt on Win+X instead of Powershell',
 $ArrayLine[5]) #Back/Cancel
 
   ##########
@@ -2556,6 +2552,7 @@ Function LoadWinDefault {
     $FrequentFoldersQikAcc = 1
     $WinContentWhileDrag = 1
     $StoreOpenWith = 1
+    $WinXPowerShell = 1
 
     #'This PC' Items
     $DesktopIconInThisPC = 1
@@ -2631,10 +2628,20 @@ Function RunScript {
     # 14393 = anniversary update
     # 10586 = first major update
     # 10240 = first release
+	
+    # Define HKCR
+    If(!(Test-Path "HKCR:")) {
+        New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null
+    }
 
-    ##########
-    # Privacy Settings -Start
-    ##########
+    # Define HKU
+    If(!(Test-Path "HKU:")) {
+        New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_USERS | Out-Null
+    }
+
+    If([System.Environment]::Is64BitProcess) {
+        $OSType = 64
+    }
 
     DisplayOut "" 14 0
     DisplayOut "------------------------" 14 0
@@ -2851,14 +2858,6 @@ Function RunScript {
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent" -Name "DisableWindowsConsumerFeatures" -Type DWord -Value 1
     }
 
-    ##########
-    # Privacy Settings -End
-    ##########
-
-    ##########
-    # Windows Update -Start
-    ##########
-
     DisplayOut "" 14 0
     DisplayOut "-------------------------------" 14 0
     DisplayOut "-   Windows Update Settings   -" 14 0
@@ -2920,14 +2919,6 @@ Function RunScript {
         }
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization" -Name "SystemSettingsDownloadMode" -Type DWord -Value 3
     }
-
-    ##########
-    # Windows Update -End
-    ##########
-
-    ##########
-    # Service Tweaks -Start
-    ##########
 
     DisplayOut "" 14 0
     DisplayOut "----------------------" 14 0
@@ -3042,14 +3033,6 @@ Function RunScript {
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" -Type DWord -Value 1
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" -Name "UserAuthentication" -Type DWord -Value 1
     }
-
-    ##########
-    # Service Tweaks -End
-    ##########
-
-    ##########
-    # Context Menu Items -Start
-    ##########
 
     DisplayOut "" 14 0
     DisplayOut "--------------------------" 14 0
@@ -3181,14 +3164,6 @@ Function RunScript {
             Remove-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo"
         }
     }
-
-    ##########
-    # Context Menu Items -End
-    ##########
-
-    ##########
-    # Task Bar Items -Start
-    ##########
 
     DisplayOut "" 14 0
     DisplayOut "----------------------" 14 0
@@ -3343,14 +3318,6 @@ Function RunScript {
         Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarMode" -Type DWord -Value 1
     }
 
-    ##########
-    # Task Bar Items -End
-    ##########
-
-    ##########
-    # Star Menu Items -Start
-    ##########
-
     DisplayOut "" 14 0
     DisplayOut "-----------------------" 14 0
     DisplayOut "-   Star Menu Items   -" 14 0
@@ -3413,14 +3380,6 @@ Function RunScript {
         }
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" -Name "Start_TrackDocs" -Type DWord -Value 0
     }
-
-    ##########
-    # Star Menu Items -End
-    ##########
-
-    ##########
-    # Explorer Items -Start
-    ##########
 
     DisplayOut "" 14 0
     DisplayOut "----------------------" 14 0
@@ -3589,13 +3548,16 @@ Function RunScript {
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "NoUseStoreOpenWith" -Type DWord -Value 1
     }
 
-    ##########
-    # Explorer Items -End
-    ##########
-
-    ##########
-    # 'This PC' items -Start
-    ##########
+    # Powershell to Command Prompt
+    If($WinXPowerShell -eq 0 -and $ShowSkipped -eq 1) {
+        DisplayOut "Skipping Win+X PowerShell to Command Prompt..." 15 0
+    } ElseIf($WinXPowerShell -eq 1) {
+        DisplayOut "Changing Win+X Command Prompt to PowerShell ..." 11 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "DontUsePowerShellOnWinX" -Type DWord -Value 0
+    } ElseIf($WinXPowerShell -eq 2) {
+        DisplayOut "Changing Win+X PowerShell to Command Prompt..." 12 0
+        Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "DontUsePowerShellOnWinX" -Type DWord -Value 1
+    }
 
     DisplayOut "" 14 0
     DisplayOut "-----------------------" 14 0
@@ -3705,14 +3667,6 @@ Function RunScript {
         }
     }
 
-    ##########
-    # 'This PC' items -End
-    ##########
-
-    ##########
-    # Desktop items -Start
-    ##########
-
     DisplayOut "" 14 0
     DisplayOut "---------------------" 14 0
     DisplayOut "-   Desktop Items   -" 14 0
@@ -3788,14 +3742,6 @@ Function RunScript {
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}" -Type DWord -Value 1
     }
 
-    ##########
-    # Desktop items -End
-    ########## 
-
-    ##########
-    # Photo Viewer Settings -Start
-    ##########
-
     DisplayOut "" 14 0
     DisplayOut "-----------------------------" 14 0
     DisplayOut "-   Photo Viewer Settings   -" 14 0
@@ -3846,14 +3792,6 @@ Function RunScript {
             Remove-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open" -Recurse
         }
     }
-
-    ##########
-    # Photo Viewer Settings -End
-    ##########
-
-    ##########
-    # Lockscreen Items -Start
-    ##########
 
     DisplayOut "" 14 0
     DisplayOut "------------------------" 14 0
@@ -3921,14 +3859,6 @@ Function RunScript {
         }
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreenCamera" -Type DWord -Value 1
     }
-
-    ##########
-    # Lockscreen Items -End
-    ##########
-
-    ##########
-    # Misc Items -Start
-    ##########
 
     DisplayOut "" 14 0
     DisplayOut "------------------" 14 0
@@ -4020,14 +3950,6 @@ Function RunScript {
         DisplayOut "Disabling Sleep Option..." 12 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" -Name "ShowSleepOption" -Type DWord -Value 0
     }
-
-    ##########
-    # Misc Items -End
-    ##########
-
-    ##########
-    # Application Items -Start
-    ##########
 
     DisplayOut "" 14 0
     DisplayOut "-------------------------" 14 0
@@ -4142,14 +4064,6 @@ Function RunScript {
         DisplayOut "Windows 10 Build isn't new enough for Linux Subsystem..." 14 0
     }
 
-    ##########
-    # Application Items -end
-    ##########
-
-    ##########
-    # Metro App Items -Start
-    ##########
-
     # Sorts the apps to Install, Hide or Uninstall
     $APPProcess = Get-Variable -Name "APP_*" -ValueOnly -Scope Script
 
@@ -4222,14 +4136,6 @@ Function RunScript {
         }
     }
 
-    ##########
-    # Metro App Items -End
-    ##########
-
-    ##########
-    # Unpin App Items -Start
-    ##########
-
     If($Unpin -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Unpinning Items..." 15 0
     } ElseIf($Unpin -eq 1) {
@@ -4241,10 +4147,6 @@ Function RunScript {
             unPin-App $Pin
         }
     }
-
-    ##########
-    # Unpin App Items -End
-    ##########
 
     Remove-Variable -Name filebase -scope global
     If($Restart -eq 1 -and $Release_Type -eq "Stable ") {
@@ -4401,6 +4303,7 @@ $Script:RecentFileQikAcc = 0      #0-Skip, 1-Show/Add*, 2-Hide, 3-Remove --(Rece
 $Script:FrequentFoldersQikAcc = 0 #0-Skip, 1-Show*, 2-Hide --(Frequent Folders in Quick Access)
 $Script:WinContentWhileDrag = 0   #0-Skip, 1-Show*, 2-Hide
 $Script:StoreOpenWith = 0         #0-Skip, 1-Enable*, 2-Disable
+$Script:WinXPowerShell = 0        #0-Skip, 1-Powershell*, 2-Command Prompt 
 
 #'This PC' Items
 # Function = Option               #Choices (* Indicates Windows Default)
