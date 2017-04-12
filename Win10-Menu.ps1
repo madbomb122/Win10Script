@@ -108,7 +108,7 @@ Note: File has to be in the proper format or settings wont be imported
 ##########
 
 $Global:filebase = $PSScriptRoot
-#$ErrorActionPreference= 'silentlycontinue'
+$ErrorActionPreference= 'silentlycontinue'
 $TempFolder = $env:Temp
 
 # Ask for elevated permissions if required
