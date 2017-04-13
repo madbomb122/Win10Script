@@ -8,13 +8,19 @@ The original basic script created by https://github.com/Disassembler0/Win10-Init
 This script is a Highly Modded version of the 2.0 script by Disaseembler0. <br />
 The script has added items with an easier way to change preferences and a menu.
 
+# [](#header-1)Usage Requirements
+OS: Windows 10 <br />
+Files: 
+1. Win10-Menu.ps1 (Script File) <br />
+2. _Win10-Script-Run.bat (Recommended to run script)
+
 # [](#header-1)Basic Usage
 Run the Script <br />
 Use the Menu <br />
 Set what you want <br />
 Select option to run script <br />
 
-## [](#header-2)Advanced Usage
+## [](#header-1)Advanced Usage
 Use one of the following Methods 
 (Bat file provided can run script, look in bat file for insructions) <br />
 
