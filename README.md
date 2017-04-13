@@ -10,9 +10,8 @@ The script has added items with an easier way to change preferences and a menu.
 
 # [](#header-1)Usage Requirements
 OS: Windows 10 <br />
-Files: 
-1. Win10-Menu.ps1 (Script File) <br />
-2. _Win10-Script-Run.bat (Recommended to run script)
+Needed Files: Win10-Menu.ps1 (Script File) <br />
+Recommended Files: _Win10-Script-Run.bat <br />
 
 # [](#header-1)Basic Usage
 Run the Script <br />
