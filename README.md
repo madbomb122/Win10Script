@@ -9,8 +9,8 @@ This script is a Highly Modded version of the 2.0 script by Disaseembler0. <br /
 The script has added items with an easier way to change preferences and a menu.
 
 # [](#header-1)Usage Requirements
-**OS:** Windows 10 <br />
-**Needed Files:** `Win10-Menu.ps1 (Script File)` <br />
+**OS:** `Windows 10` <br />
+**Needed Files:** `Win10-Menu.ps1` (Script File) <br />
 **Recommended Files:** `_Win10-Script-Run.bat` <br />
 
 # [](#header-1)Basic Usage
