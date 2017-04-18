@@ -14,7 +14,7 @@ The script has added items with an easier way to change preferences and a menu.
 **Recommended Files:** `_Win10-Script-Run.bat` <br />
 
 # [](#header-1)Basic Usage
-Run the Script <br />
+Run the Script by bat file or `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1` <br />
 Use the Menu <br />
 Set what you want <br />
 Select option to run script <br />
