@@ -48,6 +48,9 @@ Examples: <br />
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1 -Set Whatever.txt` <br />
 ******
 ## FAQ
+**Q:** Do you accept any donations? <br />
+**A:** Not atm, but I might add something for donations at some point.
+
 **Q:** The script file looks all messy in notepad, How do i view/change it? <br />
 **A:** Try using wordpad or what I recommend, Notepad++ https://notepad-plus-plus.org/
 
