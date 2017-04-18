@@ -24,7 +24,7 @@ Use one of the following Methods
 (Bat file provided can run script, look in bat file for insructions) <br />
 
 Change the variables you want (Bottom of Script) then run script with: <br />
-   -Set Run
+   `-Set Run`
 
 Examples: <br />
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1 -Set Run` <br />
@@ -32,8 +32,8 @@ Examples: <br />
 ******
 To run the script with the Items in the script back to the Default
 for windows run the script with one of the 2 switches bellow:  <br />
-   -Set WD  <br />
-   -Set WinDefault 
+   `-Set WD`  <br />
+   `-Set WinDefault` 
 
 Examples: <br />
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1 -Set WD` <br />
@@ -41,7 +41,7 @@ or <br />
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1 -Set WinDefault` <br />
 ******
 To run the script with imported Settings run the script with:   
-   -Set Filename
+   `-Set Filename`
 
 Examples: <br />
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1 -Set File.csv` <br />
