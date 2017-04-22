@@ -1,7 +1,16 @@
 -----------------------------------------------------------------------------------
+2.0-Menu (04-22-2017) 
+
+Internal Script Changes
+Fixed "Users File Icon on Desktop" showing as "Recycle Bin Icon on Desktop"
+Fixed "Removeing Recent Files in Quick Access" set incorrectly
+Fixed "Disabling Cast to Device Context" set incorrectly
+Change Powershell to Command Prompt (in Win+X)
+
+-----------------------------------------------------------------------------------
 1.9-Menu (04-08-2017) 
 
-added some updates to settings for creator's update
+Added some updates to settings for creator's update
 Changed TOS Display look
 Added Internet Check if script checks for update
 Various display changes
