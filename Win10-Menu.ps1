@@ -13,8 +13,7 @@ Param([alias("Set")] [string] $SettingImp)
 #
 $Script_Version = "2.0"
 $Script_Date = "04-22-17"
-#$Release_Type = "Stable "
-$Release_Type = "Testing"
+$Release_Type = "Stable "
 ##########
 
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
