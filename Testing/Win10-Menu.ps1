@@ -11,11 +11,20 @@ Param([alias("Set")] [string] $SettingImp)
 #  Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script/
 #
-$Script_Version = 2.0
-$Script_Date = "04-??-17"
+$Script_Version = "2.0"
+$Script_Date = "04-22-17"
 #$Release_Type = "Stable "
 $Release_Type = "Testing"
 ##########
+
+## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+## !!!!!!                                                !!!!!!
+## !!!!!!               SAFE TO EDIT ITEM                !!!!!!
+## !!!!!!              AT BOTTOM OF SCRIPT               !!!!!!
+## !!!!!!                                                !!!!!!
+## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 <#----------------------------------------------------------------------------
     Copyright (c) 2017 Disassembler -Original Basic Version of Script
@@ -76,15 +85,6 @@ Note: File has to be in the proper format or settings wont be imported
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## !!!!!!                                                !!!!!!
-## !!!!!!               SAFE TO EDIT ITEM                !!!!!!
-## !!!!!!              AT BOTTOM OF SCRIPT               !!!!!!
-## !!!!!!                                                !!!!!!
-## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-## !!!!!!                                                !!!!!!
 ## !!!!!!                    CAUTION                     !!!!!!
 ## !!!!!!          DO NOT EDIT PAST THIS POINT           !!!!!!
 ## !!!!!!                                                !!!!!!
@@ -109,7 +109,9 @@ Note: File has to be in the proper format or settings wont be imported
 ##########
 
 $Global:filebase = $PSScriptRoot
-#$ErrorActionPreference= 'silentlycontinue'
+If($Release_Type -eq "Stable ") {
+    $ErrorActionPreference= 'silentlycontinue'
+}
 $TempFolder = $env:Temp
 
 # Ask for elevated permissions if required
@@ -302,8 +304,8 @@ Function UpdateCheck ([Int]$Bypass) {
                 $DFilename = "Win10-Menu-Ver." + $WebScriptVer + ".ps1"
                 $url = "https://raw.githubusercontent.com/madbomb122/Win10Script/master/Testing/Win10-Menu.ps1"
             }
-
-            If($WebScriptVer -gt $Script_Version) {
+            $SV=[Int]$Script_Version
+            If($WebScriptVer -gt $SV) {
                 Clear-Host
                 MenuLine
                 LeftLine ;DisplayOutMenu "                  Update Found!                  " 13 0 0 ;RightLine
@@ -331,7 +333,7 @@ Function UpdateCheck ([Int]$Bypass) {
         MenuLine
         MenuBlankLine
         LeftLine ;DisplayOutMenu "No internet connection dectected.                " 2 0 0 ;RightLine
-        LeftLine ;DisplayOutMenu "Tested by pinging google.com and yahoo.com       " 2 0 0 ;RightLine
+        LeftLine ;DisplayOutMenu "Tested by pinging github.com                     " 2 0 0 ;RightLine
         MenuBlankLine
         MenuLine
         Write-Host ""
@@ -341,12 +343,10 @@ Function UpdateCheck ([Int]$Bypass) {
 }
 
 Function InternetCheck {
-    If(!(Test-Connection -computer google.com -count 1 -quiet)) {
-        If(!(Test-Connection -computer yahoo.com -count 1 -quiet)) {
-            Return $false
-        } Else {
-            Return $true
-        }
+    If($Internet_Check -eq 1) {
+        Return $true
+    } ElseIf(!(Test-Connection -computer github.com -count 1 -quiet)) {
+        Return $false
     } Else {
         Return $true
     }
@@ -521,7 +521,7 @@ Function Openwebsite ([String]$Url) {
 Function InvalidSelection {
     Write-Host ""
     Write-Host "Invalid Selection" -ForegroundColor Red -BackgroundColor Black -NoNewline
-	Return 0
+    Return 0
 }
 
 ##########
@@ -983,7 +983,7 @@ Function HUACMenu ([String]$VariJ) {
 $PrivacySetMenuItems = @(
 '              Privacy Settings Menu              ',
 '1. Telemetry           ','7. Wi-Fi Sense         ',
-'2. Smart Screen        ','8. Auto Logger File    ',
+'2. SmartScreen         ','8. Auto Logger File    ',
 '3. Location Tracking   ','9. Feedback            ',
 '4. Diagnostic Track    ','10. Advertising ID     ',
 '5. Cortana             ','11. Cortana Search     ',
@@ -1014,7 +1014,7 @@ $ArrayLine[2], #Disable
 $ArrayLine[5]) #Back/Cancel
 
 $SmartScreenItems = @(
-'                  Smart Screen                   ',
+'                   SmartScreen                   ',
 " Identify reported phishing & malware websites.  ",
 ' Helps you make informed decisions for downloads.',
 $ArrayLine[0], #Skip
@@ -1757,8 +1757,8 @@ $WinXPowerShellItems = @(
 $ArrayLine[7], #Blank
 $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
-' 1. Powershell on Win+X instead of Command Prompt',
-' 2. Command Prompt on Win+X instead of Powershell',
+'1. Powershell on Win+X instead of Command Prompt ',
+'2. Command Prompt on Win+X instead of Powershell ',
 $ArrayLine[5]) #Back/Cancel
 
   ##########
@@ -2618,17 +2618,17 @@ Function RunScript {
         Checkpoint-Computer -Description $RestorePointName | Out-Null
     }
 
-    $WinEdition = gwmi win32_operatingsystem | % caption
+    $WinEdition = (Get-WmiObject Win32_OperatingSystem).Caption
     #Pro = Microsoft Windows 10 Pro
     #Home = Microsoft Windows 10 Home 
 
-    $BuildVer = [environment]::OSVersion.Version.build
+    $BuildVer = [Environment]::OSVersion.Version.build
     $CreatorUpdateBuild = 15063
     # 15063 = Creator's Update
     # 14393 = anniversary update
     # 10586 = first major update
     # 10240 = first release
-	
+    
     # Define HKCR
     If(!(Test-Path "HKCR:")) {
         New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null
@@ -2693,8 +2693,8 @@ Function RunScript {
         Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppHost" -Name "EnableWebContentEvaluation"
         If($BuildVer -ge $CreatorUpdateBuild) {
             $AddPath = (Get-AppxPackage -AllUsers "Microsoft.MicrosoftEdge").PackageFamilyName
-            Remove-ItemProperty -Path "HKCU:\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\$AddPath\MicrosoftEdge\PhishingFilter" -Name "EnabledV9" -ErrorAction SilentlyContinue
-            Remove-ItemProperty -Path "HKCU:\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\$AddPath\MicrosoftEdge\PhishingFilter" -Name "PreventOverride" -ErrorAction SilentlyContinue
+            Remove-ItemProperty -Path "HKCU:\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\$AddPath\MicrosoftEdge\PhishingFilter" -Name "EnabledV9"
+            Remove-ItemProperty -Path "HKCU:\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\$AddPath\MicrosoftEdge\PhishingFilter" -Name "PreventOverride"
         }
     } ElseIf($SmartScreen -eq 2) {
         DisplayOut "Disabling SmartScreen Filter..." 12 0
@@ -3806,9 +3806,11 @@ Function RunScript {
         If($BuildVer -eq 10240 -or $BuildVer -eq 10586) {
             DisplayOut "Enabling Lock Screen..." 11 0
             Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreen"
-        } ElseIf($BuildVer -eq 14393) {
+        } ElseIf($BuildVer -ge 14393) {
             DisplayOut "Enabling Lock screen (removing scheduler workaround)..." 11 0
             Unregister-ScheduledTask -TaskName "Disable LockScreen" -Confirm:$false
+        } Else {
+            DisplayOut "Unable to Enable Lock screen..." 11 0
         }
     } ElseIf($LockScreen -eq 2) {
         If($BuildVer -eq 10240 -or $BuildVer -eq 10586) {
@@ -3817,7 +3819,7 @@ Function RunScript {
                 New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" | Out-Null
             }
             Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreen" -Type DWord -Value 1
-        } ElseIf($BuildVer -eq 14393) {
+        } ElseIf($BuildVer -ge 14393) {
             DisplayOut "Disabling Lock screen using scheduler workaround..." 12 0
             $service = New-Object -com Schedule.Service
             $service.Connect()
@@ -4148,7 +4150,6 @@ Function RunScript {
         }
     }
 
-    Remove-Variable -Name filebase -scope global
     If($Restart -eq 1 -and $Release_Type -eq "Stable ") {
         Clear-Host
         Write-Host ""
@@ -4169,7 +4170,7 @@ Function RunScript {
         Exit
     } Else {
         Read-Host -Prompt "Press any key to Go back to Menu"
-    }
+    }    
 }
 
 ##########
@@ -4186,7 +4187,6 @@ $AutomaticVariables = Get-Variable -scope Script
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## !!!!!!                                                !!!!!!
 ## !!!!!!              SAFE TO EDIT VALUES               !!!!!!
-## !!!!!!                  -- START --                   !!!!!!
 ## !!!!!!                                                !!!!!!
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -4211,6 +4211,10 @@ $Script:Version_Check = 0         #0-Dont Check for Update, 1-Check for Update (
 $Script:Verbros = 1               #0-Dont Show output (Other than Errors), 1-Show output
 $Script:ShowSkipped = 1           #0-Dont Show Skipped, 1-Show Skipped
 $Script:ShowColor = 1             #0-Dont Show output Color, 1-Show output Colors
+
+#Checks
+$Script:Internet_Check = 0        #0 = Checks if you have internet by doing a ping to github.com
+                                  #1 = Bypass check if your pings are blocked
 
 #Restart when done? (I recommend restarting when done)
 $Script:Restart = 1               #0-Dont Restart, 1-Restart
@@ -4408,15 +4412,6 @@ $Script:APP_WindowsStore = 0      # Windows Store
 $Script:APP_XboxApp = 0           # Xbox app
 $Script:APP_ZuneMusic = 0         # Groove Music app
 $Script:APP_ZuneVideo = 0         # Groove Video app
-
-## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-## !!!!!!                                                !!!!!!
-## !!!!!!              SAFE TO EDIT VALUES               !!!!!!
-## !!!!!!                   -- END --                    !!!!!!
-## !!!!!!                                                !!!!!!
-## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 # --------------------------------------------------------------------------
 
