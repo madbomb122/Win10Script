@@ -114,10 +114,11 @@ Note: File has to be in the proper format or settings wont be imported
 # Pre-Script -Start
 ##########
 
-$Global:filebase = $PSScriptRoot
 If($Release_Type -eq "Stable ") {
     $ErrorActionPreference= 'silentlycontinue'
 }
+
+$Global:filebase = $PSScriptRoot
 $TempFolder = $env:Temp
 
 # Ask for elevated permissions if required
@@ -302,14 +303,13 @@ Function UpdateCheck ([Int]$Bypass) {
             If($Release_Type -eq "Stable ") {
                 $WebScriptVer = $($CSV_Ver[0].Version)
                 $DFilename = "Win10-Menu-Ver." + $WebScriptVer + ".ps1"
-                $WebScriptFilePath = $filebase + "\Win10-Menu-Ver." + $WebScriptVer + ".ps1"
                 $url = "https://raw.githubusercontent.com/madbomb122/Win10Script/master/Win10-Menu.ps1"
             } Else {
                 $WebScriptVer = $($CSV_Ver[1].Version)
-                $WebScriptFilePath = $filebase + "\Win10-Menu-Ver." +$WebScriptVer + "-Testing.ps1"
                 $DFilename = "Win10-Menu-Ver." + $WebScriptVer + ".ps1"
                 $url = "https://raw.githubusercontent.com/madbomb122/Win10Script/master/Testing/Win10-Menu.ps1"
             }
+            $WebScriptFilePath = $filebase + "\" + $DFilename
             $SV=[Int]$Script_Version
             If($WebScriptVer -gt $SV) {
                 Clear-Host
@@ -317,12 +317,8 @@ Function UpdateCheck ([Int]$Bypass) {
                 LeftLine ;DisplayOutMenu "                  Update Found!                  " 13 0 0 ;RightLine
                 MenuLine
                 MenuBlankLine
-                LeftLine ;DisplayOutMenu "Downloading version $WebScriptVer                           " 2 0 0 ;RightLine
-                If($Release_Type -eq "Stable ") {
-                    LeftLine ;DisplayOutMenu "Will run $DFilename               " 2 0 0 ;RightLine
-                } Else {
-                    LeftLine ;DisplayOutMenu "Will run $DFilename       " 2 0 0 ;RightLine
-                }
+                LeftLine ;DisplayOutMenu "Downloading version " 15 0 0 ;DisplayOutMenu ("$WebScriptVer"    +(" "*(29-$WebScriptVer.length))) 11 0 0 ;RightLine
+                LeftLine ;DisplayOutMenu "Will run " 15 0 0 ;DisplayOutMenu ("$DFilename"    +(" "*(40-$DFilename.length))) 11 0 0 ;RightLine
                 LeftLine ;DisplayOutMenu "after download is complete.                       " 2 0 0 ;RightLine
                 MenuBlankLine
                 MenuLine
@@ -2135,7 +2131,7 @@ $ArrayLine[5]) #Back/Cancel
 $LinuxSubsystemItems = @(
 '                 Linux Subsystem                 ',
 ' A Linux bash you can run from within windows.   ',
-' Only available with anniversary update.         ',
+' Only available with Anniversary Update or Higher',
 $ArrayLine[0], #Skip
 '1. Install                                       ',
 '2. Uninstall*                                    ',
@@ -4368,7 +4364,7 @@ $Script:OneDriveInstall = 0       #0-Skip, 1-Installed*, 2-Uninstall
 $Script:XboxDVR = 0               #0-Skip, 1-Enable*, 2-Disable
 $Script:MediaPlayer = 0           #0-Skip, 1-Installed*, 2-Uninstall
 $Script:WorkFolders = 0           #0-Skip, 1-Installed*, 2-Uninstall
-$Script:LinuxSubsystem = 0        #0-Skip, 1-Installed, 2-Uninstall* (Anniversary Update)
+$Script:LinuxSubsystem = 0        #0-Skip, 1-Installed, 2-Uninstall* (Anniversary Update or Higher)
 
 # Custom List of App to Install, Hide or Uninstall
 # I dunno if you can Install random apps with this script
