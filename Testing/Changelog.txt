@@ -1,7 +1,9 @@
 -----------------------------------------------------------------------------------
-?.?-Menu (??-??-2017) 
+2.1-Menu (05-11-2017) 
 
-Nothing ATM
+Minor changes in script
+Changed how Firewall is Enabled/Disabled
+Added Ability to Show/Hide Task Manager details
 
 -----------------------------------------------------------------------------------
 2.0-Menu (04-22-2017) 
