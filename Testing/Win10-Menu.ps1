@@ -12,7 +12,7 @@ Param([alias("Set")] [string] $SettingImp)
 # Website: https://github.com/madbomb122/Win10Script/
 #
 $Script_Version = "2.1"
-$Script_Date = "05-11-17"
+$Script_Date = "05-12-17"
 #$Release_Type = "Stable "
 $Release_Type = "Testing"
 ##########
@@ -104,7 +104,7 @@ Note: File has to be in the proper format or settings wont be imported
 
 If($Release_Type -eq "Stable ") { $ErrorActionPreference= 'silentlycontinue' }
 
-$Global:filebase = $PSScriptRoot
+$Global:filebase = $PSScriptRoot + "\"
 $TempFolder = $env:Temp
 
 # Ask for elevated permissions if required
@@ -282,7 +282,7 @@ Function UpdateCheck ([Int]$Bypass) {
                 $DFilename = "Win10-Menu-Ver." + $WebScriptVer + ".ps1"
                 $url = "https://raw.githubusercontent.com/madbomb122/Win10Script/master/Testing/Win10-Menu.ps1"
             }
-            $WebScriptFilePath = $filebase + "\" + $DFilename
+            $WebScriptFilePath = $filebase + $DFilename
             $SV=[Int]$Script_Version
             If($WebScriptVer -gt $SV) {
                 Clear-Host
@@ -337,7 +337,7 @@ Function InternetCheck {
 
 Function ScriptPreStart {    
     If($SettingImp -ne $null -and $SettingImp) {
-        $FileImp = $filebase + "\" + $SettingImp
+        $FileImp = $filebase + $SettingImp
         If(Test-Path $FileImp -PathType Leaf) {
             LoadSettingFile $FileImp
             UpdateCheck
@@ -711,22 +711,23 @@ Function LoadSetting {
         VariableDisplay $LoadFileItems
         If($Invalid -eq 1) {
             Write-Host ""
-            Write-Host "No file with the name " $LoadSetting -ForegroundColor Red -BackgroundColor Black -NoNewline
+            Write-Host "No file with the name" $LoadSetting -ForegroundColor Red -BackgroundColor Black -NoNewline
             $Invalid = 0
         }
         $LoadSetting = Read-Host "`nFilename"
         Switch($LoadSetting) {
-            0 {$LoadSetting ="Out"; $Switched = "True"; Write-Host "0"}
-            $null {$LoadSetting ="Out"; $Switched = "True"; Write-Host "null"}
-            WD {LoadWinDefault; $Switched = "True"; Write-Host "wd"}
-            WinDefault {LoadWinDefault; $Switched = "True"; Write-Host "windef"}
-            Default {$Switched = "False"; Write-Host "def"}
+            0 {$LoadSetting ="Out"; $Switched = "True"}
+            $null {$LoadSetting ="Out"; $Switched = "True"}
+            WD {LoadWinDefault; $Switched = "True"}
+            WinDefault {LoadWinDefault; $Switched = "True"}
+            Default {$Switched = "False"}
         }
         If($Switched -ne "True") {
-            If(Test-Path $LoadSetting -PathType Leaf) {
+		$LoadFile = $filebase + $LoadSetting
+            If(Test-Path $LoadFile -PathType Leaf) {
                 $Conf = ConfirmMenu 1
                 If($Conf -eq $true) {
-                    Import-Csv .\$LoadSetting | %{Set-Variable $_.Name $_.Value -Scope Script}
+                    Import-Csv $LoadFile | %{Set-Variable $_.Name $_.Value -Scope Script}
                     $LoadSetting ="Out"
                 }
             } Else {
@@ -751,7 +752,7 @@ Function SaveSetting {
         If($SaveSetting -eq $null -or $SaveSetting -eq 0) {
             $SaveSetting = "Out"
         } Else {
-            $SavePath = $filebase+"\"+$SaveSetting
+            $SavePath = $filebase + $SaveSetting
             If(Test-Path $SavePath -PathType Leaf) {
                 $Conf = ConfirmMenu 2
                 If($Conf -eq $true) { cmpv | Export-Csv -LiteralPath $SavePath -encoding "unicode" -force }
