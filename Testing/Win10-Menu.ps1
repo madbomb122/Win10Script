@@ -723,7 +723,7 @@ Function LoadSetting {
             Default {$Switched = "False"}
         }
         If($Switched -ne "True") {
-		$LoadFile = $filebase + $LoadSetting
+            $LoadFile = $filebase + $LoadSetting
             If(Test-Path $LoadFile -PathType Leaf) {
                 $Conf = ConfirmMenu 1
                 If($Conf -eq $true) {
@@ -2181,6 +2181,11 @@ Function ChoicesMenuMetro ([String]$Vari, [Int]$MultiV) {
         $Vari1 = -join($VariM,"1")
         $Vari2 = -join($VariM,"2")
         $VariV = Get-Variable $Vari1 -valueOnly #Variable
+    } ElseIf($MultiV -eq 2) {
+        $VariM = -join("APP_",$Vari)
+        $Vari1 = -join($VariM,"Music")
+        $Vari2 = -join($VariM,"Video")
+        $VariV = Get-Variable $Vari1 -valueOnly #Variable
     } ElseIf($MultiV -eq 9) {
         $VariM = $Vari
         $VariV = "9"
@@ -2265,7 +2270,7 @@ $MetroAppsMenuItm= @(
 (9,'WindowsFeedbak',1),
 (10,'MicrosoftOffHub',0),
 (11,'Getstarted',0),
-(12,'ZuneMusic',1),
+(12,'Zune',2),
 (13,'WindowsMaps',0),
 (14,'Messaging',0),
 (15,'SolitaireCollect',0),
@@ -2340,7 +2345,7 @@ $GetstartedItems = @(
 $ArrayLine[7], #Blank
 $ArrayLine[7]) #Blank
 
-$ZuneMusicItems = @(
+$ZuneItems = @(
 '                Groove Music app                 ',
 'Enjoy all your music on Windows, iOS and Android ',
 'devices with Groove.                             ')
@@ -2664,6 +2669,7 @@ Function RunScript {
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppHost" -Name "EnableWebContentEvaluation" -Type DWord -Value 0
         If($BuildVer -ge $CreatorUpdateBuild) {
             $AddPath = (Get-AppxPackage -AllUsers "Microsoft.MicrosoftEdge").PackageFamilyName
+            If (!(Test-Path "HKCU:\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\$AddPath\MicrosoftEdge\PhishingFilter")) { New-Item -Path "HKCU:\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\$AddPath\MicrosoftEdge\PhishingFilter" -Force | Out-Null }
             Set-ItemProperty -Path "HKCU:\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\$AddPath\MicrosoftEdge\PhishingFilter" -Name "EnabledV9" -Type DWord -Value 0
             Set-ItemProperty -Path "HKCU:\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\$AddPath\MicrosoftEdge\PhishingFilter" -Name "PreventOverride" -Type DWord -Value 0
         }
@@ -2784,7 +2790,7 @@ Function RunScript {
         Set-Service "dmwappushservice" -StartupType Automatic
         Start-Service "dmwappushservice"
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\dmwappushservice" -Name "DelayedAutoStart" -Type DWord -Value 1
-    } ElseIf($WAPPush -eq 1) {
+    } ElseIf($WAPPush -eq 2) {
         DisplayOut "Disabling WAP Push Service..." 12 0
         Stop-Service "dmwappushservice"
         Set-Service "dmwappushservice" -StartupType Disabled
@@ -3489,8 +3495,8 @@ Function RunScript {
             }
             Stop-Process $taskmgr
         }
-	    $preferences.Preferences[28] = 0
-	    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "Preferences" -Type Binary -Value $preferences.Preferences
+        $preferences.Preferences[28] = 0
+        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "Preferences" -Type Binary -Value $preferences.Preferences
     } ElseIf($TaskManagerDetails -eq 2) {
         DisplayOut "Hiding Task Manager Details..." 12 0
         $preferences = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "Preferences" -ErrorAction SilentlyContinue
@@ -3885,26 +3891,28 @@ Function RunScript {
         } Else {
             $onedriveS = "$env:SYSTEMROOT\System32\OneDriveSetup.exe"
         }
-        Start-Process $onedriveS -NoNewWindow
+        If(Test-Path $onedriveS -PathType Leaf)) { Start-Process $onedriveS -NoNewWindow }
     } ElseIf($OneDriveInstall -eq 2) {
         DisplayOut "Uninstalling OneDrive..." 15 0
-        Stop-Process -Name OneDrive
-        Start-Sleep -s 3
         If($OSType -eq 64) {
             $onedriveS = "$env:SYSTEMROOT\SysWOW64\OneDriveSetup.exe"
         } Else {
             $onedriveS = "$env:SYSTEMROOT\System32\OneDriveSetup.exe"
         }
-        Start-Process $onedriveS "/uninstall" -NoNewWindow -Wait | Out-Null
-        Start-Sleep -s 3
-        Stop-Process -Name explorer
-        Start-Sleep -s 3
-        Remove-Item "$env:USERPROFILE\OneDrive" -Force -Recurse
-        Remove-Item "$env:LOCALAPPDATA\Microsoft\OneDrive" -Force -Recurse
-        Remove-Item "$env:PROGRAMDATA\Microsoft OneDrive" -Force -Recurse
-        Remove-Item "$env:SYSTEMDRIVE\OneDriveTemp" -Force -Recurse
-        Remove-Item -Path "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Recurse
-        Remove-Item -Path "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Recurse
+        If(Test-Path $onedriveS -PathType Leaf)) {
+            Stop-Process -Name OneDrive
+            Start-Sleep -s 3
+            Start-Process $onedriveS "/uninstall" -NoNewWindow -Wait | Out-Null
+            Start-Sleep -s 3
+            Stop-Process -Name explorer
+            Start-Sleep -s 3
+            Remove-Item "$env:USERPROFILE\OneDrive" -Force -Recurse
+            Remove-Item "$env:LOCALAPPDATA\Microsoft\OneDrive" -Force -Recurse
+            Remove-Item "$env:PROGRAMDATA\Microsoft OneDrive" -Force -Recurse
+            Remove-Item "$env:SYSTEMDRIVE\OneDriveTemp" -Force -Recurse
+            Remove-Item -Path "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Recurse
+            Remove-Item -Path "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Recurse
+        }
     }
 
     # Xbox DVR
@@ -3968,11 +3976,11 @@ Function RunScript {
     $A = 0
     ForEach($AppV in $APPProcess) {
         If($AppV -eq 1) {
-            $APPS_AppsInstall+=$AppsList[$A]
+            $APPS_AppsInstall.Add($AppsList[$A]) | Out-null
         } ElseIf($AppV -eq 2) {
-            $APPS_AppsHide+=$AppsList[$A]
+            $APPS_AppsHide.Add($AppsList[$A]) | Out-null
         } ElseIf($AppV -eq 3) {
-            $APPS_AppsUninstall+=$AppsList[$A]
+            $APPS_AppsUninstall.Add($AppsList[$A]) | Out-null
         }
         $A++
     }
@@ -4254,9 +4262,9 @@ $Script:LinuxSubsystem = 0        #0-Skip, 1-Installed, 2-Uninstall* (Anniversar
 # Custom List of App to Install, Hide or Uninstall
 # I dunno if you can Install random apps with this script
 # Cant Import these ATM
-$APPS_AppsInstall = @()          # Apps to Install
-$APPS_AppsHide = @()             # Apps to Hide
-$APPS_AppsUninstall = @()        # Apps to Uninstall
+[System.Collections.ArrayList]$APPS_AppsInstall = @()          # Apps to Install
+[System.Collections.ArrayList]$APPS_AppsHide = @()             # Apps to Hide
+[System.Collections.ArrayList]$APPS_AppsUninstall = @()        # Apps to Uninstall
 #$Script:APPS_Example = @('Somecompany.Appname1','TerribleCompany.Appname2','AppS.Appname3')
 # To get list of Packages Installed (in powershell)
 # DISM /Online /Get-ProvisionedAppxPackages | Select-string Packagename
