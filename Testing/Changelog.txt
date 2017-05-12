@@ -1,8 +1,10 @@
 -----------------------------------------------------------------------------------
-2.1-Menu (05-11-2017) 
+2.1-Menu (05-12-2017) 
 
 Minor changes in script
-Fixed but with enable Windows Defender
+Fixed bug with enable Windows Defender
+Fixed bug with smart screen and Wap push not disableing
+Fixed bug with metro apps
 Changed how Firewall is Enabled/Disabled
 Added Ability to Show/Hide Task Manager details
 Fixed Load setting bug (Thanks to Scott C)
