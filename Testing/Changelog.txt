@@ -5,6 +5,7 @@ Minor changes in script
 Fixed but with enable Windows Defender
 Changed how Firewall is Enabled/Disabled
 Added Ability to Show/Hide Task Manager details
+Fixed Load setting bug (Thanks to Scott C)
 
 -----------------------------------------------------------------------------------
 2.0-Menu (04-22-2017) 
