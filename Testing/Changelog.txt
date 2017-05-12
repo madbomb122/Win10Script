@@ -2,6 +2,7 @@
 2.1-Menu (05-11-2017) 
 
 Minor changes in script
+Fixed but with enable Windows Defender
 Changed how Firewall is Enabled/Disabled
 Added Ability to Show/Hide Task Manager details
 
