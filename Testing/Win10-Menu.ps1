@@ -2922,7 +2922,7 @@ Function RunScript {
     } ElseIf($WinDefender -eq 1) {
         DisplayOut "Enabling Windows Defender..." 11 0
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name "DisableAntiSpyware"
-        If($BuildVer-lt $CreatorUpdateBuild) {
+        If($BuildVer -lt $CreatorUpdateBuild) {
             Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "WindowsDefender" -Type ExpandString -Value "`"%ProgramFiles%\Windows Defender\MSASCuiL.exe`""
         } Else {
             Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "SecurityHealth" -Type ExpandString -Value "`"%ProgramFiles%\Windows Defender\MSASCuiL.exe`""
