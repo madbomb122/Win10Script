@@ -12,7 +12,7 @@ Param([alias("Set")] [string] $SettingImp)
 # Website: https://github.com/madbomb122/Win10Script/
 #
 $Script_Version = "2.1"
-$Script_Date = "05-12-17"
+$Script_Date = "05-13-17"
 #$Release_Type = "Stable "
 $Release_Type = "Testing"
 ##########
@@ -3891,7 +3891,7 @@ Function RunScript {
         } Else {
             $onedriveS = "$env:SYSTEMROOT\System32\OneDriveSetup.exe"
         }
-        If(Test-Path $onedriveS -PathType Leaf)) { Start-Process $onedriveS -NoNewWindow }
+        If(Test-Path $onedriveS -PathType Leaf) { Start-Process $onedriveS -NoNewWindow }
     } ElseIf($OneDriveInstall -eq 2) {
         DisplayOut "Uninstalling OneDrive..." 15 0
         If($OSType -eq 64) {
@@ -3899,7 +3899,7 @@ Function RunScript {
         } Else {
             $onedriveS = "$env:SYSTEMROOT\System32\OneDriveSetup.exe"
         }
-        If(Test-Path $onedriveS -PathType Leaf)) {
+        If(Test-Path $onedriveS -PathType Leaf) {
             Stop-Process -Name OneDrive
             Start-Sleep -s 3
             Start-Process $onedriveS "/uninstall" -NoNewWindow -Wait | Out-Null
@@ -3934,10 +3934,10 @@ Function RunScript {
         DisplayOut "Skipping Windows Media Player..." 15 0
     } ElseIf($MediaPlayer -eq 1) {
         DisplayOut "Installing Windows Media Player..." 11 0
-        dism /online /Enable-Feature /FeatureName:MediaPlayback /Quiet /NoRestart
+        If((Get-WindowsOptionalFeature -Online | where featurename -Like "MediaPlayback").State){ dism /online /Enable-Feature /FeatureName:MediaPlayback /Quiet /NoRestart }
     } ElseIf($MediaPlayer -eq 2) {
         DisplayOut "Uninstalling Windows Media Player..." 14 0
-        dism /online /Disable-Feature /FeatureName:MediaPlayback /Quiet /NoRestart
+        If(!((Get-WindowsOptionalFeature -Online | where featurename -Like "MediaPlayback").State)){ dism /online /Disable-Feature /FeatureName:MediaPlayback /Quiet /NoRestart }
     }
 
     # Work Folders Client
@@ -3945,10 +3945,10 @@ Function RunScript {
         DisplayOut "Skipping Work Folders Client..." 15 0
     } ElseIf($WorkFolders -eq 1) {
         DisplayOut "Installing Work Folders Client..." 11 0
-        dism /online /Enable-Feature /FeatureName:WorkFolders-Client /Quiet /NoRestart
+        If((Get-WindowsOptionalFeature -Online | where featurename -Like "WorkFolders-Client").State){ dism /online /Enable-Feature /FeatureName:WorkFolders-Client /Quiet /NoRestart }
     } ElseIf($WorkFolders -eq 2) {
         DisplayOut "Uninstalling Work Folders Client..." 14 0
-        dism /online /Disable-Feature /FeatureName:WorkFolders-Client /Quiet /NoRestart
+        If(!((Get-WindowsOptionalFeature -Online | where featurename -Like "WorkFolders-Client").State)){ dism /online /Disable-Feature /FeatureName:WorkFolders-Client /Quiet /NoRestart }
     }
 
     # Install Linux Subsystem - Applicable to RS1 or newer
@@ -3957,14 +3957,17 @@ Function RunScript {
             DisplayOut "Skipping Linux Subsystem..." 15 0
         } ElseIf($LinuxSubsystem -eq 1) {
             DisplayOut "Installing Linux Subsystem..." 11 0
-            Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" -Name "AllowDevelopmentWithoutDevLicense" -Type DWord -Value 1
-            Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" -Name "AllowAllTrustedApps" -Type DWord -Value 1
-            dism /online /Enable-Feature /FeatureName:Microsoft-Windows-Subsystem-Linux /Quiet /NoRestart
+            If((Get-WindowsOptionalFeature -Online | where featurename -Like "Microsoft-Windows-Subsystem-Linux").State){ 
+                Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" -Name "AllowDevelopmentWithoutDevLicense" -Type DWord -Value 1
+                Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" -Name "AllowAllTrustedApps" -Type DWord -Value 1
+                dism /online /Enable-Feature /FeatureName:Microsoft-Windows-Subsystem-Linux /Quiet /NoRestart
+            }
         } ElseIf($LinuxSubsystem -eq 2) {
             DisplayOut "Uninstalling Linux Subsystem..." 14 0
-            Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" -Name "AllowDevelopmentWithoutDevLicense" -Type DWord -Value 0
-            Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" -Name "AllowAllTrustedApps" -Type DWord -Value 0
-            dism /online /Disable-Feature /FeatureName:Microsoft-Windows-Subsystem-Linux /Quiet /NoRestart
+            If(!((Get-WindowsOptionalFeature -Online | where featurename -Like "Microsoft-Windows-Subsystem-Linux").State)){ 
+                Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" -Name "AllowDevelopmentWithoutDevLicense" -Type DWord -Value 0
+                dism /online /Disable-Feature /FeatureName:Microsoft-Windows-Subsystem-Linux /Quiet /NoRestart
+            }
         }
     } ElseIf($LinuxSubsystem -ne 0) {
         DisplayOut "Windows 10 Build isn't new enough for Linux Subsystem..." 14 0
