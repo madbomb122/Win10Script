@@ -1,3 +1,6 @@
+**Current Version** <br />
+**Script:** `2.1` (May 13, 2017) <br />
+
 ## Description
 
 This is a PowerShell script for automation of routine tasks/setting on Windows 10. <br /> 
