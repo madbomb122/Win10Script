@@ -1,4 +1,21 @@
 -----------------------------------------------------------------------------------
+2.1-Menu (05-12-2017) 
+
+Added check for (Bellow) before script attempts to Install/Uninstall
+Windows Media Player
+Work Folders Client
+Linux Subsystem
+Onedrive (checks for OneDriveSetup.exe)
+
+Minor changes in script
+Fixed bug with enabling Windows Defender
+Fixed bug with smart screen and Wap push not disableing
+Fixed bug with metro apps
+Changed how Firewall is Enabled/Disabled
+Added Ability to Show/Hide Task Manager details
+Fixed Load setting bug (Thanks to Scott C)
+
+-----------------------------------------------------------------------------------
 2.0-Menu (04-22-2017) 
 
 Internal Script Changes
