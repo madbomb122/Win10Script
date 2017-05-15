@@ -11,6 +11,8 @@ The original basic script created by https://github.com/Disassembler0/Win10-Init
 This script is a Highly Modded version of the 2.0 script by Disaseembler0. <br />
 The script has added items with an easier way to change preferences and a menu.
 
+PS. Don't forget to check out my other Repo https://github.com/madbomb122/BlackViperScript  <br />
+
 # [](#header-1)Usage Requirements
 **OS:** `Windows 10` <br />
 **Needed Files:** `Win10-Menu.ps1` (Script File) <br />
