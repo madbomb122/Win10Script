@@ -335,7 +335,14 @@ Function InternetCheck {
 # Multi Use Functions -Start
 ##########
 
-Function ScriptPreStart {    
+Function ScriptPreStart {
+    $Script:BuildVer = [Environment]::OSVersion.Version.build
+    $Script:CreatorUpdateBuild = 15063
+    # 15063 = Creator's Update
+    # 14393 = anniversary update
+    # 10586 = first major update
+    # 10240 = first release
+	
     If($SettingImp -ne $null -and $SettingImp) {
         $FileImp = $filebase + $SettingImp
         If(Test-Path $FileImp -PathType Leaf) {
@@ -2524,7 +2531,11 @@ Function LoadWinDefault {
     $FrequentFoldersQikAcc = 1
     $WinContentWhileDrag = 1
     $StoreOpenWith = 1
-    $WinXPowerShell = 1
+    If($BuildVer -ge $CreatorUpdateBuild) {
+        $WinXPowerShell = 1
+    } Else {
+        $WinXPowerShell = 2
+    }
     $TaskManagerDetails = 2
 
     #'This PC' Items
@@ -2594,27 +2605,14 @@ Function RunScript {
     $WinEdition = (Get-WmiObject Win32_OperatingSystem).Caption
     #Pro = Microsoft Windows 10 Pro
     #Home = Microsoft Windows 10 Home 
-
-    $BuildVer = [Environment]::OSVersion.Version.build
-    $CreatorUpdateBuild = 15063
-    # 15063 = Creator's Update
-    # 14393 = anniversary update
-    # 10586 = first major update
-    # 10240 = first release
     
     # Define HKCR
-    If(!(Test-Path "HKCR:")) {
-        New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null
-    }
+    If(!(Test-Path "HKCR:")) { New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null }
 
     # Define HKU
-    If(!(Test-Path "HKU:")) {
-        New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_USERS | Out-Null
-    }
+    If(!(Test-Path "HKU:")) { New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_USERS | Out-Null }
 
-    If([System.Environment]::Is64BitProcess) {
-        $OSType = 64
-    }
+    If([System.Environment]::Is64BitProcess) { $OSType = 64 }
 
     DisplayOut "" 14 0
     DisplayOut "------------------------" 14 0
@@ -3973,6 +3971,12 @@ Function RunScript {
         DisplayOut "Windows 10 Build isn't new enough for Linux Subsystem..." 14 0
     }
 
+    DisplayOut "" 14 0
+    DisplayOut "-----------------------" 14 0
+    DisplayOut "-   Metro App Items   -" 14 0
+    DisplayOut "-----------------------" 14 0
+    DisplayOut "" 14 0
+
     # Sorts the apps to Install, Hide or Uninstall
     $APPProcess = Get-Variable -Name "APP_*" -ValueOnly -Scope Script
 
@@ -3988,12 +3992,6 @@ Function RunScript {
         $A++
     }
 
-    DisplayOut "" 14 0
-    DisplayOut "-----------------------" 14 0
-    DisplayOut "-   Metro App Items   -" 14 0
-    DisplayOut "-----------------------" 14 0
-    DisplayOut "" 14 0
-
     # Default Microsoft applications (Bloatware)
     DisplayOut "" 14 0
     DisplayOut "Installing Apps..." 11 0
@@ -4007,8 +4005,8 @@ Function RunScript {
         } ElseIf($Release_Type -ne "Stable ") {
             DisplayOut "Error, can't Install $AppI" 12 0
         }
-
     }
+
     DisplayOut "" 14 0
     DisplayOut "Hidinging Apps..." 12 0
     DisplayOut "-----------------" 12 0
