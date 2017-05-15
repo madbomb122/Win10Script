@@ -1,10 +1,14 @@
 # To Do/Done
 
-- [X]  Ability to have script check for newer version
-
+- [X] Ability to have script check for newer version
+- [X] Undo the change in Win+X menu in the creator's update (Powershell -> Command Prompt)
 
 -------------------------------------------------------------------------------------------------------------
 
 # Working On/Testing
-- [X] Undo the change in Win+X menu in the upcoming creator's update (Powershell -> Command Prompt)
-- [ ] Undo the change in Win+X menu in the upcoming creator's update (setting -> control panel)
+
+-------------------------------------------------------------------------------------------------------------
+
+# Thinking of adding
+- [ ] Undo the change in Win+X menu in the creator's update (setting -> control panel) -- If i can find how to do
+- [ ] A Log file
