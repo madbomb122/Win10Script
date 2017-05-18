@@ -1,10 +1,19 @@
 -----------------------------------------------------------------------------------
-2.?-Menu (0?-??-2017) 
+2.2-Menu (05-18-2017)
 
-Nothing ATM
+Working on changing/adding different arguments/switches
+
+Change Window content while dragging items from enable/disable to show/hide
+Fixed a bug with windows update not setting if path not being there
+Fixed problem with remove cast to device context item
+Fixed a detection for metro apps
+Fixed bug with unpin not being corrently set to unpin
+
+Changed format for setting save/load (smaller files and more readable)
+Ability to add custom apps to hide/uninstall in setting file
 
 -----------------------------------------------------------------------------------
-2.1-Menu (05-13-2017) 
+2.1-Menu (05-13-2017)
 
 Added check for (Bellow) before script attempts to Install/Uninstall
 Windows Media Player
@@ -21,7 +30,7 @@ Added Ability to Show/Hide Task Manager details
 Fixed Load setting bug (Thanks to Scott C)
 
 -----------------------------------------------------------------------------------
-2.0-Menu (04-22-2017) 
+2.0-Menu (04-22-2017)
 
 Internal Script Changes
 Fixed "Users File Icon on Desktop" showing as "Recycle Bin Icon on Desktop"
@@ -31,7 +40,7 @@ Change Powershell to Command Prompt (in Win+X)
 Changed the Internet check to ping github instead of google.com & yahoo.com
 
 -----------------------------------------------------------------------------------
-1.9-Menu (04-08-2017) 
+1.9-Menu (04-08-2017)
 
 Added some updates to settings for creator's update
 Changed TOS Display look
@@ -63,7 +72,7 @@ Taptiles
 Twitter
 
 -----------------------------------------------------------------------------------
-1.8-Menu (03-19-2017) 
+1.8-Menu (03-19-2017)
 
 Added Script update check option
 
@@ -72,7 +81,7 @@ Please use the script for just the Black Viper Service configuration @
 https://github.com/madbomb122/BlackViperScript
 
 -----------------------------------------------------------------------------------
-1.7-Menu (03-17-2017) 
+1.7-Menu (03-17-2017)
 
 Fixed bug with using the bat file to run with setting file
 Fixed bug with add/remove pin to "quick access"
@@ -84,7 +93,7 @@ Removed Custom App Import in setting file (was causeing the apps to not Install/
 Disabled Black Viper Service configuration
 
 -----------------------------------------------------------------------------------
-1.5-Menu (03-12-2017) 
+1.5-Menu (03-12-2017)
 
 Added option to show/hide when an item is skipped
 Added a check if running in Powershell or Powershell ISE (ISE is not supported)
@@ -99,7 +108,7 @@ User's Files
 Control Panel
 
 -----------------------------------------------------------------------------------
-1.4-Menu (03-04-2017) 
+1.4-Menu (03-04-2017)
 
 Added Black Viper's service settings (Win 10 Home/Pro ONLY)
 Removed Lock Screen alt (script check run the correct lockscreen work around)
@@ -109,17 +118,17 @@ Added a display of skipped items
 https://github.com/madbomb122/BlackViperScript
 
 -----------------------------------------------------------------------------------
-1.3-Menu (02-27-2017) 
+1.3-Menu (02-27-2017)
 
 Load/save setting fix
 
 -----------------------------------------------------------------------------------
-1.2-Menu (02-20-2017) 
+1.2-Menu (02-20-2017)
 
 Metro Apps setting changeable in the menu
 
 -----------------------------------------------------------------------------------
-1.1-Menu (02-19-2017) 
+1.1-Menu (02-19-2017)
 
 Fixed 2 Bugs:
 If tos was set to accept in script it did not skip the tos
