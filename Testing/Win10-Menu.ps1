@@ -11,8 +11,8 @@ Param([alias("Set")] [string] $SettingImp)
 #  Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script/
 #
-$Script_Version = "2.1"
-$Script_Date = "05-13-17"
+$Script_Version = "2.2"
+$Script_Date = "05-18-17"
 #$Release_Type = "Stable "
 $Release_Type = "Testing"
 ##########
@@ -122,6 +122,10 @@ If(!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::
 ##########
 
 $VersionDisplay = "$Script_Version" + " (" + $Script_Date + ")"
+
+[Array]$Script:APPS_AppsInstall = @()
+[Array]$Script:APPS_AppsHide = @()
+[Array]$Script:APPS_AppsUninstall = @()
 
 $AppsList = @(
     'Microsoft.3DBuilder',
@@ -342,12 +346,12 @@ Function ScriptPreStart {
     # 14393 = anniversary update
     # 10586 = first major update
     # 10240 = first release
-	
+
     If($SettingImp -ne $null -and $SettingImp) {
         $FileImp = $filebase + $SettingImp
         If(Test-Path $FileImp -PathType Leaf) {
-            LoadSettingFile $FileImp
             UpdateCheck
+            LoadSettingFile $FileImp
         } ElseIf($SettingImp.ToLower() -eq "wd" -or $SettingImp.ToLower() -eq "windefault") {
             UpdateCheck
             LoadWinDefault
@@ -364,6 +368,48 @@ Function ScriptPreStart {
     } ElseIf($Term_of_Use -ne 1) {
         UpdateCheck
         mainMenu
+    }
+}
+
+Function ArgCheck {
+    If ($PassedArg.length -gt 0) {
+        For($i=0; $i -lt $PassedArg.length; $i++) {
+            $ArgVal = $PassedArg[$i]
+            If($ArgVal.StartsWith("-")){
+                $ArgVal = $PassedArg[$i].ToLower()
+                $PasVal = $PassedArg[($i+1)]
+                If($ArgVal -eq "-run") {
+                    If(Test-Path $PasVal -PathType Leaf) {
+                        LoadSettingFile $PasVal
+                        $RunScr = $true
+                    } ElseIf($PasVal -eq "wd" -or $PasVal -eq "windefault") {
+                        LoadWinDefault
+                        $RunScr = $true
+                    } ElseIf($PasVal.StartsWith("-")){
+                        $RunScr = $true
+                    }
+                } ElseIf($ArgVal -eq "-load") {
+                    If(Test-Path $PasVal -PathType Leaf) {
+                        LoadSettingFile $PasVal
+                    } ElseIf($PasVal -eq "wd" -or $PasVal -eq "windefault") {
+                        LoadWinDefault
+                    }
+                } ElseIf($ArgVal -eq "-sic") {
+                    $Script:Internet_Check = 1
+                } ElseIf($ArgVal -eq "-usc") {
+                    $Script:Version_Check  = 1
+                } ElseIf($ArgVal -eq "-atos") {
+                    $Script:Term_of_Use = 1
+                } ElseIf($ArgVal -eq "-crp") {
+                    $Script:CreateRestorePoint = 1
+                    If(!($PasVal.StartsWith("-"))){ $Script:RestorePointName = $PasVal }
+                } ElseIf($ArgVal -eq "-verb") {
+                    $Script:Verbros = 1
+                } ElseIf($ArgVal -eq "-dnr") {
+                    $Script:Restart = 0
+                } 
+            }
+        }
     }
 }
 
@@ -734,7 +780,10 @@ Function LoadSetting {
             If(Test-Path $LoadFile -PathType Leaf) {
                 $Conf = ConfirmMenu 1
                 If($Conf -eq $true) {
-                    Import-Csv $LoadFile | %{Set-Variable $_.Name $_.Value -Scope Script}
+                    Import-Csv $LoadFile -Delimiter ";" | %{Set-Variable $_.Name $_.Value -Scope Script}
+                    [System.Collections.ArrayList]$APPS_AppsInstall = $AppsInstall.split(",")
+                    [System.Collections.ArrayList]$APPS_AppsHidel = $AppsHide.split(",")
+                    [System.Collections.ArrayList]$APPS_AppsUninstall = $AppsUninstall.split(",")
                     $LoadSetting ="Out"
                 }
             } Else {
@@ -746,7 +795,10 @@ Function LoadSetting {
 }
 
 Function LoadSettingFile([String]$Filename) {
-    Import-Csv $Filename | %{Set-Variable $_.Name $_.Value -Scope Script}
+    Import-Csv $Filename -Delimiter ";" | %{Set-Variable $_.Name $_.Value -Scope Script}
+    [System.Collections.ArrayList]$APPS_AppsInstall = $AppsInstall.split(",")
+    [System.Collections.ArrayList]$APPS_AppsHidel = $AppsHide.split(",")
+    [System.Collections.ArrayList]$APPS_AppsUninstall = $AppsUninstall.split(",")
     RunScript
 }
 
@@ -760,11 +812,14 @@ Function SaveSetting {
             $SaveSetting = "Out"
         } Else {
             $SavePath = $filebase + $SaveSetting
+            foreach($temp in $APPS_AppsInstall){$Script:AppsInstall+=$temp+","}
+            foreach($temp in $APPS_AppsHide){$Script:AppsHide+=$temp+","}
+            foreach($temp in $APPS_Uninstall){$Script:AppsUninstall+=$temp+","}
             If(Test-Path $SavePath -PathType Leaf) {
                 $Conf = ConfirmMenu 2
-                If($Conf -eq $true) { cmpv | Export-Csv -LiteralPath $SavePath -encoding "unicode" -force }
+                If($Conf -eq $true) { cmpv | select-object name,value | Export-Csv -LiteralPath $SavePath -encoding "unicode" -force -Delimiter ";" }
             } Else {
-                cmpv | Export-Csv -LiteralPath $SavePath -encoding "unicode" -force
+                cmpv | select-object name,value | Export-Csv -LiteralPath $SavePath -encoding "unicode" -force -Delimiter ";"
             }
             $SaveSetting = "Out"
         }
@@ -1665,8 +1720,8 @@ $WinContentWhileDragItems = @(
 $ArrayLine[7], #Blank
 $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
-$ArrayLine[1], #Enable
-$ArrayLine[2], #Disable
+$ArrayLine[8], #Show
+$ArrayLine[11], #Hide*
 $ArrayLine[5]) #Back/Cancel
 
 $ExplorerOpenLocItems = @(
@@ -2815,6 +2870,7 @@ Function RunScript {
     DisplayOut "" 14 0
 
     # Check for Windows Update
+    If(!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate")) { New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Force | Out-Null }
     If($CheckForWinUpdate -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Check for Windows Update..." 15 0
     } ElseIf($CheckForWinUpdate -eq 1) {
@@ -2994,7 +3050,7 @@ Function RunScript {
     } ElseIf($CastToDevice -eq 2) {
         DisplayOut "Disabling Cast to Device Context item..." 12 0
         If(!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked")) { New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked" | Out-Null }
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked" -Name "{7AD84985-87B4-4a16-BE58-8B72A5B390F7}"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked" -Name "{7AD84985-87B4-4a16-BE58-8B72A5B390F7}" -Type String -Value ""
     }
 
     # Previous Versions Context Menu
@@ -3463,7 +3519,7 @@ Function RunScript {
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "NoUseStoreOpenWith"
     } ElseIf($StoreOpenWith -eq 2) {
         DisplayOut "Disabling Search Windows Store for Unknown Extensions..." 12 0
-        If(!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer")) { New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" }
+        If(!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer")) { New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" | Out-Null }
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "NoUseStoreOpenWith" -Type DWord -Value 1
     }
 
@@ -3483,24 +3539,24 @@ Function RunScript {
         DisplayOut "Skipping Task Manager Details..." 15 0
     } ElseIf($TaskManagerDetails -eq 1) {
         DisplayOut "Showing Task Manager Details..." 11 0
-        If (!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager")) { New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Force | Out-Null }
-        $preferences = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "Preferences" -ErrorAction SilentlyContinue
-        If (!($preferences)) {
+        If(!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager")) { New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Force | Out-Null }
+        $TaskManKey = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "Preferences"
+        If(!($TaskManKey)) {
             $taskmgr = Start-Process -WindowStyle Hidden -FilePath taskmgr.exe -PassThru
-            While (!($preferences)) {
+            While(!($TaskManKey)) {
                 Start-Sleep -m 250
-                $preferences = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "Preferences" -ErrorAction SilentlyContinue
+                $TaskManKey = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "Preferences"
             }
-            Stop-Process $taskmgr
+            Stop-Process $taskmgr | Out-Null
         }
-        $preferences.Preferences[28] = 0
-        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "Preferences" -Type Binary -Value $preferences.Preferences
+        $TaskManKey.Preferences[28] = 0
+        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "Preferences" -Type Binary -Value $TaskManKey.Preferences
     } ElseIf($TaskManagerDetails -eq 2) {
         DisplayOut "Hiding Task Manager Details..." 12 0
-        $preferences = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "Preferences" -ErrorAction SilentlyContinue
-        If ($preferences) {
-            $preferences.Preferences[28] = 1
-            Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "Preferences" -Type Binary -Value $preferences.Preferences
+        $TaskManKey = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "Preferences"
+        If($TaskManKey) {
+            $TaskManKey.Preferences[28] = 1
+            Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "Preferences" -Type Binary -Value $TaskManKey.Preferences
         }
     }
 
@@ -3878,7 +3934,7 @@ Function RunScript {
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSyncProviderNotifications" -Type DWord -Value 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" -Name "DisableFileSyncNGSC" -Type DWord -Value 1
     }
-    
+
     # OneDrive Install
     If($OneDriveInstall -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping OneDrive Installing..." 15 0
@@ -4000,7 +4056,7 @@ Function RunScript {
 
     ForEach($AppI in $APPS_AppsInstall) {
         DisplayOut $AppI 11 0
-        If($AppI -ne $null -or $AppI -ne "") {
+        If($AppI -ne $null -and $AppI -ne "") {
             Add-AppxPackage -DisableDevelopmentMode -Register "$($(Get-AppXPackage -AllUsers $AppI).InstallLocation)\AppXManifest.xml" | Out-null
         } ElseIf($Release_Type -ne "Stable ") {
             DisplayOut "Error, can't Install $AppI" 12 0
@@ -4014,7 +4070,7 @@ Function RunScript {
 
     ForEach($AppH in $APPS_AppsHide) {
         $ProvisionedPackage = Get-AppxProvisionedPackage -online | Where {$_.displayName -eq $AppH}
-        If($ProvisionedPackage -ne $null -or $AppH -ne "") {
+        If($ProvisionedPackage -ne $null -and $AppH -ne "") {
             DisplayOut $AppH 12 0
             Get-AppxPackage $AppH | Remove-AppxPackage | Out-null
         } ElseIf($Release_Type -ne "Stable ") {
@@ -4029,7 +4085,7 @@ Function RunScript {
 
     ForEach($AppU in $APPS_AppsUninstall) {
         $ProvisionedPackage = Get-AppxProvisionedPackage -online | Where {$_.displayName -eq $AppU}
-        If($ProvisionedPackage -ne $null -or $AppU -ne "") {
+        If($ProvisionedPackage -ne $null -and $AppU -ne "") {
             DisplayOut $AppU 14 0
             $PackageFullName = (Get-AppxPackage $AppU).PackageFullName
             $ProPackageFullName = (Get-AppxProvisionedPackage -online | where {$_.Displayname -eq $AppU}).PackageName
@@ -4043,9 +4099,9 @@ Function RunScript {
         }
     }
 
-    If($Unpin -eq 0 -and $ShowSkipped -eq 1) {
+    If($UnpinItems -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Unpinning Items..." 15 0
-    } ElseIf($Unpin -eq 1) {
+    } ElseIf($UnpinItems -eq 1) {
         DisplayOut "" 12 0
         DisplayOut "Unpinning Items..." 12 0
         DisplayOut "------------------" 12 0
@@ -4084,6 +4140,11 @@ Function RunScript {
 # when exporting shows ALL defined after this point
 $AutomaticVariables = Get-Variable -scope Script
 
+# DO NOT TOUCH THESE
+$Script:AppsInstall = ""
+$Script:AppsHide = ""
+$Script:AppsUninstall = ""
+
 # --------------------------------------------------------------------------
 
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -4106,16 +4167,14 @@ $Script:RestorePointName = "Win10 Initial Setup Script"
 #Skips Term of Use
 $Script:Term_of_Use = 1           #1-See ToS, Anything else = Accepts Term of Use
 
-#Update Check
-$Script:Version_Check = 0         #0-Dont Check for Update, 1-Check for Update (Will Auto Download and run newer version)
-#File will be named 'Win10-Menu-Ver.(Version HERE).ps1 (For non Test version)
-
 #Output Display
 $Script:Verbros = 1               #0-Dont Show output (Other than Errors), 1-Show output
 $Script:ShowSkipped = 1           #0-Dont Show Skipped, 1-Show Skipped
 $Script:ShowColor = 1             #0-Dont Show output Color, 1-Show output Colors
 
 #Checks
+$Script:Version_Check = 0         #0-Dont Check for Update, 1-Check for Update (Will Auto Download and run newer version)
+                        #File will be named 'Win10-Menu-Ver.(Version HERE).ps1 (For non Test version)
 $Script:Internet_Check = 0        #0 = Checks if you have internet by doing a ping to github.com
                                   #1 = Bypass check if your pings are blocked
 
@@ -4194,6 +4253,7 @@ $Script:StartMenuWebSearch = 0    #0-Skip, 1-Enable*, 2-Disable
 $Script:StartSuggestions = 0      #0-Skip, 1-Enable*, 2-Disable --(The Suggested Apps in Start Menu)
 $Script:MostUsedAppStartMenu = 0  #0-Skip, 1-Show*, 2-Hide
 $Script:RecentItemsFrequent = 0   #0-Skip, 1-Enable*, 2-Disable --(In Start Menu)
+$Script:UnpinItems = 0            #0-Skip, 1-Unpin
 
 #Explorer Items
 # Function = Option               #Choices (* Indicates Windows Default)
@@ -4263,9 +4323,9 @@ $Script:LinuxSubsystem = 0        #0-Skip, 1-Installed, 2-Uninstall* (Anniversar
 # Custom List of App to Install, Hide or Uninstall
 # I dunno if you can Install random apps with this script
 # Cant Import these ATM
-[System.Collections.ArrayList]$APPS_AppsInstall = @()          # Apps to Install
-[System.Collections.ArrayList]$APPS_AppsHide = @()             # Apps to Hide
-[System.Collections.ArrayList]$APPS_AppsUninstall = @()        # Apps to Uninstall
+[System.Collections.ArrayList]$Script:APPS_AppsInstall = @()          # Apps to Install
+[System.Collections.ArrayList]$Script:APPS_AppsHide = @()             # Apps to Hide
+[System.Collections.ArrayList]$Script:APPS_AppsUninstall = @()        # Apps to Uninstall
 #$Script:APPS_Example = @('Somecompany.Appname1','TerribleCompany.Appname2','AppS.Appname3')
 # To get list of Packages Installed (in powershell)
 # DISM /Online /Get-ProvisionedAppxPackages | Select-string Packagename
