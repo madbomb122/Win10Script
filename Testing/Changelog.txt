@@ -1,7 +1,19 @@
 -----------------------------------------------------------------------------------
-2.2-Menu (05-18-2017)
+2.2-Menu (05-19-2017)
 
-Working on changing/adding different arguments/switches
+Changed/added different arguments/switches
+   -run                       Runs script with setting in script
+   -run Settingfile           Runs script with Settingfile
+   -run WinDefault            Runs script with Win Default
+   -load Settingfile          Loads Settingfile (Does not run)
+   -load WinDefault           Loads Win Default (Does not run)
+   -sic                       Skip Internet Check
+   -usc                       Check for update
+   -atos                      Accepts ToS
+   -crp                       Creates a Restore Point
+   -dnr                       Do not restart when done
+   
+Note: Settingfile = name of your setting file
 
 Change Window content while dragging items from enable/disable to show/hide
 Fixed a bug with windows update not setting if path not being there
