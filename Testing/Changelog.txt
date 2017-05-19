@@ -17,9 +17,9 @@ Note: Settingfile = name of your setting file
 Note: Old arguments/switches will not work
 
 Change Window content while dragging items from enable/disable to show/hide
-Fixed a bug with windows update not setting if path not being there
-Fixed problem with remove cast to device context item
 Changed how script does detection for metro apps
+Fixed a bug with windows update not setting if path was not there
+Fixed problem with remove cast to device context item
 Fixed bug with unpin not being corrently set to unpin
 
 Changed format for setting save/load (smaller files and more readable)
