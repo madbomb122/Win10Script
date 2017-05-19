@@ -6,11 +6,13 @@ Working on changing/adding different arguments/switches
 Change Window content while dragging items from enable/disable to show/hide
 Fixed a bug with windows update not setting if path not being there
 Fixed problem with remove cast to device context item
-Fixed a detection for metro apps
+Changed how script does detection for metro apps
 Fixed bug with unpin not being corrently set to unpin
 
 Changed format for setting save/load (smaller files and more readable)
 Ability to add custom apps to hide/uninstall in setting file
+
+NOTE: YOU WILL NEED TO MAKE A NEW SETTING FILE
 
 -----------------------------------------------------------------------------------
 2.1-Menu (05-13-2017)
