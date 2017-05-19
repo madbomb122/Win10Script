@@ -1,4 +1,3 @@
-Param([alias("Set")] [string] $SettingImp)
 ##########
 # Win10 Setup Script Settings with Menu
 #
@@ -104,12 +103,13 @@ Note: File has to be in the proper format or settings wont be imported
 
 If($Release_Type -eq "Stable ") { $ErrorActionPreference= 'silentlycontinue' }
 
+$Global:PassedArg = $args
 $Global:filebase = $PSScriptRoot + "\"
 $TempFolder = $env:Temp
 
 # Ask for elevated permissions if required
 If(!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
-    Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $SettingImp" -Verb RunAs
+    Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $PassedArg" -Verb RunAs
     Exit
 }
 
@@ -301,7 +301,19 @@ Function UpdateCheck ([Int]$Bypass) {
                 MenuLine
                 (New-Object System.Net.WebClient).DownloadFile($url, $WebScriptFilePath)
                 DownloadScriptFile $WebScriptFilePath
-                Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$WebScriptFilePath`" $args" -Verb RunAs
+                $TempSetting = $TempFolder + "\TempSet.csv"
+                SaveSettingFiles $TempSetting 0
+                $UpArg = ""
+                If($Accept_ToS -ne 1) { $UpArg = $UpArg + "-atos" }
+                If($Internet_Check -eq 1) { $UpArg = $UpArg + "-sic" }
+                If($CreateRestorePoint -eq 1) { $UpArg = $UpArg + "-crp" }
+                If($Restart -eq 0) { $UpArg = $UpArg + "-dnr" }
+                If($RunScr -eq $true) { 
+                    $UpArg = $UpArg + "-run $TempSetting" 
+                } Else {
+                    $UpArg = $UpArg + "-load $TempSetting" 
+                }
+                Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$WebScriptFilePath`" $UpArg" -Verb RunAs
                 Exit
             }
         }
@@ -347,26 +359,13 @@ Function ScriptPreStart {
     # 10586 = first major update
     # 10240 = first release
 
-    If($SettingImp -ne $null -and $SettingImp) {
-        $FileImp = $filebase + $SettingImp
-        If(Test-Path $FileImp -PathType Leaf) {
-            UpdateCheck
-            LoadSettingFile $FileImp
-        } ElseIf($SettingImp.ToLower() -eq "wd" -or $SettingImp.ToLower() -eq "windefault") {
-            UpdateCheck
-            LoadWinDefault
-            RunScript
-        } ElseIf($SettingImp.ToLower() -eq "run") {
-            RunScript
-        } Else {
-            UpdateCheck
-            TOS 
-        }
-    } ElseIf($Term_of_Use -eq 1) {
-        UpdateCheck
+    ArgCheck
+    UpdateCheck
+    If($Term_of_Use -eq 1) {
         TOS
+    } ElseIf($RunScr -eq $true) {
+        RunScript
     } ElseIf($Term_of_Use -ne 1) {
-        UpdateCheck
         mainMenu
     }
 }
@@ -381,12 +380,12 @@ Function ArgCheck {
                 If($ArgVal -eq "-run") {
                     If(Test-Path $PasVal -PathType Leaf) {
                         LoadSettingFile $PasVal
-                        $RunScr = $true
+                        $Script:RunScr = $true
                     } ElseIf($PasVal -eq "wd" -or $PasVal -eq "windefault") {
                         LoadWinDefault
-                        $RunScr = $true
+                        $Script:RunScr = $true
                     } ElseIf($PasVal.StartsWith("-")){
-                        $RunScr = $true
+                        $Script:RunScr = $true
                     }
                 } ElseIf($ArgVal -eq "-load") {
                     If(Test-Path $PasVal -PathType Leaf) {
@@ -399,12 +398,10 @@ Function ArgCheck {
                 } ElseIf($ArgVal -eq "-usc") {
                     $Script:Version_Check  = 1
                 } ElseIf($ArgVal -eq "-atos") {
-                    $Script:Term_of_Use = 1
+                    $Script:Term_of_Use = "Accepted"
                 } ElseIf($ArgVal -eq "-crp") {
                     $Script:CreateRestorePoint = 1
                     If(!($PasVal.StartsWith("-"))){ $Script:RestorePointName = $PasVal }
-                } ElseIf($ArgVal -eq "-verb") {
-                    $Script:Verbros = 1
                 } ElseIf($ArgVal -eq "-dnr") {
                     $Script:Restart = 0
                 } 
@@ -446,8 +443,8 @@ Function TOS {
         Switch($TOS.ToLower()) {
             n {Exit}
             no {Exit}
-            y {$Term_of_Use = "Accepted"; mainMenu}
-            yes {$Term_of_Use = "Accepted"; mainMenu}
+            y {$Term_of_Use = "Accepted"; If($RunScr -eq $true) { RunScript } Else { mainMenu} }
+            yes {$Term_of_Use = "Accepted"; If($RunScr -eq $true) { RunScript } Else { mainMenu} }
             default {$Invalid = 1}
         }
     }
@@ -794,12 +791,28 @@ Function LoadSetting {
     Return
 }
 
-Function LoadSettingFile([String]$Filename) {
+Function LoadSettingFile([String]$Filename,[Int]$RunOrNot) {
     Import-Csv $Filename -Delimiter ";" | %{Set-Variable $_.Name $_.Value -Scope Script}
     [System.Collections.ArrayList]$APPS_AppsInstall = $AppsInstall.split(",")
     [System.Collections.ArrayList]$APPS_AppsHidel = $AppsHide.split(",")
     [System.Collections.ArrayList]$APPS_AppsUninstall = $AppsUninstall.split(",")
-    RunScript
+}
+
+Function SaveSettingFiles([String]$SaveSetting,[Int]$ShowConf) {
+    $SavePath = $filebase + $SaveSetting
+    foreach($temp in $APPS_AppsInstall){$Script:AppsInstall+=$temp+","}
+    foreach($temp in $APPS_AppsHide){$Script:AppsHide+=$temp+","}
+    foreach($temp in $APPS_Uninstall){$Script:AppsUninstall+=$temp+","}
+    If(Test-Path $SavePath -PathType Leaf) {
+        If($ShowConf -eq 1) { 
+            $Conf = ConfirmMenu 2 
+        } Else {
+            $Conf = $true
+        }
+        If($Conf -eq $true) { cmpv | select-object name,value | Export-Csv -LiteralPath $SavePath -encoding "unicode" -force -Delimiter ";" }
+    } Else {
+        cmpv | select-object name,value | Export-Csv -LiteralPath $SavePath -encoding "unicode" -force -Delimiter ";"
+    }
 }
 
 Function SaveSetting {
@@ -811,16 +824,7 @@ Function SaveSetting {
         If($SaveSetting -eq $null -or $SaveSetting -eq 0) {
             $SaveSetting = "Out"
         } Else {
-            $SavePath = $filebase + $SaveSetting
-            foreach($temp in $APPS_AppsInstall){$Script:AppsInstall+=$temp+","}
-            foreach($temp in $APPS_AppsHide){$Script:AppsHide+=$temp+","}
-            foreach($temp in $APPS_Uninstall){$Script:AppsUninstall+=$temp+","}
-            If(Test-Path $SavePath -PathType Leaf) {
-                $Conf = ConfirmMenu 2
-                If($Conf -eq $true) { cmpv | select-object name,value | Export-Csv -LiteralPath $SavePath -encoding "unicode" -force -Delimiter ";" }
-            } Else {
-                cmpv | select-object name,value | Export-Csv -LiteralPath $SavePath -encoding "unicode" -force -Delimiter ";"
-            }
+            SaveSettingFiles $SaveSetting 1
             $SaveSetting = "Out"
         }
     }
