@@ -4,7 +4,7 @@
 
 -------------------------------------------------------------------------------------------------------------
 # Working On/Testing
-Nothing ATM
+- [ ] Changing arguments/switches to accept multiple (old arguments/switches DO NOT WORK)
 
 -------------------------------------------------------------------------------------------------------------
 # Thinking of adding
