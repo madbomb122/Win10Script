@@ -376,7 +376,7 @@ Function ArgCheck {
             $ArgVal = $PassedArg[$i]
             If($ArgVal.StartsWith("-")){
                 $ArgVal = $PassedArg[$i].ToLower()
-                $PasVal = $PassedArg[($i+1)]
+                $PasVal = $PassedArg[($i+1)].ToLower()
                 If($ArgVal -eq "-run") {
                     If(Test-Path $PasVal -PathType Leaf) {
                         LoadSettingFile $PasVal
@@ -401,6 +401,7 @@ Function ArgCheck {
                     $Script:Term_of_Use = "Accepted"
                 } ElseIf($ArgVal -eq "-crp") {
                     $Script:CreateRestorePoint = 1
+                    $PasVal = $PassedArg[($i+1)]
                     If(!($PasVal.StartsWith("-"))){ $Script:RestorePointName = $PasVal }
                 } ElseIf($ArgVal -eq "-dnr") {
                     $Script:Restart = 0
