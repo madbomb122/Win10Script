@@ -1,10 +1,11 @@
 # To Do/Done
 - [X] Ability to have script check for newer version
 - [X] Undo the change in Win+X menu in the creator's update (Powershell -> Command Prompt)
+- [X] Changing arguments/switches to accept multiple
 
 -------------------------------------------------------------------------------------------------------------
 # Working On/Testing
-- [ ] Changing arguments/switches to accept multiple (old arguments/switches DO NOT WORK)
+Nothing ATM
 
 -------------------------------------------------------------------------------------------------------------
 # Thinking of adding
