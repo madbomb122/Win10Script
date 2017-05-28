@@ -1,5 +1,5 @@
 **Current Version** <br />
-**Script:** `2.1` (May 13, 2017) <br />
+**Script:** `2.2` (May 28, 2017) <br />
 
 ## Description
 
@@ -13,44 +13,43 @@ The script has added items with an easier way to change preferences and a menu.
 
 PS. Don't forget to check out my other Repo https://github.com/madbomb122/BlackViperScript  <br />
 
-# [](#header-1)Usage Requirements
+# Usage Requirements
 **OS:** `Windows 10` <br />
 **Needed Files:** `Win10-Menu.ps1` (Script File) <br />
 **Recommended Files:** `_Win10-Script-Run.bat` <br />
 
-# [](#header-1)Basic Usage
+# Basic Usage
 Run the Script by bat file or `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1` <br />
 Use the Menu <br />
 Set what you want <br />
 Select option to run script <br />
 
-## [](#header-1)Advanced Usage
-Use one of the following Methods 
-(Bat file provided can run script, look in bat file for insructions) <br />
+# Advanced_Usage
+Use one of the following Methods you can 
+1. Run script or bat file with one (or more) of the switches bellow
+2. Edit the script (bottom of file) to change the values
+3. Edit the bat file (top of file) to change the values to add the switch
 
-Change the variables you want (Bottom of Script) then run script with: <br />
-   `-Set Run`
-
-Examples: <br />
-`powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1 -Set Run` <br />
-`powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1 -Set RUN` <br />
-******
-To run the script with the Items in the script back to the Default
-for windows run the script with one of the 2 switches bellow:  <br />
-   `-Set WD`  <br />
-   `-Set WinDefault` 
-
-Examples: <br />
-`powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1 -Set WD` <br />
-or <br />
-`powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1 -Set WinDefault` <br />
-******
-To run the script with imported Settings run the script with:   
-   `-Set Filename`
+|   Switch  | Description                                                                    | Notes                            |
+| :-------- | :------------------------------------------------------------------------------| :------------------------------- |
+| -atos     | Accepts the ToS                                                                |                                  |
+| -auto     | Runs the script to be Automated.. Closes on Errors, End of Script)             | Implies `-atos`                    |
+| -run      | Runs script with setting in script                                             |                     |
+| -run Settingfile     | Runs script with Settingfile                                            |                     |
+| -run WinDefault     | Runs script with Win Default                                            |                     |
+| -load Settingfile     | Loads Settingfile (Does not run)                                            |                     |
+| -load WinDefault     | Loads Win Default (Does not run)                                            |                     |
+| -sic      | Skips Internet Check (If checking for update)                                  | Tests by pinging github.com      |
+| -usc      | Checks for Update to Script file before running                                | Auto downloads and runs if found |
+| -crp     | Creates a Restore Point                            |  |
+| -dnr      | Do not restart when done                    |   |
 
 Examples: <br />
-`powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1 -Set File.csv` <br />
-`powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1 -Set Whatever.txt` <br />
+`powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1 -auto -run mine.csv` <br />
+`powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1 -atos -load WinDefault` <br />
+`_Win10-Script.bat -run -crp` <br />
+`_Win10-Script.bat -run WinDefault -dnr` <br />
+
 ******
 ## FAQ
 **Q:** Do you accept any donations? <br />
