@@ -1,4 +1,3 @@
-Param([alias("Set")] [string] $SettingImp)
 ##########
 # Win10 Setup Script Settings with Menu
 #
@@ -11,8 +10,8 @@ Param([alias("Set")] [string] $SettingImp)
 #  Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script/
 #
-$Script_Version = "2.1"
-$Script_Date = "05-13-17"
+$Script_Version = "2.2"
+$Script_Date = "05-28-17"
 $Release_Type = "Stable "
 ##########
 
@@ -62,30 +61,33 @@ $Release_Type = "Stable "
     Use the Menu and set what you want then select run the script
 
 .ADVANCED USAGE
-    Use one of the following Methods
+ One of the following Methods...
+  1. Edit values at bottom of the script
+  2. Edit bat file and run
+  3. Run the script with one of these arguments/switches (space between multiple)
 
-1. Change the variables you want (Bottom of Script) then run script with
-      -Set Run
+-- Basic Switches --
+ Switches       Description of Switch
+  -atos          (Accepts ToS)
+  -auto          (Implies -Atos...Closes on - User Errors, or End of Script)
+  -crp           (Creates Restore Point)
+  -dnr           (Do Not Restart when done)
+  
+-- Run Script Switches --
+ Switches       Description of Switch
+  -run           (Runs script with settings in script)
+  -run FILENME   (Runs script with settings in the file FILENME)
+  -run wd        (Runs script with win default settings)
 
-Example: Win10-Menu.ps1 -Set Run
-Example: Win10-Menu.ps1 -Set run
-------
-2. To run the script with the Items in the script back to the Default 
-    for windows run the script with one of the 2 switches bellow:
-      -Set WD
-      -Set WinDefault 
+-- Load Script Switches --
+ Switches       Description of Switch
+  -load FILENME  (Loads script with settings in the file FILENME)
+  -load wd       (Loads script with win default settings)
 
-Example: Win10-Menu.ps1 -Set WD
-Example: Win10-Menu.ps1 -Set WinDefault
-------
-3. To run the script with imported Settings run the script with:    
-      -Set Filename
-
-Example: Win10-Menu.ps1 -Set File.csv
-Example: Win10-Menu.ps1 -Set Example.txt
-Example: Win10-Menu.ps1 -Set whatever.sjdfh
-
-Note: File has to be in the proper format or settings wont be imported
+--Update Switches--
+ Switches       Description of Switch
+  -usc           (Checks for Update to Script file before running)
+  -sic           (Skips Internet Check)
 ----------------------------------------------------------------------------#>
 
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -101,14 +103,15 @@ Note: File has to be in the proper format or settings wont be imported
 # Pre-Script -Start
 ##########
 
-If($Release_Type -eq "Stable ") { $ErrorActionPreference= 'silentlycontinue' }
+If($Release_Type -eq "Stable ") { $ErrorActionPreference = 'silentlycontinue' }
 
+$Global:PassedArg = $args
 $Global:filebase = $PSScriptRoot + "\"
 $TempFolder = $env:Temp
 
 # Ask for elevated permissions if required
 If(!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
-    Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $SettingImp" -Verb RunAs
+    Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $PassedArg" -Verb RunAs
     Exit
 }
 
@@ -121,6 +124,10 @@ If(!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::
 ##########
 
 $VersionDisplay = "$Script_Version" + " (" + $Script_Date + ")"
+
+[Array]$Script:APPS_AppsInstall = @()
+[Array]$Script:APPS_AppsHide = @()
+[Array]$Script:APPS_AppsUninstall = @()
 
 $AppsList = @(
     'Microsoft.3DBuilder',
@@ -234,6 +241,7 @@ $UpdateCheckItems = @(
 $ArrayLine[7]) #Blank
 
 Function UpCheckDisplay {
+    Clear-Host
     TitleBottom $UpdateCheckItems[0] 11
     MenuBlankLine
     LeftLine ;DisplayOutMenu $UpdateCheckItems[1] 2 0 0 ;RightLine
@@ -250,9 +258,8 @@ Function UpCheckDisplay {
 Function UpCheck {
     $UpCheck = 'X'
     While($UpCheck -ne "Out") {
-        Clear-Host
         UpCheckDisplay
-        If($Invalid -eq 1) { $Invalid = InvalidSelection }
+        $Invalid = ShowInvalid $Invalid
         $UpCheck = Read-Host "`nCheck for update?"
         Switch($UpCheck.ToLower()) {
             n {$UpCheck = "Out"}
@@ -296,7 +303,19 @@ Function UpdateCheck ([Int]$Bypass) {
                 MenuLine
                 (New-Object System.Net.WebClient).DownloadFile($url, $WebScriptFilePath)
                 DownloadScriptFile $WebScriptFilePath
-                Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$WebScriptFilePath`" $args" -Verb RunAs
+                $TempSetting = $TempFolder + "\TempSet.csv"
+                SaveSettingFiles $TempSetting 0
+                $UpArg = ""
+                If($Accept_ToS -ne 1) { $UpArg = $UpArg + "-atos" }
+                If($Internet_Check -eq 1) { $UpArg = $UpArg + "-sic" }
+                If($CreateRestorePoint -eq 1) { $UpArg = $UpArg + "-crp" }
+                If($Restart -eq 0) { $UpArg = $UpArg + "-dnr" }
+                If($RunScr -eq $true) { 
+                    $UpArg = $UpArg + "-run $TempSetting" 
+                } Else {
+                    $UpArg = $UpArg + "-load $TempSetting" 
+                }
+                Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$WebScriptFilePath`" $UpArg" -Verb RunAs
                 Exit
             }
         }
@@ -341,32 +360,64 @@ Function ScriptPreStart {
     # 14393 = anniversary update
     # 10586 = first major update
     # 10240 = first release
-	
-    If($SettingImp -ne $null -and $SettingImp) {
-        $FileImp = $filebase + $SettingImp
-        If(Test-Path $FileImp -PathType Leaf) {
-            LoadSettingFile $FileImp
-            UpdateCheck
-        } ElseIf($SettingImp.ToLower() -eq "wd" -or $SettingImp.ToLower() -eq "windefault") {
-            UpdateCheck
-            LoadWinDefault
-            RunScript
-        } ElseIf($SettingImp.ToLower() -eq "run") {
-            RunScript
-        } Else {
-            UpdateCheck
-            TOS 
-        }
-    } ElseIf($Term_of_Use -eq 1) {
-        UpdateCheck
+
+    ArgCheck
+    UpdateCheck
+    If($Term_of_Use -eq 1) {
         TOS
+    } ElseIf($RunScr -eq $true) {
+        RunScript
     } ElseIf($Term_of_Use -ne 1) {
-        UpdateCheck
         mainMenu
     }
 }
 
+Function ArgCheck {
+    If ($PassedArg.length -gt 0) {
+        For($i=0; $i -lt $PassedArg.length; $i++) {
+            $ArgVal = $PassedArg[$i]
+            If($ArgVal.StartsWith("-")){
+                $ArgVal = $PassedArg[$i].ToLower()
+                $PasVal = $PassedArg[($i+1)].ToLower()
+                If($ArgVal -eq "-run") {
+                    If(Test-Path $PasVal -PathType Leaf) {
+                        LoadSettingFile $PasVal
+                        $Script:RunScr = $true
+                    } ElseIf($PasVal -eq "wd" -or $PasVal -eq "windefault") {
+                        LoadWinDefault
+                        $Script:RunScr = $true
+                    } ElseIf($PasVal.StartsWith("-")){
+                        $Script:RunScr = $true
+                    }
+                } ElseIf($ArgVal -eq "-load") {
+                    If(Test-Path $PasVal -PathType Leaf) {
+                        LoadSettingFile $PasVal
+                    } ElseIf($PasVal -eq "wd" -or $PasVal -eq "windefault") {
+                        LoadWinDefault
+                    }
+                } ElseIf($ArgVal -eq "-sic") {
+                    $Script:Internet_Check = 1
+                } ElseIf($ArgVal -eq "-usc") {
+                    $Script:Version_Check  = 1
+                } ElseIf($ArgVal -eq "-atos") {
+                    $Script:Term_of_Use = "Accepted"
+                } ElseIf($ArgVal -eq "-auto") {
+                    $Script:Automated = 1
+                    $Script:Term_of_Use = "Accepted"
+                } ElseIf($ArgVal -eq "-crp") {
+                    $Script:CreateRestorePoint = 1
+                    $PasVal = $PassedArg[($i+1)]
+                    If(!($PasVal.StartsWith("-"))){ $Script:RestorePointName = $PasVal }
+                } ElseIf($ArgVal -eq "-dnr") {
+                    $Script:Restart = 0
+                } 
+            }
+        }
+    }
+}
+
 Function TOSDisplay {
+    Clear-Host
     $BorderColor = 14
     If($Release_Type -eq "Testing" -or $Release_Type -eq "Beta   ") {
         $BorderColor = 15
@@ -392,15 +443,14 @@ Function TOSDisplay {
 Function TOS {
     $TOS = 'X'
     While($TOS -ne "Out") {
-        Clear-Host
         TOSDisplay
-        If($Invalid -eq 1) { $Invalid = InvalidSelection }
+        $Invalid = ShowInvalid $Invalid
         $TOS = Read-Host "`nDo you Accept? (Y)es/(N)o"
         Switch($TOS.ToLower()) {
             n {Exit}
             no {Exit}
-            y {$Term_of_Use = "Accepted"; mainMenu}
-            yes {$Term_of_Use = "Accepted"; mainMenu}
+            y {$Term_of_Use = "Accepted"; If($RunScr -eq $true) { RunScript } Else { mainMenu} }
+            yes {$Term_of_Use = "Accepted"; If($RunScr -eq $true) { RunScript } Else { mainMenu} }
             default {$Invalid = 1}
         }
     }
@@ -446,9 +496,8 @@ Function ChoicesMenu ([String]$Vari, [Int]$NumberH, [Int]$NumberL) {
     $VariA = Get-Variable $VariJ -valueOnly #Array
     $ChoicesMenu = 'X'
     While($ChoicesMenu -ne "Out") {
-        Clear-Host
         ChoicesDisplay $VariA $VariV
-        If($Invalid -eq 1) { $Invalid = InvalidSelection }
+        $Invalid = ShowInvalid $Invalid
         $ChoicesMenu = Read-Host "`nChoice"
         switch -regex ($ChoicesMenu) {
             0 {If($NumberL -eq $ChoicesMenu) {$ReturnV = $ChoicesMenu; $ChoicesMenu = "Out"} Else {$Invalid = 1}}
@@ -465,7 +514,7 @@ Function VariMenu ([Array]$VariDisplay,[Array]$VariMenuItm) {
     $VariMenu = 'X'
     While($VariMenu -ne "Out") {
         MenuDisplay $VariDisplay
-        If($Invalid -eq 1) { $Invalid = InvalidSelection }
+        $Invalid = ShowInvalid $Invalid
         $VariMenu = Read-Host "`nSelection"
         $ConInt = $VariMenu -as [int]
         If($ConInt -is [int] -and $VariMenu -ne $null) {
@@ -487,9 +536,12 @@ Function VariMenu ([Array]$VariDisplay,[Array]$VariMenuItm) {
 
 Function Openwebsite ([String]$Url) { [System.Diagnostics.Process]::Start($Url) }
 
-Function InvalidSelection {
-    Write-Host ""
-    Write-Host "Invalid Selection" -ForegroundColor Red -BackgroundColor Black -NoNewline
+Function ShowInvalid ([Int]$InvalidA) {
+    If($InvalidA -eq 1) {
+        Write-Host ""
+        Write-Host "Invalid Input" -ForegroundColor Red -BackgroundColor Black -NoNewline
+        Return 0
+    }
     Return 0
 }
 
@@ -505,18 +557,17 @@ $ConfirmMenuItems1 = @(
 '                 Confirm Dialog                  ',
 $ArrayLine[7], #Blank
 '              Are You sure? (Y/N)                ',
-$ArrayLine[6])
+$ArrayLine[6]) #Cancel/Back
 
 $ConfirmMenuItems2 = @(
 '                 Confirm Dialog                  ',
 $ArrayLine[7], #Blank
 '  File Exists do you want to overwrite? (Y/N)    ',
-$ArrayLine[6])
+$ArrayLine[6]) #Cancel/Back
 
 Function ConfirmMenu ([int]$Option) {
     $ConfirmMenu = 'X'
     While($ConfirmMenu -ne "Out") {
-        Clear-Host
         If($Option -eq 1) {
             VariableDisplay $ConfirmMenuItems1
         } ElseIf($Option -eq 2) {
@@ -559,6 +610,7 @@ Function MenuDisplay ([Array]$ToDisplay) {
 # For loop = Choices
 # $ChToDisplayVal = Current Value
 Function ChoicesDisplay ([Array]$ChToDisplay, [Int]$ChToDisplayVal) {
+    Clear-Host
     TitleBottom $ChToDisplay[0] 11
     MenuBlankLine
     LeftLine ;DisplayOutMenu $ChToDisplay[1] 2 0 0 ;RightLine
@@ -576,6 +628,7 @@ Function ChoicesDisplay ([Array]$ChToDisplay, [Int]$ChToDisplayVal) {
 
 # Displays items but NO Seperators
 Function VariableDisplay ([Array]$VarToDisplay) {
+    Clear-Host
     TitleBottom $VarToDisplay[0] 11
     For($i=1; $i -lt $VarToDisplay.length-1; $i++) { LeftLine ;DisplayOutMenu $VarToDisplay[$i] 2 0 0 ;RightLine }
     TitleBottom $VarToDisplay[$VarToDisplay.length-1] 13
@@ -625,20 +678,20 @@ Function mainMenu {
     $mainMenu = 'X'
     While($mainMenu -ne "Out") {
         MenuDisplay $MainMenuItems 0
-        If($Invalid -eq 1) { $Invalid = InvalidSelection }
+        $Invalid = ShowInvalid $Invalid
         $mainMenu = Read-Host "`nSelection"
         Switch($mainMenu) {
-            1 {RunScript} #Run Script
+            1 {RunScript}
             2 {ScriptSettingsMM} #Script Settings Main Menu
-            3 {LoadSetting} #Load Settings
-            4 {SaveSetting} #Save Settings
+            3 {LoadSetting}
+            4 {SaveSetting}
             5 {VariMenu $ScriptOptionMenuItems $ScriptOptionMenuItm} #Script Options
-            U {UpCheck} #Update Check
-            H {HUACMenu "UsageItems"} #How to Use
-            A {HUACMenu "AboutItems"}  #About/Version
-            C {HUACMenu "CopyrightItems"}  #Copyright
-            M {Openwebsite "https://github.com/madbomb122/"} #My Website
-            Q {Exit} #/Exit/Quit
+            U {UpCheck}
+            H {HUACMenu "UsageItems"}
+            A {HUACMenu "AboutItems"}
+            C {HUACMenu "CopyrightItems"}
+            M {Openwebsite "https://github.com/madbomb122/"}
+            Q {Exit}
             default {$Invalid = 1}
         }
     }
@@ -667,21 +720,21 @@ Function ScriptSettingsMM {
     $ScriptSettingsMM = 'X'
     While($ScriptSettingsMM -ne "Out") {
         MenuDisplay $ScriptSettingsMainMenuItems
-        If($Invalid -eq 1) { $Invalid = InvalidSelection }
+        $Invalid = ShowInvalid $Invalid
         $ScriptSettingsMM = Read-Host "`nSelection"
         Switch($ScriptSettingsMM) {
-             1 {VariMenu $PrivacySetMenuItems $PrivacySetMenuItm}            #Privacy Settings
-             2 {VariMenu $ServiceTweaksSetMenuItems $ServiceTweaksSetMenuItm}#Service Tweaks
-             3 {VariMenu $StartMenuSetMenuItems $StartMenuSetMenuItm}        #Star Menu
-             4 {VariMenu $LockScreenSetMenuItems $LockScreenSetMenuItm}      #Lock Screen
-             5 {VariMenu $ThisPCSetMenuItems $ThisPCSetMenuItm}              #'This PC'
-             6 {VariMenu $ExplorerSetMenuItems $ExplorerSetMenuItm}          #Explorer
-             7 {VariMenu $WindowsUpdateSetMenuItems $WindowsUpdateSetMenuItm}#Windows Update
-             8 {VariMenu $ContextMenuSetMenuItems $ContextMenuSetMenuItm}    #Context Menu
-             9 {VariMenu $TaskbarSetMenuItems $TaskbarSetMenuItm}            #Task Bar
-            10 {VariMenu $FeaturesAppsMenuItems $FeaturesAppsMenuItm}        #Features
-            11 {MetroMenu $MetroAppsMenuItems $MetroAppsMenuItm}             #Metro Apps
-            12 {VariMenu $MiscSetMenuItems $MiscSetMenuItm}                  #Misc/Photo Viewer
+             1 {VariMenu $PrivacySetMenuItems $PrivacySetMenuItm}
+             2 {VariMenu $ServiceTweaksSetMenuItems $ServiceTweaksSetMenuItm}
+             3 {VariMenu $StartMenuSetMenuItems $StartMenuSetMenuItm}
+             4 {VariMenu $LockScreenSetMenuItems $LockScreenSetMenuItm}
+             5 {VariMenu $ThisPCSetMenuItems $ThisPCSetMenuItm}
+             6 {VariMenu $ExplorerSetMenuItems $ExplorerSetMenuItm}
+             7 {VariMenu $WindowsUpdateSetMenuItems $WindowsUpdateSetMenuItm}
+             8 {VariMenu $ContextMenuSetMenuItems $ContextMenuSetMenuItm}
+             9 {VariMenu $TaskbarSetMenuItems $TaskbarSetMenuItm}
+            10 {VariMenu $FeaturesAppsMenuItems $FeaturesAppsMenuItm}
+            11 {MetroMenu $MetroAppsMenuItems $MetroAppsMenuItm}
+            12 {VariMenu $MiscSetMenuItems $MiscSetMenuItm}
              B {$ScriptSettingsMM = "Out"}
             default {$Invalid = 1}
         }
@@ -703,17 +756,16 @@ $LoadFileItems = @(
 ' Default settings for each item in this script.  ',
 $ArrayLine[7], #Blank
 '          Please Input Filename to Load.         ',
-$ArrayLine[6])
+$ArrayLine[6]) #Cancel/Back
 
 $SaveSettingItems = @(
 '                  Setting File                   ',
 '          Please Input Filename to Save.         ',
-$ArrayLine[6])
+$ArrayLine[6]) #Cancel/Back
 
 Function LoadSetting {
     $LoadSetting = 'X'
     While($LoadSetting -ne "Out") {
-        Clear-Host
         VariableDisplay $LoadFileItems
         If($Invalid -eq 1) {
             Write-Host ""
@@ -733,7 +785,10 @@ Function LoadSetting {
             If(Test-Path $LoadFile -PathType Leaf) {
                 $Conf = ConfirmMenu 1
                 If($Conf -eq $true) {
-                    Import-Csv $LoadFile | %{Set-Variable $_.Name $_.Value -Scope Script}
+                    Import-Csv $LoadFile -Delimiter ";" | %{Set-Variable $_.Name $_.Value -Scope Script}
+                    [System.Collections.ArrayList]$APPS_AppsInstall = $AppsInstall.split(",")
+                    [System.Collections.ArrayList]$APPS_AppsHidel = $AppsHide.split(",")
+                    [System.Collections.ArrayList]$APPS_AppsUninstall = $AppsUninstall.split(",")
                     $LoadSetting ="Out"
                 }
             } Else {
@@ -744,27 +799,39 @@ Function LoadSetting {
     Return
 }
 
-Function LoadSettingFile([String]$Filename) {
-    Import-Csv $Filename | %{Set-Variable $_.Name $_.Value -Scope Script}
-    RunScript
+Function LoadSettingFile([String]$Filename,[Int]$RunOrNot) {
+    Import-Csv $Filename -Delimiter ";" | %{Set-Variable $_.Name $_.Value -Scope Script}
+    [System.Collections.ArrayList]$APPS_AppsInstall = $AppsInstall.split(",")
+    [System.Collections.ArrayList]$APPS_AppsHidel = $AppsHide.split(",")
+    [System.Collections.ArrayList]$APPS_AppsUninstall = $AppsUninstall.split(",")
+}
+
+Function SaveSettingFiles([String]$SaveSetting,[Int]$ShowConf) {
+    $SavePath = $filebase + $SaveSetting
+    foreach($temp in $APPS_AppsInstall){$Script:AppsInstall+=$temp+","}
+    foreach($temp in $APPS_AppsHide){$Script:AppsHide+=$temp+","}
+    foreach($temp in $APPS_Uninstall){$Script:AppsUninstall+=$temp+","}
+    If(Test-Path $SavePath -PathType Leaf) {
+        If($ShowConf -eq 1) { 
+            $Conf = ConfirmMenu 2 
+        } Else {
+            $Conf = $true
+        }
+        If($Conf -eq $true) { cmpv | select-object name,value | Export-Csv -LiteralPath $SavePath -encoding "unicode" -force -Delimiter ";" }
+    } Else {
+        cmpv | select-object name,value | Export-Csv -LiteralPath $SavePath -encoding "unicode" -force -Delimiter ";"
+    }
 }
 
 Function SaveSetting {
     $SaveSetting = 'X'
     While($SaveSetting -ne "Out") {
-        Clear-Host
         VariableDisplay $SaveSettingItems
         $SaveSetting = Read-Host "`nFilename"
         If($SaveSetting -eq $null -or $SaveSetting -eq 0) {
             $SaveSetting = "Out"
         } Else {
-            $SavePath = $filebase + $SaveSetting
-            If(Test-Path $SavePath -PathType Leaf) {
-                $Conf = ConfirmMenu 2
-                If($Conf -eq $true) { cmpv | Export-Csv -LiteralPath $SavePath -encoding "unicode" -force }
-            } Else {
-                cmpv | Export-Csv -LiteralPath $SavePath -encoding "unicode" -force
-            }
+            SaveSettingFiles $SaveSetting 1
             $SaveSetting = "Out"
         }
     }
@@ -800,7 +867,7 @@ $CreateRestorePointItems = @(
 ' This Only can be done once ever 24 Hours.       ',
 $ArrayLine[0], #Skip
 '1. Create Restore Point                          ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $VerbrosItems = @(
 '                     Verbros                     ',
@@ -808,7 +875,7 @@ $VerbrosItems = @(
 $ArrayLine[7], #Blank
 '0. Dont Show ANY Output (Other than Errors)      ',
 '1. Show Output                                   ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $ShowColorItems = @(
 '                   Show Color                    ',
@@ -816,7 +883,7 @@ $ArrayLine[7], #Blank
 ' Shows color for the output of the Script.       ',
 '0. Dont Show Color                               ',
 '1. Show Color                                    ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $ShowSkippedItems = @(
 '               Show Skipped Items                ',
@@ -824,7 +891,7 @@ $ArrayLine[7], #Blank
 ' Show output showing skipped items.              ',
 '0. Dont Show Skipped Items                       ',
 '1. Show Skipped Items                            ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $RestartItems = @(
 '                     Restart                     ',
@@ -832,7 +899,7 @@ $RestartItems = @(
 ' I recommend you restart computer.               ',
 '0. Dont Restart Computer                         ',
 '1. Restart Computer                              ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $Version_CheckItems = @(
 '            Check for Script Updates             ',
@@ -840,7 +907,7 @@ $Version_CheckItems = @(
 " run that file, unless you use '-set Run'        ",
 '0. Dont Check for Updates (on script start)      ',
 '1. Check for Updates (on script start)           ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 ##########
 # Script Options Sub Menu -End
@@ -922,17 +989,13 @@ $ArrayLine[7], #Blank
 ' ARISING FROM, OUT OF OR IN CONNECTION WITH THE  ',
 ' SOFTWARE OR THE USE OR OTHER DEALINGS IN THE    ',
 ' SOFTWARE.                                       ',
-"Press 'Enter' to go back                         ")
+"Press any key to go back to menu                 ")
 
 Function HUACMenu ([String]$VariJ) {
-    $HUACMenu = 'X'
     $VariA = Get-Variable $VariJ -valueOnly #Array
-    While($HUACMenu -ne "Out") {
-        Clear-Host
-        VariableDisplay $VariA
-        $HUACMenu = Read-Host "`nPress 'Enter' to continue"
-        Switch($HUACMenu) { default {$HUACMenu = "Out"} }
-    }
+    VariableDisplay $VariA
+    Write-Host ""
+    Read-Host -Prompt "Press any key to go back to menu"
     Return
 }
 
@@ -979,7 +1042,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $SmartScreenItems = @(
 '                   SmartScreen                   ',
@@ -988,7 +1051,7 @@ $SmartScreenItems = @(
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $LocationTrackingItems = @(
 '                Location Tracking                ',
@@ -997,7 +1060,7 @@ $LocationTrackingItems = @(
 $ArrayLine[0], #Skip
 $ArrayLine[1], #Enable
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $DiagTrackItems = @(
 '               Diagnostic Tracking               ',
@@ -1006,7 +1069,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $CortanaItems = @(
 '                     Cortana                     ',
@@ -1015,7 +1078,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $ErrorReportingItems = @(
 '                 Error Reporting                 ',
@@ -1024,7 +1087,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $WiFiSenseItems = @(
 '                   Wi-Fi Sense                   ',
@@ -1033,7 +1096,7 @@ $WiFiSenseItems = @(
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $AutoLoggerFileItems = @(
 '                Auto Logger File                 ',
@@ -1042,7 +1105,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $FeedbackItems = @(
 '                    Feedback                     ',
@@ -1051,7 +1114,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $AdvertisingIDItems = @(
 '                  Advertising ID                 ',
@@ -1060,7 +1123,7 @@ $AdvertisingIDItems = @(
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $CortanaSearchItems = @(
 '                  Cortana Search                 ',
@@ -1069,7 +1132,7 @@ $CortanaSearchItems = @(
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $WAPPushItems = @(
 '                    WAP Push                     ',
@@ -1078,7 +1141,7 @@ $WAPPushItems = @(
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
   ##########
   # Privacy Menu -End
@@ -1112,7 +1175,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $WinUpdateDownloadItems = @(
 '             Windows Update Download             ',
@@ -1122,7 +1185,7 @@ $ArrayLine[0], #Skip
 '1. P2P* (Get update from other peers)            ',
 '2. Local Only (If another computer has update)   ',
 '3. Disable (Only get from Windows Offical Server)',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $UpdateDriverItems = @(
 '                  Update Driver                  ',
@@ -1131,7 +1194,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[1], #Enable
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $AppAutoDownloadItems = @(
 '                App Auto Download                ',
@@ -1140,7 +1203,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $WinUpdateTypeItems = @(
 '               Windows Update Type               ',
@@ -1151,7 +1214,7 @@ $ArrayLine[0], #Skip
 '2. Auto Download (Manual Install)                ',
 '3. Auto Download/Install*                        ',
 '4. Local Admin Choses                            ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $UpdateMSRTItems = @(
 '    Update of Malicious Software Removal Tool    ',
@@ -1160,7 +1223,7 @@ $UpdateMSRTItems = @(
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $RestartOnUpdateItems = @(
 '          Restart After Windows Update           ',
@@ -1169,7 +1232,7 @@ $RestartOnUpdateItems = @(
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
   ##########
   # Windows Update Menu -End
@@ -1205,7 +1268,7 @@ $ArrayLine[0], #Skip
 '1. Never Notify                                  ',
 '2. Normal*                                       ',
 '3. Always Notify                                 ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $AdminSharesItems = @(
 '                  Admin Shares                   ',
@@ -1214,7 +1277,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $WinDefenderItems = @(
 '                Windows Defender                 ',
@@ -1223,7 +1286,7 @@ $WinDefenderItems = @(
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $RemoteAssistanceItems = @(
 '                Remote Assistance                ',
@@ -1232,7 +1295,7 @@ $RemoteAssistanceItems = @(
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $SharingMappedDrivesItems = @(
 '              Sharing Mapped Drives              ',
@@ -1241,7 +1304,7 @@ $SharingMappedDrivesItems = @(
 $ArrayLine[0], #Skip
 $ArrayLine[1], #Enable
 $ArrayLine[4], #Disable*
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $FirewallItems = @(
 '                    Firewall                     ',
@@ -1250,7 +1313,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $HomeGroupsItems = @(
 '                   Home Groups                   ',
@@ -1260,7 +1323,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $RemoteDesktopItems = @(
 '                 Remote Desktop                  ',
@@ -1269,7 +1332,7 @@ $RemoteDesktopItems = @(
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
   ##########
   # Service Tweaks Menu -End
@@ -1303,7 +1366,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $IncludeinLibraryItems = @(
 '         Include in Library Context Menu         ',
@@ -1312,7 +1375,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $ShareWithItems = @(
 '             Share With Context Menu             ',
@@ -1321,7 +1384,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $PreviousVersionsItems = @(
 '          Previous Versions Context Menu         ',
@@ -1330,7 +1393,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $PinToStartItems = @(
 '            Pin To Start Context Menu            ',
@@ -1339,7 +1402,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $PinToQuickAccessItems = @(
 '        Pin To Quick Access Context Menu         ',
@@ -1348,7 +1411,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $SendToItems = @(
 '               Send To Context Menu              ',
@@ -1357,7 +1420,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
   ##########
   # Context Menu -End
@@ -1388,7 +1451,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $StartSuggestionsItems = @(
 '                 App Suggestions                 ',
@@ -1397,7 +1460,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $UnpinItemsItems = @(
 '                Unpin Tile Items                 ',
@@ -1405,7 +1468,7 @@ $UnpinItemsItems = @(
 ' Edge, Weather, Twitter, Skype, and a few others.',
 $ArrayLine[0], #Skip
 '1. Unpin                                         ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $MostUsedAppStartMenuItems = @(
 '                  Most Used App                  ',
@@ -1414,7 +1477,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $RecentItemsFrequentItems = @(
 "         Recent & Frequent in Start Menu         ",
@@ -1423,7 +1486,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
   ##########
   # Start Menu -End
@@ -1464,7 +1527,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 '1. New Flyout*                                   ',
 '2. Classic Flyout (like the on Win 7 uses)       ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $VolumeControlBarItems = @(
 '       Volume Control UI Flyout on Taskbar       ',
@@ -1473,7 +1536,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 '1. New Flyout (Horizontal)*                      ',
 '2. Classic Flyout (Vertical)                     ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $TaskViewButtonItems = @(
 '           Task View Button on Taskbar           ',
@@ -1482,7 +1545,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[10], #Show*
 $ArrayLine[9], #Hide
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $TaskbarGroupingItems = @(
 '           Grouping of Icons on Taskbar          ',
@@ -1492,7 +1555,7 @@ $ArrayLine[0], #Skip
 '1. Never Group                                   ',
 '2. Always Group*                                 ',
 '3. When Needed                                   ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $SecondsInClockItems = @(
 '           Seconds in Clock on Taskbar           ',
@@ -1501,7 +1564,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 '1. Show Seconds                                  ',
 '2. Hide Seconds*                                 ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $TaskBarOnMultiDisplayItems = @(
 '           Taskbar on Multiple Display           ',
@@ -1510,7 +1573,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 '1. Show on all Display*                          ',
 '2. Hide on other Display                         ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $ClockUIBarItems = @(
 '           Clock UI Flyout on Taskbar            ',
@@ -1519,7 +1582,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 '1. New Flyout*                                   ',
 '2. Classic Flyout (like the on Win 7 uses)       ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $TaskbarSearchBoxItems = @(
 '              Search box on Taskbar              ',
@@ -1528,7 +1591,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[10], #Show*
 $ArrayLine[9], #Hide
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $TaskbarIconSizeItems = @(
 '                Taskbar Icon Size                ',
@@ -1537,7 +1600,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 '1. Normal*                                       ',
 '2. Smaller                                       ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $TrayIconItems = @(
 '                Notifcation Icons                ',
@@ -1546,7 +1609,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 '1. Auto Hide*                                    ',
 '2. Always Show                                   ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $LastActiveClickItems = @(
 '                Last Active Click                ',
@@ -1555,7 +1618,7 @@ $LastActiveClickItems = @(
 $ArrayLine[0], #Skip
 $ArrayLine[1], #Enable
 $ArrayLine[4], #Disable*
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $TaskbarButtOnDisplayItems = @(
 '             Taskbar Button Display              ',
@@ -1565,7 +1628,7 @@ $ArrayLine[0], #Skip
 '1. All Taskbars                                  ',
 '2. Where Window is Open                          ',
 '3. Main + Where Window is Open                   ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
   ##########
   # Taskbar Menu -End
@@ -1611,7 +1674,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[10], #Show*
 $ArrayLine[9], #Hide
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $RecentFileQikAccItems = @(
 '          Recent Items in Quick Access           ',
@@ -1621,7 +1684,7 @@ $ArrayLine[0], #Skip
 $ArrayLine[10], #Show*
 $ArrayLine[9], #Hide
 '3. Remove                                        ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $SystemFilesItems = @(
 '                  System Files                   ',
@@ -1630,7 +1693,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 '1. Show System Files/Folders                     ',
 '2. Hide System Files/Folders*                    ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $HiddenFilesItems = @(
 '                  Hidden Files                   ',
@@ -1639,7 +1702,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 '1. Show Hidden Files/Folders                     ',
 '2. Hide Hidden Files/Folders*                    ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $AeroSnapItems = @(
 '                    Aero Snap                    ',
@@ -1648,7 +1711,7 @@ $AeroSnapItems = @(
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $AeroShakeItems = @(
 '                   Aero Shake                    ',
@@ -1657,16 +1720,16 @@ $AeroShakeItems = @(
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $WinContentWhileDragItems = @(
 '          Windows Content While Dragging         ',
 $ArrayLine[7], #Blank
 $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
-$ArrayLine[1], #Enable
-$ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[8], #Show
+$ArrayLine[11], #Hide*
+$ArrayLine[5]) #Back
 
 $ExplorerOpenLocItems = @(
 '             Explorer Open Location              ',
@@ -1675,7 +1738,7 @@ $ExplorerOpenLocItems = @(
 $ArrayLine[0], #Skip
 '1. Quick Access*                                 ',
 "2. 'This PC'                                     ",
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $KnownExtensionsItems = @(
 '              Known File Extensions              ',
@@ -1684,7 +1747,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[8], #Show
 $ArrayLine[11], #Hide*
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $AutorunItems = @(
 '                     Autorun                     ',
@@ -1693,7 +1756,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[1], #Enable
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $AutoplayItems = @(
 '                     Autoplay                    ',
@@ -1702,7 +1765,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[1], #Enable
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $PidInTitleBarItems = @(
 '                 PID In Title Bar                ',
@@ -1711,7 +1774,7 @@ $PidInTitleBarItems = @(
 $ArrayLine[0], #Skip
 $ArrayLine[1], #Enable
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $StoreOpenWithItems = @(
 '   Search Windows Store for Unknown Extensions   ',
@@ -1720,7 +1783,7 @@ $StoreOpenWithItems = @(
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $WinXPowerShellItems = @(
 '       Win+X PowerShell -> Command Prompt        ',
@@ -1729,7 +1792,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 '1. Powershell on Win+X instead of Command Prompt ',
 '2. Command Prompt on Win+X instead of Powershell ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $TaskManagerDetailsItems = @(
 "               Task Manager Detail               ",
@@ -1738,7 +1801,7 @@ $TaskManagerDetailsItems = @(
 $ArrayLine[0], #Skip
 $ArrayLine[8], #Show
 $ArrayLine[11], #Hide*
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
   ##########
   # Explorer Menu -End
@@ -1779,7 +1842,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[8], #Show
 $ArrayLine[11], #Hide*
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $DocumentsIconInThisPCItems = @(
 "           Documents Icon in 'This PC'           ",
@@ -1788,7 +1851,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[8], #Show
 $ArrayLine[11], #Hide*
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $MusicIconInThisPCItems = @(
 "             Music Icon in 'This PC'             ",
@@ -1797,7 +1860,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[8], #Show
 $ArrayLine[11], #Hide*
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $VideosIconInThisPCItems = @(
 "             Video Icon in 'This PC'             ",
@@ -1806,7 +1869,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[8], #Show
 $ArrayLine[11], #Hide*
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $DownloadsIconInThisPCItems = @(
 "           Download Icon in 'This PC'            ",
@@ -1815,7 +1878,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[8], #Show
 $ArrayLine[11], #Hide*
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $PicturesIconInThisPCItems = @(
 "            Picture Icon in 'This PC'            ",
@@ -1824,7 +1887,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[8], #Show
 $ArrayLine[11], #Hide*
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $ThisPCOnDesktopItems = @(
 "               'This PC' On Desktop              ",
@@ -1833,7 +1896,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[8], #Show
 $ArrayLine[11], #Hide*
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $NetworkOnDesktopItems = @(
 "                Network On Desktop               ",
@@ -1842,7 +1905,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[8], #Show
 $ArrayLine[11], #Hide*
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $RecycleBinOnDesktopItems = @(
 "                RecyclBin On Desktop             ",
@@ -1851,7 +1914,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[10], #Show*
 $ArrayLine[9], #Hide
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $UsersFileOnDesktopItems = @(
 "              User's File On Desktop             ",
@@ -1860,7 +1923,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[8], #Show
 $ArrayLine[11], #Hide*
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $ControlPanelOnDesktopItems = @(
 "             Control Panel On Desktop            ",
@@ -1869,7 +1932,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[8], #Show
 $ArrayLine[11], #Hide*
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
   ##########
   # 'This PC' Menu -End
@@ -1897,7 +1960,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $PowerMenuLockScreenItems = @(
 '             Power Menu on Lock Screen           ',
@@ -1906,7 +1969,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $CameraOnLockScreenItems = @(
 '               Camera on Lock Screen             ',
@@ -1915,7 +1978,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
   ##########
   # Lock Screen Menu -End
@@ -1955,7 +2018,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $StickyKeyPromptItems = @(
 '                Sticky Key Prompt                ',
@@ -1964,7 +2027,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $NumblockOnStartItems = @(
 '               Numblock on Startup               ',
@@ -1973,7 +2036,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[1], #Enable
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $F8BootMenuItems = @(
 '                  F8 Boot Menu                   ',
@@ -1982,7 +2045,7 @@ $F8BootMenuItems = @(
 $ArrayLine[0], #Skip
 '1. Legacy                                        ',
 '2. Standard*                                     ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $RemoteUACAcctTokenItems = @(
 '            Remote UAC Acctount Token            ',
@@ -1991,7 +2054,7 @@ $RemoteUACAcctTokenItems = @(
 $ArrayLine[0], #Skip
 $ArrayLine[1], #Enable
 $ArrayLine[4], #Disable*
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $HibernatePowerItems = @(
 '             Hibernate Power Options             ',
@@ -2000,7 +2063,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[1], #Enable
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $SleepPowerItems = @(
 '               Sleep Power Options               ',
@@ -2009,7 +2072,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $PVFileAssociationItems = @(
 '          Photo Viewer File Association          ',
@@ -2018,7 +2081,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[1], #Enable
 $ArrayLine[4], #Disable*
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $PVOpenWithMenuItems = @(
 '          Photo Viewer Open With Entry           ',
@@ -2027,7 +2090,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[1], #Enable
 $ArrayLine[4], #Disable*
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
   ##########
   # Misc/Photo Viewer Menu -End
@@ -2059,7 +2122,7 @@ $OneDriveItems = @(
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $OneDriveInstallItems = @(
 '                One Drive Install                ',
@@ -2068,7 +2131,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 '1. Install*                                      ',
 '2. Uninstall                                     ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $XboxDVRItems = @(
 '                  Xbox One DVR                   ',
@@ -2077,7 +2140,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 $ArrayLine[3], #Enable*
 $ArrayLine[2], #Disable
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $MediaPlayerItems = @(
 '              Windows Media Player               ',
@@ -2086,7 +2149,7 @@ $ArrayLine[7], #Blank
 $ArrayLine[0], #Skip
 '1. Install*                                      ',
 '2. Uninstall                                     ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $WorkFoldersItems = @(
 '                  Work Folders                   ',
@@ -2095,7 +2158,7 @@ $WorkFoldersItems = @(
 $ArrayLine[0], #Skip
 '1. Install*                                      ',
 '2. Uninstall                                     ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
 $LinuxSubsystemItems = @(
 '                 Linux Subsystem                 ',
@@ -2104,7 +2167,7 @@ $LinuxSubsystemItems = @(
 $ArrayLine[0], #Skip
 '1. Install                                       ',
 '2. Uninstall*                                    ',
-$ArrayLine[5]) #Back/Cancel
+$ArrayLine[5]) #Back
 
   ##########
   # Features Menu -End
@@ -2158,7 +2221,7 @@ Function MetroMenu ([Array]$VariDisplay, [Array]$MetroMenuItm) {
     $MetroMenu = 'X'
     While($MetroMenu -ne "Out") {
         MenuDisplay $VariDisplay
-        If($Invalid -eq 1) { $Invalid = InvalidSelection }
+        $Invalid = ShowInvalid $Invalid
         $MetroMenu = Read-Host "`nSelection"
         $ConInt = $MetroMenu -as [int]
         If($ConInt -is [int] -and $MetroMenu -ne $null) {
@@ -2200,9 +2263,8 @@ Function ChoicesMenuMetro ([String]$Vari, [Int]$MultiV) {
     $VariA = Get-Variable $VariJ -valueOnly #Array
     $ChoicesMenuMetro = 'X'
     While($ChoicesMenuMetro -ne "Out") {
-        Clear-Host
         ChoicesDisplayMetro $VariA $VariV
-        If($Invalid -eq 1) { $Invalid = InvalidSelection }
+        $Invalid = ShowInvalid $Invalid
         $ChoicesMenuMetro = Read-Host "`nChoice"
         switch -regex ($ChoicesMenuMetro) {
             [0-3] {$ReturnV = $ChoicesMenuMetro; $ChoicesMenuMetro = "Out"}
@@ -2222,6 +2284,7 @@ Function ChoicesMenuMetro ([String]$Vari, [Int]$MultiV) {
 }
 
 Function ChoicesDisplayMetro ([Array]$ChToDisplayMetro, [Int]$ChToDisplayValMetro) {
+    Clear-Host
     TitleBottom $ChToDisplayMetro[0] 11
     MenuBlankLine
     LeftLine ;DisplayOutMenu $ChToDisplayMetro[1] 2 0 0 ;RightLine
@@ -2587,6 +2650,7 @@ Function LoadWinDefault {
 ##########
 
 Function RunScript {
+    Clear-Host
     DisplayOut "" 14 0
     DisplayOut "------------------" 14 0
     DisplayOut "-   Pre-Script   -" 14 0
@@ -2814,6 +2878,7 @@ Function RunScript {
     DisplayOut "" 14 0
 
     # Check for Windows Update
+    If(!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate")) { New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Force | Out-Null }
     If($CheckForWinUpdate -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Check for Windows Update..." 15 0
     } ElseIf($CheckForWinUpdate -eq 1) {
@@ -2993,7 +3058,7 @@ Function RunScript {
     } ElseIf($CastToDevice -eq 2) {
         DisplayOut "Disabling Cast to Device Context item..." 12 0
         If(!(Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked")) { New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked" | Out-Null }
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked" -Name "{7AD84985-87B4-4a16-BE58-8B72A5B390F7}"
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked" -Name "{7AD84985-87B4-4a16-BE58-8B72A5B390F7}" -Type String -Value ""
     }
 
     # Previous Versions Context Menu
@@ -3462,7 +3527,7 @@ Function RunScript {
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "NoUseStoreOpenWith"
     } ElseIf($StoreOpenWith -eq 2) {
         DisplayOut "Disabling Search Windows Store for Unknown Extensions..." 12 0
-        If(!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer")) { New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" }
+        If(!(Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer")) { New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" | Out-Null }
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "NoUseStoreOpenWith" -Type DWord -Value 1
     }
 
@@ -3482,24 +3547,24 @@ Function RunScript {
         DisplayOut "Skipping Task Manager Details..." 15 0
     } ElseIf($TaskManagerDetails -eq 1) {
         DisplayOut "Showing Task Manager Details..." 11 0
-        If (!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager")) { New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Force | Out-Null }
-        $preferences = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "Preferences" -ErrorAction SilentlyContinue
-        If (!($preferences)) {
+        If(!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager")) { New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Force | Out-Null }
+        $TaskManKey = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "Preferences"
+        If(!($TaskManKey)) {
             $taskmgr = Start-Process -WindowStyle Hidden -FilePath taskmgr.exe -PassThru
-            While (!($preferences)) {
+            While(!($TaskManKey)) {
                 Start-Sleep -m 250
-                $preferences = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "Preferences" -ErrorAction SilentlyContinue
+                $TaskManKey = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "Preferences"
             }
-            Stop-Process $taskmgr
+            Stop-Process $taskmgr | Out-Null
         }
-        $preferences.Preferences[28] = 0
-        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "Preferences" -Type Binary -Value $preferences.Preferences
+        $TaskManKey.Preferences[28] = 0
+        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "Preferences" -Type Binary -Value $TaskManKey.Preferences
     } ElseIf($TaskManagerDetails -eq 2) {
         DisplayOut "Hiding Task Manager Details..." 12 0
-        $preferences = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "Preferences" -ErrorAction SilentlyContinue
-        If ($preferences) {
-            $preferences.Preferences[28] = 1
-            Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "Preferences" -Type Binary -Value $preferences.Preferences
+        $TaskManKey = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "Preferences"
+        If($TaskManKey) {
+            $TaskManKey.Preferences[28] = 1
+            Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager" -Name "Preferences" -Type Binary -Value $TaskManKey.Preferences
         }
     }
 
@@ -3877,7 +3942,7 @@ Function RunScript {
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSyncProviderNotifications" -Type DWord -Value 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" -Name "DisableFileSyncNGSC" -Type DWord -Value 1
     }
-    
+
     # OneDrive Install
     If($OneDriveInstall -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping OneDrive Installing..." 15 0
@@ -3998,11 +4063,11 @@ Function RunScript {
     DisplayOut "" 14 0
 
     ForEach($AppI in $APPS_AppsInstall) {
-        DisplayOut $AppI 11 0
-        If($AppI -ne $null -or $AppI -ne "") {
-            Add-AppxPackage -DisableDevelopmentMode -Register "$($(Get-AppXPackage -AllUsers $AppI).InstallLocation)\AppXManifest.xml" | Out-null
-        } ElseIf($Release_Type -ne "Stable ") {
-            DisplayOut "Error, can't Install $AppI" 12 0
+        If($AppI -ne $null -and $AppI -ne "") {
+            DisplayOut $AppI 11 0
+            $Package = "C:\Program Files\WindowsApps\$AppI\AppxManifest.xml"
+            Add-AppxPackage -register $Package -DisableDevelopmentMode
+            #Add-AppxPackage -DisableDevelopmentMode -Register "$($(Get-AppXPackage -AllUsers $AppI).InstallLocation)\AppXManifest.xml" | Out-null
         }
     }
 
@@ -4013,7 +4078,7 @@ Function RunScript {
 
     ForEach($AppH in $APPS_AppsHide) {
         $ProvisionedPackage = Get-AppxProvisionedPackage -online | Where {$_.displayName -eq $AppH}
-        If($ProvisionedPackage -ne $null -or $AppH -ne "") {
+        If($ProvisionedPackage -ne $null -and $AppH -ne "") {
             DisplayOut $AppH 12 0
             Get-AppxPackage $AppH | Remove-AppxPackage | Out-null
         } ElseIf($Release_Type -ne "Stable ") {
@@ -4028,7 +4093,7 @@ Function RunScript {
 
     ForEach($AppU in $APPS_AppsUninstall) {
         $ProvisionedPackage = Get-AppxProvisionedPackage -online | Where {$_.displayName -eq $AppU}
-        If($ProvisionedPackage -ne $null -or $AppU -ne "") {
+        If($ProvisionedPackage -ne $null -and $AppU -ne "") {
             DisplayOut $AppU 14 0
             $PackageFullName = (Get-AppxPackage $AppU).PackageFullName
             $ProPackageFullName = (Get-AppxProvisionedPackage -online | where {$_.Displayname -eq $AppU}).PackageName
@@ -4042,9 +4107,9 @@ Function RunScript {
         }
     }
 
-    If($Unpin -eq 0 -and $ShowSkipped -eq 1) {
+    If($UnpinItems -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Unpinning Items..." 15 0
-    } ElseIf($Unpin -eq 1) {
+    } ElseIf($UnpinItems -eq 1) {
         DisplayOut "" 12 0
         DisplayOut "Unpinning Items..." 12 0
         DisplayOut "------------------" 12 0
@@ -4069,11 +4134,13 @@ Function RunScript {
         Restart-Computer
     } ElseIf($Release_Type -eq "Stable ") {
         Write-Host "Goodbye..."
+        If($Automated -eq 0) { Read-Host -Prompt "Press any key to exit" }
         Exit
-    } Else {
+    } ElseIf($Automated -eq 0) { 
         Read-Host -Prompt "Press any key to Go back to Menu"
-    }    
+    }
 }
+
 
 ##########
 # Script -End
@@ -4082,6 +4149,11 @@ Function RunScript {
 # Used to get all values BEFORE any defined so
 # when exporting shows ALL defined after this point
 $AutomaticVariables = Get-Variable -scope Script
+
+# DO NOT TOUCH THESE
+$Script:AppsInstall = ""
+$Script:AppsHide = ""
+$Script:AppsUninstall = ""
 
 # --------------------------------------------------------------------------
 
@@ -4104,10 +4176,7 @@ $Script:RestorePointName = "Win10 Initial Setup Script"
 
 #Skips Term of Use
 $Script:Term_of_Use = 1           #1-See ToS, Anything else = Accepts Term of Use
-
-#Update Check
-$Script:Version_Check = 0         #0-Dont Check for Update, 1-Check for Update (Will Auto Download and run newer version)
-#File will be named 'Win10-Menu-Ver.(Version HERE).ps1 (For non Test version)
+$Script:Automated = 0             #0-Pause at End/Error, Dont Pause at End/Error
 
 #Output Display
 $Script:Verbros = 1               #0-Dont Show output (Other than Errors), 1-Show output
@@ -4115,6 +4184,8 @@ $Script:ShowSkipped = 1           #0-Dont Show Skipped, 1-Show Skipped
 $Script:ShowColor = 1             #0-Dont Show output Color, 1-Show output Colors
 
 #Checks
+$Script:Version_Check = 0         #0-Dont Check for Update, 1-Check for Update (Will Auto Download and run newer version)
+                        #File will be named 'Win10-Menu-Ver.(Version HERE).ps1 (For non Test version)
 $Script:Internet_Check = 0        #0 = Checks if you have internet by doing a ping to github.com
                                   #1 = Bypass check if your pings are blocked
 
@@ -4193,6 +4264,7 @@ $Script:StartMenuWebSearch = 0    #0-Skip, 1-Enable*, 2-Disable
 $Script:StartSuggestions = 0      #0-Skip, 1-Enable*, 2-Disable --(The Suggested Apps in Start Menu)
 $Script:MostUsedAppStartMenu = 0  #0-Skip, 1-Show*, 2-Hide
 $Script:RecentItemsFrequent = 0   #0-Skip, 1-Enable*, 2-Disable --(In Start Menu)
+$Script:UnpinItems = 0            #0-Skip, 1-Unpin
 
 #Explorer Items
 # Function = Option               #Choices (* Indicates Windows Default)
@@ -4262,9 +4334,9 @@ $Script:LinuxSubsystem = 0        #0-Skip, 1-Installed, 2-Uninstall* (Anniversar
 # Custom List of App to Install, Hide or Uninstall
 # I dunno if you can Install random apps with this script
 # Cant Import these ATM
-[System.Collections.ArrayList]$APPS_AppsInstall = @()          # Apps to Install
-[System.Collections.ArrayList]$APPS_AppsHide = @()             # Apps to Hide
-[System.Collections.ArrayList]$APPS_AppsUninstall = @()        # Apps to Uninstall
+[System.Collections.ArrayList]$Script:APPS_AppsInstall = @()          # Apps to Install
+[System.Collections.ArrayList]$Script:APPS_AppsHide = @()             # Apps to Hide
+[System.Collections.ArrayList]$Script:APPS_AppsUninstall = @()        # Apps to Uninstall
 #$Script:APPS_Example = @('Somecompany.Appname1','TerribleCompany.Appname2','AppS.Appname3')
 # To get list of Packages Installed (in powershell)
 # DISM /Online /Get-ProvisionedAppxPackages | Select-string Packagename
