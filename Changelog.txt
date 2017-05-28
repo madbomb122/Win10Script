@@ -1,6 +1,8 @@
 -----------------------------------------------------------------------------------
 2.2-Menu (05-28-2017)
 
+OLD SETTING FILES WILL NOT WORK
+
 Changed/added different arguments/switches
    -run                       Runs script with setting in script
    -run Settingfile           Runs script with Settingfile
@@ -25,8 +27,6 @@ Fixed bug with unpin not being corrently set to unpin
 
 Changed format for setting save/load (smaller files and more readable)
 Ability to add custom apps to hide/uninstall in setting file
-
-NOTE: YOU WILL NEED TO MAKE A NEW SETTING FILE
 
 -----------------------------------------------------------------------------------
 2.1-Menu (05-13-2017)
