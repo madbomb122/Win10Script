@@ -11,7 +11,7 @@
 # Website: https://github.com/madbomb122/Win10Script/
 #
 $Script_Version = "2.2"
-$Script_Date = "05-24-17"
+$Script_Date = "05-28-17"
 #$Release_Type = "Stable "
 $Release_Type = "Testing"
 ##########
