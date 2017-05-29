@@ -47,8 +47,6 @@ Use one of the following Methods you can
 Examples: <br />
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1 -auto -run mine.csv` <br />
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1 -atos -load WinDefault` <br />
-`_Win10-Script.bat -run -crp` <br />
-`_Win10-Script.bat -run WinDefault -dnr` <br />
 
 ******
 ## FAQ
