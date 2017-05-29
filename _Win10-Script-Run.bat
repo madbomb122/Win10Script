@@ -36,9 +36,6 @@ Set Script=no
 Set Internet_Check=yes 
 :: Internet_Check only matters If Script is yes and pings to github.com is blocked 
 
-:: Diagnostic Output (Wont run script)
-Set Diagnostic=no
-
 ::----------------------------------------------------------------------
 :: Do not change unless you know what you are doing
 Set Script_Directory=%~dp0
@@ -61,8 +58,6 @@ If /i %Create_Restore_Point%==yes Set Run_Option=!Run_Option! -crp %Restore_Poin
 If /i %Internet_Check%==no Set Run_Option=!Run_Option! -sic
 
 If /i %Script%==yes Set Run_Option=!Run_Option! -usc
-
-If /i %Service%==yes Set Run_Option=!Run_Option! -use
 
 If /i %Restart_when_Done%==no Set Run_Option=!Run_Option! -dnr
 
