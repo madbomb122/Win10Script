@@ -4065,7 +4065,8 @@ Function RunScript {
     ForEach($AppI in $APPS_AppsInstall) {
         If($AppI -ne $null -and $AppI -ne "") {
             DisplayOut $AppI 11 0
-            $Package = "C:\Program Files\WindowsApps\$AppI\AppxManifest.xml"
+            $AppIfull = (Get-AppxProvisionedPackage -online | where {$_.Displayname -eq $AppI}).PackageName
+            $Package = "C:\Program Files\WindowsApps\$AppIfull\AppxManifest.xml"
             Add-AppxPackage -register $Package -DisableDevelopmentMode
             #Add-AppxPackage -DisableDevelopmentMode -Register "$($(Get-AppXPackage -AllUsers $AppI).InstallLocation)\AppXManifest.xml" | Out-null
         }
