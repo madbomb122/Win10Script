@@ -51,7 +51,7 @@ Examples: <br />
 ******
 ## FAQ
 **Q:** Do you accept any donations? <br />
-**A:** If you would like to donate to me I accept amazon giftcards (email it to me).
+**A:** If you would like to donate to me Please Contact me about donating.
 
 **Q:** How can I contact you? <br />
 **A:** You can email me @ madbomb122@gmail.com
