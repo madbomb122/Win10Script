@@ -51,7 +51,8 @@ Examples: <br />
 ******
 ## FAQ
 **Q:** Do you accept any donations? <br />
-**A:** If you would like to donate to me Please Contact me about donating.
+**A:** If you would like to donate to me Please Contact me about donating or pick an item from my amazon wishlist. <br />
+**Wishlist:** https://www.amazon.com/gp/registry/wishlist/YBAYWBJES5DE/
 
 **Q:** How can I contact you? <br />
 **A:** You can email me @ madbomb122@gmail.com
