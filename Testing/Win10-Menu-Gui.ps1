@@ -11,6 +11,7 @@
 # Website: https://github.com/madbomb122/Win10Script/
 #
 $Script_Version = "3.0"
+$Minor_Version = "0"
 $Script_Date = "07-25-17"
 #$Release_Type = "Stable "
 $Release_Type = "Testing"
@@ -116,8 +117,6 @@ $URL_Base = "https://raw.githubusercontent.com/madbomb122/Win10Script/master/"
 # Needed Variable -Start
 ##########
 
-$VersionDisplay = "$Script_Version" + " (" + $Script_Date + ")"
-
 [Array]$Script:APPS_AppsInstall = @()
 [Array]$Script:APPS_AppsHide = @()
 [Array]$Script:APPS_AppsUninstall = @()
@@ -220,18 +219,26 @@ Function UpdateCheck ([Int]$Bypass) {
             $DFilename = "Win10-Menu-Ver."
             If($Release_Type -ne "Stable") {
                 $WebScriptVer = $($CSV_Ver[0].Version)
+                $WebScriptMinorVer = $($CSV_Ver[0].MinorVersion)
                 $DFilename += $WebScriptVer + "-Testing"
                 $Script_Url = $URL_Base + "Testing/"
             } Else {
                 $WebScriptVer = $($CSV_Ver[1].Version)
+                $WebScriptMinorVer = $($CSV_Ver[1].MinorVersion)
                 $DFilename += $WebScriptVer
             }
             $DFilename += ".ps1"
             $Script_Url = $URL_Base + "Win10-Menu.ps1"
-
             $WebScriptFilePath = $filebase + $DFilename
-            $SV=[Int]$Script_Version
-            If($WebScriptVer -gt $SV) {
+
+            If($WebScriptVer -gt $Script_Version) {
+                 $Script_Update = $true
+            } ElseIf($WebScriptVer -eq $Script_Version -and $WebScriptMinorVer -gt $Minor_Version) {
+                $Script_Update = $true
+            } Else {
+                $Script_Update = $false
+            }
+            If($Script_Update) {
                 Clear-Host
                 MenuLine
                 LeftLine ;DisplayOutMenu "                  Update Found!                  " 13 0 0 ;RightLine
