@@ -1,5 +1,5 @@
 # Currently Testing
-Nothing ATM
+GUI (Win10-Menu-Gui.ps1).. The metro app is the only thing not in the GUI yet, The script itself should work fine
 
 # About Testing Version
 If I am not working on a change or addition to the script, this will be the same exact copy as the non test.<br />
