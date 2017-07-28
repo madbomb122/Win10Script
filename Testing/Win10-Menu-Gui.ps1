@@ -12,7 +12,7 @@
 #
 $Script_Version = "3.0"
 $Minor_Version = "0"
-$Script_Date = "07-26-17"
+$Script_Date = "07-28-17"
 #$Release_Type = "Stable "
 $Release_Type = "Testing"
 ##########
@@ -208,62 +208,58 @@ Function RightLine { DisplayOutMenu " |" 14 0 1 }
 # Update Check -Start
 ##########
 
-Function UpdateCheck ([Int]$Bypass) {
+Function UpdateCheck {
     If(InternetCheck) {
-        If($VersionCheck -eq 1 -or $Bypass -eq 1) {
-            $VersionFile = $TempFolder + "\Temp.csv"
-            $VersionURL = "https://raw.githubusercontent.com/madbomb122/Win10Script/master/Version/Version.csv"
-            (New-Object System.Net.WebClient).DownloadFile($VersionURL, $VersionFile)
-            $CSV_Ver = Import-Csv $VersionFile
-
-            $DFilename = "Win10-Menu-Ver."
-            If($Release_Type -ne "Stable") {
-                $WebScriptVer = $($CSV_Ver[0].Version)
-                $WebScriptMinorVer = $($CSV_Ver[0].MinorVersion)
-                $DFilename += $WebScriptVer + "-Testing"
-                $Script_Url = $URL_Base + "Testing/"
-            } Else {
-                $WebScriptVer = $($CSV_Ver[1].Version)
-                $WebScriptMinorVer = $($CSV_Ver[1].MinorVersion)
-                $DFilename += $WebScriptVer
-            }
-            $DFilename += ".ps1"
-            $Script_Url = $URL_Base + "Win10-Menu.ps1"
-            $WebScriptFilePath = $filebase + $DFilename
-
-            If($WebScriptVer -gt $Script_Version) {
-                 $Script_Update = $true
-            } ElseIf($WebScriptVer -eq $Script_Version -and $WebScriptMinorVer -gt $Minor_Version) {
-                $Script_Update = $true
-            } Else {
-                $Script_Update = $false
-            }
-            If($Script_Update) {
-                Clear-Host
-                MenuLine
-                LeftLine ;DisplayOutMenu "                  Update Found!                  " 13 0 0 ;RightLine
-                MenuLine
-                MenuBlankLine
-                LeftLine ;DisplayOutMenu "Downloading version " 15 0 0 ;DisplayOutMenu ("$WebScriptVer" +(" "*(29-$WebScriptVer.length))) 11 0 0 ;RightLine
-                LeftLine ;DisplayOutMenu "Will run " 15 0 0 ;DisplayOutMenu ("$DFilename" +(" "*(40-$DFilename.length))) 11 0 0 ;RightLine
-                LeftLine ;DisplayOutMenu "after download is complete.                       " 2 0 0 ;RightLine
-                MenuBlankLine
-                MenuLine
-                (New-Object System.Net.WebClient).DownloadFile($url, $WebScriptFilePath)
-                DownloadScriptFile $WebScriptFilePath
-                $TempSetting = $TempFolder + "\TempSet.csv"
-                SaveSettingFiles $TempSetting 0
-                $UpArg = ""
-                If($Accept_ToS -ne 1) { $UpArg = $UpArg + "-atos" }
-                If($InternetCheck -eq 1) { $UpArg = $UpArg + "-sic" }
-                If($CreateRestorePoint -eq 1) { $UpArg = $UpArg + "-crp" }
-                If($Restart -eq 0) { $UpArg = $UpArg + "-dnr" }
-                If($RunScr -eq $true) { $UpArg = $UpArg + "-run $TempSetting" } Else { $UpArg = $UpArg + "-load $TempSetting" }
-                Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$WebScriptFilePath`" $UpArg" -Verb RunAs
-                Exit
-            }
+        $VersionFile = $TempFolder + "\Temp.csv"
+        $VersionURL = "https://raw.githubusercontent.com/madbomb122/Win10Script/master/Version/Version.csv"
+        (New-Object System.Net.WebClient).DownloadFile($VersionURL, $VersionFile)
+        $CSV_Ver = Import-Csv $VersionFile
+         $DFilename = "Win10-Menu-Ver."
+        If($Release_Type -ne "Stable") {
+            $WebScriptVer = $($CSV_Ver[0].Version)
+            $WebScriptMinorVer = $($CSV_Ver[0].MinorVersion)
+            $DFilename += $WebScriptVer + "-Testing"
+            $Script_Url = $URL_Base + "Testing/"
+        } Else {
+            $WebScriptVer = $($CSV_Ver[1].Version)
+            $WebScriptMinorVer = $($CSV_Ver[1].MinorVersion)
+            $DFilename += $WebScriptVer
         }
-    } ElseIf($Bypass -eq 1) {
+        $DFilename += ".ps1"
+        $Script_Url = $URL_Base + "Win10-Menu.ps1"
+        $WebScriptFilePath = $filebase + $DFilename
+         If($WebScriptVer -gt $Script_Version) {
+             $Script_Update = $true
+        } ElseIf($WebScriptVer -eq $Script_Version -and $WebScriptMinorVer -gt $Minor_Version) {
+            $Script_Update = $true
+        } Else {
+            $Script_Update = $false
+        }
+        If($Script_Update) {
+            Clear-Host
+            MenuLine
+            LeftLine ;DisplayOutMenu "                  Update Found!                  " 13 0 0 ;RightLine
+            MenuLine
+            MenuBlankLine
+            LeftLine ;DisplayOutMenu "Downloading version " 15 0 0 ;DisplayOutMenu ("$WebScriptVer" +(" "*(29-$WebScriptVer.length))) 11 0 0 ;RightLine
+            LeftLine ;DisplayOutMenu "Will run " 15 0 0 ;DisplayOutMenu ("$DFilename" +(" "*(40-$DFilename.length))) 11 0 0 ;RightLine
+            LeftLine ;DisplayOutMenu "after download is complete.                       " 2 0 0 ;RightLine
+            MenuBlankLine
+            MenuLine
+            (New-Object System.Net.WebClient).DownloadFile($url, $WebScriptFilePath)
+            DownloadScriptFile $WebScriptFilePath
+            $TempSetting = $TempFolder + "\TempSet.csv"
+            SaveSettingFiles $TempSetting 0
+            $UpArg = ""
+            If($Accept_ToS -ne 1) { $UpArg = $UpArg + "-atos" }
+            If($InternetCheck -eq 1) { $UpArg = $UpArg + "-sic" }
+            If($CreateRestorePoint -eq 1) { $UpArg = $UpArg + "-crp" }
+            If($Restart -eq 0) { $UpArg = $UpArg + "-dnr" }
+            If($RunScr -eq $true) { $UpArg = $UpArg + "-run $TempSetting" } Else { $UpArg = $UpArg + "-load $TempSetting" }
+            Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$WebScriptFilePath`" $UpArg" -Verb RunAs
+            Exit
+        }
+    } Else {
         Clear-Host
         MenuLine
         LeftLine ;DisplayOutMenu "                      Error                      " 13 0 0 ;RightLine
@@ -278,10 +274,7 @@ Function UpdateCheck ([Int]$Bypass) {
     }
 }
 
-Function InternetCheck {
-    If($InternetCheck -eq 1) { Return $true } ElseIf(!(Test-Connection -computer github.com -count 1 -quiet)) { Return $false }
-    Return $true
-}
+Function InternetCheck { If($InternetCheck -eq 1) { Return $true } ElseIf(!(Test-Connection -computer github.com -count 1 -quiet)) { Return $false } Return $true }
 
 ##########
 # Update Check -End
@@ -361,8 +354,7 @@ Function TOS {
             { $_ -eq "y" -or $_ -eq "yes" } { $AcceptToS = "Accepted-Script" ;$TOS = "Out"; If($RunScr -eq $true) { PreStartScript } Else { Gui-Start } ;Break }
             default {$Invalid = 1}
         }
-    }
-    Return
+    } Return
 }
 
 # Used to Help remove the Automatic variables
@@ -385,10 +377,7 @@ Function DisplayOut ([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor) {
 
 Function Openwebsite ([String]$Url) { [System.Diagnostics.Process]::Start($Url) }
 
-Function ShowInvalid ([Int]$InvalidA) {
-    If($InvalidA -eq 1) { Write-Host "`nInvalid Input" -ForegroundColor Red -BackgroundColor Black -NoNewline }
-    Return 0
-}
+Function ShowInvalid ([Int]$InvalidA) { If($InvalidA -eq 1) { Write-Host "`nInvalid Input" -ForegroundColor Red -BackgroundColor Black -NoNewline } Return 0 }
 
 Function LoadSettingFile([String]$Filename) {
     Import-Csv $Filename -Delimiter ";" | %{Set-Variable $_.Name $_.Value -Scope Script}
@@ -424,14 +413,14 @@ Function Update-Window {
 
 Function SetCombo ([String]$Name, [String]$Item) {
     $Items = $Item.split(',')
-    [void] [void] $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).Items.Add("Skip")
+    [void] $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).Items.Add("Skip")
     ForEach($CmbItm in $Items) { [void] $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).Items.Add($CmbItm) }
     $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).SelectedIndex = $(Get-Variable -Name $Name -ValueOnly)
 }
 
 Function SetComboM ([String]$Name, [String]$Item) {
     $Items = $Item.split(',')
-    [void] [void] $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).Items.Add("Skip")
+    [void] $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).Items.Add("Skip")
     ForEach($CmbItm in $Items) { [void] $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).Items.Add($CmbItm) }
     If($Name -eq "AllMetro") {
         $WPF_AllMetro_Combo.SelectedIndex = 0
@@ -467,21 +456,36 @@ Function ConfigGUIitms {
     RestorePointCBCheck
 }
 
-Function SelectComboBox { ForEach($Var in $VarList) { $(Get-Variable -Name $Var -ValueOnly).SelectedIndex = $(Get-Variable -Name ($Var.split('_')[1]) -ValueOnly) } }
-
-Function SelectComboBoxM ([Int]$Numb) { ForEach($Var in $ListApp) { $(Get-Variable -Name $Var -ValueOnly).SelectedIndex = $Numb } }
+Function SelectComboBox { ForEach($Var in $VarList) { $(Get-Variable -Name ("WPF_"+$Var+"_Combo") -ValueOnly).SelectedIndex = $(Get-Variable -Name $Var -ValueOnly) } }
+Function SelectComboBoxM ([Int]$Numb) { ForEach($Var in $ListApp) { $(Get-Variable -Name ("WPF_"+$Var+"_Combo") -ValueOnly).SelectedIndex = $Numb } }
 
 Function AppAraySet([String]$Get) {
-    $ListTMP = Get-Variable -Name $Get
+    [System.Collections.ArrayList]$ListTMP = Get-Variable -Name $Get
     [System.Collections.ArrayList]$List = @()
-    ForEach($Var in $ListTMP) { $List += $Var.Name }
-    $List.Remove("APP_SkypeApp1")
-    $List.Remove("APP_SkypeApp2")
-    $List.Remove("APP_WindowsFeedbak1")
-    $List.Remove("APP_WindowsFeedbak2")
-    $List.Remove("APP_ZuneMusic")
-    $List.Remove("APP_ZuneVideo")
-    Return $List
+    If($Get -eq "WPF_*_Combo"){
+        ForEach($Var in $ListTMP) { If(!($Var.Name -like "WPF_APP_*")) { $List += $Var.Name.split('_')[1] } }
+        $List.Remove("AllMetro")
+    } Else {
+        ForEach($Var in $ListTMP) { $List += $Var.Name }
+        $List.Remove("APP_SkypeApp1")
+        $List.Remove("APP_SkypeApp2")
+        $List.Remove("APP_WindowsFeedbak1")
+        $List.Remove("APP_WindowsFeedbak2")
+        $List.Remove("APP_ZuneMusic")
+        $List.Remove("APP_ZuneVideo")
+        $List.Add("APP_SkypeApp") | Out-Null
+        $List.Add("APP_WindowsFeedbak") | Out-Null
+        $List.Add("APP_Zune") | Out-Null
+    } Return $List
+}
+
+Function OpenSaveDiaglog([Int]$SorO){
+    If($SorO -eq 0) { $SOFileDialog = New-Object System.Windows.Forms.OpenFileDialog ;write-host "Open"} Else { $SOFileDialog = New-Object System.Windows.Forms.SaveFileDialog ;write-host "Save"}
+    $SOFileDialog.initialDirectory = $filebase
+    $SOFileDialog.filter = "CSV (*.csv)| *.csv"
+    $SOFileDialog.ShowDialog() | Out-Null
+    $File = $SOFileDialog.filename
+    If($SorO -eq 0) { LoadSettingFile $File;ConfigGUIitms ;SelectComboBox } Else { SaveSettingFiles $File }
 }
 
 Function Gui-Start {
@@ -808,14 +812,10 @@ $inputXML = @"
     $reader=(New-Object System.Xml.XmlNodeReader $xaml)
     $Form=[Windows.Markup.XamlReader]::Load( $reader )
     $xaml.SelectNodes("//*[@Name]") | %{Set-Variable -Name "WPF_$($_.Name)" -Value $Form.FindName($_.Name) -scope Script}
-
     $WPFList = Get-Variable -Name ("WPF_*")
 
     [System.Collections.ArrayList]$VarList = AppAraySet "WPF_*_Combo"
     [System.Collections.ArrayList]$ListApp = AppAraySet "APP_*"
-    $ListApp.Add("APP_SkypeApp") | Out-Null
-    $ListApp.Add("APP_WindowsFeedbak") | Out-Null
-    $ListApp.Add("APP_Zune") | Out-Null
     
     $Runspace = [runspacefactory]::CreateRunspace()
     $PowerShell = [PowerShell]::Create()
@@ -829,23 +829,10 @@ $inputXML = @"
     $WPF_Madbomb122WSButton.Add_Click({ OpenWebsite "https://github.com/madbomb122/" })
     $WPF_WinDefault_Button.Add_Click({ LoadWinDefault ;SelectComboBox })
     #$WPF_EMail.Add_Click({ OpenWebsite "mailto:madbomb122@gmail.com" })
-    $WPF_Load_Setting_Button.Add_Click({ 
-        $OpenFileDialog = New-Object System.Windows.Forms.OpenFileDialog
-        $OpenFileDialog.initialDirectory = $filebase
-        $OpenFileDialog.filter = "CSV (*.csv)| *.csv"
-        $OpenFileDialog.ShowDialog() | Out-Null
-        $File = $OpenFileDialog.filename
-        LoadSettingFile $File;ConfigGUIitms ;SelectComboBox
-    })
-    $WPF_Save_Setting_Button.Add_Click({
-        $SaveFileDialog = New-Object System.Windows.Forms.SaveFileDialog
-        $SaveFileDialog.initialDirectory = $filebase
-        $SaveFileDialog.filter = "CSV (*.csv)| *.csv"
-        $SaveFileDialog.ShowDialog() | Out-Null
-        $File = $SaveFileDialog.filename
-        SaveSettingFiles $File
-    })
-    $WPF_AllMetro_Combo.add_SelectionChanged({ SelectComboBoxM ($WPF_AllMetro_Combo.SelectedIndex+1) })
+    $WPF_Load_Setting_Button.Add_Click({ OpenSaveDiaglog 0 })
+    $WPF_Save_Setting_Button.Add_Click({ OpenSaveDiaglog 1 })
+    $WPF_AllMetro_Combo.add_SelectionChanged({ SelectComboBoxM ($WPF_AllMetro_Combo.SelectedIndex) })
+    $WPF_CopyrightButton.Add_Click({ [Windows.Forms.MessageBox]::Show($CopyrightItems,"Copyright", 'OK') })
 
     $CopyrightItems = 'Copyright (c) 1999-2017 Charles "Black Viper" Sparks - Services Configuration
 
@@ -858,8 +845,6 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.'
-
-    $WPF_CopyrightButton.Add_Click({ [Windows.Forms.MessageBox]::Show($CopyrightItems,"Copyright", 'OK') })
 
 $Skip_EnableD_Disable = @(
 "Telemetry",
@@ -985,7 +970,13 @@ $Skip_InstalledD_Uninstall = @(
 }
 
 Function Gui-Done {
-    ForEach($Var in $VarList) { Set-Variable -Name ($Var.split('_')[1]) -Value ($(Get-Variable -Name $Var -ValueOnly).SelectedIndex) -scope Script }
+    ForEach($Var in $VarList) { $WPFName ="WPF_"+$Var+"_Combo" ;Set-Variable -Name $Var -Value ($(Get-Variable -Name $WPFName -ValueOnly).SelectedIndex) -scope Script }
+    If($WPF_CreateRestorePoint_CB.IsChecked) { $CreateRestorePoint = 1 } Else { $CreateRestorePoint = 0 }
+    If($WPF_VersionCheck_CB.IsChecked) { $VersionCheck = 1 } Else { $VersionCheck = 0 }
+    If($WPF_InternetCheck_CB.IsChecked) { $InternetCheck = 1 } Else { $InternetCheck = 0 }
+    If($WPF_ShowSkipped_CB.IsChecked) { $ShowSkipped = 1 } Else { $ShowSkipped = 0 }
+    If($WPF_Restart_CB.IsChecked) { $Restart = 1 } Else { $Restart = 0 }
+    $RestorePointName = $WPF_RestorePointName_Txt.Text 
     $Form.Close()
     $Script:RunScr = $true
     PreStartScript
@@ -1128,7 +1119,7 @@ Function LoadWinDefault {
 ##########
 
 Function PreStartScript {
-    UpdateCheck
+    If($VersionCheck -eq 1) { UpdateCheck }
     Clear-Host
     DisplayOut "" 14 0
     DisplayOut "------------------" 14 0
@@ -2516,8 +2507,7 @@ Function RunScript {
             $APPS_AppsHide.Add($AppsList[$A]) | Out-null
         } ElseIf($AppV -eq 3) {
             $APPS_AppsUninstall.Add($AppsList[$A]) | Out-null
-        }
-        $A++
+        } $A++
     }
 
     DisplayOut "" 14 0
@@ -2587,12 +2577,7 @@ Function RunScript {
         Write-Host "`nRestarting Computer in 10 Seconds..." -ForegroundColor Yellow -BackgroundColor Black
         $Message = "Restarting in"
         Start-Sleep -Seconds 1
-        ForEach($Count in (1..$Seconds)) {
-            If($Count -ne 0) {
-                Write-Host $Message" $($Seconds - $Count)" -ForegroundColor Yellow -BackgroundColor Black
-                Start-Sleep -Seconds 1
-            }
-        }
+        ForEach($Count in (1..$Seconds)) { If($Count -ne 0) { Write-Host $Message" $($Seconds - $Count)" -ForegroundColor Yellow -BackgroundColor Black ;Start-Sleep -Seconds 1 } }
         Write-Host "Restarting Computer..." -ForegroundColor Red -BackgroundColor Black
         Restart-Computer
     } ElseIf($Release_Type -eq "Stable ") {
