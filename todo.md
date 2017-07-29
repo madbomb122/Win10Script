@@ -5,9 +5,8 @@
 
 -------------------------------------------------------------------------------------------------------------
 # Working On/Testing
-Nothing ATM
+- [ ] A True GUI that is easyer to use (File: Win10-Menu-Gui.ps1 ,In Testing Folder)
 
 -------------------------------------------------------------------------------------------------------------
 # Thinking of adding/Might add
-- [ ] A True GUI that is easyer to use
 - [ ] Undo the change in Win+X menu in the creator's update (setting -> control panel) -- If i can find how to do
