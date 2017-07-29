@@ -214,7 +214,7 @@ Function UpdateCheck {
         $VersionURL = "https://raw.githubusercontent.com/madbomb122/Win10Script/master/Version/Version.csv"
         (New-Object System.Net.WebClient).DownloadFile($VersionURL, $VersionFile)
         $CSV_Ver = Import-Csv $VersionFile
-         $DFilename = "Win10-Menu-Ver."
+        $DFilename = "Win10-Menu-Ver."
         If($Release_Type -ne "Stable") {
             $WebScriptVer = $($CSV_Ver[0].Version)
             $WebScriptMinorVer = $($CSV_Ver[0].MinorVersion)
@@ -228,8 +228,8 @@ Function UpdateCheck {
         $DFilename += ".ps1"
         $Script_Url = $URL_Base + "Win10-Menu.ps1"
         $WebScriptFilePath = $filebase + $DFilename
-         If($WebScriptVer -gt $Script_Version) {
-             $Script_Update = $true
+        If($WebScriptVer -gt $Script_Version) {
+            $Script_Update = $true
         } ElseIf($WebScriptVer -eq $Script_Version -and $WebScriptMinorVer -gt $Minor_Version) {
             $Script_Update = $true
         } Else {
