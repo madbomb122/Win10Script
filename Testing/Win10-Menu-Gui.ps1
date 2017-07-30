@@ -12,7 +12,7 @@
 #
 $Script_Version = "3.0"
 $Minor_Version = "0"
-$Script_Date = "07-28-17"
+$Script_Date = "07-30-17"
 #$Release_Type = "Stable "
 $Release_Type = "Testing"
 ##########
@@ -282,6 +282,11 @@ Function InternetCheck { If($InternetCheck -eq 1) { Return $true } ElseIf(!(Test
 # Multi Use Functions -Start
 ##########
 
+Function cmpv { Compare-Object (Get-Variable -Scope Script) $AutomaticVariables -Property Name -PassThru | Where -Property Name -ne "AutomaticVariables" | Where-Object { $_ -NotIn $WPFList } }
+Function DisplayOut ([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor) { Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] }
+Function Openwebsite ([String]$Url) { [System.Diagnostics.Process]::Start($Url) }
+Function ShowInvalid ([Int]$InvalidA) { If($InvalidA -eq 1) { Write-Host "`nInvalid Input" -ForegroundColor Red -BackgroundColor Black -NoNewline } Return 0 }
+Function unPin-App ([string]$appname) { ((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'Unpin from Start'} | %{$_.DoIt()} }
 Function Check-SetPath ([string]$RPath)  { If(!(Test-Path "$RPath")) { New-Item -Path "$RPath" -Force | Out-Null } }
 
 Function ScriptPreStart {
@@ -357,28 +362,13 @@ Function TOS {
     } Return
 }
 
-# Used to Help remove the Automatic variables
-Function cmpv { Compare-Object (Get-Variable -Scope Script) $AutomaticVariables -Property Name -PassThru | Where -Property Name -ne "AutomaticVariables" | Where-Object { $_ -NotIn $WPFList } }
-
-Function unPin-App ([string]$appname) { ((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'Unpin from Start'} | %{$_.DoIt()} }
-
-# Function to Display in Color or NOT (for MENU ONLY)
 Function DisplayOutMenu ([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor,[int]$NewLine) {
     If($NewLine -eq 0) {
-        If($TxtColor -le 15) { Write-Host -NoNewline $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } Else { Write-Host -NoNewline $TxtToDisplay }
+        Write-Host -NoNewline $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor]
     } Else {
-        If($TxtColor -le 15) { Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } Else { Write-Host $TxtToDisplay }
+        Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor]
     }
 }
-
-Function DisplayOut ([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor) {
-    If($TxtColor -le 15) { Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } Else { Write-Host $TxtToDisplay }
-}
-
-Function Openwebsite ([String]$Url) { [System.Diagnostics.Process]::Start($Url) }
-
-Function ShowInvalid ([Int]$InvalidA) { If($InvalidA -eq 1) { Write-Host "`nInvalid Input" -ForegroundColor Red -BackgroundColor Black -NoNewline } Return 0 }
-
 Function LoadSettingFile([String]$Filename) {
     Import-Csv $Filename -Delimiter ";" | %{Set-Variable $_.Name $_.Value -Scope Script}
     [System.Collections.ArrayList]$APPS_AppsInstall = $AppsInstall.split(",")
@@ -490,7 +480,7 @@ Function OpenSaveDiaglog([Int]$SorO){
 
 Function Gui-Start {
     Clear-Host
-    DisplayOutMenu "Preparing GUI for Loading, Please wait..." 15 0 1 0
+    DisplayOutMenu "Preparing GUI, Please wait..." 15 0 1 0
 
 $inputXML = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -512,9 +502,11 @@ $inputXML = @"
    <CheckBox x:Name="InternetCheck_CB" Content="Skip Internet Check" HorizontalAlignment="Left" Margin="8,109,0,0" VerticalAlignment="Top"/>
    <Button x:Name="Save_Setting_Button" Content="Save Settings" HorizontalAlignment="Left" Margin="100,178,0,0" VerticalAlignment="Top" Width="77"/>
    <Button x:Name="Load_Setting_Button" Content="Load Settings" HorizontalAlignment="Left" Margin="8,178,0,0" VerticalAlignment="Top" Width="77"/>
-   <Button x:Name="WinDefault_Button" Content="Windows Default" HorizontalAlignment="Left" Margin="192,178,0,0" VerticalAlignment="Top" Width="96"/> </Grid>
+   <Button x:Name="WinDefault_Button" Content="Windows Default" HorizontalAlignment="Left" Margin="192,178,0,0" VerticalAlignment="Top" Width="96"/>
+   <Button x:Name="ResetDefault_Button" Content="Reset All Items" HorizontalAlignment="Left" Margin="306,178,0,0" VerticalAlignment="Top" Width="85"/>
+   <Label Content="Options with items marked with * means &quot;Windows Default&quot;&#xD;&#xA;Windows Default Button does not change Metro Apps or OneDrive Install" HorizontalAlignment="Left" Margin="8,198,0,0" VerticalAlignment="Top" FontStyle="Italic"/></Grid>
   </TabItem>
-  <TabItem x:Name="Privacy_tab" Header="Privacy" Margin="-2,0,2,0"> <Grid Background="#FFE5E5E5">
+  <TabItem x:Name="Privacy_tab" Header="Privacy" Margin="-2,0,2,0"><Grid Background="#FFE5E5E5">
    <Label Content="Telemetry:" HorizontalAlignment="Left" Margin="67,10,0,0" VerticalAlignment="Top"/>
    <ComboBox x:Name="Telemetry_Combo" HorizontalAlignment="Left" Margin="128,13,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Wi-Fi Sense:" HorizontalAlignment="Left" Margin="57,37,0,0" VerticalAlignment="Top"/>
@@ -772,13 +764,13 @@ $inputXML = @"
    <Label Content="OneDrive:" HorizontalAlignment="Left" Margin="69,31,0,0" VerticalAlignment="Top"/>
    <ComboBox x:Name="OneDrive_Combo" HorizontalAlignment="Left" Margin="128,34,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="OneDrive Install:" HorizontalAlignment="Left" Margin="34,58,0,0" VerticalAlignment="Top"/>
-   <ComboBox x:Name="OneDriveInstall_Combo" HorizontalAlignment="Left" Margin="128,61,0,0" VerticalAlignment="Top" Width="72"/>
+   <ComboBox x:Name="OneDriveInstall_Combo" HorizontalAlignment="Left" Margin="128,61,0,0" VerticalAlignment="Top" Width="78"/>
    <Label Content="Xbox DVR:" HorizontalAlignment="Left" Margin="66,85,0,0" VerticalAlignment="Top"/>
    <ComboBox x:Name="XboxDVR_Combo" HorizontalAlignment="Left" Margin="128,88,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="MediaPlayer:" HorizontalAlignment="Left" Margin="53,112,0,0" VerticalAlignment="Top"/>
-   <ComboBox x:Name="MediaPlayer_Combo" HorizontalAlignment="Left" Margin="128,115,0,0" VerticalAlignment="Top" Width="72"/>
+   <ComboBox x:Name="MediaPlayer_Combo" HorizontalAlignment="Left" Margin="128,115,0,0" VerticalAlignment="Top" Width="78"/>
    <Label Content="Work Folders:" HorizontalAlignment="Left" Margin="49,139,0,0" VerticalAlignment="Top"/>
-   <ComboBox x:Name="WorkFolders_Combo" HorizontalAlignment="Left" Margin="128,142,0,0" VerticalAlignment="Top" Width="72"/>
+   <ComboBox x:Name="WorkFolders_Combo" HorizontalAlignment="Left" Margin="128,142,0,0" VerticalAlignment="Top" Width="78"/>
    <Label Content="Linux Subsystem:" HorizontalAlignment="Left" Margin="31,166,0,0" VerticalAlignment="Top"/>
    <ComboBox x:Name="LinuxSubsystem_Combo" HorizontalAlignment="Left" Margin="128,169,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Check for Update:" HorizontalAlignment="Left" Margin="290,31,0,0" VerticalAlignment="Top"/>
@@ -828,6 +820,7 @@ $inputXML = @"
     $WPF_CreateRestorePoint_CB.Add_UnChecked({ $WPF_CreateRestorePoint_CB.IsChecked = $false ;$WPF_RestorePointName_Txt.IsEnabled = $false })
     $WPF_Madbomb122WSButton.Add_Click({ OpenWebsite "https://github.com/madbomb122/" })
     $WPF_WinDefault_Button.Add_Click({ LoadWinDefault ;SelectComboBox })
+    $WPF_ResetDefault_Button.Add_Click({ SetDefault ;SelectComboBox })
     #$WPF_EMail.Add_Click({ OpenWebsite "mailto:madbomb122@gmail.com" })
     $WPF_Load_Setting_Button.Add_Click({ OpenSaveDiaglog 0 })
     $WPF_Save_Setting_Button.Add_Click({ OpenSaveDiaglog 1 })
@@ -2603,7 +2596,7 @@ $Script:AppsHide = ""
 $Script:AppsUninstall = ""
 
 # --------------------------------------------------------------------------
-
+Function SetDefault {
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## !!                                            !!
 ## !!            SAFE TO EDIT VALUES             !!
@@ -2622,7 +2615,6 @@ $Script:RestorePointName = "Win10 Initial Setup Script"
 #Skips Term of Use
 $Script:AcceptToS = 1             #1-See ToS, Anything else = Accepts Term of Use
 $Script:Automated = 0             #0-Pause at End/Error, Dont Pause at End/Error
-
 
 $Script:ShowSkipped = 1           #0-Dont Show Skipped, 1-Show Skipped
 
@@ -2829,7 +2821,8 @@ $Script:APP_WindowsStore = 0      # Windows Store
 $Script:APP_XboxApp = 0           # Xbox app
 $Script:APP_ZuneMusic = 0         # Groove Music app
 $Script:APP_ZuneVideo = 0         # Groove Video app
-
+}
+SetDefault
 # --------------------------------------------------------------------------
 #Starts the script (Do not change)
 ScriptPreStart
