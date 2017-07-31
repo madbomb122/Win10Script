@@ -12,7 +12,7 @@
 #
 $Script_Version = "3.0"
 $Minor_Version = "0"
-$Script_Date = "07-30-17"
+$Script_Date = "07-31-17"
 #$Release_Type = "Stable "
 $Release_Type = "Testing"
 ##########
@@ -287,7 +287,7 @@ Function DisplayOut ([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor) { Write
 Function Openwebsite ([String]$Url) { [System.Diagnostics.Process]::Start($Url) }
 Function ShowInvalid ([Int]$InvalidA) { If($InvalidA -eq 1) { Write-Host "`nInvalid Input" -ForegroundColor Red -BackgroundColor Black -NoNewline } Return 0 }
 Function unPin-App ([string]$appname) { ((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'Unpin from Start'} | %{$_.DoIt()} }
-Function Check-SetPath ([string]$RPath)  { If(!(Test-Path "$RPath")) { New-Item -Path "$RPath" -Force | Out-Null } }
+Function Check-SetPath ([string]$RPath)  { If(!(Test-Path "$RPath")) { New-Item -Path "$RPath" -Force | Out-Null } Return $RPath }
 
 Function ScriptPreStart {
     If ($PassedArg.length -gt 0) { ArgCheck }
@@ -771,7 +771,7 @@ $inputXML = @"
    <ComboBox x:Name="MediaPlayer_Combo" HorizontalAlignment="Left" Margin="128,115,0,0" VerticalAlignment="Top" Width="78"/>
    <Label Content="Work Folders:" HorizontalAlignment="Left" Margin="49,139,0,0" VerticalAlignment="Top"/>
    <ComboBox x:Name="WorkFolders_Combo" HorizontalAlignment="Left" Margin="128,142,0,0" VerticalAlignment="Top" Width="78"/>
-   <Label Content="Linux Subsystem:" HorizontalAlignment="Left" Margin="31,166,0,0" VerticalAlignment="Top"/>
+   <Label x:Name="LinuxSubsystemTxt" Content="Linux Subsystem:" HorizontalAlignment="Left" Margin="31,166,0,0" VerticalAlignment="Top"/>
    <ComboBox x:Name="LinuxSubsystem_Combo" HorizontalAlignment="Left" Margin="128,169,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Check for Update:" HorizontalAlignment="Left" Margin="290,31,0,0" VerticalAlignment="Top"/>
    <ComboBox x:Name="CheckForWinUpdate_Combo" HorizontalAlignment="Left" Margin="392,34,0,0" VerticalAlignment="Top" Width="72"/>
@@ -928,6 +928,7 @@ $Skip_InstalledD_Uninstall = @(
 "MediaPlayer",
 "WorkFolders")
 
+    If($BuildVer -lt $CreatorUpdateBuild) { $WPF_LinuxSubsystem_Combo.Visibility = 'Hidden' ;$WPF_LinuxSubsystemTxt.Visibility = 'Hidden' }
     ForEach($Var in $Skip_EnableD_Disable) { SetCombo $Var "Enable*,Disable" }
     ForEach($Var in $Skip_Enable_DisableD) { SetCombo $Var "Enable,Disable*" }
     ForEach($Var in $Skip_ShowD_Hide) { SetCombo $Var "Show*,Hide" }
@@ -1057,11 +1058,7 @@ Function LoadWinDefault {
     $Script:FrequentFoldersQikAcc = 1
     $Script:WinContentWhileDrag = 1
     $Script:StoreOpenWith = 1
-    If($BuildVer -ge $CreatorUpdateBuild) {
-        $Script:WinXPowerShell = 1
-    } Else {
-        $Script:WinXPowerShell = 2
-    }
+    If($BuildVer -ge $CreatorUpdateBuild) { $Script:WinXPowerShell = 1 } Else { $Script:WinXPowerShell = 2 }
     $Script:TaskManagerDetails = 2
 
     #'This PC' Items
@@ -1127,7 +1124,6 @@ Function PreStartScript {
         DisplayOut "Please Wait..." 11 1
         Checkpoint-Computer -Description $RestorePointName | Out-Null
     }
-
     Invoke-Expression RunScript
 }
 
@@ -1135,17 +1131,9 @@ Function PreStartScript {
 Function RunScript {
     $Script:BuildVer = [Environment]::OSVersion.Version.build
     $Script:CreatorUpdateBuild = 15063
-    # 15063 = Creator's Update
-    # 14393 = anniversary update
-    # 10586 = first major update
-    # 10240 = first release
 
     If([System.Environment]::Is64BitProcess) { $Script:OSType = 64 }
-
-    # Define HKCR
     If(!(Test-Path "HKCR:")) { New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null }
-
-    # Define HKU
     If(!(Test-Path "HKU:")) { New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_USERS | Out-Null }
 
     DisplayOut "" 14 0
@@ -1177,8 +1165,7 @@ Function RunScript {
         Set-ItemProperty -Path "HKLM:\$Path\AllowAutoConnectToWiFiSenseHotspots" -Name "Value" -Type DWord -Value 1
     } ElseIf($WiFiSense -eq 2) {
         DisplayOut "Disabling Wi-Fi Sense..." 12 0
-        $Path = "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi\AllowWiFiHotSpotReporting"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi\AllowWiFiHotSpotReporting"
         Set-ItemProperty -Path "$Path" -Name "Value" -Type DWord -Value 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi\AllowAutoConnectToWiFiSenseHotspots" -Name "Value" -Type DWord -Value 0
     }
@@ -1202,8 +1189,7 @@ Function RunScript {
         Set-ItemProperty -Path "HKCU:\$Path\AppHost" -Name "EnableWebContentEvaluation" -Type DWord -Value 0
         If($BuildVer -ge $CreatorUpdateBuild) {
             $AddPath = (Get-AppxPackage -AllUsers "Microsoft.MicrosoftEdge").PackageFamilyName
-            $Path = "HKCU:\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\$AddPath\MicrosoftEdge\PhishingFilter"
-            Check-SetPath $Path
+            $Path = Check-SetPath "HKCU:\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\$AddPath\MicrosoftEdge\PhishingFilter"
             Set-ItemProperty -Path "$Path" -Name "EnabledV9" -Type DWord -Value 0
             Set-ItemProperty -Path "$Path" -Name "PreventOverride" -Type DWord -Value 0
         }
@@ -1228,8 +1214,7 @@ Function RunScript {
         Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Siuf\Rules" -Name "NumberOfSIUFInPeriod"
     } ElseIf($Feedback -eq 2) {
         DisplayOut "Disabling Feedback..." 12 0
-        $Path = "HKCU:\SOFTWARE\Microsoft\Siuf\Rules"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\Siuf\Rules"
         Set-ItemProperty -Path "$Path" -Name "NumberOfSIUFInPeriod" -Type DWord -Value 0
     }
 
@@ -1240,8 +1225,7 @@ Function RunScript {
         Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo" -Name "Enabled"
     } ElseIf($AdvertisingID -eq 2) {
         DisplayOut "Disabling Advertising ID..." 12 0
-        $Path = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo"
         Set-ItemProperty -Path "$Path" -Name "Enabled" -Type DWord -Value 0
     }
 
@@ -1256,15 +1240,13 @@ Function RunScript {
         Set-ItemProperty -Path "$Path" -Name "RestrictImplicitInkCollection" -Type DWord -Value 0
     } ElseIf($Cortana -eq 2) {
         DisplayOut "Disabling Cortana..." 12 0
-        $Path = "HKCU:\SOFTWARE\Microsoft\Personalization\Settings"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\Personalization\Settings"
         Set-ItemProperty -Path "$Path" -Name "AcceptedPrivacyPolicy" -Type DWord -Value 0
-        $Path = "HKCU:\SOFTWARE\Microsoft\InputPersonalization"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\InputPersonalization"
         Set-ItemProperty -Path "$Path" -Name "RestrictImplicitTextCollection" -Type DWord -Value 1
         Set-ItemProperty -Path "$Path" -Name "RestrictImplicitInkCollection" -Type DWord -Value 1
         $Path += "\TrainedDataStore"
-        Check-SetPath $Path
+        $Path = Check-SetPath $Path
         Set-ItemProperty -Path "$Path" -Name "HarvestContacts" -Type DWord -Value 0
     }
 
@@ -1275,8 +1257,7 @@ Function RunScript {
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana"
     } ElseIf($CortanaSearch -eq 2) {
         DisplayOut "Disabling Cortana Search..." 12 0
-        $Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search"
         Set-ItemProperty -Path "$Path" -Name "AllowCortana" -Type DWord -Value 0
     }
 
@@ -1337,8 +1318,7 @@ Function RunScript {
     } ElseIf($AppAutoDownload -eq 2) {
         DisplayOut "Disabling App Auto Download..." 12 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsStore\WindowsUpdate" -Name "AutoDownload" -Type DWord -Value 2
-        $Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent"
         Set-ItemProperty -Path "$Path" -Name "DisableWindowsConsumerFeatures" -Type DWord -Value 1
     }
 
@@ -1362,8 +1342,7 @@ Function RunScript {
     If($WinUpdateType -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Windows Update Check Type..." 15 0
     } ElseIf($WinUpdateType -In 1..4) {
-        $Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU"
         If($WinUpdateType -eq 1) {
             DisplayOut "Notify for windows update download and notify for install..." 16 0
             Set-ItemProperty -Path "$Path" -Name "AUOptions" -Type DWord -Value 2
@@ -1388,14 +1367,12 @@ Function RunScript {
         Remove-ItemProperty -Path "HKCU:\$Path" -Name "SystemSettingsDownloadMode"
     } ElseIf($WinUpdateDownload -eq 2) {
         DisplayOut "Restricting Windows Update P2P only to local network..." 16 0
-        $Path = "SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization"
-        Check-SetPath $Path
+        $Path = Check-SetPath "SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization"
         Set-ItemProperty -Path "HKCU:\$Path" -Name "SystemSettingsDownloadMode" -Type DWord -Value 3
         Set-ItemProperty -Path "HKLM:\$Path\Config" -Name "DODownloadMode" -Type DWord -Value 1
     } ElseIf($WinUpdateDownload -eq 3) {
         DisplayOut "Disabling Windows Update P2P..." 12 0
-        $Path = "SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization"
-        Check-SetPath $Path
+        $Path = Check-SetPath "SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization"
         Set-ItemProperty -Path "HKCU:\$Path" -Name "SystemSettingsDownloadMode" -Type DWord -Value 3
         Set-ItemProperty -Path "HKLM:\$Path\Config" -Name "DODownloadMode" -Type DWord -Value 0
     }
@@ -1452,8 +1429,7 @@ Function RunScript {
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\WindowsFirewall\StandardProfile" -Name "EnableFirewall"
     } ElseIf($Firewall -eq 2) {
         DisplayOut "Disabling Firewall..." 12 0
-        $Path = "HKLM:\SOFTWARE\Policies\Microsoft\WindowsFirewall\StandardProfile"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKLM:\SOFTWARE\Policies\Microsoft\WindowsFirewall\StandardProfile"
         Set-ItemProperty -Path "$Path" -Name "EnableFirewall" -Type DWord -Value 0
     }
 
@@ -1463,11 +1439,8 @@ Function RunScript {
         DisplayOut "Enabling Windows Defender..." 11 0
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name "DisableAntiSpyware"
         $Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
-        If($BuildVer -lt $CreatorUpdateBuild) {
-            Set-ItemProperty -Path "$Path" -Name "WindowsDefender" -Type ExpandString -Value "`"%ProgramFiles%\Windows Defender\MSASCuiL.exe`""
-        } Else {
-            Set-ItemProperty -Path "$Path" -Name "SecurityHealth" -Type ExpandString -Value "`"%ProgramFiles%\Windows Defender\MSASCuiL.exe`""
-        }
+        If($BuildVer -lt $CreatorUpdateBuild) { $RegName = "WindowsDefender" } Else { $RegName = "SecurityHealth" }
+        Set-ItemProperty -Path "$Path" -Name "SecurityHealth" -Type ExpandString -Value "`"%ProgramFiles%\Windows Defender\MSASCuiL.exe`""
     } ElseIf($WinDefender -eq 2) {
         DisplayOut "Disabling Windows Defender..." 12 0
         $Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
@@ -1529,8 +1502,7 @@ Function RunScript {
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked" -Name "{7AD84985-87B4-4a16-BE58-8B72A5B390F7}"
     } ElseIf($CastToDevice -eq 2) {
         DisplayOut "Disabling Cast to Device Context item..." 12 0
-        $Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked"
         Set-ItemProperty -Path "$Path" -Name "{7AD84985-87B4-4a16-BE58-8B72A5B390F7}" -Type String -Value ""
     }
 
@@ -1632,8 +1604,7 @@ Function RunScript {
         DisplayOut "Skipping Send To Context item..." 15 0
     } ElseIf($SendTo -eq 1) {
         DisplayOut "Enabling Send To Context item..." 11 0
-        $Path = "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo"
         Set-ItemProperty -Path "$Path" -Name "(Default)" -Type String -Value "{7BA4C740-9E81-11CF-99D3-00AA004AE837}" | Out-Null
     } ElseIf($SendTo -eq 2) {
         DisplayOut "Disabling Send To Context item..." 12 0
@@ -1653,8 +1624,7 @@ Function RunScript {
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" -Name "UseWin32BatteryFlyout"
     } ElseIf($BatteryUIBar -eq 2) {
         DisplayOut "Enabling Old Battery UI Bar..." 12 0
-        $Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell"
         Set-ItemProperty -Path "$Path" -Name "UseWin32BatteryFlyout" -Type DWord -Value 1
     }
 
@@ -1665,8 +1635,7 @@ Function RunScript {
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell" -Name "UseWin32TrayClockExperience"
     } ElseIf($ClockUIBar -eq 2) {
         DisplayOut "Enabling Old Clock UI Bar..." 12 0
-        $Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell"
         Set-ItemProperty -Path "$Path" -Name "UseWin32TrayClockExperience" -Type DWord -Value 1
     }
 
@@ -1677,8 +1646,7 @@ Function RunScript {
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\MTCUVC" -Name "EnableMtcUvc"
     } ElseIf($VolumeControlBar -eq 2) {
         DisplayOut "Enabling Classic Volume Control Bar (Vertical)..." 12 0
-        $Path = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\MTCUVC"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\MTCUVC"
         Set-ItemProperty -Path "$Path" -Name "EnableMtcUvc" -Type DWord -Value 0
     }
 
@@ -1793,8 +1761,7 @@ Function RunScript {
     } ElseIf($StartMenuWebSearch -eq 2) {
         DisplayOut "Disabling Bing Search in Start Menu..." 12 0
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "BingSearchEnabled" -Type DWord -Value 0
-        $Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search"
         Set-ItemProperty -Path "$Path" -Name "DisableWebSearch" -Type DWord -Value 1
     }
 
@@ -1826,13 +1793,11 @@ Function RunScript {
         DisplayOut "Skipping Recent Items and Frequent Places..." 15 0
     } ElseIf($RecentItemsFrequent -eq 1) {
         DisplayOut "Enabling Recent Items and Frequent Places..." 11 0
-        $Path = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu"
         Set-ItemProperty -Path "$Path" -Name "Start_TrackDocs" -Type DWord -Value 1
     } ElseIf($RecentItemsFrequent -eq 2) {
         DisplayOut "Disabling Recent Items and Frequent Places..." 12 0
-        $Path = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu"
         Set-ItemProperty -Path "$Path" -Name "Start_TrackDocs" -Type DWord -Value 0
     }
 
@@ -1869,8 +1834,7 @@ Function RunScript {
         Remove-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" -Name "NoWindowMinimizingShortcuts"
     } ElseIf($AeroShake -eq 2) {
         DisplayOut "Disabling Aero Shake..." 12 0
-        $Path = "HKCU:\Software\Policies\Microsoft\Windows\Explorer"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKCU:\Software\Policies\Microsoft\Windows\Explorer"
         Set-ItemProperty -Path "$Path" -Name "NoWindowMinimizingShortcuts" -Type DWord -Value 1
     }
 
@@ -1970,8 +1934,7 @@ Function RunScript {
         Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoDriveTypeAutoRun"
     } ElseIf($Autorun -eq 2) {
         DisplayOut "Disabling Autorun for all Drives..." 12 0
-        $Path = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer"
         Set-ItemProperty -Path "$Path" -Name "NoDriveTypeAutoRun" -Type DWord -Value 255
     }
     
@@ -1982,8 +1945,7 @@ Function RunScript {
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer" -Name "NoUseStoreOpenWith"
     } ElseIf($StoreOpenWith -eq 2) {
         DisplayOut "Disabling Search Windows Store for Unknown Extensions..." 12 0
-        $Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer"
         Set-ItemProperty -Path "$Path" -Name "NoUseStoreOpenWith" -Type DWord -Value 1
     }
 
@@ -2001,8 +1963,7 @@ Function RunScript {
         DisplayOut "Skipping Task Manager Details..." 15 0
     } ElseIf($TaskManagerDetails -eq 1) {
         DisplayOut "Showing Task Manager Details..." 11 0
-        $Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager"
         $TaskManKey = Get-ItemProperty -Path "$Path" -Name "Preferences"
         If(!($TaskManKey)) {
             $taskmgr = Start-Process -WindowStyle Hidden -FilePath taskmgr.exe -PassThru
@@ -2016,8 +1977,7 @@ Function RunScript {
         Set-ItemProperty -Path "$Path" -Name "Preferences" -Type Binary -Value $TaskManKey.Preferences
     } ElseIf($TaskManagerDetails -eq 2) {
         DisplayOut "Hiding Task Manager Details..." 12 0
-        $Path = "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager"
         $TaskManKey = Get-ItemProperty -Path "$Path" -Name "Preferences"
         If($TaskManKey) {
             $TaskManKey.Preferences[28] = 1
@@ -2255,8 +2215,7 @@ Function RunScript {
     } ElseIf($LockScreen -eq 2) {
         If($BuildVer -eq 10240 -or $BuildVer -eq 10586) {
             DisplayOut "Disabling Lock Screen..." 12 0
-            $Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization"
-            Check-SetPath $Path
+            $Path = Check-SetPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization"
             Set-ItemProperty -Path "$Path" -Name "NoLockScreen" -Type DWord -Value 1
         } ElseIf($BuildVer -ge 14393) {
             DisplayOut "Disabling Lock screen using scheduler workaround..." 12 0
@@ -2293,8 +2252,7 @@ Function RunScript {
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreenCamera"
     } ElseIf($CameraOnLockscreen -eq 2) {
         DisplayOut "Disabling Camera at Lockscreen..." 12 0
-        $Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization"
         Set-ItemProperty -Path "$Path" -Name "NoLockScreenCamera" -Type DWord -Value 1
     }
 
@@ -2312,8 +2270,7 @@ Function RunScript {
         Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled"
     } ElseIf($ActionCenter -eq 2) {
         DisplayOut "Disabling Action Center..." 12 0
-        $Path = "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKCU:\SOFTWARE\Policies\Microsoft\Windows\Explorer"
         Set-ItemProperty -Path "$Path" -Name "DisableNotificationCenter" -Type DWord -Value 1
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Type DWord -Value 0
     }
@@ -2393,8 +2350,7 @@ Function RunScript {
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSyncProviderNotifications" -Type DWord -Value 1
     } ElseIf($OneDrive -eq 2) {
         DisplayOut "Disabling OneDrive..." 12 0
-        $Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive"
         Set-ItemProperty -Path "$Path" -Name "DisableFileSyncNGSC" -Type DWord -Value 1
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSyncProviderNotifications" -Type DWord -Value 0
     }
@@ -2436,8 +2392,7 @@ Function RunScript {
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR" -Name "AllowGameDVR"
     } ElseIf($XboxDVR -eq 2) {
         DisplayOut "Disabling Xbox DVR..." 12 0
-        $Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR"
-        Check-SetPath $Path
+        $Path = Check-SetPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR"
         Set-ItemProperty -Path "$Path" -Name "AllowGameDVR" -Type DWord -Value 0
         Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Type DWord -Value 0
     }
