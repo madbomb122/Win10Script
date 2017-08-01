@@ -1,5 +1,5 @@
 # Currently Testing
-GUI (Win10-Menu-Gui.ps1).. The metro app is the only thing not in the GUI yet, The script itself should work fine
+GUI (Win10-Menu-Gui.ps1).. Everything Works, other than metro items loading settings (from default, file, reset all button)
 
 # About Testing Version
 If I am not working on a change or addition to the script, this will be the same exact copy as the non test.<br />
