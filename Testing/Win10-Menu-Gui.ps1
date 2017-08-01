@@ -12,7 +12,7 @@
 #
 $Script_Version = "3.0"
 $Minor_Version = "0"
-$Script_Date = "07-31-17"
+$Script_Date = "08-01-17"
 #$Release_Type = "Stable "
 $Release_Type = "Testing"
 ##########
@@ -283,12 +283,18 @@ Function InternetCheck { If($InternetCheck -eq 1) { Return $true } ElseIf(!(Test
 ##########
 
 Function cmpv { Compare-Object (Get-Variable -Scope Script) $AutomaticVariables -Property Name -PassThru | Where -Property Name -ne "AutomaticVariables" | Where-Object { $_ -NotIn $WPFList } }
-Function DisplayOut ([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor) { Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] }
 Function Openwebsite ([String]$Url) { [System.Diagnostics.Process]::Start($Url) }
 Function ShowInvalid ([Int]$InvalidA) { If($InvalidA -eq 1) { Write-Host "`nInvalid Input" -ForegroundColor Red -BackgroundColor Black -NoNewline } Return 0 }
 Function unPin-App ([string]$appname) { ((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'Unpin from Start'} | %{$_.DoIt()} }
 Function Check-SetPath ([string]$RPath)  { If(!(Test-Path "$RPath")) { New-Item -Path "$RPath" -Force | Out-Null } Return $RPath }
 
+Function DisplayOut ([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor) {
+    If($TxtColor -le 15) {
+        Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor]
+    } Else {
+        Write-Host $TxtToDisplay
+    } 
+}
 Function ScriptPreStart {
     If ($PassedArg.length -gt 0) { ArgCheck }
     If($AcceptToS -eq 1) {
@@ -405,7 +411,7 @@ Function SetCombo ([String]$Name, [String]$Item) {
     $Items = $Item.split(',')
     [void] $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).Items.Add("Skip")
     ForEach($CmbItm in $Items) { [void] $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).Items.Add($CmbItm) }
-    $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).SelectedIndex = $(Get-Variable -Name $Name -ValueOnly)
+	SelectComboBoxGen $Name $(Get-Variable -Name $Name -ValueOnly)
 }
 
 Function SetComboM ([String]$Name, [String]$Item) {
@@ -421,10 +427,9 @@ Function SetComboM ([String]$Name, [String]$Item) {
     } ElseIf($Name -eq "APP_Zune") {
         $WPF_APP_Zune_Combo.SelectedIndex = $APP_ZuneMusic
     } Else {
-        $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).SelectedIndex = $(Get-Variable -Name $Name -ValueOnly)
+        SelectComboBoxGen $Name $(Get-Variable -Name $Name -ValueOnly)
     }
-
-} 
+}
 
 Function RestorePointCBCheck {
     If($CreateRestorePoint -eq 1) {
@@ -446,8 +451,9 @@ Function ConfigGUIitms {
     RestorePointCBCheck
 }
 
-Function SelectComboBox { ForEach($Var in $VarList) { $(Get-Variable -Name ("WPF_"+$Var+"_Combo") -ValueOnly).SelectedIndex = $(Get-Variable -Name $Var -ValueOnly) } }
-Function SelectComboBoxM ([Int]$Numb) { ForEach($Var in $ListApp) { $(Get-Variable -Name ("WPF_"+$Var+"_Combo") -ValueOnly).SelectedIndex = $Numb } }
+Function SelectComboBox { ForEach($Var in $VarList) { SelectComboBoxGen $Var $(Get-Variable -Name $Var -ValueOnly) } }
+Function SelectComboBoxM([Int]$Numb) { ForEach($Var in $ListApp) { SelectComboBoxGen $Var $Numb } }
+Function SelectComboBoxGen([String]$Name,[Int]$Numb) { $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).SelectedIndex = $Numb }
 
 Function AppAraySet([String]$Get) {
     [System.Collections.ArrayList]$ListTMP = Get-Variable -Name $Get
@@ -470,7 +476,7 @@ Function AppAraySet([String]$Get) {
 }
 
 Function OpenSaveDiaglog([Int]$SorO){
-    If($SorO -eq 0) { $SOFileDialog = New-Object System.Windows.Forms.OpenFileDialog ;write-host "Open"} Else { $SOFileDialog = New-Object System.Windows.Forms.SaveFileDialog ;write-host "Save"}
+    If($SorO -eq 0) { $SOFileDialog = New-Object System.Windows.Forms.OpenFileDialog } Else { $SOFileDialog = New-Object System.Windows.Forms.SaveFileDialog }
     $SOFileDialog.initialDirectory = $filebase
     $SOFileDialog.filter = "CSV (*.csv)| *.csv"
     $SOFileDialog.ShowDialog() | Out-Null
@@ -493,18 +499,18 @@ $inputXML = @"
  <TextBox x:Name="Script_Ver_Txt" HorizontalAlignment="Left" Height="20" Margin="83,321,0,0" TextWrapping="Wrap" Text="2.8.0 (6-21-2017)" VerticalAlignment="Top" Width="125" IsEnabled="False"/>
  <TextBox x:Name="Release_Type_Txt" HorizontalAlignment="Left" Height="20" Margin="208,321,0,0" TextWrapping="Wrap" Text="Testing" VerticalAlignment="Top" Width="50" IsEnabled="False"/>
  <TabControl x:Name="TabControl" Height="300" VerticalAlignment="Top">
-  <TabItem x:Name="Services_Tab" Header="Script Options" Margin="-2,0,2,0"> <Grid Background="#FFE5E5E5">
+  <TabItem x:Name="Services_Tab" Header="Script Options" Margin="-2,0,2,0"><Grid Background="#FFE5E5E5">
    <CheckBox x:Name="CreateRestorePoint_CB" Content="Create Restore Point:" HorizontalAlignment="Left" Margin="8,30,0,0" VerticalAlignment="Top"/>
-   <TextBox x:Name="RestorePointName_Txt" HorizontalAlignment="Left" Height="18" Margin="139,29,0,0" TextWrapping="Wrap" Text="Win10 Initial Setup Script" VerticalAlignment="Top" Width="188"/>
+   <TextBox x:Name="RestorePointName_Txt" HorizontalAlignment="Left" Height="20" Margin="139,29,0,0" TextWrapping="Wrap" Text="Win10 Initial Setup Script" VerticalAlignment="Top" Width="188"/>
    <CheckBox x:Name="ShowSkipped_CB" Content="Show Skipped Items" HorizontalAlignment="Left" Margin="8,49,0,0" VerticalAlignment="Top"/>
    <CheckBox x:Name="Restart_CB" Content="Restart When Done" HorizontalAlignment="Left" Margin="8,69,0,0" VerticalAlignment="Top"/>
    <CheckBox x:Name="VersionCheck_CB" Content="Check for Update" HorizontalAlignment="Left" Margin="8,89,0,0" VerticalAlignment="Top"/>
    <CheckBox x:Name="InternetCheck_CB" Content="Skip Internet Check" HorizontalAlignment="Left" Margin="8,109,0,0" VerticalAlignment="Top"/>
-   <Button x:Name="Save_Setting_Button" Content="Save Settings" HorizontalAlignment="Left" Margin="100,178,0,0" VerticalAlignment="Top" Width="77"/>
-   <Button x:Name="Load_Setting_Button" Content="Load Settings" HorizontalAlignment="Left" Margin="8,178,0,0" VerticalAlignment="Top" Width="77"/>
-   <Button x:Name="WinDefault_Button" Content="Windows Default" HorizontalAlignment="Left" Margin="192,178,0,0" VerticalAlignment="Top" Width="96"/>
-   <Button x:Name="ResetDefault_Button" Content="Reset All Items" HorizontalAlignment="Left" Margin="306,178,0,0" VerticalAlignment="Top" Width="85"/>
-   <Label Content="Options with items marked with * means &quot;Windows Default&quot;&#xD;&#xA;Windows Default Button does not change Metro Apps or OneDrive Install" HorizontalAlignment="Left" Margin="8,198,0,0" VerticalAlignment="Top" FontStyle="Italic"/></Grid>
+   <Button x:Name="Save_Setting_Button" Content="Save Settings" HorizontalAlignment="Left" Margin="100,153,0,0" VerticalAlignment="Top" Width="77"/>
+   <Button x:Name="Load_Setting_Button" Content="Load Settings" HorizontalAlignment="Left" Margin="8,153,0,0" VerticalAlignment="Top" Width="77"/>
+   <Button x:Name="WinDefault_Button" Content="Windows Default*" HorizontalAlignment="Left" Margin="192,153,0,0" VerticalAlignment="Top" Width="100"/>
+   <Button x:Name="ResetDefault_Button" Content="Reset All Items" HorizontalAlignment="Left" Margin="306,153,0,0" VerticalAlignment="Top" Width="85"/>
+   <Label Content="Notes:&#xD;&#xA;Options with items marked with * means &quot;Windows Default&quot;&#xA;Windows Default Button does not change Metro Apps or OneDrive Install" HorizontalAlignment="Left" Margin="8,178,0,0" VerticalAlignment="Top" FontStyle="Italic"/></Grid>
   </TabItem>
   <TabItem x:Name="Privacy_tab" Header="Privacy" Margin="-2,0,2,0"><Grid Background="#FFE5E5E5">
    <Label Content="Telemetry:" HorizontalAlignment="Left" Margin="67,10,0,0" VerticalAlignment="Top"/>
@@ -698,9 +704,9 @@ $inputXML = @"
    <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="253" Margin="254,0,0,0" Stroke="Black" VerticalAlignment="Top" Width="1"/></Grid>
   </TabItem>
   <TabItem x:Name="MetroApp_Tab" Header="Metro App" Margin="-2,0,2,0"><Grid Background="#FFE5E5E5">
-   <Label Content="Set All Metro Apps:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="2,2,0,0"/>
-   <Rectangle Fill="#FFFFFFFF" Height="1" Margin="0,29,-6,0" Stroke="Black" VerticalAlignment="Top"/>
-   <ComboBox x:Name="AllMetro_Combo" HorizontalAlignment="Left" Margin="111,4,0,0" VerticalAlignment="Top" Width="74"/>
+   <Label Content="Set All Metro Apps:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="72,2,0,0"/>
+   <Rectangle Fill="#FFFFFFFF" Height="1" Margin="0,29,0,0" Stroke="Black" VerticalAlignment="Top" HorizontalAlignment="Left" Width="347"/>
+   <ComboBox x:Name="AllMetro_Combo" HorizontalAlignment="Left" Margin="181,4,0,0" VerticalAlignment="Top" Width="74"/>
    <Label Content="3DBuilder:" HorizontalAlignment="Left" Margin="32,32,0,0" VerticalAlignment="Top"/>
    <ComboBox x:Name="APP_3DBuilder_Combo" HorizontalAlignment="Left" Margin="94,35,0,0" VerticalAlignment="Top" Width="74"/>
    <Label Content="3DViewer:" HorizontalAlignment="Left" Margin="34,56,0,0" VerticalAlignment="Top"/>
@@ -738,27 +744,27 @@ $inputXML = @"
    <ComboBox x:Name="APP_SolitaireCollect_Combo" HorizontalAlignment="Left" Margin="269,203,0,0" VerticalAlignment="Top" Width="74"/>
    <Label Content="Sticky Notes:" HorizontalAlignment="Left" Margin="194,224,0,0" VerticalAlignment="Top"/>
    <ComboBox x:Name="APP_StickyNotes_Combo" HorizontalAlignment="Left" Margin="269,227,0,0" VerticalAlignment="Top" Width="74"/>
-   <Label Content="Voice Recorder:" HorizontalAlignment="Left" Margin="355,32,0,0" VerticalAlignment="Top"/>
-   <ComboBox x:Name="APP_VoiceRecorder_Combo" HorizontalAlignment="Left" Margin="444,35,0,0" VerticalAlignment="Top" Width="74"/>
-   <Label Content="Alarms&amp; Clock:" HorizontalAlignment="Left" Margin="356,56,0,0" VerticalAlignment="Top"/>
-   <ComboBox x:Name="APP_WindowsAlarms_Combo" HorizontalAlignment="Left" Margin="444,59,0,0" VerticalAlignment="Top" Width="74"/>
-   <Label Content="Calculator:" HorizontalAlignment="Left" Margin="381,80,0,0" VerticalAlignment="Top"/>
-   <ComboBox x:Name="APP_WindowsCalculator_Combo" HorizontalAlignment="Left" Margin="444,83,0,0" VerticalAlignment="Top" Width="74"/>
-   <Label Content="Camera:" HorizontalAlignment="Left" Margin="394,104,0,0" VerticalAlignment="Top"/>
-   <ComboBox x:Name="APP_WindowsCamera_Combo" HorizontalAlignment="Left" Margin="444,107,0,0" VerticalAlignment="Top" Width="74"/>
-   <Label Content="Win. Feedback:" HorizontalAlignment="Left" Margin="357,128,0,0" VerticalAlignment="Top"/>
-   <ComboBox x:Name="APP_WindowsFeedbak_Combo" HorizontalAlignment="Left" Margin="444,131,0,0" VerticalAlignment="Top" Width="74"/>
-   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="224" Margin="346,29,0,-1" Stroke="Black" VerticalAlignment="Top" Width="1"/>
-   <Label Content="Windows Maps:" HorizontalAlignment="Left" Margin="353,152,0,0" VerticalAlignment="Top"/>
-   <ComboBox x:Name="APP_WindowsMaps_Combo" HorizontalAlignment="Left" Margin="444,155,0,0" VerticalAlignment="Top" Width="74"/>
-   <Label Content="Phone Comp.:" HorizontalAlignment="Left" Margin="363,176,0,0" VerticalAlignment="Top"/>
-   <ComboBox x:Name="APP_WindowsPhone_Combo" HorizontalAlignment="Left" Margin="444,179,0,0" VerticalAlignment="Top" Width="74"/>
-   <Label Content="Xbox App:" HorizontalAlignment="Left" Margin="383,200,0,0" VerticalAlignment="Top"/>
-   <ComboBox x:Name="APP_XboxApp_Combo" HorizontalAlignment="Left" Margin="444,203,0,0" VerticalAlignment="Top" Width="74"/>
-   <Label Content="Groove:" HorizontalAlignment="Left" Margin="396,224,0,0" VerticalAlignment="Top"/>
-   <ComboBox x:Name="APP_Zune_Combo" HorizontalAlignment="Left" Margin="444,227,0,0" VerticalAlignment="Top" Width="74"/>
-   <Label Content="Windows Store:" HorizontalAlignment="Left" Margin="220,0,0,0" VerticalAlignment="Top"/>
-   <ComboBox x:Name="APP_WindowsStore_Combo" HorizontalAlignment="Left" Margin="309,3,0,0" VerticalAlignment="Top" Width="74"/></Grid>
+   <Label Content="Voice Recorder:" HorizontalAlignment="Left" Margin="353,32,0,0" VerticalAlignment="Top"/>
+   <ComboBox x:Name="APP_VoiceRecorder_Combo" HorizontalAlignment="Left" Margin="442,35,0,0" VerticalAlignment="Top" Width="74"/>
+   <Label Content="Alarms&amp; Clock:" HorizontalAlignment="Left" Margin="354,56,0,0" VerticalAlignment="Top"/>
+   <ComboBox x:Name="APP_WindowsAlarms_Combo" HorizontalAlignment="Left" Margin="442,59,0,0" VerticalAlignment="Top" Width="74"/>
+   <Label Content="Calculator:" HorizontalAlignment="Left" Margin="379,80,0,0" VerticalAlignment="Top"/>
+   <ComboBox x:Name="APP_WindowsCalculator_Combo" HorizontalAlignment="Left" Margin="442,83,0,0" VerticalAlignment="Top" Width="74"/>
+   <Label Content="Camera:" HorizontalAlignment="Left" Margin="392,104,0,0" VerticalAlignment="Top"/>
+   <ComboBox x:Name="APP_WindowsCamera_Combo" HorizontalAlignment="Left" Margin="442,107,0,0" VerticalAlignment="Top" Width="74"/>
+   <Label Content="Win. Feedback:" HorizontalAlignment="Left" Margin="355,128,0,0" VerticalAlignment="Top"/>
+   <ComboBox x:Name="APP_WindowsFeedbak_Combo" HorizontalAlignment="Left" Margin="442,131,0,0" VerticalAlignment="Top" Width="74"/>
+   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="253" Margin="346,0,0,-1" Stroke="Black" VerticalAlignment="Top" Width="1"/>
+   <Label Content="Windows Maps:" HorizontalAlignment="Left" Margin="351,152,0,0" VerticalAlignment="Top"/>
+   <ComboBox x:Name="APP_WindowsMaps_Combo" HorizontalAlignment="Left" Margin="442,155,0,0" VerticalAlignment="Top" Width="74"/>
+   <Label Content="Phone Comp.:" HorizontalAlignment="Left" Margin="361,176,0,0" VerticalAlignment="Top"/>
+   <ComboBox x:Name="APP_WindowsPhone_Combo" HorizontalAlignment="Left" Margin="442,179,0,0" VerticalAlignment="Top" Width="74"/>
+   <Label Content="Xbox App:" HorizontalAlignment="Left" Margin="381,200,0,0" VerticalAlignment="Top"/>
+   <ComboBox x:Name="APP_XboxApp_Combo" HorizontalAlignment="Left" Margin="442,203,0,0" VerticalAlignment="Top" Width="74"/>
+   <Label Content="Groove:" HorizontalAlignment="Left" Margin="394,224,0,0" VerticalAlignment="Top"/>
+   <ComboBox x:Name="APP_Zune_Combo" HorizontalAlignment="Left" Margin="442,227,0,0" VerticalAlignment="Top" Width="74"/>
+   <Label Content="Windows Store:" HorizontalAlignment="Left" Margin="353,8,0,0" VerticalAlignment="Top"/>
+   <ComboBox x:Name="APP_WindowsStore_Combo" HorizontalAlignment="Left" Margin="442,11,0,0" VerticalAlignment="Top" Width="74"/></Grid>
   </TabItem>
   <TabItem x:Name="Application_Tab" Header="Application/Windows Update" Margin="-2,0,2,0"><Grid Background="#FFE5E5E5">
    <Label Content="OneDrive:" HorizontalAlignment="Left" Margin="69,31,0,0" VerticalAlignment="Top"/>
@@ -789,7 +795,7 @@ $inputXML = @"
    <Label Content="Restart on Update:" HorizontalAlignment="Left" Margin="287,166,0,0" VerticalAlignment="Top"/>
    <ComboBox x:Name="RestartOnUpdate_Combo" HorizontalAlignment="Left" Margin="392,169,0,0" VerticalAlignment="Top" Width="72"/></Grid>
   </TabItem>
-  </TabControl>
+ </TabControl>
  <Rectangle Fill="#FFFFFFFF" Height="1" Margin="0,299,0,0" Stroke="Black" VerticalAlignment="Top"/>
  <Rectangle Fill="#FFFFFFFF" Height="1" Margin="0,320,0,0" Stroke="Black" VerticalAlignment="Top"/>
  <Rectangle Fill="#FFB6B6B6" Stroke="Black" Margin="0,341,0,0" Height="14" VerticalAlignment="Top"/>
@@ -815,13 +821,13 @@ $inputXML = @"
     $Runspace.Open()
     [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") | Out-Null
 
+    #$WPF_EMail.Add_Click({ OpenWebsite "mailto:madbomb122@gmail.com" })
     $WPF_RunScriptButton.Add_Click({ Gui-Done })
     $WPF_CreateRestorePoint_CB.Add_Checked({ $WPF_CreateRestorePoint_CB.IsChecked = $true ;$WPF_RestorePointName_Txt.IsEnabled = $true })
     $WPF_CreateRestorePoint_CB.Add_UnChecked({ $WPF_CreateRestorePoint_CB.IsChecked = $false ;$WPF_RestorePointName_Txt.IsEnabled = $false })
     $WPF_Madbomb122WSButton.Add_Click({ OpenWebsite "https://github.com/madbomb122/" })
     $WPF_WinDefault_Button.Add_Click({ LoadWinDefault ;SelectComboBox })
     $WPF_ResetDefault_Button.Add_Click({ SetDefault ;SelectComboBox })
-    #$WPF_EMail.Add_Click({ OpenWebsite "mailto:madbomb122@gmail.com" })
     $WPF_Load_Setting_Button.Add_Click({ OpenSaveDiaglog 0 })
     $WPF_Save_Setting_Button.Add_Click({ OpenSaveDiaglog 1 })
     $WPF_AllMetro_Combo.add_SelectionChanged({ SelectComboBoxM ($WPF_AllMetro_Combo.SelectedIndex) })
@@ -923,11 +929,9 @@ $Skip_Show_HideD = @(
 "UsersFileOnDesktop",
 "ControlPanelOnDesktop")
 
-$Skip_InstalledD_Uninstall = @(
-"OneDriveInstall",
-"MediaPlayer",
-"WorkFolders")
+$Skip_InstalledD_Uninstall = @("OneDriveInstall","MediaPlayer","WorkFolders")
 
+    If($Release_Type -eq "Testing") { $Script:Restart = 0 ;$WPF_Restart_CB.IsEnabled = $false ;$WPF_Restart_CB.Content += " (Disabled in Testing Version)" }
     If($BuildVer -lt $CreatorUpdateBuild) { $WPF_LinuxSubsystem_Combo.Visibility = 'Hidden' ;$WPF_LinuxSubsystemTxt.Visibility = 'Hidden' }
     ForEach($Var in $Skip_EnableD_Disable) { SetCombo $Var "Enable*,Disable" }
     ForEach($Var in $Skip_Enable_DisableD) { SetCombo $Var "Enable,Disable*" }
@@ -2336,6 +2340,16 @@ Function RunScript {
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" -Name "ShowSleepOption" -Type DWord -Value 0
     }
 
+    If($UnpinItems -eq 0 -and $ShowSkipped -eq 1) {
+        DisplayOut "Skipping Unpinning Items..." 15 0
+    } ElseIf($UnpinItems -eq 1) {
+        DisplayOut "" 12 0
+        DisplayOut "Unpinning Items..." 12 0
+        DisplayOut "------------------" 12 0
+        DisplayOut "" 14 0
+        ForEach($Pin In $Pined_App) { unPin-App $Pin }
+    }
+
     DisplayOut "" 14 0
     DisplayOut "-------------------------" 14 0
     DisplayOut "-   Application Items   -" 14 0
@@ -2445,8 +2459,7 @@ Function RunScript {
     DisplayOut "-----------------------" 14 0
     DisplayOut "" 14 0
 
-    $APPProcess = Get-Variable -Name "^APP_*" -ValueOnly -Scope Script
-
+    $APPProcess = Get-Variable -Name "APP_*" -ValueOnly -Scope Script
     $A = 0
     ForEach($AppV In $APPProcess) {
         If($AppV -eq 1) {
@@ -2509,16 +2522,6 @@ Function RunScript {
         }
     }
 
-    If($UnpinItems -eq 0 -and $ShowSkipped -eq 1) {
-        DisplayOut "Skipping Unpinning Items..." 15 0
-    } ElseIf($UnpinItems -eq 1) {
-        DisplayOut "" 12 0
-        DisplayOut "Unpinning Items..." 12 0
-        DisplayOut "------------------" 12 0
-        DisplayOut "" 14 0
-        ForEach($Pin In $Pined_App) { unPin-App $Pin }
-    }
-
     If($Restart -eq 1 -and $Release_Type -eq "Stable ") {
         Clear-Host
         $Seconds = 10
@@ -2533,7 +2536,7 @@ Function RunScript {
         If($Automated -eq 0) { Read-Host -Prompt "`nPress any key to exit" }
         Exit
     } ElseIf($Automated -eq 0) { 
-        Read-Host -Prompt "`nPress any key to Go back to Menu"
+        Read-Host -Prompt "`nPress any key to Exit"
     }
 }
 
