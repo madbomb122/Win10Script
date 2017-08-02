@@ -12,7 +12,7 @@
 #
 $Script_Version = "3.0"
 $Minor_Version = "0"
-$Script_Date = "08-01-17"
+$Script_Date = "08-02-17"
 #$Release_Type = "Stable "
 $Release_Type = "Testing"
 ##########
@@ -451,8 +451,24 @@ Function ConfigGUIitms {
     RestorePointCBCheck
 }
 
-Function SelectComboBox { ForEach($Var in $VarList) { SelectComboBoxGen $Var $(Get-Variable -Name $Var -ValueOnly) } }
-Function SelectComboBoxM([Int]$Numb) { ForEach($Var in $ListApp) { SelectComboBoxGen $Var $Numb } }
+Function SelectComboBox([Array]$List,[Int]$Metro) { 
+    If($Metro -eq 1) {
+	    ForEach($Var in $List) {
+            If($Var -eq "APP_SkypeApp") {
+                $WPF_APP_SkypeApp_Combo.SelectedIndex = $APP_SkypeApp1
+            } ElseIf($Var -eq "APP_WindowsFeedbak") {
+                $WPF_APP_WindowsFeedbak_Combo.SelectedIndex = $APP_WindowsFeedbak1
+            } ElseIf($Var -eq "APP_Zune") {
+                $WPF_APP_Zune_Combo.SelectedIndex = $APP_ZuneMusic
+            } Else {
+                SelectComboBoxGen $Var $(Get-Variable -Name $Var -ValueOnly)
+            }
+		}
+	} Else {
+	    ForEach($Var in $List) { SelectComboBoxGen $Var $(Get-Variable -Name $Var -ValueOnly) }
+	}
+}
+Function SelectComboBoxAllMetro([Int]$Numb) { ForEach($Var in $ListApp) { SelectComboBoxGen $Var $Numb } }
 Function SelectComboBoxGen([String]$Name,[Int]$Numb) { $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).SelectedIndex = $Numb }
 
 Function AppAraySet([String]$Get) {
@@ -481,7 +497,7 @@ Function OpenSaveDiaglog([Int]$SorO){
     $SOFileDialog.filter = "CSV (*.csv)| *.csv"
     $SOFileDialog.ShowDialog() | Out-Null
     $File = $SOFileDialog.filename
-    If($SorO -eq 0) { LoadSettingFile $File;ConfigGUIitms ;SelectComboBox } Else { SaveSettingFiles $File }
+    If($SorO -eq 0) { LoadSettingFile $File;ConfigGUIitms ;SelectComboBox $VarList ;SelectComboBox $ListApp 1 } Else { SaveSettingFiles $File }
 }
 
 Function Gui-Start {
@@ -826,11 +842,11 @@ $inputXML = @"
     $WPF_CreateRestorePoint_CB.Add_Checked({ $WPF_CreateRestorePoint_CB.IsChecked = $true ;$WPF_RestorePointName_Txt.IsEnabled = $true })
     $WPF_CreateRestorePoint_CB.Add_UnChecked({ $WPF_CreateRestorePoint_CB.IsChecked = $false ;$WPF_RestorePointName_Txt.IsEnabled = $false })
     $WPF_Madbomb122WSButton.Add_Click({ OpenWebsite "https://github.com/madbomb122/" })
-    $WPF_WinDefault_Button.Add_Click({ LoadWinDefault ;SelectComboBox })
-    $WPF_ResetDefault_Button.Add_Click({ SetDefault ;SelectComboBox })
+    $WPF_WinDefault_Button.Add_Click({ LoadWinDefault ;SelectComboBox $VarList })
+    $WPF_ResetDefault_Button.Add_Click({ SetDefault ;SelectComboBox $VarList ;SelectComboBox $ListApp 1 })
     $WPF_Load_Setting_Button.Add_Click({ OpenSaveDiaglog 0 })
     $WPF_Save_Setting_Button.Add_Click({ OpenSaveDiaglog 1 })
-    $WPF_AllMetro_Combo.add_SelectionChanged({ SelectComboBoxM ($WPF_AllMetro_Combo.SelectedIndex) })
+    $WPF_AllMetro_Combo.add_SelectionChanged({ SelectComboBoxAllMetro ($WPF_AllMetro_Combo.SelectedIndex) })
     $WPF_CopyrightButton.Add_Click({ [Windows.Forms.MessageBox]::Show($CopyrightItems,"Copyright", 'OK') })
 
     $CopyrightItems = 'Copyright (c) 1999-2017 Charles "Black Viper" Sparks - Services Configuration
@@ -938,9 +954,10 @@ $Skip_InstalledD_Uninstall = @("OneDriveInstall","MediaPlayer","WorkFolders")
     ForEach($Var in $Skip_ShowD_Hide) { SetCombo $Var "Show*,Hide" }
     ForEach($Var in $Skip_Show_HideD) { SetCombo $Var "Show,Hide*" }
     ForEach($Var in $Skip_InstalledD_Uninstall) { SetCombo $Var "Installed*,Uninstall" }
+	
+    SetComboM "AllMetro" "Unhide,Hide,Uninstall"
     ForEach($MetroApp in $ListApp){ SetComboM $MetroApp "Unhide,Hide,Uninstall" }
 
-    SetComboM "AllMetro" "Unhide,Hide,Uninstall"
     SetCombo "LinuxSubsystem" "Installed,Uninstall*"
     SetCombo "HibernatePower" "Enable,Disable"
     SetCombo "UAC" "Lower,Normal*,Higher"
