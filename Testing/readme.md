@@ -1,5 +1,5 @@
 # Currently Testing
-GUI (Win10-Menu-Gui.ps1).. Everything Works, other than metro items loading settings (from default, file, reset all button)
+GUI (Win10-Menu-Gui.ps1).. Everything should Work now, doing a few tests before release
 
 # About Testing Version
 If I am not working on a change or addition to the script, this will be the same exact copy as the non test.<br />
