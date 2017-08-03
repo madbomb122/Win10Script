@@ -2512,18 +2512,22 @@ Function RunScript {
     $APPS_AppsInstall.Remove("") ;$Ai = $APPS_AppsInstall.length
     $APPS_AppsHide.Remove("") ;$Ah = $APPS_AppsHide.length
     $APPS_AppsUninstall.Remove("");$Au = $APPS_AppsUninstall.length
-    If($Ai -ne $null -or $Ah -ne $null -or $Au -ne $null) { $AppxPackages = Get-AppxProvisionedPackage -online | select-object PackageName,Displayname }
+    If($Ah -ne $null -or $Au -ne $null) { $AppxPackages = Get-AppxProvisionedPackage -online | select-object PackageName,Displayname }
 
     DisplayOut "" 14 0
     DisplayOut "Installing Apps..." 11 0
     DisplayOut "------------------" 11 0
     DisplayOut "" 14 0
-    
+
     If($Ai -ne $null) {
         ForEach($AppI In $APPS_AppsInstall) {
-            DisplayOut $AppI 11 0
-			$AppPkg = (get-appxpackage -Name $AppI).InstallLocation + "\Appxmanifest.xml" 
-            Add-AppxPackage -register $AppPkg –DisableDevelopmentMode
+            $AppInst = Get-AppxPackage -AllUsers $AppI
+            If($AppInst -ne $null) {
+                DisplayOut $AppI 11 0
+                ForEach($App In $AppInst) {Add-AppxPackage -DisableDevelopmentMode -Register "$($App.InstallLocation)\AppXManifest.xml"}
+            } Else {
+                DisplayOut "Unable to Install $AppI" 11 0
+            }
         }
     } Else {
         DisplayOut "No Apps being Installed" 11 0
