@@ -12,7 +12,7 @@
 #
 $Script_Version = "3.0"
 $Minor_Version = "0"
-$Script_Date = "08-02-17"
+$Script_Date = "08-03-17"
 #$Release_Type = "Stable "
 $Release_Type = "Testing"
 ##########
@@ -503,7 +503,22 @@ Function OpenSaveDiaglog([Int]$SorO){
 }
 
 Function GuiItmToVariable {
-    ForEach($Var in $VarList) { $WPFName ="WPF_"+$Var+"_Combo" ;Set-Variable -Name $Var -Value ($(Get-Variable -Name $WPFName -ValueOnly).SelectedIndex) -scope Script }
+    ForEach($Var in $ListApp) {
+        $Value = ($(Get-Variable -Name ("WPF_"+$Var+"_Combo") -ValueOnly).SelectedIndex)
+        If($Var -eq "APP_SkypeApp") {
+            Set-Variable -Name "APP_SkypeApp1" -Value $Value -scope Script
+            Set-Variable -Name "APP_SkypeApp2" -Value $Value -scope Script
+        } ElseIf($Var -eq "APP_WindowsFeedbak") {
+            Set-Variable -Name "APP_WindowsFeedbak1" -Value $Value -scope Script
+            Set-Variable -Name "APP_WindowsFeedbak2" -Value $Value -scope Script
+        } ElseIf($Var -eq "APP_Zune") {
+            Set-Variable -Name "APP_ZuneMusic" -Value $Value -scope Script
+            Set-Variable -Name "APP_ZuneVideo" -Value $Value -scope Script
+        } Else {
+            Set-Variable -Name $Var -Value $Value -scope Script
+        }
+    }
+    ForEach($Var in $VarList) { Set-Variable -Name $Var -Value ($(Get-Variable -Name ("WPF_"+$Var+"_Combo") -ValueOnly).SelectedIndex) -scope Script }
     If($WPF_CreateRestorePoint_CB.IsChecked) { $CreateRestorePoint = 1 } Else { $CreateRestorePoint = 0 }
     If($WPF_VersionCheck_CB.IsChecked) { $VersionCheck = 1 } Else { $VersionCheck = 0 }
     If($WPF_InternetCheck_CB.IsChecked) { $InternetCheck = 1 } Else { $InternetCheck = 0 }
@@ -967,8 +982,8 @@ $Skip_InstalledD_Uninstall = @("OneDriveInstall","MediaPlayer","WorkFolders")
     ForEach($Var in $Skip_Show_HideD) { SetCombo $Var "Show,Hide*" }
     ForEach($Var in $Skip_InstalledD_Uninstall) { SetCombo $Var "Installed*,Uninstall" }
     
-    SetComboM "AllMetro" "Unhide,Hide,Uninstall"
-    ForEach($MetroApp in $ListApp){ SetComboM $MetroApp "Unhide,Hide,Uninstall" }
+    SetComboM "AllMetro" "Install,Hide,Uninstall"
+    ForEach($MetroApp in $ListApp){ SetComboM $MetroApp "Install,Hide,Uninstall" }
 
     SetCombo "LinuxSubsystem" "Installed,Uninstall*"
     SetCombo "HibernatePower" "Enable,Disable"
@@ -2494,34 +2509,42 @@ Function RunScript {
         } $A++
     }
 
+    $APPS_AppsInstall.Remove("") ;$Ai = $APPS_AppsInstall.length
+    $APPS_AppsHide.Remove("") ;$Ah = $APPS_AppsHide.length
+    $APPS_AppsUninstall.Remove("");$Au = $APPS_AppsUninstall.length
+    If($Ai -ne $null -or $Ah -ne $null -or $Au -ne $null) { $AppxPackages = Get-AppxProvisionedPackage -online | select-object PackageName,Displayname }
+
     DisplayOut "" 14 0
     DisplayOut "Installing Apps..." 11 0
     DisplayOut "------------------" 11 0
     DisplayOut "" 14 0
-
-    ForEach($AppI In $APPS_AppsInstall) {
-        If($AppI -ne $null -and $AppI -ne "") {
+    
+    If($Ai -ne $null) {
+        ForEach($AppI In $APPS_AppsInstall) {
             DisplayOut $AppI 11 0
-            $AppIfull = (Get-AppxProvisionedPackage -online | where {$_.Displayname -eq $AppI}).PackageName
-            $Package = "C:\Program Files\WindowsApps\$AppIfull\AppxManifest.xml"
-            Add-AppxPackage -Register $Package -DisableDevelopmentMode
-            #Add-AppxPackage -DisableDevelopmentMode -Register "$($(Get-AppXPackage -AllUsers $AppI).InstallLocation)\AppXManifest.xml" | Out-null
+			$AppPkg = (get-appxpackage -Name $AppI).InstallLocation + "\Appxmanifest.xml" 
+            Add-AppxPackage -register $AppPkg –DisableDevelopmentMode
         }
+    } Else {
+        DisplayOut "No Apps being Installed" 11 0
     }
 
     DisplayOut "" 14 0
-    DisplayOut "Hidinging Apps..." 12 0
+    DisplayOut "Hidding Apps..." 12 0
     DisplayOut "-----------------" 12 0
     DisplayOut "" 14 0
 
-    ForEach($AppH In $APPS_AppsHide) {
-        $ProvisionedPackage = Get-AppxProvisionedPackage -online | Where {$_.displayName -eq $AppH}
-        If($ProvisionedPackage -ne $null -and $AppH -ne "") {
+    If($Ah -ne $null) {
+      ForEach($AppH In $APPS_AppsHide) {
+        If($AppxPackages.DisplayName.Contains($AppH)) {
             DisplayOut $AppH 12 0
             Get-AppxPackage $AppH | Remove-AppxPackage | Out-null
         } ElseIf($Release_Type -ne "Stable ") {
             DisplayOut "$AppH Isn't Installed" 12 0
         }
+      }
+    } Else {
+        DisplayOut "No Apps being Hidden" 12 0
     }
 
     DisplayOut "" 14 0
@@ -2529,20 +2552,22 @@ Function RunScript {
     DisplayOut "--------------------" 14 0
     DisplayOut "" 14 0
 
-    ForEach($AppU In $APPS_AppsUninstall) {
-        $ProvisionedPackage = Get-AppxProvisionedPackage -online | Where {$_.displayName -eq $AppU}
-        If($ProvisionedPackage -ne $null -and $AppU -ne "") {
+    If($Au -ne $null) {
+      ForEach($AppU In $APPS_AppsUninstall) {
+        If($AppxPackages.DisplayName.Contains($AppU)) {
             DisplayOut $AppU 14 0
             $PackageFullName = (Get-AppxPackage $AppU).PackageFullName
-            $ProPackageFullName = (Get-AppxProvisionedPackage -online | where {$_.Displayname -eq $AppU}).PackageName
+            $ProPackageFullName = ($AppxPackages | Where {$_.Displayname -eq $AppU}).PackageName
 
-            # Alt removal
-            # DISM /Online /Remove-ProvisionedAppxPackage /PackageName:
+            # Alt removal: DISM /Online /Remove-ProvisionedAppxPackage /PackageName:
             Remove-AppxPackage -package $PackageFullName | Out-null
             Remove-AppxProvisionedPackage -online -packagename $ProPackageFullName | Out-null
         } ElseIf($Release_Type -ne "Stable ") {
             DisplayOut "$AppU Isn't Installed" 14 0
         }
+      }
+    } Else {
+        DisplayOut "No Apps being Uninstalled" 14 0
     }
 
     If($Restart -eq 1 -and $Release_Type -eq "Stable ") {
