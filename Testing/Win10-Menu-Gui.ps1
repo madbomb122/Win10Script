@@ -124,80 +124,77 @@ If([System.Environment]::Is64BitProcess) { $Script:OSType = 64 }
 [Array]$Script:APPS_AppsUninstall = @()
 
 $AppsList = @(
-    'Microsoft.3DBuilder',
-    'Microsoft.Microsoft3DViewer',
-    'Microsoft.BingWeather',
-    'Microsoft.CommsPhone',
-    'Microsoft.windowscommunicationsapps',
-    'Microsoft.Getstarted',
-    'Microsoft.Messaging',
-    'Microsoft.MicrosoftOfficeHub',
-    'Microsoft.MovieMoments',
-    '4DF9E0F8.Netflix',
-    'Microsoft.Office.OneNote',
-    'Microsoft.Office.Sway',
-    'Microsoft.OneConnect',
-    'Microsoft.People',
-    'Microsoft.Windows.Photos',
-    'Microsoft.SkypeApp',
-    'Microsoft.SkypeWiFi',
-    'Microsoft.MicrosoftSolitaireCollection',
-    'Microsoft.MicrosoftStickyNotes',
-    'Microsoft.WindowsSoundRecorder',
-    'Microsoft.WindowsAlarms',
-    'Microsoft.WindowsCalculator',
-    'Microsoft.WindowsCamera',
-    'Microsoft.WindowsFeedback',
-    'Microsoft.WindowsFeedbackHub',
-    'Microsoft.WindowsMaps',
-    'Microsoft.WindowsPhone',
-    'Microsoft.WindowsStore',
-    'Microsoft.XboxApp',
-    'Microsoft.ZuneMusic',
-    'Microsoft.ZuneVideo'
-)
+'Microsoft.3DBuilder',
+'Microsoft.Microsoft3DViewer',
+'Microsoft.BingWeather',
+'Microsoft.CommsPhone',
+'Microsoft.windowscommunicationsapps',
+'Microsoft.Getstarted',
+'Microsoft.Messaging',
+'Microsoft.MicrosoftOfficeHub',
+'Microsoft.MovieMoments',
+'4DF9E0F8.Netflix',
+'Microsoft.Office.OneNote',
+'Microsoft.Office.Sway',
+'Microsoft.OneConnect',
+'Microsoft.People',
+'Microsoft.Windows.Photos',
+'Microsoft.SkypeApp',
+'Microsoft.SkypeWiFi',
+'Microsoft.MicrosoftSolitaireCollection',
+'Microsoft.MicrosoftStickyNotes',
+'Microsoft.WindowsSoundRecorder',
+'Microsoft.WindowsAlarms',
+'Microsoft.WindowsCalculator',
+'Microsoft.WindowsCamera',
+'Microsoft.WindowsFeedback',
+'Microsoft.WindowsFeedbackHub',
+'Microsoft.WindowsMaps',
+'Microsoft.WindowsPhone',
+'Microsoft.WindowsStore',
+'Microsoft.XboxApp',
+'Microsoft.ZuneMusic',
+'Microsoft.ZuneVideo')
 
 # predefined Color Array
 $colors = @(
-    "black",        #0
-    "blue",         #1
-    "cyan",         #2
-    "darkblue",     #3
-    "darkcyan",     #4
-    "darkgray",     #5
-    "darkgreen",    #6
-    "darkmagenta",  #7
-    "darkred",      #8
-    "darkyellow",   #9
-    "gray",         #10
-    "green",        #11
-    "magenta",      #12
-    "red",          #13
-    "white",        #14
-    "yellow"        #15
-)
+"black",        #0
+"blue",         #1
+"cyan",         #2
+"darkblue",     #3
+"darkcyan",     #4
+"darkgray",     #5
+"darkgreen",    #6
+"darkmagenta",  #7
+"darkred",      #8
+"darkyellow",   #9
+"gray",         #10
+"green",        #11
+"magenta",      #12
+"red",          #13
+"white",        #14
+"yellow")       #15
 
 $Pined_App = @(
-    'Mail',
-    'Store',
-    'Calendar',
-    'Microsoft Edge',
-    'Photos',
-    'Cortana',
-    'Weather',
-    'Phone Companion',
-    'Twitter',
-    'Skype Video',
-    'Candy Crush Soda Saga',
-    'xbox',
-    'Groove music',
-    "movies & tv",
-    'microsoft solitaire collection',
-    'money',
-    'get office',
-    'onenote',
-    'news'
-)
+'Mail',
+'Store',
+'Calendar',
+'Microsoft Edge',
+'Photos',
+'Cortana',
+'Weather',
+'Phone Companion',
+'Twitter',
+'Skype Video',
+'Candy Crush Soda Saga',
+'xbox',
+'Groove music',
+"movies & tv",
+'microsoft solitaire collection',
+'money',
+'get office',
+'onenote',
+'news')
 
 Function MenuBlankLine { DisplayOutMenu "|                                                   |" 14 0 1 }
 Function MenuLine { DisplayOutMenu "|---------------------------------------------------|" 14 0 1 }
@@ -1153,11 +1150,7 @@ Function LoadWinDefault {
 Function PreStartScript {
     If($VersionCheck -eq 1) { UpdateCheck }
     Clear-Host
-    DisplayOut "" 14 0
-    DisplayOut "------------------" 14 0
-    DisplayOut "-   Pre-Script   -" 14 0
-    DisplayOut "------------------" 14 0
-    DisplayOut "" 14 0
+    DisplayOut "------------------`n-   Pre-Script   -`n------------------" 14 0
     
     If($CreateRestorePoint -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Creation of System Restore Point..." 15 0
@@ -1174,11 +1167,7 @@ Function RunScript {
     If(!(Test-Path "HKCR:")) { New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null }
     If(!(Test-Path "HKU:")) { New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_USERS | Out-Null }
 
-    DisplayOut "" 14 0
-    DisplayOut "------------------------" 14 0
-    DisplayOut "-   Privacy Settings   -" 14 0
-    DisplayOut "------------------------" 14 0
-    DisplayOut "" 14 0
+    DisplayOut "`n------------------------`n-   Privacy Settings   -`n------------------------" 14 0
 
     If($Telemetry -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Telemetry..." 15 0
@@ -1361,11 +1350,7 @@ Function RunScript {
         Set-ItemProperty -Path $Path -Name "DisableWindowsConsumerFeatures" -Type DWord -Value 1
     }
 
-    DisplayOut "" 14 0
-    DisplayOut "-------------------------------" 14 0
-    DisplayOut "-   Windows Update Settings   -" 14 0
-    DisplayOut "-------------------------------" 14 0
-    DisplayOut "" 14 0
+    DisplayOut "`n-------------------------------`n-   Windows Update Settings   -`n-------------------------------" 14 0
 
     $Path = Check-SetPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
     If($CheckForWinUpdate -eq 0 -and $ShowSkipped -eq 1) {
@@ -1420,11 +1405,7 @@ Function RunScript {
         Set-ItemProperty -Path $Path -Name "DODownloadMode" -Type DWord -Value 0
     }
 
-    DisplayOut "" 14 0
-    DisplayOut "----------------------" 14 0
-    DisplayOut "-   Service Tweaks   -" 14 0
-    DisplayOut "----------------------" 14 0
-    DisplayOut "" 14 0
+    DisplayOut "`n----------------------`n-   Service Tweaks   -`n----------------------" 14 0
 
     If($UAC -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping UAC Level..." 15 0
@@ -1532,11 +1513,7 @@ Function RunScript {
         Set-ItemProperty -Path "$Path\WinStations\RDP-Tcp" -Name "UserAuthentication" -Type DWord -Value 1
     }
 
-    DisplayOut "" 14 0
-    DisplayOut "--------------------------" 14 0
-    DisplayOut "-   Context Menu Items   -" 14 0
-    DisplayOut "--------------------------" 14 0
-    DisplayOut "" 14 0
+    DisplayOut "`n--------------------------`n-   Context Menu Items   -`n--------------------------" 14 0
 
     If($CastToDevice -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Cast to Device Context item..." 15 0
@@ -1654,11 +1631,7 @@ Function RunScript {
         If(Test-Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo") { Remove-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" }
     }
 
-    DisplayOut "" 14 0
-    DisplayOut "----------------------" 14 0
-    DisplayOut "-   Task Bar Items   -" 14 0
-    DisplayOut "----------------------" 14 0
-    DisplayOut "" 14 0
+    DisplayOut "`n----------------------`n-   Task Bar Items   -`n----------------------" 14 0
 
     If($BatteryUIBar -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Battery UI Bar..." 15 0
@@ -1789,11 +1762,7 @@ Function RunScript {
         Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MMTaskbarMode" -Type DWord -Value 1
     }
 
-    DisplayOut "" 14 0
-    DisplayOut "-----------------------" 14 0
-    DisplayOut "-   Star Menu Items   -" 14 0
-    DisplayOut "-----------------------" 14 0
-    DisplayOut "" 14 0
+    DisplayOut "`n-----------------------`n-   Star Menu Items   -`n-----------------------" 14 0
 
     If($StartMenuWebSearch -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Bing Search in Start Menu..." 15 0
@@ -1844,11 +1813,7 @@ Function RunScript {
         Set-ItemProperty -Path $Path -Name "Start_TrackDocs" -Type DWord -Value 0
     }
 
-    DisplayOut "" 14 0
-    DisplayOut "----------------------" 14 0
-    DisplayOut "-   Explorer Items   -" 14 0
-    DisplayOut "----------------------" 14 0
-    DisplayOut "" 14 0
+    DisplayOut "`n----------------------`n-   Explorer Items   -`n----------------------" 14 0
 
     If($PidInTitleBar -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Process ID on Title Bar..." 15 0
@@ -2028,11 +1993,7 @@ Function RunScript {
         }
     }
 
-    DisplayOut "" 14 0
-    DisplayOut "-----------------------" 14 0
-    DisplayOut "-   'This PC' Items   -" 14 0
-    DisplayOut "-----------------------" 14 0
-    DisplayOut "" 14 0
+    DisplayOut "`n-----------------------`n-   'This PC' Items   -`n-----------------------" 14 0
 
     If($DesktopIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Desktop folder in This PC..." 15 0
@@ -2118,11 +2079,7 @@ Function RunScript {
         If($OSType -eq 64) { Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
     }
 
-    DisplayOut "" 14 0
-    DisplayOut "---------------------" 14 0
-    DisplayOut "-   Desktop Items   -" 14 0
-    DisplayOut "---------------------" 14 0
-    DisplayOut "" 14 0
+    DisplayOut "`n---------------------`n-   Desktop Items   -`n---------------------" 14 0
 
     $Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu"
     If($ThisPCOnDesktop -eq 0 -and $ShowSkipped -eq 1) {
@@ -2195,11 +2152,7 @@ Function RunScript {
         Set-ItemProperty -Path "$Path\NewStartPanel" -Name "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}" -Type DWord -Value 1
     }
 
-    DisplayOut "" 14 0
-    DisplayOut "-----------------------------" 14 0
-    DisplayOut "-   Photo Viewer Settings   -" 14 0
-    DisplayOut "-----------------------------" 14 0
-    DisplayOut "" 14 0
+    DisplayOut "`n-----------------------------`n-   Photo Viewer Settings   -`n-----------------------------" 14 0
 
     If($PVFileAssociation -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Photo Viewer File Association..." 15 0
@@ -2236,11 +2189,7 @@ Function RunScript {
         If(Test-Path "HKCR:\Applications\photoviewer.dll\shell\open") { Remove-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open" -Recurse }
     }
 
-    DisplayOut "" 14 0
-    DisplayOut "------------------------" 14 0
-    DisplayOut "-   Lockscreen Items   -" 14 0
-    DisplayOut "------------------------" 14 0
-    DisplayOut "" 14 0
+    DisplayOut "`n------------------------`n-   Lockscreen Items   -`n------------------------" 14 0
 
     If($LockScreen -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Lock Screen..." 15 0
@@ -2298,11 +2247,7 @@ Function RunScript {
         Set-ItemProperty -Path $Path -Name "NoLockScreenCamera" -Type DWord -Value 1
     }
 
-    DisplayOut "" 14 0
-    DisplayOut "------------------" 14 0
-    DisplayOut "-   Misc Items   -" 14 0
-    DisplayOut "------------------" 14 0
-    DisplayOut "" 14 0
+    DisplayOut "`n------------------`n-   Misc Items   -`n------------------" 14 0
 
     If($ActionCenter -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Action Center..." 15 0
@@ -2381,18 +2326,11 @@ Function RunScript {
     If($UnpinItems -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Unpinning Items..." 15 0
     } ElseIf($UnpinItems -eq 1) {
-        DisplayOut "" 12 0
-        DisplayOut "Unpinning Items..." 12 0
-        DisplayOut "------------------" 12 0
-        DisplayOut "" 14 0
+        DisplayOut "`nUnpinning Items...`n------------------" 12 0
         ForEach($Pin In $Pined_App) { unPin-App $Pin }
     }
 
-    DisplayOut "" 14 0
-    DisplayOut "-------------------------" 14 0
-    DisplayOut "-   Application Items   -" 14 0
-    DisplayOut "-------------------------" 14 0
-    DisplayOut "" 14 0
+    DisplayOut "`n-------------------------`n-   Application Items   -`n-------------------------" 14 0
 
     If($OneDrive -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping OneDrive..." 15 0
@@ -2491,11 +2429,7 @@ Function RunScript {
         DisplayOut "Windows 10 Build isn't new enough for Linux Subsystem..." 14 0
     }
 
-    DisplayOut "" 14 0
-    DisplayOut "-----------------------" 14 0
-    DisplayOut "-   Metro App Items   -" 14 0
-    DisplayOut "-----------------------" 14 0
-    DisplayOut "" 14 0
+    DisplayOut "`n-----------------------`n-   Metro App Items   -`n-----------------------" 14 0
 
     $APPProcess = Get-Variable -Name "APP_*" -ValueOnly -Scope Script
     $A = 0
@@ -2514,10 +2448,7 @@ Function RunScript {
     $APPS_AppsUninstall.Remove("");$Au = $APPS_AppsUninstall.length
     If($Ah -ne $null -or $Au -ne $null) { $AppxPackages = Get-AppxProvisionedPackage -online | select-object PackageName,Displayname }
 
-    DisplayOut "" 14 0
-    DisplayOut "Installing Apps..." 11 0
-    DisplayOut "------------------" 11 0
-    DisplayOut "" 14 0
+    DisplayOut "Installing Apps...`n------------------" 11 0
 
     If($Ai -ne $null) {
         ForEach($AppI In $APPS_AppsInstall) {
@@ -2533,10 +2464,7 @@ Function RunScript {
         DisplayOut "No Apps being Installed" 11 0
     }
 
-    DisplayOut "" 14 0
-    DisplayOut "Hidding Apps..." 12 0
-    DisplayOut "-----------------" 12 0
-    DisplayOut "" 14 0
+    DisplayOut "`nHidding Apps...`n-----------------" 12 0
 
     If($Ah -ne $null) {
       ForEach($AppH In $APPS_AppsHide) {
@@ -2551,10 +2479,7 @@ Function RunScript {
         DisplayOut "No Apps being Hidden" 12 0
     }
 
-    DisplayOut "" 14 0
-    DisplayOut "Uninstalling Apps..." 14 0
-    DisplayOut "--------------------" 14 0
-    DisplayOut "" 14 0
+    DisplayOut "`nUninstalling Apps...`n--------------------" 14 0
 
     If($Au -ne $null) {
       ForEach($AppU In $APPS_AppsUninstall) {
@@ -2580,7 +2505,7 @@ Function RunScript {
         Write-Host "`nRestarting Computer in 10 Seconds..." -ForegroundColor Yellow -BackgroundColor Black
         $Message = "Restarting in"
         Start-Sleep -Seconds 1
-        ForEach($Count in (1..$Seconds)) { If($Count -ne 0) { Write-Host $Message" $($Seconds - $Count)" -ForegroundColor Yellow -BackgroundColor Black ;Start-Sleep -Seconds 1 } }
+        ForEach($Count in (1..$Seconds)) { If($Count -ne 0) { Write-Host "$Message $($Seconds - $Count)" -ForegroundColor Yellow -BackgroundColor Black ;Start-Sleep -Seconds 1 } }
         Write-Host "Restarting Computer..." -ForegroundColor Red -BackgroundColor Black
         Restart-Computer
     } ElseIf($Release_Type -eq "Stable ") {
