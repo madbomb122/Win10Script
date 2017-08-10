@@ -1,8 +1,8 @@
 ##########
-# Win10 Setup Script Settings with Menu
+# Win 10 Setup Script/Tweaks with Menu(GUI)
 #
 # Original Basic Script By
-#  Author: Disassembler
+#  Author: Disassembler0
 # Website: https://github.com/Disassembler0/Win10-Initial-Setup-Script/
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
@@ -12,7 +12,7 @@
 #
 $Script_Version = "3.0"
 $Minor_Version = "0"
-$Script_Date = "08-03-17"
+$Script_Date = "Aug-09-2017"
 #$Release_Type = "Stable "
 $Release_Type = "Testing"
 ##########
@@ -29,7 +29,7 @@ $Release_Type = "Testing"
 ## !!                                            !!
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-<#--------------------------------------------------------------------------------
+<#------------------------------------------------------------------------------
 The MIT License (MIT)
 
 Copyright (c) 2017 Disassembler -Original Basic Version of Script
@@ -51,9 +51,9 @@ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
---------------------------------------------------------------------------------#>
 
-<#----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
 .Prerequisite to run script
   System: Windows 10
   Files: This script
@@ -92,8 +92,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  Switches       Description of Switch
   -usc           (Checks for Update to Script file before running)
   -sic           (Skips Internet Check)
-----------------------------------------------------------------------------#>
-
+------------------------------------------------------------------------------#>
 ##########
 # Pre-Script -Start
 ##########
@@ -464,7 +463,7 @@ Function SelectComboBox([Array]$List,[Int]$Metro) {
             }
         }
     } Else {
-        ForEach($Var in $List) { SelectComboBoxGen $Var $(Get-Variable -Name $Var -ValueOnly) }
+        ForEach($Var in $List) { SelectComboBoxGen $Var $Var.Value }
     }
 }
 Function SelectComboBoxAllMetro([Int]$Numb) { ForEach($Var in $ListApp) { SelectComboBoxGen $Var $Numb } }
@@ -497,31 +496,6 @@ Function OpenSaveDiaglog([Int]$SorO){
     $SOFileDialog.ShowDialog() | Out-Null
     $File = $SOFileDialog.filename
     If($SorO -eq 0) { LoadSettingFile $File;ConfigGUIitms ;SelectComboBox $VarList ;SelectComboBox $ListApp 1 } Else { GuiItmToVariable ;SaveSettingFiles $File }
-}
-
-Function GuiItmToVariable {
-    ForEach($Var in $ListApp) {
-        $Value = ($(Get-Variable -Name ("WPF_"+$Var+"_Combo") -ValueOnly).SelectedIndex)
-        If($Var -eq "APP_SkypeApp") {
-            Set-Variable -Name "APP_SkypeApp1" -Value $Value -scope Script
-            Set-Variable -Name "APP_SkypeApp2" -Value $Value -scope Script
-        } ElseIf($Var -eq "APP_WindowsFeedbak") {
-            Set-Variable -Name "APP_WindowsFeedbak1" -Value $Value -scope Script
-            Set-Variable -Name "APP_WindowsFeedbak2" -Value $Value -scope Script
-        } ElseIf($Var -eq "APP_Zune") {
-            Set-Variable -Name "APP_ZuneMusic" -Value $Value -scope Script
-            Set-Variable -Name "APP_ZuneVideo" -Value $Value -scope Script
-        } Else {
-            Set-Variable -Name $Var -Value $Value -scope Script
-        }
-    }
-    ForEach($Var in $VarList) { Set-Variable -Name $Var -Value ($(Get-Variable -Name ("WPF_"+$Var+"_Combo") -ValueOnly).SelectedIndex) -scope Script }
-    If($WPF_CreateRestorePoint_CB.IsChecked) { $CreateRestorePoint = 1 } Else { $CreateRestorePoint = 0 }
-    If($WPF_VersionCheck_CB.IsChecked) { $VersionCheck = 1 } Else { $VersionCheck = 0 }
-    If($WPF_InternetCheck_CB.IsChecked) { $InternetCheck = 1 } Else { $InternetCheck = 0 }
-    If($WPF_ShowSkipped_CB.IsChecked) { $ShowSkipped = 1 } Else { $ShowSkipped = 0 }
-    If($WPF_Restart_CB.IsChecked) { $Restart = 1 } Else { $Restart = 0 }
-    $RestorePointName = $WPF_RestorePointName_Txt.Text 
 }
 
 Function Gui-Start {
@@ -844,7 +818,7 @@ $inputXML = @"
 </Window>
 "@
 
-    $inputXML = $inputXML -replace 'mc:Ignorable="d"','' -replace "x:N",'N'
+    $inputXML = $inputXML -replace "x:N",'N'
     [void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
     [xml]$XAML = $inputXML
     $reader=(New-Object System.Xml.XmlNodeReader $xaml)
@@ -862,6 +836,7 @@ $inputXML = @"
     [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") | Out-Null
 
     #$WPF_EMail.Add_Click({ OpenWebsite "mailto:madbomb122@gmail.com" })
+    #$WPF_DonateButton.Add_Click({ OpenWebsite "https://www.amazon.com/gp/registry/wishlist/YBAYWBJES5DE/" })
     $WPF_RunScriptButton.Add_Click({ Gui-Done })
     $WPF_CreateRestorePoint_CB.Add_Checked({ $WPF_CreateRestorePoint_CB.IsChecked = $true ;$WPF_RestorePointName_Txt.IsEnabled = $true })
     $WPF_CreateRestorePoint_CB.Add_UnChecked({ $WPF_CreateRestorePoint_CB.IsChecked = $false ;$WPF_RestorePointName_Txt.IsEnabled = $false })
@@ -1013,6 +988,31 @@ Function Gui-Done {
     $Form.Close()
     $Script:RunScr = $true
     PreStartScript
+}
+
+Function GuiItmToVariable {
+    ForEach($Var in $ListApp) {
+        $Value = ($(Get-Variable -Name ("WPF_"+$Var+"_Combo") -ValueOnly).SelectedIndex)
+        If($Var -eq "APP_SkypeApp") {
+            Set-Variable -Name "APP_SkypeApp1" -Value $Value -scope Script
+            Set-Variable -Name "APP_SkypeApp2" -Value $Value -scope Script
+        } ElseIf($Var -eq "APP_WindowsFeedbak") {
+            Set-Variable -Name "APP_WindowsFeedbak1" -Value $Value -scope Script
+            Set-Variable -Name "APP_WindowsFeedbak2" -Value $Value -scope Script
+        } ElseIf($Var -eq "APP_Zune") {
+            Set-Variable -Name "APP_ZuneMusic" -Value $Value -scope Script
+            Set-Variable -Name "APP_ZuneVideo" -Value $Value -scope Script
+        } Else {
+            Set-Variable -Name $Var -Value $Value -scope Script
+        }
+    }
+    ForEach($Var in $VarList) { Set-Variable -Name $Var -Value ($(Get-Variable -Name ("WPF_"+$Var+"_Combo") -ValueOnly).SelectedIndex) -scope Script }
+    If($WPF_CreateRestorePoint_CB.IsChecked) { $CreateRestorePoint = 1 } Else { $CreateRestorePoint = 0 }
+    If($WPF_VersionCheck_CB.IsChecked) { $VersionCheck = 1 } Else { $VersionCheck = 0 }
+    If($WPF_InternetCheck_CB.IsChecked) { $InternetCheck = 1 } Else { $InternetCheck = 0 }
+    If($WPF_ShowSkipped_CB.IsChecked) { $ShowSkipped = 1 } Else { $ShowSkipped = 0 }
+    If($WPF_Restart_CB.IsChecked) { $Restart = 1 } Else { $Restart = 0 }
+    $RestorePointName = $WPF_RestorePointName_Txt.Text 
 }
 
 ##########
