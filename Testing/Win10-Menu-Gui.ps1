@@ -12,7 +12,7 @@
 #
 $Script_Version = "3.0"
 $Minor_Version = "0"
-$Script_Date = "Aug-09-2017"
+$Script_Date = "Aug-11-2017"
 #$Release_Type = "Stable "
 $Release_Type = "Testing"
 ##########
@@ -227,11 +227,11 @@ Function UpdateCheck {
         $Script_Url = $URL_Base + "Win10-Menu.ps1"
         $WebScriptFilePath = $filebase + $DFilename
         If($WebScriptVer -gt $Script_Version) {
-            $Script_Update = $true
+            $Script_Update = $True
         } ElseIf($WebScriptVer -eq $Script_Version -and $WebScriptMinorVer -gt $Minor_Version) {
-            $Script_Update = $true
+            $Script_Update = $True
         } Else {
-            $Script_Update = $false
+            $Script_Update = $False
         }
         If($Script_Update) {
             Clear-Host
@@ -253,7 +253,7 @@ Function UpdateCheck {
             If($InternetCheck -eq 1) { $UpArg = $UpArg + "-sic" }
             If($CreateRestorePoint -eq 1) { $UpArg = $UpArg + "-crp" }
             If($Restart -eq 0) { $UpArg = $UpArg + "-dnr" }
-            If($RunScr -eq $true) { $UpArg = $UpArg + "-run $TempSetting" } Else { $UpArg = $UpArg + "-load $TempSetting" }
+            If($RunScr -eq $True) { $UpArg = $UpArg + "-run $TempSetting" } Else { $UpArg = $UpArg + "-load $TempSetting" }
             Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$WebScriptFilePath`" $UpArg" -Verb RunAs
             Exit
         }
@@ -272,7 +272,7 @@ Function UpdateCheck {
     }
 }
 
-Function InternetCheck { If($InternetCheck -eq 1) { Return $true } ElseIf(!(Test-Connection -computer github.com -count 1 -quiet)) { Return $false } Return $true }
+Function InternetCheck { If($InternetCheck -eq 1) { Return $True } ElseIf(!(Test-Connection -computer github.com -count 1 -quiet)) { Return $False } Return $True }
 
 ##########
 # Update Check -End
@@ -297,7 +297,7 @@ Function ScriptPreStart {
     If ($PassedArg.length -gt 0) { ArgCheck }
     If($AcceptToS -eq 1) {
         TOS
-    } ElseIf($RunScr -eq $true) {
+    } ElseIf($RunScr -eq $True) {
         PreStartScript
     } ElseIf($AcceptToS -ne 1) {
         Gui-Start
@@ -311,10 +311,10 @@ Function ArgCheck {
             $PasVal = $PassedArg[($i++)].ToLower()
             Switch($ArgVal) {
                 "-run" { If(Test-Path $PasVal -PathType Leaf) {
-                            LoadSettingFile $PasVal ;$Script:RunScr = $true
+                            LoadSettingFile $PasVal ;$Script:RunScr = $True
                        } ElseIf($PasVal -eq "wd" -or $PasVal -eq "windefault") {
-                            LoadWinDefault ;$Script:RunScr = $true
-                       } ElseIf($PasVal.StartsWith("-")){ $Script:RunScr = $true}
+                            LoadWinDefault ;$Script:RunScr = $True
+                       } ElseIf($PasVal.StartsWith("-")){ $Script:RunScr = $True}
                        Break
                 }
                 "-load" { If(Test-Path $PasVal -PathType Leaf) { LoadSettingFile $PasVal } ElseIf($PasVal -eq "wd" -or $PasVal -eq "windefault") { LoadWinDefault } ;Break }
@@ -360,7 +360,7 @@ Function TOS {
         $TOS = Read-Host "`nDo you Accept? (Y)es/(N)o"
         Switch($TOS.ToLower()) {
             { $_ -eq "n" -or $_ -eq "no" } { Exit ;Break }
-            { $_ -eq "y" -or $_ -eq "yes" } { $AcceptToS = "Accepted-Script" ;$TOS = "Out"; If($RunScr -eq $true) { PreStartScript } Else { Gui-Start } ;Break }
+            { $_ -eq "y" -or $_ -eq "yes" } { $AcceptToS = "Accepted-Script" ;$TOS = "Out"; If($RunScr -eq $True) { PreStartScript } Else { Gui-Start } ;Break }
             default {$Invalid = 1}
         }
     } Return
@@ -385,8 +385,8 @@ Function SaveSettingFiles([String]$Filename) {
     ForEach($temp In $APPS_AppsHide){$Script:AppsHide+=$temp+","}
     ForEach($temp In $APPS_Uninstall){$Script:AppsUninstall+=$temp+","}
     If(Test-Path $Filename -PathType Leaf) {
-        If($ShowConf -eq 1) { $Conf = ConfirmMenu 2 } Else { $Conf = $true }
-        If($Conf -eq $true) { cmpv | select-object name,value | Export-Csv -LiteralPath $Filename -encoding "unicode" -force -Delimiter ";" }
+        If($ShowConf -eq 1) { $Conf = ConfirmMenu 2 } Else { $Conf = $True }
+        If($Conf -eq $True) { cmpv | select-object name,value | Export-Csv -LiteralPath $Filename -encoding "unicode" -force -Delimiter ";" }
     } Else {
         cmpv | select-object name,value | Export-Csv -LiteralPath $Filename -encoding "unicode" -force -Delimiter ";"
     }
@@ -431,20 +431,20 @@ Function SetComboM ([String]$Name, [String]$Item) {
 
 Function RestorePointCBCheck {
     If($CreateRestorePoint -eq 1) {
-        $WPF_CreateRestorePoint_CB.IsChecked = $true
-        $WPF_RestorePointName_Txt.IsEnabled = $true
+        $WPF_CreateRestorePoint_CB.IsChecked = $True
+        $WPF_RestorePointName_Txt.IsEnabled = $True
     } Else {
-        $WPF_CreateRestorePoint_CB.IsChecked = $false
-        $WPF_RestorePointName_Txt.IsEnabled = $false
+        $WPF_CreateRestorePoint_CB.IsChecked = $False
+        $WPF_RestorePointName_Txt.IsEnabled = $False
     }
 }
 
 Function ConfigGUIitms {
-    If($CreateRestorePoint -eq 1) { $WPF_CreateRestorePoint_CB.IsChecked = $true } Else { $WPF_CreateRestorePoint_CB.IsChecked = $false }
-    If($VersionCheck -eq 1) { $WPF_VersionCheck_CB.IsChecked = $true } Else { $WPF_VersionCheck_CB.IsChecked = $false }
-    If($InternetCheck -eq 1) { $WPF_InternetCheck_CB.IsChecked = $true } Else { $WPF_InternetCheck_CB.IsChecked = $false }
-    If($ShowSkipped -eq 1) { $WPF_ShowSkipped_CB.IsChecked = $true } Else { $WPF_ShowSkipped_CB.IsChecked = $false }
-    If($Restart -eq 1) { $WPF_Restart_CB.IsChecked = $true } Else { $WPF_Restart_CB.IsChecked = $false }
+    If($CreateRestorePoint -eq 1) { $WPF_CreateRestorePoint_CB.IsChecked = $True } Else { $WPF_CreateRestorePoint_CB.IsChecked = $False }
+    If($VersionCheck -eq 1) { $WPF_VersionCheck_CB.IsChecked = $True } Else { $WPF_VersionCheck_CB.IsChecked = $False }
+    If($InternetCheck -eq 1) { $WPF_InternetCheck_CB.IsChecked = $True } Else { $WPF_InternetCheck_CB.IsChecked = $False }
+    If($ShowSkipped -eq 1) { $WPF_ShowSkipped_CB.IsChecked = $True } Else { $WPF_ShowSkipped_CB.IsChecked = $False }
+    If($Restart -eq 1) { $WPF_Restart_CB.IsChecked = $True } Else { $WPF_Restart_CB.IsChecked = $False }
     $WPF_RestorePointName_Txt.Text = $RestorePointName
     RestorePointCBCheck
 }
@@ -494,8 +494,7 @@ Function OpenSaveDiaglog([Int]$SorO){
     $SOFileDialog.initialDirectory = $filebase
     $SOFileDialog.filter = "CSV (*.csv)| *.csv"
     $SOFileDialog.ShowDialog() | Out-Null
-    $File = $SOFileDialog.filename
-    If($SorO -eq 0) { LoadSettingFile $File;ConfigGUIitms ;SelectComboBox $VarList ;SelectComboBox $ListApp 1 } Else { GuiItmToVariable ;SaveSettingFiles $File }
+    If($SorO -eq 0) { LoadSettingFile $SOFileDialog.filename ;ConfigGUIitms ;SelectComboBox $VarList ;SelectComboBox $ListApp 1 } Else { GuiItmToVariable ;SaveSettingFiles $SOFileDialog.filename }
 }
 
 Function Gui-Start {
@@ -818,9 +817,8 @@ $inputXML = @"
 </Window>
 "@
 
-    $inputXML = $inputXML -replace "x:N",'N'
+    [xml]$XAML = $inputXML -replace "x:N",'N'
     [void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
-    [xml]$XAML = $inputXML
     $reader=(New-Object System.Xml.XmlNodeReader $xaml)
     $Form=[Windows.Markup.XamlReader]::Load( $reader )
     $xaml.SelectNodes("//*[@Name]") | %{Set-Variable -Name "WPF_$($_.Name)" -Value $Form.FindName($_.Name) -scope Script}
@@ -838,8 +836,8 @@ $inputXML = @"
     #$WPF_EMail.Add_Click({ OpenWebsite "mailto:madbomb122@gmail.com" })
     #$WPF_DonateButton.Add_Click({ OpenWebsite "https://www.amazon.com/gp/registry/wishlist/YBAYWBJES5DE/" })
     $WPF_RunScriptButton.Add_Click({ Gui-Done })
-    $WPF_CreateRestorePoint_CB.Add_Checked({ $WPF_CreateRestorePoint_CB.IsChecked = $true ;$WPF_RestorePointName_Txt.IsEnabled = $true })
-    $WPF_CreateRestorePoint_CB.Add_UnChecked({ $WPF_CreateRestorePoint_CB.IsChecked = $false ;$WPF_RestorePointName_Txt.IsEnabled = $false })
+    $WPF_CreateRestorePoint_CB.Add_Checked({ $WPF_CreateRestorePoint_CB.IsChecked = $True ;$WPF_RestorePointName_Txt.IsEnabled = $True })
+    $WPF_CreateRestorePoint_CB.Add_UnChecked({ $WPF_CreateRestorePoint_CB.IsChecked = $False ;$WPF_RestorePointName_Txt.IsEnabled = $False })
     $WPF_Madbomb122WSButton.Add_Click({ OpenWebsite "https://github.com/madbomb122/" })
     $WPF_WinDefault_Button.Add_Click({ LoadWinDefault ;SelectComboBox $VarList })
     $WPF_ResetDefault_Button.Add_Click({ SetDefault ;SelectComboBox $VarList ;SelectComboBox $ListApp 1 })
@@ -946,7 +944,7 @@ $Skip_Show_HideD = @(
 
 $Skip_InstalledD_Uninstall = @("OneDriveInstall","MediaPlayer","WorkFolders")
 
-    If($Release_Type -eq "Testing") { $Script:Restart = 0 ;$WPF_Restart_CB.IsEnabled = $false ;$WPF_Restart_CB.Content += " (Disabled in Testing Version)" }
+    If($Release_Type -eq "Testing") { $Script:Restart = 0 ;$WPF_Restart_CB.IsEnabled = $False ;$WPF_Restart_CB.Content += " (Disabled in Testing Version)" }
     If($BuildVer -lt 14393) { $WPF_LinuxSubsystem_Combo.Visibility = 'Hidden' ;$WPF_LinuxSubsystemTxt.Visibility = 'Hidden' }
     ForEach($Var in $Skip_EnableD_Disable) { SetCombo $Var "Enable*,Disable" }
     ForEach($Var in $Skip_Enable_DisableD) { SetCombo $Var "Enable,Disable*" }
@@ -986,7 +984,7 @@ $Skip_InstalledD_Uninstall = @("OneDriveInstall","MediaPlayer","WorkFolders")
 Function Gui-Done {
     GuiItmToVariable
     $Form.Close()
-    $Script:RunScr = $true
+    $Script:RunScr = $True
     PreStartScript
 }
 
@@ -2199,7 +2197,7 @@ Function RunScript {
             Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization" -Name "NoLockScreen"
         } ElseIf($BuildVer -ge 14393) {
             DisplayOut "Enabling Lock screen (removing scheduler workaround)..." 11 0
-            Unregister-ScheduledTask -TaskName "Disable LockScreen" -Confirm:$false
+            Unregister-ScheduledTask -TaskName "Disable LockScreen" -Confirm:$False
         } Else {
             DisplayOut "Unable to Enable Lock screen..." 11 0
         }
@@ -2213,7 +2211,7 @@ Function RunScript {
             $service = New-Object -com Schedule.Service
             $service.Connect()
             $task = $service.NewTask(0)
-            $task.Settings.DisallowStartIfOnBatteries = $false
+            $task.Settings.DisallowStartIfOnBatteries = $False
             $trigger = $task.Triggers.Create(9)
             $trigger = $task.Triggers.Create(11)
             $trigger.StateChange = 8
