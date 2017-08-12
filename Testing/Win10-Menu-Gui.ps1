@@ -12,7 +12,7 @@
 #
 $Script_Version = "3.0"
 $Minor_Version = "0"
-$Script_Date = "Aug-11-2017"
+$Script_Date = "Aug-12-2017"
 #$Release_Type = "Stable "
 $Release_Type = "Testing"
 ##########
@@ -97,20 +97,19 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 # Pre-Script -Start
 ##########
 
-If($Release_Type -eq "Stable ") { $ErrorActionPreference = 'silentlycontinue' }
+If($Release_Type -eq "Stable "){ $ErrorActionPreference = 'silentlycontinue' }
 
 $Global:PassedArg = $args
 $Global:filebase = $PSScriptRoot + "\"
 $TempFolder = $env:Temp
 
-# Ask for elevated permissions if required
 If(!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
     Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $PassedArg" -Verb RunAs ;Exit
 }
 
 $URL_Base = "https://raw.githubusercontent.com/madbomb122/Win10Script/master/"
 $Script:BuildVer = [Environment]::OSVersion.Version.build
-If([System.Environment]::Is64BitProcess) { $Script:OSType = 64 }
+If([System.Environment]::Is64BitProcess){ $Script:OSType = 64 }
 
 ##########
 # Pre-Script -End
@@ -249,11 +248,11 @@ Function UpdateCheck {
             $TempSetting = $TempFolder + "\TempSet.csv"
             SaveSettingFiles $TempSetting 0
             $UpArg = ""
-            If($Accept_ToS -ne 1) { $UpArg = $UpArg + "-atos" }
-            If($InternetCheck -eq 1) { $UpArg = $UpArg + "-sic" }
-            If($CreateRestorePoint -eq 1) { $UpArg = $UpArg + "-crp" }
-            If($Restart -eq 0) { $UpArg = $UpArg + "-dnr" }
-            If($RunScr -eq $True) { $UpArg = $UpArg + "-run $TempSetting" } Else { $UpArg = $UpArg + "-load $TempSetting" }
+            If($Accept_ToS -ne 1){ $UpArg = $UpArg + "-atos" }
+            If($InternetCheck -eq 1){ $UpArg = $UpArg + "-sic" }
+            If($CreateRestorePoint -eq 1){ $UpArg = $UpArg + "-crp" }
+            If($Restart -eq 0){ $UpArg = $UpArg + "-dnr" }
+            If($RunScr){ $UpArg = $UpArg + "-run $TempSetting" } Else{ $UpArg = $UpArg + "-load $TempSetting" }
             Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$WebScriptFilePath`" $UpArg" -Verb RunAs
             Exit
         }
@@ -272,7 +271,7 @@ Function UpdateCheck {
     }
 }
 
-Function InternetCheck { If($InternetCheck -eq 1) { Return $True } ElseIf(!(Test-Connection -computer github.com -count 1 -quiet)) { Return $False } Return $True }
+Function InternetCheck { If($InternetCheck -eq 1){ Return $True } ElseIf(!(Test-Connection -computer github.com -count 1 -quiet)){ Return $False } Return $True }
 
 ##########
 # Update Check -End
@@ -281,20 +280,15 @@ Function InternetCheck { If($InternetCheck -eq 1) { Return $True } ElseIf(!(Test
 ##########
 
 Function cmpv { Compare-Object (Get-Variable -Scope Script) $AutomaticVariables -Property Name -PassThru | Where -Property Name -ne "AutomaticVariables" | Where-Object { $_ -NotIn $WPFList } }
-Function Openwebsite ([String]$Url) { [System.Diagnostics.Process]::Start($Url) }
-Function ShowInvalid ([Int]$InvalidA) { If($InvalidA -eq 1) { Write-Host "`nInvalid Input" -ForegroundColor Red -BackgroundColor Black -NoNewline } Return 0 }
-Function unPin-App ([string]$appname) { ((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'Unpin from Start'} | %{$_.DoIt()} }
-Function Check-SetPath ([string]$RPath)  { If(!(Test-Path "$RPath")) { New-Item -Path "$RPath" -Force | Out-Null } Return $RPath }
+Function Openwebsite([String]$Url) { [System.Diagnostics.Process]::Start($Url) }
+Function ShowInvalid([Int]$InvalidA) { If($InvalidA -eq 1){ Write-Host "`nInvalid Input" -ForegroundColor Red -BackgroundColor Black -NoNewline } Return 0 }
+Function unPin-App([string]$appname) { ((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'Unpin from Start'} | %{$_.DoIt()} }
+Function Check-SetPath([string]$RPath)  { If(!(Test-Path "$RPath")){ New-Item -Path "$RPath" -Force | Out-Null } Return $RPath }
+Function DisplayOut([String]$TxtToDisplay, [int]$TxtColor, [int]$BGColor) { If($TxtColor -le 15){ Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } Else{ Write-Host $TxtToDisplay } }
+Function DisplayOutMenu([String]$TxtToDisplay, [int]$TxtColor, [int]$BGColor, [int]$NewLine) { If($NewLine -eq 0){ Write-Host -NoNewline $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } Else{ Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } }
 
-Function DisplayOut ([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor) {
-    If($TxtColor -le 15) {
-        Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor]
-    } Else {
-        Write-Host $TxtToDisplay
-    } 
-}
 Function ScriptPreStart {
-    If ($PassedArg.length -gt 0) { ArgCheck }
+    If($PassedArg.length -gt 0){ ArgCheck }
     If($AcceptToS -eq 1) {
         TOS
     } ElseIf($RunScr -eq $True) {
@@ -317,7 +311,7 @@ Function ArgCheck {
                        } ElseIf($PasVal.StartsWith("-")){ $Script:RunScr = $True}
                        Break
                 }
-                "-load" { If(Test-Path $PasVal -PathType Leaf) { LoadSettingFile $PasVal } ElseIf($PasVal -eq "wd" -or $PasVal -eq "windefault") { LoadWinDefault } ;Break }
+                "-load" { If(Test-Path $PasVal -PathType Leaf){ LoadSettingFile $PasVal } ElseIf($PasVal -eq "wd" -or $PasVal -eq "windefault"){ LoadWinDefault } ;Break }
                 "-sic" { $Script:InternetCheck = 1 ;Break }
                 "-usc" { $Script:VersionCheck  = 1 ;Break }
                 "-atos" { $Script:AcceptToS = "Accepted-Switch" ;Break }
@@ -360,19 +354,12 @@ Function TOS {
         $TOS = Read-Host "`nDo you Accept? (Y)es/(N)o"
         Switch($TOS.ToLower()) {
             { $_ -eq "n" -or $_ -eq "no" } { Exit ;Break }
-            { $_ -eq "y" -or $_ -eq "yes" } { $AcceptToS = "Accepted-Script" ;$TOS = "Out"; If($RunScr -eq $True) { PreStartScript } Else { Gui-Start } ;Break }
+            { $_ -eq "y" -or $_ -eq "yes" } { $AcceptToS = "Accepted-Script" ;$TOS = "Out"; If($RunScr -eq $True){ PreStartScript } Else{ Gui-Start } ;Break }
             default {$Invalid = 1}
         }
     } Return
 }
 
-Function DisplayOutMenu ([String]$TxtToDisplay,[int]$TxtColor,[int]$BGColor,[int]$NewLine) {
-    If($NewLine -eq 0) {
-        Write-Host -NoNewline $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor]
-    } Else {
-        Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor]
-    }
-}
 Function LoadSettingFile([String]$Filename) {
     Import-Csv $Filename -Delimiter ";" | %{Set-Variable $_.Name $_.Value -Scope Script}
     [System.Collections.ArrayList]$APPS_AppsInstall = $AppsInstall.split(",")
@@ -385,8 +372,8 @@ Function SaveSettingFiles([String]$Filename) {
     ForEach($temp In $APPS_AppsHide){$Script:AppsHide+=$temp+","}
     ForEach($temp In $APPS_Uninstall){$Script:AppsUninstall+=$temp+","}
     If(Test-Path $Filename -PathType Leaf) {
-        If($ShowConf -eq 1) { $Conf = ConfirmMenu 2 } Else { $Conf = $True }
-        If($Conf -eq $True) { cmpv | select-object name,value | Export-Csv -LiteralPath $Filename -encoding "unicode" -force -Delimiter ";" }
+        If($ShowConf -eq 1){ $Conf = ConfirmMenu 2 } Else{ $Conf = $True }
+        If($Conf){ cmpv | select-object name,value | Export-Csv -LiteralPath $Filename -encoding "unicode" -force -Delimiter ";" }
     } Else {
         cmpv | select-object name,value | Export-Csv -LiteralPath $Filename -encoding "unicode" -force -Delimiter ";"
     }
@@ -400,22 +387,22 @@ Function SaveSettingFiles([String]$Filename) {
 
 Function Update-Window {
     [cmdletBinding()]
-    Param ( $Control,  $Property, $Value, [switch]$AppendContent)
-    If ($Property -eq "Close") { $syncHash.Window.Dispatcher.invoke([action]{$Form.Close()},"Normal") ;Return }
-    $form.Dispatcher.Invoke([action]{ If ($PSBoundParameters['AppendContent']) { $Control.AppendText($Value) } Else { $Control.$Property = $Value } }, "Normal")
+    Param($Control, $Property, $Value, [switch]$AppendContent)
+    If($Property -eq "Close"){ $syncHash.Window.Dispatcher.invoke([action]{$syncHash.Window.Close()},"Normal") ;Return }
+    $form.Dispatcher.Invoke([action]{ If($PSBoundParameters['AppendContent']){ $Control.AppendText($Value) } Else{ $Control.$Property = $Value } }, "Normal")
 }
 
-Function SetCombo ([String]$Name, [String]$Item) {
+Function SetCombo([String]$Name, [String]$Item) {
     $Items = $Item.split(',')
     [void] $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).Items.Add("Skip")
-    ForEach($CmbItm in $Items) { [void] $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).Items.Add($CmbItm) }
+    ForEach($CmbItm in $Items){ [void] $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).Items.Add($CmbItm) }
     SelectComboBoxGen $Name $(Get-Variable -Name $Name -ValueOnly)
 }
 
-Function SetComboM ([String]$Name, [String]$Item) {
+Function SetComboM([String]$Name, [String]$Item) {
     $Items = $Item.split(',')
     [void] $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).Items.Add("Skip")
-    ForEach($CmbItm in $Items) { [void] $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).Items.Add($CmbItm) }
+    ForEach($CmbItm in $Items){ [void] $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).Items.Add($CmbItm) }
     If($Name -eq "AllMetro") {
         $WPF_AllMetro_Combo.SelectedIndex = 0
     } ElseIf($Name -eq "APP_SkypeApp") {
@@ -440,16 +427,16 @@ Function RestorePointCBCheck {
 }
 
 Function ConfigGUIitms {
-    If($CreateRestorePoint -eq 1) { $WPF_CreateRestorePoint_CB.IsChecked = $True } Else { $WPF_CreateRestorePoint_CB.IsChecked = $False }
-    If($VersionCheck -eq 1) { $WPF_VersionCheck_CB.IsChecked = $True } Else { $WPF_VersionCheck_CB.IsChecked = $False }
-    If($InternetCheck -eq 1) { $WPF_InternetCheck_CB.IsChecked = $True } Else { $WPF_InternetCheck_CB.IsChecked = $False }
-    If($ShowSkipped -eq 1) { $WPF_ShowSkipped_CB.IsChecked = $True } Else { $WPF_ShowSkipped_CB.IsChecked = $False }
-    If($Restart -eq 1) { $WPF_Restart_CB.IsChecked = $True } Else { $WPF_Restart_CB.IsChecked = $False }
+    If($CreateRestorePoint -eq 1){ $WPF_CreateRestorePoint_CB.IsChecked = $True } Else{ $WPF_CreateRestorePoint_CB.IsChecked = $False }
+    If($VersionCheck -eq 1){ $WPF_VersionCheck_CB.IsChecked = $True } Else{ $WPF_VersionCheck_CB.IsChecked = $False }
+    If($InternetCheck -eq 1){ $WPF_InternetCheck_CB.IsChecked = $True } Else{ $WPF_InternetCheck_CB.IsChecked = $False }
+    If($ShowSkipped -eq 1){ $WPF_ShowSkipped_CB.IsChecked = $True } Else{ $WPF_ShowSkipped_CB.IsChecked = $False }
+    If($Restart -eq 1){ $WPF_Restart_CB.IsChecked = $True } Else{ $WPF_Restart_CB.IsChecked = $False }
     $WPF_RestorePointName_Txt.Text = $RestorePointName
     RestorePointCBCheck
 }
 
-Function SelectComboBox([Array]$List,[Int]$Metro) { 
+Function SelectComboBox([Array]$List, [Int]$Metro) { 
     If($Metro -eq 1) {
         ForEach($Var in $List) {
             If($Var -eq "APP_SkypeApp") {
@@ -463,20 +450,20 @@ Function SelectComboBox([Array]$List,[Int]$Metro) {
             }
         }
     } Else {
-        ForEach($Var in $List) { SelectComboBoxGen $Var $Var.Value }
+        ForEach($Var in $List){ SelectComboBoxGen $Var $Var.Value }
     }
 }
-Function SelectComboBoxAllMetro([Int]$Numb) { ForEach($Var in $ListApp) { SelectComboBoxGen $Var $Numb } }
-Function SelectComboBoxGen([String]$Name,[Int]$Numb) { $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).SelectedIndex = $Numb }
+Function SelectComboBoxAllMetro([Int]$Numb) { ForEach($Var in $ListApp){ SelectComboBoxGen $Var $Numb } }
+Function SelectComboBoxGen([String]$Name, [Int]$Numb) { $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).SelectedIndex = $Numb }
 
 Function AppAraySet([String]$Get) {
     [System.Collections.ArrayList]$ListTMP = Get-Variable -Name $Get
     [System.Collections.ArrayList]$List = @()
     If($Get -eq "WPF_*_Combo"){
-        ForEach($Var in $ListTMP) { If(!($Var.Name -like "WPF_APP_*")) { $List += $Var.Name.split('_')[1] } }
+        ForEach($Var in $ListTMP){ If(!($Var.Name -like "WPF_APP_*")){ $List += $Var.Name.split('_')[1] } }
         $List.Remove("AllMetro")
     } Else {
-        ForEach($Var in $ListTMP) { $List += $Var.Name }
+        ForEach($Var in $ListTMP){ $List += $Var.Name }
         $List.Remove("APP_SkypeApp1")
         $List.Remove("APP_SkypeApp2")
         $List.Remove("APP_WindowsFeedbak1")
@@ -490,11 +477,11 @@ Function AppAraySet([String]$Get) {
 }
 
 Function OpenSaveDiaglog([Int]$SorO){
-    If($SorO -eq 0) { $SOFileDialog = New-Object System.Windows.Forms.OpenFileDialog } Else { $SOFileDialog = New-Object System.Windows.Forms.SaveFileDialog }
+    If($SorO -eq 0){ $SOFileDialog = New-Object System.Windows.Forms.OpenFileDialog } Else{ $SOFileDialog = New-Object System.Windows.Forms.SaveFileDialog }
     $SOFileDialog.initialDirectory = $filebase
     $SOFileDialog.filter = "CSV (*.csv)| *.csv"
     $SOFileDialog.ShowDialog() | Out-Null
-    If($SorO -eq 0) { LoadSettingFile $SOFileDialog.filename ;ConfigGUIitms ;SelectComboBox $VarList ;SelectComboBox $ListApp 1 } Else { GuiItmToVariable ;SaveSettingFiles $SOFileDialog.filename }
+    If($SorO -eq 0){ LoadSettingFile $SOFileDialog.filename ;ConfigGUIitms ;SelectComboBox $VarList ;SelectComboBox $ListApp 1 } Else{ GuiItmToVariable ;SaveSettingFiles $SOFileDialog.filename }
 }
 
 Function Gui-Start {
@@ -819,10 +806,10 @@ $inputXML = @"
 
     [xml]$XAML = $inputXML -replace "x:N",'N'
     [void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
-    $reader=(New-Object System.Xml.XmlNodeReader $xaml)
-    $Form=[Windows.Markup.XamlReader]::Load( $reader )
-    $xaml.SelectNodes("//*[@Name]") | %{Set-Variable -Name "WPF_$($_.Name)" -Value $Form.FindName($_.Name) -scope Script}
-    $WPFList = Get-Variable -Name ("WPF_*")
+    $reader = (New-Object System.Xml.XmlNodeReader $xaml)
+    $Form = [Windows.Markup.XamlReader]::Load( $reader )
+    $xaml.SelectNodes("//*[@Name]") | %{Set-Variable -Name "WPF_$($_.Name)" -Value $Form.FindName($_.Name) -scope Script} 
+    $WPFList = Get-Variable -Name "WPF_*"
 
     [System.Collections.ArrayList]$VarList = AppAraySet "WPF_*_Combo"
     [System.Collections.ArrayList]$ListApp = AppAraySet "APP_*"
@@ -835,15 +822,15 @@ $inputXML = @"
 
     #$WPF_EMail.Add_Click({ OpenWebsite "mailto:madbomb122@gmail.com" })
     #$WPF_DonateButton.Add_Click({ OpenWebsite "https://www.amazon.com/gp/registry/wishlist/YBAYWBJES5DE/" })
-    $WPF_RunScriptButton.Add_Click({ Gui-Done })
     $WPF_CreateRestorePoint_CB.Add_Checked({ $WPF_CreateRestorePoint_CB.IsChecked = $True ;$WPF_RestorePointName_Txt.IsEnabled = $True })
     $WPF_CreateRestorePoint_CB.Add_UnChecked({ $WPF_CreateRestorePoint_CB.IsChecked = $False ;$WPF_RestorePointName_Txt.IsEnabled = $False })
+    $WPF_AllMetro_Combo.add_SelectionChanged({ SelectComboBoxAllMetro ($WPF_AllMetro_Combo.SelectedIndex) })
+    $WPF_RunScriptButton.Add_Click({ Gui-Done })
     $WPF_Madbomb122WSButton.Add_Click({ OpenWebsite "https://github.com/madbomb122/" })
     $WPF_WinDefault_Button.Add_Click({ LoadWinDefault ;SelectComboBox $VarList })
     $WPF_ResetDefault_Button.Add_Click({ SetDefault ;SelectComboBox $VarList ;SelectComboBox $ListApp 1 })
     $WPF_Load_Setting_Button.Add_Click({ OpenSaveDiaglog 0 })
     $WPF_Save_Setting_Button.Add_Click({ OpenSaveDiaglog 1 })
-    $WPF_AllMetro_Combo.add_SelectionChanged({ SelectComboBoxAllMetro ($WPF_AllMetro_Combo.SelectedIndex) })
     $WPF_CopyrightButton.Add_Click({ [Windows.Forms.MessageBox]::Show($CopyrightItems,"Copyright", 'OK') })
 
     $CopyrightItems = 'Copyright (c) 1999-2017 Charles "Black Viper" Sparks - Services Configuration
@@ -944,13 +931,13 @@ $Skip_Show_HideD = @(
 
 $Skip_InstalledD_Uninstall = @("OneDriveInstall","MediaPlayer","WorkFolders")
 
-    If($Release_Type -eq "Testing") { $Script:Restart = 0 ;$WPF_Restart_CB.IsEnabled = $False ;$WPF_Restart_CB.Content += " (Disabled in Testing Version)" }
-    If($BuildVer -lt 14393) { $WPF_LinuxSubsystem_Combo.Visibility = 'Hidden' ;$WPF_LinuxSubsystemTxt.Visibility = 'Hidden' }
-    ForEach($Var in $Skip_EnableD_Disable) { SetCombo $Var "Enable*,Disable" }
-    ForEach($Var in $Skip_Enable_DisableD) { SetCombo $Var "Enable,Disable*" }
-    ForEach($Var in $Skip_ShowD_Hide) { SetCombo $Var "Show*,Hide" }
-    ForEach($Var in $Skip_Show_HideD) { SetCombo $Var "Show,Hide*" }
-    ForEach($Var in $Skip_InstalledD_Uninstall) { SetCombo $Var "Installed*,Uninstall" }
+    If($Release_Type -eq "Testing"){ $Script:Restart = 0 ;$WPF_Restart_CB.IsEnabled = $False ;$WPF_Restart_CB.Content += " (Disabled in Testing Version)" }
+    If($BuildVer -lt 14393){ $WPF_LinuxSubsystem_Combo.Visibility = 'Hidden' ;$WPF_LinuxSubsystemTxt.Visibility = 'Hidden' }
+    ForEach($Var in $Skip_EnableD_Disable){ SetCombo $Var "Enable*,Disable" }
+    ForEach($Var in $Skip_Enable_DisableD){ SetCombo $Var "Enable,Disable*" }
+    ForEach($Var in $Skip_ShowD_Hide){ SetCombo $Var "Show*,Hide" }
+    ForEach($Var in $Skip_Show_HideD){ SetCombo $Var "Show,Hide*" }
+    ForEach($Var in $Skip_InstalledD_Uninstall){ SetCombo $Var "Installed*,Uninstall" }
     
     SetComboM "AllMetro" "Install,Hide,Uninstall"
     ForEach($MetroApp in $ListApp){ SetComboM $MetroApp "Install,Hide,Uninstall" }
@@ -1004,12 +991,12 @@ Function GuiItmToVariable {
             Set-Variable -Name $Var -Value $Value -scope Script
         }
     }
-    ForEach($Var in $VarList) { Set-Variable -Name $Var -Value ($(Get-Variable -Name ("WPF_"+$Var+"_Combo") -ValueOnly).SelectedIndex) -scope Script }
-    If($WPF_CreateRestorePoint_CB.IsChecked) { $CreateRestorePoint = 1 } Else { $CreateRestorePoint = 0 }
-    If($WPF_VersionCheck_CB.IsChecked) { $VersionCheck = 1 } Else { $VersionCheck = 0 }
-    If($WPF_InternetCheck_CB.IsChecked) { $InternetCheck = 1 } Else { $InternetCheck = 0 }
-    If($WPF_ShowSkipped_CB.IsChecked) { $ShowSkipped = 1 } Else { $ShowSkipped = 0 }
-    If($WPF_Restart_CB.IsChecked) { $Restart = 1 } Else { $Restart = 0 }
+    ForEach($Var in $VarList){ Set-Variable -Name $Var -Value ($(Get-Variable -Name ("WPF_"+$Var+"_Combo") -ValueOnly).SelectedIndex) -scope Script }
+    If($WPF_CreateRestorePoint_CB.IsChecked){ $CreateRestorePoint = 1 } Else{ $CreateRestorePoint = 0 }
+    If($WPF_VersionCheck_CB.IsChecked){ $VersionCheck = 1 } Else{ $VersionCheck = 0 }
+    If($WPF_InternetCheck_CB.IsChecked){ $InternetCheck = 1 } Else{ $InternetCheck = 0 }
+    If($WPF_ShowSkipped_CB.IsChecked){ $ShowSkipped = 1 } Else{ $ShowSkipped = 0 }
+    If($WPF_Restart_CB.IsChecked){ $Restart = 1 } Else { $Restart = 0 }
     $RestorePointName = $WPF_RestorePointName_Txt.Text 
 }
 
@@ -1095,7 +1082,7 @@ Function LoadWinDefault {
     $Script:FrequentFoldersQikAcc = 1
     $Script:WinContentWhileDrag = 1
     $Script:StoreOpenWith = 1
-    If($BuildVer -ge 15063) { $Script:WinXPowerShell = 1 } Else { $Script:WinXPowerShell = 2 }
+    If($BuildVer -ge 15063){ $Script:WinXPowerShell = 1 } Else{ $Script:WinXPowerShell = 2 }
     $Script:TaskManagerDetails = 2
 
     #'This PC' Items
@@ -1146,7 +1133,7 @@ Function LoadWinDefault {
 ##########
 
 Function PreStartScript {
-    If($VersionCheck -eq 1) { UpdateCheck }
+    If($VersionCheck -eq 1){ UpdateCheck }
     Clear-Host
     DisplayOut "------------------`n-   Pre-Script   -`n------------------" 14 0
     
@@ -1173,12 +1160,12 @@ Function RunScript {
         DisplayOut "Enabling Telemetry..." 11 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 3
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 3
-        If($OSType -eq 64) { Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 3 }
+        If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 3 }
     } ElseIf($Telemetry -eq 2) {
         DisplayOut "Disabling Telemetry..." 12 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0
-        If($OSType -eq 64) { Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0 }
+        If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value 0 }
     }
 
     If($WiFiSense -eq 0 -and $ShowSkipped -eq 1) {
@@ -1306,7 +1293,7 @@ Function RunScript {
     } ElseIf($AutoLoggerFile -eq 2) {
         DisplayOut "Removing AutoLogger File and Festricting Directory..." 12 0
         $autoLoggerDir = "$env:PROGRAMDATA\Microsoft\Diagnosis\ETLLogs\AutoLogger"
-        If(Test-Path "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl") { Remove-Item "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl" }
+        If(Test-Path "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl"){ Remove-Item "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl" }
         icacls $autoLoggerDir /deny SYSTEM:`(OI`)`(CI`)F | Out-Null
     }
 
@@ -1891,7 +1878,7 @@ Function RunScript {
         $Path = "Microsoft\Windows\CurrentVersion\Explorer"
         Set-ItemProperty -Path "HKCU:\SOFTWARE\$Path" -Name "ShowRecent" -Type DWord -Value 1
         Set-ItemProperty -Path "HKLM:\$Path\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Name "(Default)" -Type String -Value "Recent Items Instance Folder"
-        If($OSType -eq 64) { Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Name "(Default)" -Type String -Value "Recent Items Instance Folder" }
+        If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Name "(Default)" -Type String -Value "Recent Items Instance Folder" }
     } ElseIf($RecentFileQikAcc -eq 2) {
         DisplayOut "Hiding Recent Files in Quick Access..." 12 0
         Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Type DWord -Value 0
@@ -1999,12 +1986,12 @@ Function RunScript {
         DisplayOut "Showing Desktop folder in This PC..." 11 0
         $Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}\PropertyBag"
         Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Show"
-        If($OSType -eq 64) { Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Show" }
+        If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Show" }
     } ElseIf($DesktopIconInThisPC -eq 2) {
         DisplayOut "Hiding Desktop folder in This PC..." 12 0
         $Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}\PropertyBag"
         Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide"
-        If($OSType -eq 64) { Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
+        If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
     }
 
     If($DocumentsIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
@@ -2013,12 +2000,12 @@ Function RunScript {
         DisplayOut "Showing Documents folder in This PC..." 11 0
         $Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{f42ee2d3-909f-4907-8871-4c22fc0bf756}\PropertyBag"
         Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Show"
-        If($OSType -eq 64) { Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Show" }
+        If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Show" }
     }ElseIf($DocumentsIconInThisPC -eq 2) {
         DisplayOut "Hiding Documents folder in This PC..." 12 0
         $Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{f42ee2d3-909f-4907-8871-4c22fc0bf756}\PropertyBag"
         Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide"
-        If($OSType -eq 64) { Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
+        If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
     }
 
     If($DownloadsIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
@@ -2027,12 +2014,12 @@ Function RunScript {
         DisplayOut "Showing Downloads folder in This PC..." 11 0
         $Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{7d83ee9b-2244-4e70-b1f5-5393042af1e4}\PropertyBag"
         Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Show"
-        If($OSType -eq 64) { Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Show" }
+        If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Show" }
     } ElseIf($DownloadsIconInThisPC -eq 2) {
         DisplayOut "Hiding Downloads folder in This PC..." 12 0
         $Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{7d83ee9b-2244-4e70-b1f5-5393042af1e4}\PropertyBag"
         Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide"
-        If($OSType -eq 64) { Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
+        If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
     }
 
     If($MusicIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
@@ -2041,12 +2028,12 @@ Function RunScript {
         DisplayOut "Showing Music folder in This PC..." 11 0
         $Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{a0c69a99-21c8-4671-8703-7934162fcf1d}\PropertyBag"
         Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Show"
-        If($OSType -eq 64) { Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Show" }
+        If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Show" }
     } ElseIf($MusicIconInThisPC -eq 2) {
         DisplayOut "Hiding Music folder in This PC..." 12 0
         $Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{a0c69a99-21c8-4671-8703-7934162fcf1d}\PropertyBag"
         Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide"
-        If($OSType -eq 64) { Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
+        If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
     }
 
     If($PicturesIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
@@ -2055,12 +2042,12 @@ Function RunScript {
         DisplayOut "Showing Pictures folder in This PC..." 11 0
         $Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{0ddd015d-b06c-45d5-8c4c-f59713854639}\PropertyBag"
         Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Show"
-        If($OSType -eq 64) { Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Show" }
+        If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Show" }
     } ElseIf($PicturesIconInThisPC -eq 2) {
         DisplayOut "Hiding Pictures folder in This PC..." 12 0
         $Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{0ddd015d-b06c-45d5-8c4c-f59713854639}\PropertyBag"
         Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide"
-        If($OSType -eq 64) { Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
+        If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
     }
 
     If($VideosIconInThisPC -eq 0 -and $ShowSkipped -eq 1) {
@@ -2069,12 +2056,12 @@ Function RunScript {
         DisplayOut "Showing Videos folder in This PC..." 11 0
         $Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{35286a68-3c57-41a1-bbb1-0eae73d76c95}\PropertyBag"
         Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Show"
-        If($OSType -eq 64) { Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Show" }
+        If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Show" }
     } ElseIf($VideosIconInThisPC -eq 2) {
         DisplayOut "Hiding Videos folder in This PC..." 12 0
         $Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{35286a68-3c57-41a1-bbb1-0eae73d76c95}\PropertyBag"
         Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide"
-        If($OSType -eq 64) { Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
+        If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
     }
 
     DisplayOut "`n---------------------`n-   Desktop Items   -`n---------------------" 14 0
@@ -2184,7 +2171,7 @@ Function RunScript {
         Set-ItemProperty -Path "HKCR:\Applications\photoviewer.dll\shell\open\DropTarget" -Name "Clsid" -Type String -Value "{FFE2A43C-56B9-4bf5-9A79-CC6D4285608A}"
     } ElseIf($PVOpenWithMenu -eq 2) {
         DisplayOut "Removing Photo Viewer from Open with Menu..." 12 0
-        If(Test-Path "HKCR:\Applications\photoviewer.dll\shell\open") { Remove-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open" -Recurse }
+        If(Test-Path "HKCR:\Applications\photoviewer.dll\shell\open"){ Remove-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open" -Recurse }
     }
 
     DisplayOut "`n------------------------`n-   Lockscreen Items   -`n------------------------" 14 0
@@ -2325,7 +2312,7 @@ Function RunScript {
         DisplayOut "Skipping Unpinning Items..." 15 0
     } ElseIf($UnpinItems -eq 1) {
         DisplayOut "`nUnpinning Items...`n------------------" 12 0
-        ForEach($Pin In $Pined_App) { unPin-App $Pin }
+        ForEach($Pin In $Pined_App){ unPin-App $Pin }
     }
 
     DisplayOut "`n-------------------------`n-   Application Items   -`n-------------------------" 14 0
@@ -2348,13 +2335,13 @@ Function RunScript {
     } ElseIf($OneDriveInstall -eq 1) {
         DisplayOut "Installing OneDrive..." 11 0
         $onedriveS = "$env:SYSTEMROOT\"
-        If($OSType -eq 64) { $onedriveS += "SysWOW64" } Else { $onedriveS += "System32" }
+        If($OSType -eq 64){ $onedriveS += "SysWOW64" } Else{ $onedriveS += "System32" }
         $onedriveS += "\OneDriveSetup.exe"
         If(Test-Path $onedriveS -PathType Leaf) { Start-Process $onedriveS -NoNewWindow }
     } ElseIf($OneDriveInstall -eq 2) {
         DisplayOut "Uninstalling OneDrive..." 15 0
         $onedriveS = "$env:SYSTEMROOT\"
-        If($OSType -eq 64) { $onedriveS += "SysWOW64" } Else { $onedriveS += "System32" }
+        If($OSType -eq 64){ $onedriveS += "SysWOW64" } Else{ $onedriveS += "System32" }
         $onedriveS += "\OneDriveSetup.exe"
         If(Test-Path $onedriveS -PathType Leaf) {
             Stop-Process -Name OneDrive
@@ -2444,7 +2431,7 @@ Function RunScript {
     $APPS_AppsInstall.Remove("") ;$Ai = $APPS_AppsInstall.length
     $APPS_AppsHide.Remove("") ;$Ah = $APPS_AppsHide.length
     $APPS_AppsUninstall.Remove("");$Au = $APPS_AppsUninstall.length
-    If($Ah -ne $null -or $Au -ne $null) { $AppxPackages = Get-AppxProvisionedPackage -online | select-object PackageName,Displayname }
+    If($Ah -ne $null -or $Au -ne $null){ $AppxPackages = Get-AppxProvisionedPackage -online | select-object PackageName,Displayname }
 
     DisplayOut "Installing Apps...`n------------------" 11 0
 
@@ -2484,7 +2471,7 @@ Function RunScript {
         If($AppxPackages.DisplayName.Contains($AppU)) {
             DisplayOut $AppU 14 0
             $PackageFullName = (Get-AppxPackage $AppU).PackageFullName
-            $ProPackageFullName = ($AppxPackages | Where {$_.Displayname -eq $AppU}).PackageName
+            $ProPackageFullName = ($AppxPackages.Where{$_.Displayname -eq $AppU}).PackageName
 
             # Alt removal: DISM /Online /Remove-ProvisionedAppxPackage /PackageName:
             Remove-AppxPackage -package $PackageFullName | Out-null
@@ -2503,12 +2490,12 @@ Function RunScript {
         Write-Host "`nRestarting Computer in 10 Seconds..." -ForegroundColor Yellow -BackgroundColor Black
         $Message = "Restarting in"
         Start-Sleep -Seconds 1
-        ForEach($Count in (1..$Seconds)) { If($Count -ne 0) { Write-Host "$Message $($Seconds - $Count)" -ForegroundColor Yellow -BackgroundColor Black ;Start-Sleep -Seconds 1 } }
+        ForEach($Count in (1..$Seconds)){ If($Count -ne 0){ Write-Host "$Message $($Seconds - $Count)" -ForegroundColor Yellow -BackgroundColor Black ;Start-Sleep -Seconds 1 } }
         Write-Host "Restarting Computer..." -ForegroundColor Red -BackgroundColor Black
         Restart-Computer
     } ElseIf($Release_Type -eq "Stable ") {
         Write-Host "Goodbye..."
-        If($Automated -eq 0) { Read-Host -Prompt "`nPress any key to exit" }
+        If($Automated -eq 0){ Read-Host -Prompt "`nPress any key to exit" }
         Exit
     } ElseIf($Automated -eq 0) { 
         Read-Host -Prompt "`nPress any key to Exit"
