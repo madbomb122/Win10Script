@@ -2516,8 +2516,8 @@ $Script:AppsInstall = ""
 $Script:AppsHide = ""
 $Script:AppsUninstall = ""
 
-# --------------------------------------------------------------------------
 Function SetDefault {
+# --------------------------------------------------------------------------
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## !!                                            !!
 ## !!            SAFE TO EDIT VALUES             !!
@@ -2742,8 +2742,12 @@ $Script:APP_WindowsStore = 0      # Windows Store
 $Script:APP_XboxApp = 0           # Xbox app
 $Script:APP_ZuneMusic = 0         # Groove Music app
 $Script:APP_ZuneVideo = 0         # Groove Video app
+# --------------------------------------------------------------------------
+## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+## !!                                            !!
+## !!           DO NOT EDIT PAST THIS            !!
+## !!                                            !!
+## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 }
 SetDefault
-# --------------------------------------------------------------------------
-#Starts the script (Do not change)
 ScriptPreStart
