@@ -302,7 +302,7 @@ Function ArgCheck {
     For($i=0; $i -lt $PassedArg.length; $i++) {
         If($PassedArg[$i].StartsWith("-")) {
             $ArgVal = $PassedArg[$i].ToLower()
-            $PasVal = $PassedArg[($i++)].ToLower()
+            $PasVal = $PassedArg[($i+1)]
             Switch($ArgVal) {
                 "-run" { If(Test-Path $PasVal -PathType Leaf) {
                             LoadSettingFile $PasVal ;$Script:RunScr = $True
@@ -360,7 +360,7 @@ Function TOS {
 }
 
 Function LoadSettingFile([String]$Filename) {
-    Import-Csv $Filename -Delimiter ";" | %{Set-Variable $_.Name $_.Value -Scope Script}
+    Import-Csv $Filename -Delimiter ";" | %{ Set-Variable $_.Name $_.Value -Scope Script }
     [System.Collections.ArrayList]$APPS_AppsInstall = $AppsInstall.split(",")
     [System.Collections.ArrayList]$APPS_AppsHidel = $AppsHide.split(",")
     [System.Collections.ArrayList]$APPS_AppsUninstall = $AppsUninstall.split(",")
@@ -393,16 +393,16 @@ Function Update-Window {
 
 Function SetCombo([String]$Name, [String]$Item) {
     $Items = $Item.split(',')
-	$combo =  $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly)
-	[void] $combo.Items.Add("Skip")
+    $combo =  $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly)
+    [void] $combo.Items.Add("Skip")
     ForEach($CmbItm in $Items){ [void] $combo.Items.Add($CmbItm) }
     SelectComboBoxGen $Name $(Get-Variable -Name $Name -ValueOnly)
 }
 
 Function SetComboM([String]$Name, [String]$Item) {
     $Items = $Item.split(',')
-	$combo =  $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly)
-	[void] $combo.Items.Add("Skip")
+    $combo =  $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly)
+    [void] $combo.Items.Add("Skip")
     ForEach($CmbItm in $Items){ [void] $combo.Items.Add($CmbItm) }
     If($Name -eq "AllMetro") {
         $WPF_AllMetro_Combo.SelectedIndex = 0
@@ -497,7 +497,7 @@ Function Gui-Start {
  <Button Name="RunScriptButton" Content="Run Script" HorizontalAlignment="Left" Margin="0,300,0,0" VerticalAlignment="Top" Width="525" Height="20" FontWeight="Bold"/>
  <Button Name="CopyrightButton" Content="Copyright" HorizontalAlignment="Left" Margin="394,321,0,0" VerticalAlignment="Top" Width="131" FontStyle="Italic"/>
  <Button Name="Madbomb122WSButton" Content="Madbomb122's Website" HorizontalAlignment="Left" Margin="262,321,0,0" VerticalAlignment="Top" Width="132" FontStyle="Italic"/>
- <Button Name="DonateButton_Copy" Content="Donate to me" HorizontalAlignment="Left" Margin="0,321,0,0" VerticalAlignment="Top" Width="131" FontStyle="Italic"/>
+ <Button Name="DonateButton" Content="Donate to me" HorizontalAlignment="Left" Margin="0,321,0,0" VerticalAlignment="Top" Width="131" FontStyle="Italic"/>
  <Button Name="EMail" Content="e-mail Madbomb122" HorizontalAlignment="Left" Margin="131,321,0,0" VerticalAlignment="Top" Width="131" FontStyle="Italic"/>
  <TabControl Name="TabControl" Height="300" VerticalAlignment="Top">
   <TabItem Name="Services_Tab" Header="Script Options" Margin="-2,0,2,0"><Grid Background="#FFE5E5E5">
@@ -807,7 +807,6 @@ Function Gui-Start {
 </Window>
 "@
 
-    [System.Collections.ArrayList]$Script:WPFList = @()
     [void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
     $reader = (New-Object System.Xml.XmlNodeReader $xaml)
     $Form = [Windows.Markup.XamlReader]::Load( $reader )
@@ -2514,6 +2513,7 @@ Function RunScript {
 
 # Used to get all values BEFORE any defined so
 # when exporting shows ALL defined after this point
+[System.Collections.ArrayList]$Script:WPFList = @()
 $AutomaticVariables = Get-Variable -scope Script
 
 # DO NOT TOUCH THESE
