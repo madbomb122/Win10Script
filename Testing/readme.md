@@ -1,5 +1,5 @@
 # Currently Testing
-GUI (Win10-Menu-Gui.ps1).. Everything should Work.. <br />
+Everything should Work.. <br />
 Due to various improvements i found out from working on my blackviper script i'm working on some of the improvements on this one too before release.
 
 # About Testing Version
