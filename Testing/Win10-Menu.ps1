@@ -353,7 +353,7 @@ Function TOS {
         $TOS = Read-Host "`nDo you Accept? (Y)es/(N)o"
         Switch($TOS.ToLower()) {
             { $_ -eq "n" -or $_ -eq "no" } { Exit ;Break }
-            { $_ -eq "y" -or $_ -eq "yes" } { $AcceptToS = "Accepted-Script" ;$TOS = "Out"; If($RunScr -eq $True){ PreStartScript } Else{ Gui-Start } ;Break }
+            { $_ -eq "y" -or $_ -eq "yes" } { $Script:AcceptToS = "Accepted-Script" ;$TOS = "Out"; If($RunScr -eq $True){ PreStartScript } Else{ Gui-Start } ;Break }
             default {$Invalid = 1}
         }
     } Return
@@ -2750,7 +2750,7 @@ $Script:APP_ZuneVideo = 0         # Groove Video app
 # --------------------------------------------------------------------------
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## !!                                            !!
-## !!           DO NOT EDIT PAST THIS            !!
+## !!        DO NOT EDIT PAST THIS POINT         !!
 ## !!                                            !!
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 }
