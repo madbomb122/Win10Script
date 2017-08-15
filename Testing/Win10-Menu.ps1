@@ -12,7 +12,7 @@
 #
 $Script_Version = "3.0"
 $Minor_Version = "0"
-$Script_Date = "Aug-14-2017"
+$Script_Date = "Aug-15-2017"
 #$Release_Type = "Stable "
 $Release_Type = "Testing"
 ##########
@@ -495,23 +495,26 @@ Function Gui-Start {
 <Window.Effect><DropShadowEffect/></Window.Effect><Grid>
  <Label Content="Script Version:" HorizontalAlignment="Left" Margin="1,317,0,0" VerticalAlignment="Top" Height="25"/>
  <Button Name="RunScriptButton" Content="Run Script" HorizontalAlignment="Left" Margin="0,300,0,0" VerticalAlignment="Top" Width="525" Height="20" FontWeight="Bold"/>
- <Button Name="CopyrightButton" Content="Copyright" HorizontalAlignment="Left" Margin="392,321,0,0" VerticalAlignment="Top" Width="133" FontStyle="Italic"/>
- <Button Name="Madbomb122WSButton" Content="Madbomb122's Website" HorizontalAlignment="Left" Margin="259,321,0,0" VerticalAlignment="Top" Width="133" FontStyle="Italic"/>
- <TextBox Name="Script_Ver_Txt" HorizontalAlignment="Left" Height="20" Margin="83,321,0,0" TextWrapping="Wrap" Text="2.8.0 (6-21-2017)" VerticalAlignment="Top" Width="125" IsEnabled="False"/>
- <TextBox Name="Release_Type_Txt" HorizontalAlignment="Left" Height="20" Margin="208,321,0,0" TextWrapping="Wrap" Text="Testing" VerticalAlignment="Top" Width="50" IsEnabled="False"/>
+ <Button Name="CopyrightButton" Content="Copyright" HorizontalAlignment="Left" Margin="394,321,0,0" VerticalAlignment="Top" Width="131" FontStyle="Italic"/>
+ <Button Name="Madbomb122WSButton" Content="Madbomb122's Website" HorizontalAlignment="Left" Margin="262,321,0,0" VerticalAlignment="Top" Width="132" FontStyle="Italic"/>
+ <Button Name="DonateButton_Copy" Content="Donate to me" HorizontalAlignment="Left" Margin="0,321,0,0" VerticalAlignment="Top" Width="131" FontStyle="Italic"/>
+ <Button Name="EMail" Content="e-mail Madbomb122" HorizontalAlignment="Left" Margin="131,321,0,0" VerticalAlignment="Top" Width="131" FontStyle="Italic"/>
  <TabControl Name="TabControl" Height="300" VerticalAlignment="Top">
   <TabItem Name="Services_Tab" Header="Script Options" Margin="-2,0,2,0"><Grid Background="#FFE5E5E5">
-   <CheckBox Name="CreateRestorePoint_CB" Content="Create Restore Point:" HorizontalAlignment="Left" Margin="8,30,0,0" VerticalAlignment="Top"/>
-   <TextBox Name="RestorePointName_Txt" HorizontalAlignment="Left" Height="20" Margin="139,29,0,0" TextWrapping="Wrap" Text="Win10 Initial Setup Script" VerticalAlignment="Top" Width="188"/>
-   <CheckBox Name="ShowSkipped_CB" Content="Show Skipped Items" HorizontalAlignment="Left" Margin="8,49,0,0" VerticalAlignment="Top"/>
-   <CheckBox Name="Restart_CB" Content="Restart When Done" HorizontalAlignment="Left" Margin="8,69,0,0" VerticalAlignment="Top"/>
-   <CheckBox Name="VersionCheck_CB" Content="Check for Update" HorizontalAlignment="Left" Margin="8,89,0,0" VerticalAlignment="Top"/>
-   <CheckBox Name="InternetCheck_CB" Content="Skip Internet Check" HorizontalAlignment="Left" Margin="8,109,0,0" VerticalAlignment="Top"/>
-   <Button Name="Save_Setting_Button" Content="Save Settings" HorizontalAlignment="Left" Margin="100,153,0,0" VerticalAlignment="Top" Width="77"/>
-   <Button Name="Load_Setting_Button" Content="Load Settings" HorizontalAlignment="Left" Margin="8,153,0,0" VerticalAlignment="Top" Width="77"/>
-   <Button Name="WinDefault_Button" Content="Windows Default*" HorizontalAlignment="Left" Margin="192,153,0,0" VerticalAlignment="Top" Width="100"/>
-   <Button Name="ResetDefault_Button" Content="Reset All Items" HorizontalAlignment="Left" Margin="306,153,0,0" VerticalAlignment="Top" Width="85"/>
-   <Label Content="Notes:&#xD;&#xA;Options with items marked with * means &quot;Windows Default&quot;&#xA;Windows Default Button does not change Metro Apps or OneDrive Install" HorizontalAlignment="Left" Margin="8,178,0,0" VerticalAlignment="Top" FontStyle="Italic"/></Grid>
+   <CheckBox Name="CreateRestorePoint_CB" Content="Create Restore Point:" HorizontalAlignment="Left" Margin="8,10,0,0" VerticalAlignment="Top"/>
+   <TextBox Name="RestorePointName_Txt" HorizontalAlignment="Left" Height="20" Margin="139,9,0,0" TextWrapping="Wrap" Text="Win10 Initial Setup Script" VerticalAlignment="Top" Width="188"/>
+   <CheckBox Name="ShowSkipped_CB" Content="Show Skipped Items" HorizontalAlignment="Left" Margin="8,29,0,0" VerticalAlignment="Top"/>
+   <CheckBox Name="Restart_CB" Content="Restart When Done" HorizontalAlignment="Left" Margin="8,49,0,0" VerticalAlignment="Top"/>
+   <CheckBox Name="VersionCheck_CB" Content="Check for Update" HorizontalAlignment="Left" Margin="8,69,0,0" VerticalAlignment="Top"/>
+   <CheckBox Name="InternetCheck_CB" Content="Skip Internet Check" HorizontalAlignment="Left" Margin="8,89,0,0" VerticalAlignment="Top"/>
+   <Button Name="Save_Setting_Button" Content="Save Settings" HorizontalAlignment="Left" Margin="100,133,0,0" VerticalAlignment="Top" Width="77"/>
+   <Button Name="Load_Setting_Button" Content="Load Settings" HorizontalAlignment="Left" Margin="8,133,0,0" VerticalAlignment="Top" Width="77"/>
+   <Button Name="WinDefault_Button" Content="Windows Default*" HorizontalAlignment="Left" Margin="192,133,0,0" VerticalAlignment="Top" Width="100"/>
+   <Button Name="ResetDefault_Button" Content="Reset All Items" HorizontalAlignment="Left" Margin="306,133,0,0" VerticalAlignment="Top" Width="85"/>
+   <Label Content="Notes:&#xD;&#xA;Options with items marked with * means &quot;Windows Default&quot;&#xA;Windows Default Button does not change Metro Apps or OneDrive Install" HorizontalAlignment="Left" Margin="8,158,0,0" VerticalAlignment="Top" FontStyle="Italic"/>
+   <Label Content="Script Version:" HorizontalAlignment="Left" Margin="8,218,0,0" VerticalAlignment="Top" Height="25"/>
+   <TextBox Name="Script_Ver_Txt" HorizontalAlignment="Left" Height="20" Margin="90,222,0,0" TextWrapping="Wrap" Text="2.8.0 (6-21-2017)" VerticalAlignment="Top" Width="124" IsEnabled="False"/>
+   <TextBox Name="Release_Type_Txt" HorizontalAlignment="Left" Height="20" Margin="214,222,0,0" TextWrapping="Wrap" Text="Testing" VerticalAlignment="Top" Width="50" IsEnabled="False"/></Grid>
   </TabItem>
   <TabItem Name="Privacy_tab" Header="Privacy" Margin="-2,0,2,0"><Grid Background="#FFE5E5E5">
    <Label Content="Telemetry:" HorizontalAlignment="Left" Margin="67,10,0,0" VerticalAlignment="Top"/>
@@ -582,11 +585,11 @@ Function Gui-Start {
    <ComboBox Name="MostUsedAppStartMenu_Combo" HorizontalAlignment="Left" Margin="439,115,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Recent Items &amp; Frequent Places:" HorizontalAlignment="Left" Margin="262,58,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="RecentItemsFrequent_Combo" HorizontalAlignment="Left" Margin="439,61,0,0" VerticalAlignment="Top" Width="72"/>
-   <Label Content="Context Menu" HorizontalAlignment="Left" Margin="82,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-   <Label Content="Start Menu" HorizontalAlignment="Left" Margin="352,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="253" Margin="254,0,0,0" Stroke="Black" VerticalAlignment="Top" Width="1"/>
    <Label Content="Unpin Items:" HorizontalAlignment="Left" Margin="365,139,0,0" VerticalAlignment="Top"/>
-   <ComboBox Name="UnpinItems_Combo" HorizontalAlignment="Left" Margin="439,142,0,0" VerticalAlignment="Top" Width="72"/></Grid>
+   <ComboBox Name="UnpinItems_Combo" HorizontalAlignment="Left" Margin="439,142,0,0" VerticalAlignment="Top" Width="72"/>
+   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="253" Margin="254,0,0,0" Stroke="Black" VerticalAlignment="Top" Width="1"/>
+   <Label Content="Context Menu" HorizontalAlignment="Left" Margin="82,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+   <Label Content="Start Menu" HorizontalAlignment="Left" Margin="352,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/></Grid>
   </TabItem>
   <TabItem Name="TaskBar_Tab" Header="Task Bar" Margin="-3,0,2,0"><Grid Background="#FFE5E5E5">
    <Label Content="Battery UI Bar:" HorizontalAlignment="Left" Margin="61,10,0,0" VerticalAlignment="Top"/>
@@ -611,8 +614,8 @@ Function Gui-Start {
    <ComboBox Name="LastActiveClick_Combo" HorizontalAlignment="Left" Margin="143,148,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Taskbar on Multi Display:" HorizontalAlignment="Left" Margin="252,91,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="TaskBarOnMultiDisplay_Combo" HorizontalAlignment="Left" Margin="390,94,0,0" VerticalAlignment="Top" Width="72"/>
-   <ComboBox Name="TaskbarButtOnDisplay_Combo" HorizontalAlignment="Left" Margin="190,175,0,0" VerticalAlignment="Top" Width="197"/>
-   <Label Content="Taskbar Button on Multi Display:" HorizontalAlignment="Left" Margin="13,172,0,0" VerticalAlignment="Top"/></Grid>
+   <Label Content="Taskbar Button on Multi Display:" HorizontalAlignment="Left" Margin="13,172,0,0" VerticalAlignment="Top"/>
+   <ComboBox Name="TaskbarButtOnDisplay_Combo" HorizontalAlignment="Left" Margin="190,175,0,0" VerticalAlignment="Top" Width="197"/></Grid>
   </TabItem>
   <TabItem Name="Explorer_Tab" Header="Explorer" Margin="-2,0,2,0"><Grid Background="#FFE5E5E5">
    <Label Content="Process ID on Title Bar:" HorizontalAlignment="Left" Margin="308,120,0,0" VerticalAlignment="Top"/>
@@ -669,9 +672,9 @@ Function Gui-Start {
    <ComboBox Name="PicturesIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,142,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Videos Folder:" HorizontalAlignment="Left" Margin="310,166,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="VideosIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,169,0,0" VerticalAlignment="Top" Width="72"/>
+   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="253" Margin="254,0,0,0" Stroke="Black" VerticalAlignment="Top" Width="1"/>
    <Label Content="Desktop" HorizontalAlignment="Left" Margin="99,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-   <Label Content="This PC" HorizontalAlignment="Left" Margin="364,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="253" Margin="254,0,0,0" Stroke="Black" VerticalAlignment="Top" Width="1"/></Grid>
+   <Label Content="This PC" HorizontalAlignment="Left" Margin="364,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/></Grid>
   </TabItem>
   <TabItem Name="Misc_Tab" Header="Misc/Photo Viewer/LockScreen" Margin="-2,0,2,0"><Grid Background="#FFE5E5E5">
    <Label Content="Action Center:" HorizontalAlignment="Left" Margin="46,31,0,0" VerticalAlignment="Top"/>
@@ -692,17 +695,17 @@ Function Gui-Start {
    <ComboBox Name="PVFileAssociation_Combo" HorizontalAlignment="Left" Margin="392,34,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Add &quot;Open with...&quot;:" HorizontalAlignment="Left" Margin="285,58,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="PVOpenWithMenu_Combo" HorizontalAlignment="Left" Margin="392,61,0,0" VerticalAlignment="Top" Width="72"/>
-   <Label Content="Misc" HorizontalAlignment="Left" Margin="109,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-   <Label Content="Photo Viewer" HorizontalAlignment="Left" Margin="346,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
    <Label Content="Lockscreen:" HorizontalAlignment="Left" Margin="323,139,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="LockScreen_Combo" HorizontalAlignment="Left" Margin="392,142,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Power Menu:" HorizontalAlignment="Left" Margin="316,166,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="PowerMenuLockScreen_Combo" HorizontalAlignment="Left" Margin="392,169,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Camera:" HorizontalAlignment="Left" Margin="342,193,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="CameraOnLockscreen_Combo" HorizontalAlignment="Left" Margin="392,196,0,0" VerticalAlignment="Top" Width="72"/>
-   <Label Content="Lockscreen" HorizontalAlignment="Left" Margin="352,111,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
    <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="1" Margin="254,106,0,0" Stroke="Black" VerticalAlignment="Top" Width="268"/>
-   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="253" Margin="254,0,0,0" Stroke="Black" VerticalAlignment="Top" Width="1"/></Grid>
+   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="253" Margin="254,0,0,0" Stroke="Black" VerticalAlignment="Top" Width="1"/>
+   <Label Content="Lockscreen" HorizontalAlignment="Left" Margin="352,111,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+   <Label Content="Misc" HorizontalAlignment="Left" Margin="109,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+   <Label Content="Photo Viewer" HorizontalAlignment="Left" Margin="346,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/></Grid>
   </TabItem>
   <TabItem Name="MetroApp_Tab" Header="Metro App" Margin="-2,0,2,0"><Grid Background="#FFE5E5E5">
    <Label Content="Set All Metro Apps:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="72,2,0,0"/>
@@ -740,7 +743,6 @@ Function Gui-Start {
    <ComboBox Name="APP_Photos_Combo" HorizontalAlignment="Left" Margin="269,155,0,0" VerticalAlignment="Top" Width="74"/>
    <Label Content="Skype:" HorizontalAlignment="Left" Margin="227,176,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="APP_SkypeApp_Combo" HorizontalAlignment="Left" Margin="269,179,0,0" VerticalAlignment="Top" Width="74"/>
-   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="224" Margin="171,29,0,-1" Stroke="Black" VerticalAlignment="Top" Width="1"/>
    <Label Content="Solitaire Collect:" HorizontalAlignment="Left" Margin="177,200,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="APP_SolitaireCollect_Combo" HorizontalAlignment="Left" Margin="269,203,0,0" VerticalAlignment="Top" Width="74"/>
    <Label Content="Sticky Notes:" HorizontalAlignment="Left" Margin="194,224,0,0" VerticalAlignment="Top"/>
@@ -755,7 +757,6 @@ Function Gui-Start {
    <ComboBox Name="APP_WindowsCamera_Combo" HorizontalAlignment="Left" Margin="442,107,0,0" VerticalAlignment="Top" Width="74"/>
    <Label Content="Win. Feedback:" HorizontalAlignment="Left" Margin="355,128,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="APP_WindowsFeedbak_Combo" HorizontalAlignment="Left" Margin="442,131,0,0" VerticalAlignment="Top" Width="74"/>
-   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="253" Margin="346,0,0,-1" Stroke="Black" VerticalAlignment="Top" Width="1"/>
    <Label Content="Windows Maps:" HorizontalAlignment="Left" Margin="351,152,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="APP_WindowsMaps_Combo" HorizontalAlignment="Left" Margin="442,155,0,0" VerticalAlignment="Top" Width="74"/>
    <Label Content="Phone Comp.:" HorizontalAlignment="Left" Margin="361,176,0,0" VerticalAlignment="Top"/>
@@ -765,7 +766,9 @@ Function Gui-Start {
    <Label Content="Groove:" HorizontalAlignment="Left" Margin="394,224,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="APP_Zune_Combo" HorizontalAlignment="Left" Margin="442,227,0,0" VerticalAlignment="Top" Width="74"/>
    <Label Content="Windows Store:" HorizontalAlignment="Left" Margin="353,8,0,0" VerticalAlignment="Top"/>
-   <ComboBox Name="APP_WindowsStore_Combo" HorizontalAlignment="Left" Margin="442,11,0,0" VerticalAlignment="Top" Width="74"/></Grid>
+   <ComboBox Name="APP_WindowsStore_Combo" HorizontalAlignment="Left" Margin="442,11,0,0" VerticalAlignment="Top" Width="74"/>
+   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="224" Margin="171,29,0,-1" Stroke="Black" VerticalAlignment="Top" Width="1"/>
+   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="253" Margin="346,0,0,-1" Stroke="Black" VerticalAlignment="Top" Width="1"/></Grid>
   </TabItem>
   <TabItem Name="Application_Tab" Header="Application/Windows Update" Margin="-2,0,2,0"><Grid Background="#FFE5E5E5">
    <Label Content="OneDrive:" HorizontalAlignment="Left" Margin="69,31,0,0" VerticalAlignment="Top"/>
@@ -786,22 +789,21 @@ Function Gui-Start {
    <ComboBox Name="WinUpdateType_Combo" HorizontalAlignment="Left" Margin="392,61,0,0" VerticalAlignment="Top" Width="115"/>
    <Label Content="Update P2P:" HorizontalAlignment="Left" Margin="320,85,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="WinUpdateDownload_Combo" HorizontalAlignment="Left" Margin="392,88,0,0" VerticalAlignment="Top" Width="83"/>
-   <Rectangle Fill="#FFB6B6B6" HorizontalAlignment="Left" Height="253" Margin="254,0,0,0" Stroke="Black" VerticalAlignment="Top" Width="1"/>
-   <Label Content="Application" HorizontalAlignment="Left" Margin="89,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-   <Label Content="Windows Update" HorizontalAlignment="Left" Margin="336,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
    <Label Content="Update MSRT:" HorizontalAlignment="Left" Margin="310,112,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="UpdateMSRT_Combo" HorizontalAlignment="Left" Margin="392,115,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Update Driver:" HorizontalAlignment="Left" Margin="309,139,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="UpdateDriver_Combo" HorizontalAlignment="Left" Margin="392,142,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Restart on Update:" HorizontalAlignment="Left" Margin="287,166,0,0" VerticalAlignment="Top"/>
-   <ComboBox Name="RestartOnUpdate_Combo" HorizontalAlignment="Left" Margin="392,169,0,0" VerticalAlignment="Top" Width="72"/></Grid>
+   <ComboBox Name="RestartOnUpdate_Combo" HorizontalAlignment="Left" Margin="392,169,0,0" VerticalAlignment="Top" Width="72"/>
+   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="253" Margin="254,0,0,0" Stroke="Black" VerticalAlignment="Top" Width="1"/>
+   <Label Content="Application" HorizontalAlignment="Left" Margin="89,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+   <Label Content="Windows Update" HorizontalAlignment="Left" Margin="336,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/></Grid>
   </TabItem>
  </TabControl>
  <Rectangle Fill="#FFFFFFFF" Height="1" Margin="0,299,0,0" Stroke="Black" VerticalAlignment="Top"/>
  <Rectangle Fill="#FFFFFFFF" Height="1" Margin="0,320,0,0" Stroke="Black" VerticalAlignment="Top"/>
  <Rectangle Fill="#FFB6B6B6" Stroke="Black" Margin="0,341,0,0" Height="14" VerticalAlignment="Top"/>
- <Rectangle Fill="#FFB6B6B6" Stroke="Black" HorizontalAlignment="Left" Width="14" Margin="525,0,0,0"/>
- <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="21" Margin="258,321,0,0" Stroke="Black" VerticalAlignment="Top" Width="1"/></Grid>
+ <Rectangle Fill="#FFB6B6B6" Stroke="Black" HorizontalAlignment="Left" Width="14" Margin="525,0,0,0"/></Grid>
 </Window>
 "@
 
@@ -821,8 +823,8 @@ Function Gui-Start {
     $Runspace.Open()
     [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") | Out-Null
 
-    #$WPF_EMail.Add_Click({ OpenWebsite "mailto:madbomb122@gmail.com" })
-    #$WPF_DonateButton.Add_Click({ OpenWebsite "https://www.amazon.com/gp/registry/wishlist/YBAYWBJES5DE/" })
+    $WPF_EMail.Add_Click({ OpenWebsite "mailto:madbomb122@gmail.com" })
+    $WPF_DonateButton.Add_Click({ OpenWebsite "https://www.amazon.com/gp/registry/wishlist/YBAYWBJES5DE/" })
     $WPF_CreateRestorePoint_CB.Add_Checked({ $WPF_CreateRestorePoint_CB.IsChecked = $True ;$WPF_RestorePointName_Txt.IsEnabled = $True })
     $WPF_CreateRestorePoint_CB.Add_UnChecked({ $WPF_CreateRestorePoint_CB.IsChecked = $False ;$WPF_RestorePointName_Txt.IsEnabled = $False })
     $WPF_AllMetro_Combo.add_SelectionChanged({ SelectComboBoxAllMetro ($WPF_AllMetro_Combo.SelectedIndex) })
@@ -966,6 +968,9 @@ $Skip_InstalledD_Uninstall = @("OneDriveInstall","MediaPlayer","WorkFolders")
     ConfigGUIitms
     Clear-Host
     DisplayOutMenu "Displaying GUI Now" 14 0 1 0
+    $TmpTitle = " (v.$Script_Version.$Minor_Version -$Script_Date"
+    If($Release_Type -ne "Stable"){ $TmpTitle += " -$Release_Type)" } Else{ $TmpTitle += ")" }
+    $Form.Title += $TmpTitle
     $Form.ShowDialog() | out-null
 }
 
