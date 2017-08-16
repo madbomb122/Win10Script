@@ -18,8 +18,18 @@ PS. Don't forget to check out my other Repo https://github.com/madbomb122/BlackV
 **Needed Files:** `Win10-Menu.ps1` (Script File) <br />
 **Recommended Files:** `_Win10-Script-Run.bat` <br />
 
+# How to Use/Run
+Download/Save the following files <br />
+Script File: `Win10-Menu.ps1` -Need <br />
+Bat File: `_Win10-Script-Run.bat` -Recommended <br />
+  **Note 1: DO NOT RENAME THE FILES**<br />
+  **Note 2: HAVE THE FILES IN THE SAME DIRECTORY**<br />
+Next follow the **Basic Usage** or **Advanced Usage**
+
 # Basic Usage
-Run the Script by bat file or `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1` <br />
+Run the Script by bat file `_Win10-Script-Run.bat` (Recommended) <br />
+or <br />
+`powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1` <br />
 Use the Menu <br />
 Set what you want <br />
 Select option to run script <br />
