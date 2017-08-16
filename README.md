@@ -46,7 +46,7 @@ Use one of the following Methods you can
 | -atos     | Accepts the ToS                                                                |  |
 | -auto     | Runs the script to be Automated.. Closes on Errors, End of Script)             | Implies `-atos`                  |
 | -run      | Runs script with setting in script                                             |  |
-| -run Settingfile    | Runs script with Settingfile                              | May Imply `-atos` (depends on setting file) |
+| -run Settingfile    | Runs script with Settingfile                        | May Imply `-atos` (If file was saved from script) |
 | -run WinDefault     | Runs script with Win Default                                         |  |
 | -load Settingfile   | Loads Settingfile (Does not run)                                     |  |
 | -load WinDefault    | Loads Win Default (Does not run)                                     |  |
