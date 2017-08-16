@@ -185,14 +185,15 @@ $Pined_App = @(
 'Twitter',
 'Skype Video',
 'Candy Crush Soda Saga',
-'xbox',
-'Groove music',
-"movies & tv",
-'microsoft solitaire collection',
-'money',
-'get office',
-'onenote',
-'news')
+'Xbox',
+'Groove Music',
+'Maps',
+"Movies & TV",
+'Microsoft Solitaire Collection',
+'Money',
+'Get Office',
+'Onenote',
+'News')
 
 Function MenuBlankLine { DisplayOutMenu "|                                                   |" 14 0 1 }
 Function MenuLine { DisplayOutMenu "|---------------------------------------------------|" 14 0 1 }
@@ -283,7 +284,7 @@ Function cmpv { Compare-Object (Get-Variable -Scope Script) $AutomaticVariables 
 Function Openwebsite([String]$Url) { [System.Diagnostics.Process]::Start($Url) }
 Function ShowInvalid([Int]$InvalidA) { If($InvalidA -eq 1){ Write-Host "`nInvalid Input" -ForegroundColor Red -BackgroundColor Black -NoNewline } Return 0 }
 Function unPin-App([string]$appname) { ((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'Unpin from Start'} | %{$_.DoIt()} }
-Function Check-SetPath([string]$RPath)  { If(!(Test-Path "$RPath")){ New-Item -Path "$RPath" -Force | Out-Null } Return $RPath }
+Function Check-SetPath([string]$RPath)  { While(!(Test-Path "$RPath")){ New-Item -Path "$RPath" -Force | Out-Null } Return $RPath }
 Function DisplayOut([String]$TxtToDisplay, [int]$TxtColor, [int]$BGColor) { If($TxtColor -le 15){ Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } Else{ Write-Host $TxtToDisplay } }
 Function DisplayOutMenu([String]$TxtToDisplay, [int]$TxtColor, [int]$BGColor, [int]$NewLine) { If($NewLine -eq 0){ Write-Host -NoNewline $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } Else{ Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } }
 
@@ -1458,8 +1459,8 @@ Function RunScript {
     } ElseIf($WinDefender -eq 2) {
         DisplayOut "Disabling Windows Defender..." 12 0
         $Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
-        Remove-ItemProperty -Path $Path -Name "WindowsDefender"
-        Remove-ItemProperty -Path $Path -Name "SecurityHealth"
+        If($BuildVer -lt 15063) { $RegName = "WindowsDefender" } Else { $RegName = "SecurityHealth" }
+        Remove-ItemProperty -Path $Path -Name $RegName
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name "DisableAntiSpyware" -Type DWord -Value 1
     }
 
@@ -1961,13 +1962,13 @@ Function RunScript {
         DisplayOut "Skipping Task Manager Details..." 15 0
     } ElseIf($TaskManagerDetails -eq 1) {
         DisplayOut "Showing Task Manager Details..." 11 0
-        $Path = Check-SetPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager"
+        $Path =  "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager"
         $TaskManKey = Get-ItemProperty -Path $Path -Name "Preferences" | Out-Null
         If(!($TaskManKey)) {
             $taskmgr = Start-Process -WindowStyle Hidden -FilePath taskmgr.exe -PassThru
             While(!($TaskManKey)) {
                 Start-Sleep -m 250
-                $TaskManKey = Get-ItemProperty -Path $Path -Name "Preferences"
+                $TaskManKey = Get-ItemProperty -Path $Path -Name "Preferences" | Out-Null
             }
             Stop-Process $taskmgr | Out-Null
         }
@@ -1976,7 +1977,7 @@ Function RunScript {
     } ElseIf($TaskManagerDetails -eq 2) {
         DisplayOut "Hiding Task Manager Details..." 12 0
         $Path = Check-SetPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager"
-        $TaskManKey = Get-ItemProperty -Path $Path -Name "Preferences"
+        $TaskManKey = Get-ItemProperty -Path $Path -Name "Preferences" | Out-Null
         If($TaskManKey) {
             $TaskManKey.Preferences[28] = 1
             Set-ItemProperty -Path $Path -Name "Preferences" -Type Binary -Value $TaskManKey.Preferences
@@ -2076,12 +2077,12 @@ Function RunScript {
         DisplayOut "Skipping This PC Icon on Desktop..." 15 0
     } ElseIf($ThisPCOnDesktop -eq 1) {
         DisplayOut "Showing This PC Shortcut on Desktop..." 11 0
-        $Path = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons"
+        $Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons"
         Set-ItemProperty -Path "$Path\ClassicStartMenu" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type DWord -Value 0
         Set-ItemProperty -Path "$Path\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type DWord -Value 0
     } ElseIf($ThisPCOnDesktop -eq 2) {
         DisplayOut "Hiding This PC Shortcut on Desktop..." 12 0
-        $Path = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons"
+        $Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons"
         Set-ItemProperty -Path "$Path\ClassicStartMenu" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type DWord -Value 1
         Set-ItemProperty -Path "$Path\NewStartPanel" -Name "{20D04FE0-3AEA-1069-A2D8-08002B30309D}" -Type DWord -Value 1
     }
@@ -2090,12 +2091,12 @@ Function RunScript {
         DisplayOut "Skipping Network Icon on Desktop..." 15 0
     } ElseIf($NetworkOnDesktop -eq 1) {
         DisplayOut "Showing Network Icon on Desktop..." 11 0
-        $Path = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons"
+        $Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons"
         Set-ItemProperty -Path "$Path\ClassicStartMenu" -Name "{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}" -Type DWord -Value 0
         Set-ItemProperty -Path "$Path\NewStartPanel" -Name "{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}" -Type DWord -Value 0
     } ElseIf($NetworkOnDesktop -eq 2) {
         DisplayOut "Hiding Network Icon on Desktop..." 12 0
-        $Path = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons"
+        $Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons"
         Set-ItemProperty -Path "$Path\ClassicStartMenu" -Name "{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}" -Type DWord -Value 1
         Set-ItemProperty -Path "$Path\NewStartPanel" -Name "{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}" -Type DWord -Value 1
     }
@@ -2104,12 +2105,12 @@ Function RunScript {
         DisplayOut "Skipping Recycle Bin Icon on Desktop..." 15 0
     } ElseIf($RecycleBinOnDesktop -eq 1) {
         DisplayOut "Showing Recycle Bin Icon on Desktop..." 11 0
-        $Path = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons"
+        $Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons"
         Set-ItemProperty -Path "$Path\ClassicStartMenu" -Name "{645FF040-5081-101B-9F08-00AA002F954E}" -Type DWord -Value 0
         Set-ItemProperty -Path "$Path\NewStartPanel" -Name "{645FF040-5081-101B-9F08-00AA002F954E}" -Type DWord -Value 0
     } ElseIf($RecycleBinOnDesktop -eq 2) {
         DisplayOut "Hiding Recycle Bin Icon on Desktop..." 12 0
-        $Path = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons"
+        $Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons"
         Set-ItemProperty -Path "$Path\ClassicStartMenu" -Name "{645FF040-5081-101B-9F08-00AA002F954E}" -Type DWord -Value 1
         Set-ItemProperty -Path "$Path\NewStartPanel" -Name "{645FF040-5081-101B-9F08-00AA002F954E}" -Type DWord -Value 1
     }
@@ -2118,12 +2119,12 @@ Function RunScript {
         DisplayOut "Skipping Users File Icon on Desktop..." 15 0
     } ElseIf($UsersFileOnDesktop -eq 1) {
         DisplayOut "Showing Users File Icon on Desktop..." 11 0
-        $Path = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons"
+        $Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons"
         Set-ItemProperty -Path "$Path\ClassicStartMenu" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" -Type DWord -Value 0
         Set-ItemProperty -Path "$Path\NewStartPanel" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" -Type DWord -Value 0
     } ElseIf($UsersFileOnDesktop -eq 2) {
         DisplayOut "Hiding Users File Icon on Desktop..." 12 0
-        $Path = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons"
+        $Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons"
         Set-ItemProperty -Path "$Path\ClassicStartMenu" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" -Type DWord -Value 1
         Set-ItemProperty -Path "$Path\NewStartPanel" -Name "{59031a47-3f72-44a7-89c5-5595fe6b30ee}" -Type DWord -Value 1
     }
@@ -2132,12 +2133,12 @@ Function RunScript {
         DisplayOut "Skipping Control Panel Icon on Desktop..." 15 0
     } ElseIf($ControlPanelOnDesktop -eq 1) {
         DisplayOut "Showing Control Panel Icon on Desktop..." 11 0
-        $Path = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons"
+        $Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons"
         Set-ItemProperty -Path "$Path\ClassicStartMenu" -Name "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}" -Type DWord -Value 0
         Set-ItemProperty -Path "$Path\NewStartPanel" -Name "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}" -Type DWord -Value 0
     } ElseIf($ControlPanelOnDesktop -eq 2) {
         DisplayOut "Hiding Control Panel Icon on Desktop..." 12 0
-        $Path = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons"
+        $Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons"
         Set-ItemProperty -Path "$Path\ClassicStartMenu" -Name "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}" -Type DWord -Value 1
         Set-ItemProperty -Path "$Path\NewStartPanel" -Name "{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}" -Type DWord -Value 1
     }
@@ -2360,7 +2361,7 @@ Function RunScript {
             Remove-Item "$env:PROGRAMDATA\Microsoft OneDrive" -Force -Recurse
             Remove-Item "$env:SYSTEMDRIVE\OneDriveTemp" -Force -Recurse
             Remove-Item -Path "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Recurse
-            Remove-Item -Path "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Recurse
+            Remove-Item -Path "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Force -Recurse
         }
     }
 
