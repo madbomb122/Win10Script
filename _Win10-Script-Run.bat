@@ -1,4 +1,6 @@
 @ECHO OFF
+:: Last Updated on August 16th, 2017
+
 :: Instructions
 :: Bat, Script, and setting MUST be in same Folder
 :: Change Option to = one of the listed options (mostly yes or no)
@@ -15,8 +17,8 @@ Set Run_Option=0
 :: Name of Script File
 Set Script_File=Win10-Menu.ps1
 
-:: Name of Setting File (Change Mine.xml to your setting file, if you have one)
-Set Setting_File=Mine.xml
+:: Name of Setting File (Change Mine.csv to your setting file, if you have one)
+Set Setting_File=Mine.csv
 :: DO NOT HAVE SPACES IN FILENAME
 
 :: Change these to yes or no
