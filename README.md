@@ -29,7 +29,8 @@ Next follow the **Basic Usage** or **Advanced Usage**
 # Basic Usage
 Run the Script by bat file `_Win10-Script-Run.bat` (Recommended) <br />
 or <br />
-`powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1` <br />
+`powershell.exe -NoProfile -ExecutionPolicy Bypass -File c:/Win10-Menu.ps1`  <br />
+*For the above, Please note you need change the c:/ to the fullpath of your file* <br />
 Use the Menu <br />
 Set what you want <br />
 Select option to run script <br />
