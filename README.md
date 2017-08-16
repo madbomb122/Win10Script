@@ -46,14 +46,14 @@ Use one of the following Methods you can
 | -atos     | Accepts the ToS                                                                |                                  |
 | -auto     | Runs the script to be Automated.. Closes on Errors, End of Script)             | Implies `-atos`                    |
 | -run      | Runs script with setting in script                                             |                     |
-| -run Settingfile     | Runs script with Settingfile                                            |                     |
-| -run WinDefault     | Runs script with Win Default                                            |                     |
-| -load Settingfile     | Loads Settingfile (Does not run)                                            |                     |
-| -load WinDefault     | Loads Win Default (Does not run)                                            |                     |
+| -run Settingfile     | Runs script with Settingfile                                        |                     |
+| -run WinDefault     | Runs script with Win Default                                         |                     |
+| -load Settingfile     | Loads Settingfile (Does not run)                                   | May Imply `-atos` (depends on setting file)                   |
+| -load WinDefault     | Loads Win Default (Does not run)                                    |                     |
 | -sic      | Skips Internet Check (If checking for update)                                  | Tests by pinging github.com      |
 | -usc      | Checks for Update to Script file before running                                | Auto downloads and runs if found |
-| -crp     | Creates a Restore Point                            |  |
-| -dnr      | Do not restart when done                    |   |
+| -crp     | Creates a Restore Point                                                         |  |
+| -dnr      | Do not restart when done                                                       |   |
 
 Examples: <br />
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1 -auto -run mine.csv` <br />
