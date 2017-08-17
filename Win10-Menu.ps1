@@ -11,7 +11,7 @@
 # Website: https://github.com/madbomb122/Win10Script/
 #
 $Script_Version = "3.0"
-$Minor_Version = "0"
+$Minor_Version = "1"
 $Script_Date = "Aug-16-2017"
 $Release_Type = "Stable "
 ##########
@@ -189,10 +189,8 @@ $Pined_App = @(
 'Maps',
 "Movies & TV",
 'Microsoft Solitaire Collection',
-'Money',
 'Get Office',
-'Onenote',
-'News')
+'Onenote')
 
 Function MenuBlankLine { DisplayOutMenu "|                                                   |" 14 0 1 }
 Function MenuLine { DisplayOutMenu "|---------------------------------------------------|" 14 0 1 }
@@ -587,6 +585,7 @@ Function Gui-Start {
    <ComboBox Name="RecentItemsFrequent_Combo" HorizontalAlignment="Left" Margin="439,61,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Unpin Items:" HorizontalAlignment="Left" Margin="365,139,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="UnpinItems_Combo" HorizontalAlignment="Left" Margin="439,142,0,0" VerticalAlignment="Top" Width="72"/>
+   <Label Content="Unpin List:  Calendar, Candy Crush Soda Saga, &#xD;&#xA;Cortana, Get Office, Groove Music, Mail, Maps, &#xD;&#xA;Edge, Microsoft Solitaire, Movies &amp; TV, &#xD;&#xA;Onenote, Phone Companion, Photos, Skype, &#xD;&#xA;Store, Twitter, Weather, Xbox" HorizontalAlignment="Left" Margin="259,161,0,0" VerticalAlignment="Top"/>
    <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="253" Margin="254,0,0,0" Stroke="Black" VerticalAlignment="Top" Width="1"/>
    <Label Content="Context Menu" HorizontalAlignment="Left" Margin="82,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
    <Label Content="Start Menu" HorizontalAlignment="Left" Margin="352,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/></Grid>
