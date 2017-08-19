@@ -11,8 +11,8 @@
 # Website: https://github.com/madbomb122/Win10Script/
 #
 $Script_Version = "3.0"
-$Minor_Version = "1"
-$Script_Date = "Aug-16-2017"
+$Minor_Version = "2"
+$Script_Date = "Aug-19-2017"
 #$Release_Type = "Stable "
 $Release_Type = "Testing"
 ##########
@@ -97,6 +97,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 # Pre-Script -Start
 ##########
 
+If([Environment]::OSVersion.Version.Major -ne 10) {
+    Clear-Host
+	Write-Host "Sorry, this Script supports Windows 10 ONLY." -ForegroundColor "cyan" -BackgroundColor "black"
+	If($Automated -ne 1){ Read-Host -Prompt "`nPress Any key to Close..." }
+	Exit
+}
+
 If($Release_Type -eq "Stable "){ $ErrorActionPreference = 'silentlycontinue' }
 
 $Global:PassedArg = $args
@@ -117,7 +124,7 @@ If([System.Environment]::Is64BitProcess){ $Script:OSType = 64 }
 # Needed Variable -Start
 ##########
 
-[Array]$Script:APPS_AppsInstall = @()
+[Array]$Script:APPS_AppsUnhide = @()
 [Array]$Script:APPS_AppsHide = @()
 [Array]$Script:APPS_AppsUninstall = @()
 
@@ -279,12 +286,13 @@ Function InternetCheck { If($InternetCheck -eq 1){ Return $True } ElseIf(!(Test-
 ##########
 
 Function cmpv { Compare-Object (Get-Variable -Scope Script) $AutomaticVariables -Property Name -PassThru | Where -Property Name -ne "AutomaticVariables" | Where-Object { $_ -NotIn $WPFList } }
-Function Openwebsite([String]$Url) { [System.Diagnostics.Process]::Start($Url) }
-Function ShowInvalid([Int]$InvalidA) { If($InvalidA -eq 1){ Write-Host "`nInvalid Input" -ForegroundColor Red -BackgroundColor Black -NoNewline } Return 0 }
-Function unPin-App([string]$appname) { ((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'Unpin from Start'} | %{$_.DoIt()} }
-Function Check-SetPath([string]$RPath)  { While(!(Test-Path "$RPath")){ New-Item -Path "$RPath" -Force | Out-Null } Return $RPath }
-Function DisplayOut([String]$TxtToDisplay, [int]$TxtColor, [int]$BGColor) { If($TxtColor -le 15){ Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } Else{ Write-Host $TxtToDisplay } }
-Function DisplayOutMenu([String]$TxtToDisplay, [int]$TxtColor, [int]$BGColor, [int]$NewLine) { If($NewLine -eq 0){ Write-Host -NoNewline $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } Else{ Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } }
+Function Openwebsite([String]$Url){ [System.Diagnostics.Process]::Start($Url) }
+Function ShowInvalid([Int]$InvalidA){ If($InvalidA -eq 1){ Write-Host "`nInvalid Input" -ForegroundColor Red -BackgroundColor Black -NoNewline } Return 0 }
+Function unPin-App([string]$appname){ ((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'Unpin from Start'} | %{$_.DoIt()} }
+Function Check-SetPath([string]$RPath){ While(!(Test-Path "$RPath")){ New-Item -Path "$RPath" -Force | Out-Null } Return $RPath }
+Function Remove-SetPath([string]$RPath){ If(Test-Path $RPath){ Remove-Item -Path $RPath -Recurse } }
+Function DisplayOut([String]$TxtToDisplay, [int]$TxtColor, [int]$BGColor){ If($TxtColor -le 15){ Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } Else{ Write-Host $TxtToDisplay } }
+Function DisplayOutMenu([String]$TxtToDisplay, [int]$TxtColor, [int]$BGColor, [int]$NewLine){ If($NewLine -eq 0){ Write-Host -NoNewline $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } Else{ Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } }
 
 Function ScriptPreStart {
     If($PassedArg.length -gt 0){ ArgCheck }
@@ -360,13 +368,13 @@ Function TOS {
 
 Function LoadSettingFile([String]$Filename) {
     Import-Csv $Filename -Delimiter ";" | %{ Set-Variable $_.Name $_.Value -Scope Script }
-    [System.Collections.ArrayList]$APPS_AppsInstall = $AppsInstall.split(",")
+    [System.Collections.ArrayList]$APPS_AppsUnhide = $AppsUnhide.split(",")
     [System.Collections.ArrayList]$APPS_AppsHidel = $AppsHide.split(",")
     [System.Collections.ArrayList]$APPS_AppsUninstall = $AppsUninstall.split(",")
 }
 
 Function SaveSettingFiles([String]$Filename) {
-    ForEach($temp In $APPS_AppsInstall){$Script:AppsInstall+=$temp+","}
+    ForEach($temp In $APPS_AppsUnhide){$Script:AppsUnhide+=$temp+","}
     ForEach($temp In $APPS_AppsHide){$Script:AppsHide+=$temp+","}
     ForEach($temp In $APPS_Uninstall){$Script:AppsUninstall+=$temp+","}
     If(Test-Path $Filename -PathType Leaf) {
@@ -586,7 +594,7 @@ Function Gui-Start {
    <ComboBox Name="RecentItemsFrequent_Combo" HorizontalAlignment="Left" Margin="439,61,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Unpin Items:" HorizontalAlignment="Left" Margin="365,139,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="UnpinItems_Combo" HorizontalAlignment="Left" Margin="439,142,0,0" VerticalAlignment="Top" Width="72"/>
-   <Label Content="Unpin List:  Calendar, Candy Crush Soda Saga, &#xD;&#xA;Cortana, Get Office, Groove Music, Mail, Maps, &#xD;&#xA;Edge, Microsoft Solitaire, Movies &amp; TV, &#xD;&#xA;Onenote, Phone Companion, Photos, Skype, &#xD;&#xA;Store, Twitter, Weather, Xbox" HorizontalAlignment="Left" Margin="259,161,0,0" VerticalAlignment="Top"/>
+   <Label Content="Unpin List:  Calendar, Candy Crush Soda Saga, &#xD;&#xA;Cortana, Get Office, Groove Music, Mail, Maps, &#xD;&#xA;Edge, Microsoft Solitaire, Movies &amp; TV, &#xD;&#xA;OneNote, Phone Companion, Photos, Skype, &#xD;&#xA;Store, Twitter, Weather, Xbox" HorizontalAlignment="Left" Margin="259,161,0,0" VerticalAlignment="Top"/>
    <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="253" Margin="254,0,0,0" Stroke="Black" VerticalAlignment="Top" Width="1"/>
    <Label Content="Context Menu" HorizontalAlignment="Left" Margin="82,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
    <Label Content="Start Menu" HorizontalAlignment="Left" Margin="352,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/></Grid>
@@ -731,7 +739,7 @@ Function Gui-Start {
    <ComboBox Name="APP_MovieMoments_Combo" HorizontalAlignment="Left" Margin="94,227,0,0" VerticalAlignment="Top" Width="74"/>
    <Label Content="Netflix:" HorizontalAlignment="Left" Margin="225,32,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="APP_Netflix_Combo" HorizontalAlignment="Left" Margin="269,35,0,0" VerticalAlignment="Top" Width="74"/>
-   <Label Content="Office One Note:" HorizontalAlignment="Left" Margin="173,56,0,0" VerticalAlignment="Top"/>
+   <Label Content="Office OneNote:" HorizontalAlignment="Left" Margin="173,56,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="APP_OfficeOneNote_Combo" HorizontalAlignment="Left" Margin="269,59,0,0" VerticalAlignment="Top" Width="74"/>
    <Label Content="Office Sway:" HorizontalAlignment="Left" Margin="198,80,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="APP_OfficeSway_Combo" HorizontalAlignment="Left" Margin="269,83,0,0" VerticalAlignment="Top" Width="74"/>
@@ -749,7 +757,7 @@ Function Gui-Start {
    <ComboBox Name="APP_StickyNotes_Combo" HorizontalAlignment="Left" Margin="269,227,0,0" VerticalAlignment="Top" Width="74"/>
    <Label Content="Voice Recorder:" HorizontalAlignment="Left" Margin="353,32,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="APP_VoiceRecorder_Combo" HorizontalAlignment="Left" Margin="442,35,0,0" VerticalAlignment="Top" Width="74"/>
-   <Label Content="Alarms&amp; Clock:" HorizontalAlignment="Left" Margin="354,56,0,0" VerticalAlignment="Top"/>
+   <Label Content="Alarms &amp; Clock:" HorizontalAlignment="Left" Margin="354,56,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="APP_WindowsAlarms_Combo" HorizontalAlignment="Left" Margin="442,59,0,0" VerticalAlignment="Top" Width="74"/>
    <Label Content="Calculator:" HorizontalAlignment="Left" Margin="379,80,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="APP_WindowsCalculator_Combo" HorizontalAlignment="Left" Margin="442,83,0,0" VerticalAlignment="Top" Width="74"/>
@@ -941,8 +949,8 @@ $Skip_InstalledD_Uninstall = @("OneDriveInstall","MediaPlayer","WorkFolders")
     ForEach($Var in $Skip_Show_HideD){ SetCombo $Var "Show,Hide*" }
     ForEach($Var in $Skip_InstalledD_Uninstall){ SetCombo $Var "Installed*,Uninstall" }
     
-    SetComboM "AllMetro" "Install,Hide,Uninstall"
-    ForEach($MetroApp in $ListApp){ SetComboM $MetroApp "Install,Hide,Uninstall" }
+    SetComboM "AllMetro" "Unhide,Hide,Uninstall"
+    ForEach($MetroApp in $ListApp){ SetComboM $MetroApp "Unhide,Hide,Uninstall" }
 
     SetCombo "LinuxSubsystem" "Installed,Uninstall*"
     SetCombo "HibernatePower" "Enable,Disable"
@@ -1298,7 +1306,7 @@ Function RunScript {
     } ElseIf($AutoLoggerFile -eq 2) {
         DisplayOut "Removing AutoLogger File and Festricting Directory..." 12 0
         $autoLoggerDir = "$env:PROGRAMDATA\Microsoft\Diagnosis\ETLLogs\AutoLogger"
-        If(Test-Path "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl"){ Remove-Item "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl" }
+        Remove-SetPath "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl"
         icacls $autoLoggerDir /deny SYSTEM:`(OI`)`(CI`)F | Out-Null
     }
 
@@ -1526,10 +1534,10 @@ Function RunScript {
         Set-ItemProperty -Path "HKCR:\ApplicationsDrive\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force | Out-Null
     } ElseIf($PreviousVersions -eq 2) {
         DisplayOut "Disabling Previous Versions Context item..." 12 0
-        Remove-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Recurse
-        Remove-Item -Path "HKCR:\CLSID\{450D8FBA-AD25-11D0-98A8-0800361B1103}\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Recurse
-        Remove-Item -Path "HKCR:\Directory\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Recurse
-        Remove-Item -Path "HKCR:\Drive\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Recurse
+        Remove-SetPath "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}"
+        Remove-SetPath "HKCR:\CLSID\{450D8FBA-AD25-11D0-98A8-0800361B1103}\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}"
+        Remove-SetPath "HKCR:\Directory\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}"
+        Remove-SetPath "HKCR:\Drive\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}"
     }
 
     If($IncludeinLibrary -eq 0 -and $ShowSkipped -eq 1) {
@@ -1618,7 +1626,7 @@ Function RunScript {
         Set-ItemProperty -Path $Path -Name "(Default)" -Type String -Value "{7BA4C740-9E81-11CF-99D3-00AA004AE837}" | Out-Null
     } ElseIf($SendTo -eq 2) {
         DisplayOut "Disabling Send To Context item..." 12 0
-        If(Test-Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo") { Remove-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo" }
+        Remove-SetPath "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo"
     }
 
     DisplayOut "`n----------------------`n-   Task Bar Items   -`n----------------------" 14 0
@@ -1891,8 +1899,8 @@ Function RunScript {
         DisplayOut "Removeing Recent Files in Quick Access..." 15 0
         $Path = "Microsoft\Windows\CurrentVersion\Explorer"
         Set-ItemProperty -Path "HKCU:\SOFTWARE\$Path" -Name "ShowRecent" -Type DWord -Value 0
-        Remove-Item -Path "HKLM:\SOFTWARE\$Path\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Recurse
-        Remove-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Recurse
+        Remove-SetPath "HKLM:\SOFTWARE\$Path\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}"
+        Remove-SetPath "HKLM:\SOFTWARE\Wow6432Node\$Path\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}"
     }
 
     If($FrequentFoldersQikAcc -eq 0 -and $ShowSkipped -eq 1) {
@@ -2156,13 +2164,13 @@ Function RunScript {
         }
     } ElseIf($PVFileAssociation -eq 2) {
         DisplayOut "Unsetting Photo Viewer File Association for bmp, gif, jpg, png and tif..." 12 0
-        If(Test-Path "HKCR:\Paint.Picture\shell\open") { Remove-Item -Path "HKCR:\Paint.Picture\shell\open" -Recurse }
+        Remove-SetPath "HKCR:\Paint.Picture\shell\open"
         Remove-ItemProperty -Path "HKCR:\giffile\shell\open" -Name "MuiVerb"
         Set-ItemProperty -Path "HKCR:\giffile\shell\open" -Name "CommandId" -Type String -Value "IE.File"
         Set-ItemProperty -Path "HKCR:\giffile\shell\open\command" -Name "(Default)" -Type String -Value "`"$env:SystemDrive\Program Files\Internet Explorer\iexplore.exe`" %1"
         Set-ItemProperty -Path "HKCR:\giffile\shell\open\command" -Name "DelegateExecute" -Type String -Value "{17FE9752-0B5A-4665-84CD-569794602F5C}"
-        If(Test-Path "HKCR:\jpegfile\shell\open") { Remove-Item -Path "HKCR:\jpegfile\shell\open" -Recurse }
-        If(Test-Path "HKCR:\jpegfile\shell\open") { Remove-Item -Path "HKCR:\pngfile\shell\open" -Recurse }
+        Remove-SetPath "HKCR:\jpegfile\shell\open"
+        Remove-SetPath "HKCR:\jpegfile\shell\open"
     } 
 
     If($PVOpenWithMenu -eq 0 -and $ShowSkipped -eq 1) {
@@ -2176,7 +2184,7 @@ Function RunScript {
         Set-ItemProperty -Path "HKCR:\Applications\photoviewer.dll\shell\open\DropTarget" -Name "Clsid" -Type String -Value "{FFE2A43C-56B9-4bf5-9A79-CC6D4285608A}"
     } ElseIf($PVOpenWithMenu -eq 2) {
         DisplayOut "Removing Photo Viewer from Open with Menu..." 12 0
-        If(Test-Path "HKCR:\Applications\photoviewer.dll\shell\open"){ Remove-Item -Path "HKCR:\Applications\photoviewer.dll\shell\open" -Recurse }
+        Remove-SetPath "HKCR:\Applications\photoviewer.dll\shell\open"
     }
 
     DisplayOut "`n------------------------`n-   Lockscreen Items   -`n------------------------" 14 0
@@ -2425,7 +2433,7 @@ Function RunScript {
     $A = 0
     ForEach($AppV In $APPProcess) {
         If($AppV -eq 1) {
-            $APPS_AppsInstall.Add($AppsList[$A]) | Out-null
+            $APPS_AppsUnhide.Add($AppsList[$A]) | Out-null
         } ElseIf($AppV -eq 2) {
             $APPS_AppsHide.Add($AppsList[$A]) | Out-null
         } ElseIf($AppV -eq 3) {
@@ -2433,25 +2441,25 @@ Function RunScript {
         } $A++
     }
 
-    $APPS_AppsInstall.Remove("") ;$Ai = $APPS_AppsInstall.length
+    $APPS_AppsUnhide.Remove("") ;$Ai = $APPS_AppsUnhide.length
     $APPS_AppsHide.Remove("") ;$Ah = $APPS_AppsHide.length
     $APPS_AppsUninstall.Remove("");$Au = $APPS_AppsUninstall.length
     If($Ah -ne $null -or $Au -ne $null){ $AppxPackages = Get-AppxProvisionedPackage -online | select-object PackageName,Displayname }
 
-    DisplayOut "Installing Apps...`n------------------" 11 0
+    DisplayOut "Unhiding Apps...`n------------------" 11 0
 
     If($Ai -ne $null) {
-        ForEach($AppI In $APPS_AppsInstall) {
+        ForEach($AppI In $APPS_AppsUnhide) {
             $AppInst = Get-AppxPackage -AllUsers $AppI
             If($AppInst -ne $null) {
                 DisplayOut $AppI 11 0
                 ForEach($App In $AppInst) {Add-AppxPackage -DisableDevelopmentMode -Register "$($App.InstallLocation)\AppXManifest.xml"}
             } Else {
-                DisplayOut "Unable to Install $AppI" 11 0
+                DisplayOut "Unable to Unhide $AppI" 11 0
             }
         }
     } Else {
-        DisplayOut "No Apps being Installed" 11 0
+        DisplayOut "No Apps being Unhidden" 11 0
     }
 
     DisplayOut "`nHidding Apps...`n-----------------" 12 0
@@ -2517,7 +2525,7 @@ Function RunScript {
 $AutomaticVariables = Get-Variable -scope Script
 
 # DO NOT TOUCH THESE
-$Script:AppsInstall = ""
+$Script:AppsUnhide = ""
 $Script:AppsHide = ""
 $Script:AppsUninstall = ""
 
@@ -2694,7 +2702,7 @@ $Script:LinuxSubsystem = 0        #0-Skip, 1-Installed, 2-Uninstall* (Anniversar
 
 # Custom List of App to Install, Hide or Uninstall
 # I dunno if you can Install random apps with this script
-[System.Collections.ArrayList]$Script:APPS_AppsInstall = @()          # Apps to Install
+[System.Collections.ArrayList]$Script:APPS_AppsUnhide = @()           # Apps to Install
 [System.Collections.ArrayList]$Script:APPS_AppsHide = @()             # Apps to Hide
 [System.Collections.ArrayList]$Script:APPS_AppsUninstall = @()        # Apps to Uninstall
 #$Script:APPS_Example = @('Somecompany.Appname1','TerribleCompany.Appname2','AppS.Appname3')
