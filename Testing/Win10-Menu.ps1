@@ -3,12 +3,12 @@
 #
 # Original Basic Script By
 #  Author: Disassembler0
-# Website: https://github.com/Disassembler0/Win10-Initial-Setup-Script/
+# Website: https://GitHub.com/Disassembler0/Win10-Initial-Setup-Script/
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
 # Modded Script + Menu(GUI) By
 #  Author: Madbomb122
-# Website: https://github.com/madbomb122/Win10Script/
+# Website: https://GitHub.com/madbomb122/Win10Script/
 #
 $Script_Version = "3.0"
 $Minor_Version = "2"
@@ -100,21 +100,20 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 If([Environment]::OSVersion.Version.Major -ne 10) {
     Clear-Host
 	Write-Host "Sorry, this Script supports Windows 10 ONLY." -ForegroundColor "cyan" -BackgroundColor "black"
-	If($Automated -ne 1){ Read-Host -Prompt "`nPress Any key to Close..." }
-	Exit
+	If($Automated -ne 1){ Read-Host -Prompt "`nPress Any key to Close..." } ;Exit
 }
 
 If($Release_Type -eq "Stable "){ $ErrorActionPreference = 'silentlycontinue' }
 
 $Global:PassedArg = $args
 $Global:filebase = $PSScriptRoot + "\"
-$TempFolder = $env:Temp
+$TempFolder = $Env:Temp
 
 If(!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
     Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $PassedArg" -Verb RunAs ;Exit
 }
 
-$URL_Base = "https://raw.githubusercontent.com/madbomb122/Win10Script/master/"
+$URL_Base = "https://raw.GitHubusercontent.com/madbomb122/Win10Script/master/"
 $Script:BuildVer = [Environment]::OSVersion.Version.build
 If([System.Environment]::Is64BitProcess){ $Script:OSType = 64 }
 
@@ -214,7 +213,7 @@ Function RightLine { DisplayOutMenu " |" 14 0 1 }
 Function UpdateCheck {
     If(InternetCheck) {
         $VersionFile = $TempFolder + "\Temp.csv"
-        $VersionURL = "https://raw.githubusercontent.com/madbomb122/Win10Script/master/Version/Version.csv"
+        $VersionURL = "https://raw.GitHubusercontent.com/madbomb122/Win10Script/master/Version/Version.csv"
         (New-Object System.Net.WebClient).DownloadFile($VersionURL, $VersionFile)
         $CSV_Ver = Import-Csv $VersionFile
         $DFilename = "Win10-Menu-Ver."
@@ -244,8 +243,8 @@ Function UpdateCheck {
             LeftLine ;DisplayOutMenu "                  Update Found!                  " 13 0 0 ;RightLine
             MenuLine
             MenuBlankLine
-            LeftLine ;DisplayOutMenu "Downloading version " 15 0 0 ;DisplayOutMenu ("$WebScriptVer" +(" "*(29-$WebScriptVer.length))) 11 0 0 ;RightLine
-            LeftLine ;DisplayOutMenu "Will run " 15 0 0 ;DisplayOutMenu ("$DFilename" +(" "*(40-$DFilename.length))) 11 0 0 ;RightLine
+            LeftLine ;DisplayOutMenu "Downloading version " 15 0 0 ;DisplayOutMenu ("$WebScriptVer" +(" "*(29-$WebScriptVer.Lengthh))) 11 0 0 ;RightLine
+            LeftLine ;DisplayOutMenu "Will run " 15 0 0 ;DisplayOutMenu ("$DFilename" +(" "*(40-$DFilename.Lengthh))) 11 0 0 ;RightLine
             LeftLine ;DisplayOutMenu "after download is complete.                       " 2 0 0 ;RightLine
             MenuBlankLine
             MenuLine
@@ -269,7 +268,7 @@ Function UpdateCheck {
         MenuLine
         MenuBlankLine
         LeftLine ;DisplayOutMenu "No internet connection dectected.                " 2 0 0 ;RightLine
-        LeftLine ;DisplayOutMenu "Tested by pinging github.com                     " 2 0 0 ;RightLine
+        LeftLine ;DisplayOutMenu "Tested by pinging GitHub.com                     " 2 0 0 ;RightLine
         MenuBlankLine
         MenuLine
         Write-Host "`nPress Any key to Close...                      " -ForegroundColor White -BackgroundColor Black
@@ -277,7 +276,7 @@ Function UpdateCheck {
     }
 }
 
-Function InternetCheck { If($InternetCheck -eq 1){ Return $True } ElseIf(!(Test-Connection -computer github.com -count 1 -quiet)){ Return $False } Return $True }
+Function InternetCheck { If($InternetCheck -eq 1){ Return $True } ElseIf(!(Test-Connection -Computer GitHub.com -Count 1 -Quiet)){ Return $False } Return $True }
 
 ##########
 # Update Check -End
@@ -288,14 +287,14 @@ Function InternetCheck { If($InternetCheck -eq 1){ Return $True } ElseIf(!(Test-
 Function cmpv { Compare-Object (Get-Variable -Scope Script) $AutomaticVariables -Property Name -PassThru | Where -Property Name -ne "AutomaticVariables" | Where-Object { $_ -NotIn $WPFList } }
 Function Openwebsite([String]$Url){ [System.Diagnostics.Process]::Start($Url) }
 Function ShowInvalid([Int]$InvalidA){ If($InvalidA -eq 1){ Write-Host "`nInvalid Input" -ForegroundColor Red -BackgroundColor Black -NoNewline } Return 0 }
-Function unPin-App([string]$appname){ ((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.replace('&','') -match 'Unpin from Start'} | %{$_.DoIt()} }
-Function Check-SetPath([string]$RPath){ While(!(Test-Path "$RPath")){ New-Item -Path "$RPath" -Force | Out-Null } Return $RPath }
-Function Remove-SetPath([string]$RPath){ If(Test-Path $RPath){ Remove-Item -Path $RPath -Recurse } }
-Function DisplayOut([String]$TxtToDisplay, [int]$TxtColor, [int]$BGColor){ If($TxtColor -le 15){ Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } Else{ Write-Host $TxtToDisplay } }
-Function DisplayOutMenu([String]$TxtToDisplay, [int]$TxtColor, [int]$BGColor, [int]$NewLine){ If($NewLine -eq 0){ Write-Host -NoNewline $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } Else{ Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } }
+Function unPin-App([String]$appname){ ((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.Replace('&','') -Match 'Unpin from Start'} | %{$_.DoIt()} }
+Function Check-SetPath([String]$RPath){ While(!(Test-Path "$RPath")){ New-Item -Path "$RPath" -Force | Out-Null } Return $RPath }
+Function Remove-SetPath([String]$RPath){ If(Test-Path $RPath){ Remove-Item -Path $RPath -Recurse } }
+Function DisplayOut([String]$TxtToDisplay, [Int]$TxtColor, [Int]$BGColor){ If($TxtColor -le 15){ Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } Else{ Write-Host $TxtToDisplay } }
+Function DisplayOutMenu([String]$TxtToDisplay, [Int]$TxtColor, [Int]$BGColor, [Int]$NewLine){ If($NewLine -eq 0){ Write-Host -NoNewline $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } Else{ Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } }
 
 Function ScriptPreStart {
-    If($PassedArg.length -gt 0){ ArgCheck }
+    If($PassedArg.Lengthh -gt 0){ ArgCheck }
     If($AcceptToS -eq 1) {
         TOS
     } ElseIf($RunScr -eq $True) {
@@ -306,7 +305,7 @@ Function ScriptPreStart {
 }
 
 Function ArgCheck {
-    For($i=0; $i -lt $PassedArg.length; $i++) {
+    For($i=0; $i -lt $PassedArg.Lengthh; $i++) {
         If($PassedArg[$i].StartsWith("-")) {
             $ArgVal = $PassedArg[$i].ToLower()
             $PasVal = $PassedArg[($i+1)]
@@ -368,9 +367,9 @@ Function TOS {
 
 Function LoadSettingFile([String]$Filename) {
     Import-Csv $Filename -Delimiter ";" | %{ Set-Variable $_.Name $_.Value -Scope Script }
-    [System.Collections.ArrayList]$APPS_AppsUnhide = $AppsUnhide.split(",")
-    [System.Collections.ArrayList]$APPS_AppsHidel = $AppsHide.split(",")
-    [System.Collections.ArrayList]$APPS_AppsUninstall = $AppsUninstall.split(",")
+    [System.Collections.ArrayList]$APPS_AppsUnhide = $AppsUnhide.Split(",")
+    [System.Collections.ArrayList]$APPS_AppsHidel = $AppsHide.Split(",")
+    [System.Collections.ArrayList]$APPS_AppsUninstall = $AppsUninstall.Split(",")
 }
 
 Function SaveSettingFiles([String]$Filename) {
@@ -379,9 +378,9 @@ Function SaveSettingFiles([String]$Filename) {
     ForEach($temp In $APPS_Uninstall){$Script:AppsUninstall+=$temp+","}
     If(Test-Path $Filename -PathType Leaf) {
         If($ShowConf -eq 1){ $Conf = ConfirmMenu 2 } Else{ $Conf = $True }
-        If($Conf){ cmpv | select-object name,value | Export-Csv -LiteralPath $Filename -encoding "unicode" -force -Delimiter ";" }
+        If($Conf){ cmpv | Select-Object Name,Value | Export-Csv -LiteralPath $Filename -Encoding "unicode" -Force -Delimiter ";" }
     } Else {
-        cmpv | select-object name,value | Export-Csv -LiteralPath $Filename -encoding "unicode" -force -Delimiter ";"
+        cmpv | Select-Object Name,Value | Export-Csv -LiteralPath $Filename -Encoding "unicode" -Force -Delimiter ";"
     }
 }
 
@@ -393,24 +392,24 @@ Function SaveSettingFiles([String]$Filename) {
 
 Function Update-Window {
     [cmdletBinding()]
-    Param($Control, $Property, $Value, [switch]$AppendContent)
+    Param($Control, $Property, $Value, [Switch]$AppendContent)
     If($Property -eq "Close"){ $syncHash.Window.Dispatcher.invoke([action]{$syncHash.Window.Close()},"Normal") ;Return }
-    $form.Dispatcher.Invoke([action]{ If($PSBoundParameters['AppendContent']){ $Control.AppendText($Value) } Else{ $Control.$Property = $Value } }, "Normal")
+    $form.Dispatcher.Invoke([Action]{ If($PSBoundParameters['AppendContent']){ $Control.AppendText($Value) } Else{ $Control.$Property = $Value } }, "Normal")
 }
 
 Function SetCombo([String]$Name, [String]$Item) {
-    $Items = $Item.split(',')
+    $Items = $Item.Split(',')
     $combo =  $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly)
     [void] $combo.Items.Add("Skip")
-    ForEach($CmbItm in $Items){ [void] $combo.Items.Add($CmbItm) }
+    ForEach($CmbItm In $Items){ [void] $combo.Items.Add($CmbItm) }
     SelectComboBoxGen $Name $(Get-Variable -Name $Name -ValueOnly)
 }
 
 Function SetComboM([String]$Name, [String]$Item) {
-    $Items = $Item.split(',')
+    $Items = $Item.Split(',')
     $combo =  $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly)
     [void] $combo.Items.Add("Skip")
-    ForEach($CmbItm in $Items){ [void] $combo.Items.Add($CmbItm) }
+    ForEach($CmbItm In $Items){ [void] $combo.Items.Add($CmbItm) }
     If($Name -eq "AllMetro") {
         $WPF_AllMetro_Combo.SelectedIndex = 0
     } ElseIf($Name -eq "APP_SkypeApp") {
@@ -446,7 +445,7 @@ Function ConfigGUIitms {
 
 Function SelectComboBox([Array]$List, [Int]$Metro) { 
     If($Metro -eq 1) {
-        ForEach($Var in $List) {
+        ForEach($Var In $List) {
             If($Var -eq "APP_SkypeApp") {
                 $WPF_APP_SkypeApp_Combo.SelectedIndex = $APP_SkypeApp1
             } ElseIf($Var -eq "APP_WindowsFeedbak") {
@@ -458,20 +457,20 @@ Function SelectComboBox([Array]$List, [Int]$Metro) {
             }
         }
     } Else {
-        ForEach($Var in $List){ SelectComboBoxGen $Var $Var.Value }
+        ForEach($Var In $List){ SelectComboBoxGen $Var $Var.Value }
     }
 }
-Function SelectComboBoxAllMetro([Int]$Numb) { ForEach($Var in $ListApp){ SelectComboBoxGen $Var $Numb } }
+Function SelectComboBoxAllMetro([Int]$Numb) { ForEach($Var In $ListApp){ SelectComboBoxGen $Var $Numb } }
 Function SelectComboBoxGen([String]$Name, [Int]$Numb) { $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).SelectedIndex = $Numb }
 
 Function AppAraySet([String]$Get) {
     [System.Collections.ArrayList]$ListTMP = Get-Variable -Name $Get
     [System.Collections.ArrayList]$List = @()
     If($Get -eq "WPF_*_Combo"){
-        ForEach($Var in $ListTMP){ If(!($Var.Name -like "WPF_APP_*")){ $List += $Var.Name.split('_')[1] } }
+        ForEach($Var In $ListTMP){ If(!($Var.Name -like "WPF_APP_*")){ $List += $Var.Name.Split('_')[1] } }
         $List.Remove("AllMetro")
     } Else {
-        ForEach($Var in $ListTMP){ $List += $Var.Name }
+        ForEach($Var In $ListTMP){ $List += $Var.Name }
         $List.Remove("APP_SkypeApp1")
         $List.Remove("APP_SkypeApp2")
         $List.Remove("APP_WindowsFeedbak1")
@@ -486,10 +485,10 @@ Function AppAraySet([String]$Get) {
 
 Function OpenSaveDiaglog([Int]$SorO){
     If($SorO -eq 0){ $SOFileDialog = New-Object System.Windows.Forms.OpenFileDialog } Else{ $SOFileDialog = New-Object System.Windows.Forms.SaveFileDialog }
-    $SOFileDialog.initialDirectory = $filebase
-    $SOFileDialog.filter = "CSV (*.csv)| *.csv"
+    $SOFileDialog.InitialDirectory = $filebase
+    $SOFileDialog.Filter = "CSV (*.csv)| *.csv"
     $SOFileDialog.ShowDialog() | Out-Null
-    If($SorO -eq 0){ LoadSettingFile $SOFileDialog.filename ;ConfigGUIitms ;SelectComboBox $VarList ;SelectComboBox $ListApp 1 } Else{ GuiItmToVariable ;SaveSettingFiles $SOFileDialog.filename }
+    If($SorO -eq 0){ LoadSettingFile $SOFileDialog.Filename ;ConfigGUIitms ;SelectComboBox $VarList ;SelectComboBox $ListApp 1 } Else{ GuiItmToVariable ;SaveSettingFiles $SOFileDialog.Filename }
 }
 
 Function Gui-Start {
@@ -818,7 +817,7 @@ Function Gui-Start {
     [void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
     $reader = (New-Object System.Xml.XmlNodeReader $xaml)
     $Form = [Windows.Markup.XamlReader]::Load( $reader )
-    $xaml.SelectNodes("//*[@Name]") | %{Set-Variable -Name "WPF_$($_.Name)" -Value $Form.FindName($_.Name) -scope Script }
+    $xaml.SelectNodes("//*[@Name]") | %{Set-Variable -Name "WPF_$($_.Name)" -Value $Form.FindName($_.Name) -Scope Script }
     $WPFList = Get-Variable -Name "WPF_*"
 
     [System.Collections.ArrayList]$VarList = AppAraySet "WPF_*_Combo"
@@ -826,7 +825,7 @@ Function Gui-Start {
     
     $Runspace = [runspacefactory]::CreateRunspace()
     $PowerShell = [PowerShell]::Create()
-    $PowerShell.runspace = $Runspace
+    $PowerShell.RunSpace = $Runspace
     $Runspace.Open()
     [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") | Out-Null
 
@@ -836,7 +835,7 @@ Function Gui-Start {
     $WPF_CreateRestorePoint_CB.Add_UnChecked({ $WPF_CreateRestorePoint_CB.IsChecked = $False ;$WPF_RestorePointName_Txt.IsEnabled = $False })
     $WPF_AllMetro_Combo.add_SelectionChanged({ SelectComboBoxAllMetro ($WPF_AllMetro_Combo.SelectedIndex) })
     $WPF_RunScriptButton.Add_Click({ Gui-Done })
-    $WPF_Madbomb122WSButton.Add_Click({ OpenWebsite "https://github.com/madbomb122/" })
+    $WPF_Madbomb122WSButton.Add_Click({ OpenWebsite "https://GitHub.com/madbomb122/" })
     $WPF_WinDefault_Button.Add_Click({ LoadWinDefault ;SelectComboBox $VarList })
     $WPF_ResetDefault_Button.Add_Click({ SetDefault ;SelectComboBox $VarList ;SelectComboBox $ListApp 1 })
     $WPF_Load_Setting_Button.Add_Click({ OpenSaveDiaglog 0 })
@@ -943,14 +942,14 @@ $Skip_InstalledD_Uninstall = @("OneDriveInstall","MediaPlayer","WorkFolders")
 
     If($Release_Type -eq "Testing"){ $Script:Restart = 0 ;$WPF_Restart_CB.IsEnabled = $False ;$WPF_Restart_CB.Content += " (Disabled in Testing Version)" }
     If($BuildVer -lt 14393){ $WPF_LinuxSubsystem_Combo.Visibility = 'Hidden' ;$WPF_LinuxSubsystemTxt.Visibility = 'Hidden' }
-    ForEach($Var in $Skip_EnableD_Disable){ SetCombo $Var "Enable*,Disable" }
-    ForEach($Var in $Skip_Enable_DisableD){ SetCombo $Var "Enable,Disable*" }
-    ForEach($Var in $Skip_ShowD_Hide){ SetCombo $Var "Show*,Hide" }
-    ForEach($Var in $Skip_Show_HideD){ SetCombo $Var "Show,Hide*" }
-    ForEach($Var in $Skip_InstalledD_Uninstall){ SetCombo $Var "Installed*,Uninstall" }
+    ForEach($Var In $Skip_EnableD_Disable){ SetCombo $Var "Enable*,Disable" }
+    ForEach($Var In $Skip_Enable_DisableD){ SetCombo $Var "Enable,Disable*" }
+    ForEach($Var In $Skip_ShowD_Hide){ SetCombo $Var "Show*,Hide" }
+    ForEach($Var In $Skip_Show_HideD){ SetCombo $Var "Show,Hide*" }
+    ForEach($Var In $Skip_InstalledD_Uninstall){ SetCombo $Var "Installed*,Uninstall" }
     
     SetComboM "AllMetro" "Unhide,Hide,Uninstall"
-    ForEach($MetroApp in $ListApp){ SetComboM $MetroApp "Unhide,Hide,Uninstall" }
+    ForEach($MetroApp In $ListApp){ SetComboM $MetroApp "Unhide,Hide,Uninstall" }
 
     SetCombo "LinuxSubsystem" "Installed,Uninstall*"
     SetCombo "HibernatePower" "Enable,Disable"
@@ -978,7 +977,7 @@ $Skip_InstalledD_Uninstall = @("OneDriveInstall","MediaPlayer","WorkFolders")
     $TmpTitle = " (v.$Script_Version.$Minor_Version -$Script_Date"
     If($Release_Type -ne "Stable"){ $TmpTitle += " -$Release_Type)" } Else{ $TmpTitle += ")" }
     $Form.Title += $TmpTitle
-    $Form.ShowDialog() | out-null
+    $Form.ShowDialog() | Out-Null
 }
 
 Function Gui-Done {
@@ -989,22 +988,22 @@ Function Gui-Done {
 }
 
 Function GuiItmToVariable {
-    ForEach($Var in $ListApp) {
+    ForEach($Var In $ListApp) {
         $Value = ($(Get-Variable -Name ("WPF_"+$Var+"_Combo") -ValueOnly).SelectedIndex)
         If($Var -eq "APP_SkypeApp") {
-            Set-Variable -Name "APP_SkypeApp1" -Value $Value -scope Script
-            Set-Variable -Name "APP_SkypeApp2" -Value $Value -scope Script
+            Set-Variable -Name "APP_SkypeApp1" -Value $Value -Scope Script
+            Set-Variable -Name "APP_SkypeApp2" -Value $Value -Scope Script
         } ElseIf($Var -eq "APP_WindowsFeedbak") {
-            Set-Variable -Name "APP_WindowsFeedbak1" -Value $Value -scope Script
-            Set-Variable -Name "APP_WindowsFeedbak2" -Value $Value -scope Script
+            Set-Variable -Name "APP_WindowsFeedbak1" -Value $Value -Scope Script
+            Set-Variable -Name "APP_WindowsFeedbak2" -Value $Value -Scope Script
         } ElseIf($Var -eq "APP_Zune") {
-            Set-Variable -Name "APP_ZuneMusic" -Value $Value -scope Script
-            Set-Variable -Name "APP_ZuneVideo" -Value $Value -scope Script
+            Set-Variable -Name "APP_ZuneMusic" -Value $Value -Scope Script
+            Set-Variable -Name "APP_ZuneVideo" -Value $Value -Scope Script
         } Else {
-            Set-Variable -Name $Var -Value $Value -scope Script
+            Set-Variable -Name $Var -Value $Value -Scope Script
         }
     }
-    ForEach($Var in $VarList){ Set-Variable -Name $Var -Value ($(Get-Variable -Name ("WPF_"+$Var+"_Combo") -ValueOnly).SelectedIndex) -scope Script }
+    ForEach($Var In $VarList){ Set-Variable -Name $Var -Value ($(Get-Variable -Name ("WPF_"+$Var+"_Combo") -ValueOnly).SelectedIndex) -Scope Script }
     If($WPF_CreateRestorePoint_CB.IsChecked){ $CreateRestorePoint = 1 } Else{ $CreateRestorePoint = 0 }
     If($WPF_VersionCheck_CB.IsChecked){ $VersionCheck = 1 } Else{ $VersionCheck = 0 }
     If($WPF_InternetCheck_CB.IsChecked){ $InternetCheck = 1 } Else{ $InternetCheck = 0 }
@@ -1301,11 +1300,11 @@ Function RunScript {
         DisplayOut "Skipping AutoLogger..." 15 0
     } ElseIf($AutoLoggerFile -eq 1) {
         DisplayOut "Unrestricting AutoLogger Directory..." 11 0
-        $autoLoggerDir = "$env:PROGRAMDATA\Microsoft\Diagnosis\ETLLogs\AutoLogger"
+        $autoLoggerDir = "$Env:PROGRAMDATA\Microsoft\Diagnosis\ETLLogs\AutoLogger"
         icacls $autoLoggerDir /grant:r SYSTEM:`(OI`)`(CI`)F | Out-Null
     } ElseIf($AutoLoggerFile -eq 2) {
         DisplayOut "Removing AutoLogger File and Festricting Directory..." 12 0
-        $autoLoggerDir = "$env:PROGRAMDATA\Microsoft\Diagnosis\ETLLogs\AutoLogger"
+        $autoLoggerDir = "$Env:PROGRAMDATA\Microsoft\Diagnosis\ETLLogs\AutoLogger"
         Remove-SetPath "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl"
         icacls $autoLoggerDir /deny SYSTEM:`(OI`)`(CI`)F | Out-Null
     }
@@ -2156,7 +2155,7 @@ Function RunScript {
         DisplayOut "Skipping Photo Viewer File Association..." 15 0
     } ElseIf($PVFileAssociation -eq 1) {
         DisplayOut "Setting Photo Viewer File Association for bmp, gif, jpg, png and tif..." 11 0
-        ForEach($type in @("Paint.Picture", "giffile", "jpegfile", "pngfile")) {
+        ForEach($type In @("Paint.Picture", "giffile", "jpegfile", "pngfile")) {
             New-Item -Path $("HKCR:\$type\shell\open") -Force | Out-Null
             New-Item -Path $("HKCR:\$type\shell\open\command") | Out-Null
             Set-ItemProperty -Path $("HKCR:\$type\shell\open") -Name "MuiVerb" -Type ExpandString -Value "@%ProgramFiles%\Windows Photo Viewer\photoviewer.dll,-3043"
@@ -2167,7 +2166,7 @@ Function RunScript {
         Remove-SetPath "HKCR:\Paint.Picture\shell\open"
         Remove-ItemProperty -Path "HKCR:\giffile\shell\open" -Name "MuiVerb"
         Set-ItemProperty -Path "HKCR:\giffile\shell\open" -Name "CommandId" -Type String -Value "IE.File"
-        Set-ItemProperty -Path "HKCR:\giffile\shell\open\command" -Name "(Default)" -Type String -Value "`"$env:SystemDrive\Program Files\Internet Explorer\iexplore.exe`" %1"
+        Set-ItemProperty -Path "HKCR:\giffile\shell\open\command" -Name "(Default)" -Type String -Value "`"$Env:SystemDrive\Program Files\Internet Explorer\iexplore.exe`" %1"
         Set-ItemProperty -Path "HKCR:\giffile\shell\open\command" -Name "DelegateExecute" -Type String -Value "{17FE9752-0B5A-4665-84CD-569794602F5C}"
         Remove-SetPath "HKCR:\jpegfile\shell\open"
         Remove-SetPath "HKCR:\jpegfile\shell\open"
@@ -2347,13 +2346,13 @@ Function RunScript {
         DisplayOut "Skipping OneDrive Installing..." 15 0
     } ElseIf($OneDriveInstall -eq 1) {
         DisplayOut "Installing OneDrive..." 11 0
-        $onedriveS = "$env:SYSTEMROOT\"
+        $onedriveS = "$Env:SYSTEMROOT\"
         If($OSType -eq 64){ $onedriveS += "SysWOW64" } Else{ $onedriveS += "System32" }
         $onedriveS += "\OneDriveSetup.exe"
         If(Test-Path $onedriveS -PathType Leaf) { Start-Process $onedriveS -NoNewWindow }
     } ElseIf($OneDriveInstall -eq 2) {
         DisplayOut "Uninstalling OneDrive..." 15 0
-        $onedriveS = "$env:SYSTEMROOT\"
+        $onedriveS = "$Env:SYSTEMROOT\"
         If($OSType -eq 64){ $onedriveS += "SysWOW64" } Else{ $onedriveS += "System32" }
         $onedriveS += "\OneDriveSetup.exe"
         If(Test-Path $onedriveS -PathType Leaf) {
@@ -2363,10 +2362,10 @@ Function RunScript {
             Start-Sleep -s 3
             Stop-Process -Name explorer
             Start-Sleep -s 3
-            Remove-Item "$env:USERPROFILE\OneDrive" -Force -Recurse
-            Remove-Item "$env:LOCALAPPDATA\Microsoft\OneDrive" -Force -Recurse
-            Remove-Item "$env:PROGRAMDATA\Microsoft OneDrive" -Force -Recurse
-            Remove-Item "$env:SYSTEMDRIVE\OneDriveTemp" -Force -Recurse
+            Remove-Item "$Env:USERPROFILE\OneDrive" -Force -Recurse
+            Remove-Item "$Env:LOCALAPPDATA\Microsoft\OneDrive" -Force -Recurse
+            Remove-Item "$Env:PROGRAMDATA\Microsoft OneDrive" -Force -Recurse
+            Remove-Item "$Env:SYSTEMDRIVE\OneDriveTemp" -Force -Recurse
             Remove-Item -Path "HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Recurse
             Remove-Item -Path "HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Force -Recurse
         }
@@ -2389,20 +2388,20 @@ Function RunScript {
         DisplayOut "Skipping Windows Media Player..." 15 0
     } ElseIf($MediaPlayer -eq 1) {
         DisplayOut "Installing Windows Media Player..." 11 0
-        If((Get-WindowsOptionalFeature -Online | where featurename -Like "MediaPlayback").State){ Enable-WindowsOptionalFeature -Online -FeatureName "WindowsMediaPlayer" -NoRestart | Out-Null }
+        If((Get-WindowsOptionalFeature -Online | Where featurename -Like "MediaPlayback").State){ Enable-WindowsOptionalFeature -Online -FeatureName "WindowsMediaPlayer" -NoRestart | Out-Null }
     } ElseIf($MediaPlayer -eq 2) {
         DisplayOut "Uninstalling Windows Media Player..." 14 0
-        If(!((Get-WindowsOptionalFeature -Online | where featurename -Like "MediaPlayback").State)){ Disable-WindowsOptionalFeature -Online -FeatureName "WindowsMediaPlayer" -NoRestart | Out-Null }
+        If(!((Get-WindowsOptionalFeature -Online | Where featurename -Like "MediaPlayback").State)){ Disable-WindowsOptionalFeature -Online -FeatureName "WindowsMediaPlayer" -NoRestart | Out-Null }
     }
 
     If($WorkFolders -eq 0 -and $ShowSkipped -eq 1) {
         DisplayOut "Skipping Work Folders Client..." 15 0
     } ElseIf($WorkFolders -eq 1) {
         DisplayOut "Installing Work Folders Client..." 11 0
-        If((Get-WindowsOptionalFeature -Online | where featurename -Like "WorkFolders-Client").State){ Enable-WindowsOptionalFeature -Online -FeatureName "WorkFolders-Client" -NoRestart | Out-Null }
+        If((Get-WindowsOptionalFeature -Online | Where featurename -Like "WorkFolders-Client").State){ Enable-WindowsOptionalFeature -Online -FeatureName "WorkFolders-Client" -NoRestart | Out-Null }
     } ElseIf($WorkFolders -eq 2) {
         DisplayOut "Uninstalling Work Folders Client..." 14 0
-        If(!((Get-WindowsOptionalFeature -Online | where featurename -Like "WorkFolders-Client").State)){ Disable-WindowsOptionalFeature -Online -FeatureName "WorkFolders-Client" -NoRestart | Out-Null }
+        If(!((Get-WindowsOptionalFeature -Online | Where featurename -Like "WorkFolders-Client").State)){ Disable-WindowsOptionalFeature -Online -FeatureName "WorkFolders-Client" -NoRestart | Out-Null }
     }
 
     If($BuildVer -ge 14393) {
@@ -2410,7 +2409,7 @@ Function RunScript {
             DisplayOut "Skipping Linux Subsystem..." 15 0
         } ElseIf($LinuxSubsystem -eq 1) {
             DisplayOut "Installing Linux Subsystem..." 11 0
-            If((Get-WindowsOptionalFeature -Online | where featurename -Like "Microsoft-Windows-Subsystem-Linux").State){ 
+            If((Get-WindowsOptionalFeature -Online | Where featurename -Like "Microsoft-Windows-Subsystem-Linux").State){ 
                 $Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock"
                 Set-ItemProperty -Path $Path -Name "AllowDevelopmentWithoutDevLicense" -Type DWord -Value 1
                 Set-ItemProperty -Path $Path -Name "AllowAllTrustedApps" -Type DWord -Value 1
@@ -2418,7 +2417,7 @@ Function RunScript {
             }
         } ElseIf($LinuxSubsystem -eq 2) {
             DisplayOut "Uninstalling Linux Subsystem..." 14 0
-            If(!((Get-WindowsOptionalFeature -Online | where featurename -Like "Microsoft-Windows-Subsystem-Linux").State)){ 
+            If(!((Get-WindowsOptionalFeature -Online | Where featurename -Like "Microsoft-Windows-Subsystem-Linux").State)){ 
                 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" -Name "AllowDevelopmentWithoutDevLicense" -Type DWord -Value 0
                 Disable-WindowsOptionalFeature -Online -FeatureName "Microsoft-Windows-Subsystem-Linux" -NoRestart | Out-Null
             }
@@ -2441,9 +2440,9 @@ Function RunScript {
         } $A++
     }
 
-    $APPS_AppsUnhide.Remove("") ;$Ai = $APPS_AppsUnhide.length
-    $APPS_AppsHide.Remove("") ;$Ah = $APPS_AppsHide.length
-    $APPS_AppsUninstall.Remove("");$Au = $APPS_AppsUninstall.length
+    $APPS_AppsUnhide.Remove("") ;$Ai = $APPS_AppsUnhide.Lengthh
+    $APPS_AppsHide.Remove("") ;$Ah = $APPS_AppsHide.Lengthh
+    $APPS_AppsUninstall.Remove("");$Au = $APPS_AppsUninstall.Lengthh
     If($Ah -ne $null -or $Au -ne $null){ $AppxPackages = Get-AppxProvisionedPackage -online | select-object PackageName,Displayname }
 
     DisplayOut "Unhiding Apps...`n------------------" 11 0
@@ -2487,8 +2486,8 @@ Function RunScript {
             $ProPackageFullName = ($AppxPackages.Where{$_.Displayname -eq $AppU}).PackageName
 
             # Alt removal: DISM /Online /Remove-ProvisionedAppxPackage /PackageName:
-            Remove-AppxPackage -package $PackageFullName | Out-null
-            Remove-AppxProvisionedPackage -online -packagename $ProPackageFullName | Out-null
+            Remove-AppxPackage -Package $PackageFullName | Out-null
+            Remove-AppxProvisionedPackage -Online -PackageName $ProPackageFullName | Out-null
         } ElseIf($Release_Type -ne "Stable ") {
             DisplayOut "$AppU Isn't Installed" 14 0
         }
@@ -2503,7 +2502,7 @@ Function RunScript {
         Write-Host "`nRestarting Computer in 10 Seconds..." -ForegroundColor Yellow -BackgroundColor Black
         $Message = "Restarting in"
         Start-Sleep -Seconds 1
-        ForEach($Count in (1..$Seconds)){ If($Count -ne 0){ Write-Host "$Message $($Seconds - $Count)" -ForegroundColor Yellow -BackgroundColor Black ;Start-Sleep -Seconds 1 } }
+        ForEach($Count In (1..$Seconds)){ If($Count -ne 0){ Write-Host "$Message $($Seconds - $Count)" -ForegroundColor Yellow -BackgroundColor Black ;Start-Sleep -Seconds 1 } }
         Write-Host "Restarting Computer..." -ForegroundColor Red -BackgroundColor Black
         Restart-Computer
     } ElseIf($Release_Type -eq "Stable ") {
@@ -2522,7 +2521,7 @@ Function RunScript {
 # Used to get all values BEFORE any defined so
 # when exporting shows ALL defined after this point
 [System.Collections.ArrayList]$Script:WPFList = @()
-$AutomaticVariables = Get-Variable -scope Script
+$AutomaticVariables = Get-Variable -Scope Script
 
 # DO NOT TOUCH THESE
 $Script:AppsUnhide = ""
@@ -2554,8 +2553,9 @@ $Script:ShowSkipped = 1           #0-Dont Show Skipped, 1-Show Skipped
 
 #Checks
 $Script:VersionCheck = 0          #0-Dont Check for Update, 1-Check for Update (Will Auto Download and run newer version)
-                        #File will be named 'Win10-Menu-Ver.(Version HERE).ps1 (For non Test version)
-$Script:InternetCheck = 0         #0 = Checks if you have internet by doing a ping to github.com
+#File will be named 'Win10-Menu-Ver.(Version HERE).ps1 (For non Test version)
+
+$Script:InternetCheck = 0         #0 = Checks if you have internet by doing a ping to GitHub.com
                                   #1 = Bypass check if your pings are blocked
 
 #Restart when done? (I recommend restarting when done)
