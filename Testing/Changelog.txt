@@ -1,10 +1,13 @@
 -----------------------------------------------------------------------------------
-3.0.2 (08-19-2017)
+3.0.3 (08-19-2017)
 
 Added List for what is Unpined for the Unpined Item
+
 Renamed the Install in Metro to Unhide (you cant install metro apps w/o the appx file)
 Fixed a typo
 Added check for windows 10
+
+Fixed Bug with script downloading Newer version of script
 
 -----------------------------------------------------------------------------------
 3.0.0-GUI (08-16-2017)
