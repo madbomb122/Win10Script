@@ -39,7 +39,7 @@ Select option to run script <br />
 
 # Advanced_Usage
 Use one of the following Methods you can 
-1. Run script or bat file with one (or more) of the switches bellow
+1. Run script with one (or more) of the switches bellow
 2. Edit the script (bottom of file) to change the values
 3. Edit the bat file (top of file) to change the values to add the switch
 
