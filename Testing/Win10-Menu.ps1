@@ -11,8 +11,8 @@
 # Website: https://GitHub.com/madbomb122/Win10Script/
 #
 $Script_Version = "3.0"
-$Minor_Version = "3"
-$Script_Date = "Aug-22-2017"
+$Minor_Version = "4"
+$Script_Date = "Aug-25-2017"
 #$Release_Type = "Stable "
 $Release_Type = "Testing"
 ##########
@@ -99,8 +99,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 If([Environment]::OSVersion.Version.Major -ne 10) {
     Clear-Host
-	Write-Host "Sorry, this Script supports Windows 10 ONLY." -ForegroundColor "cyan" -BackgroundColor "black"
-	If($Automated -ne 1){ Read-Host -Prompt "`nPress Any key to Close..." } ;Exit
+    Write-Host "Sorry, this Script supports Windows 10 ONLY." -ForegroundColor "cyan" -BackgroundColor "black"
+    If($Automated -ne 1){ Read-Host -Prompt "`nPress Any key to Close..." } ;Exit
 }
 
 If($Release_Type -eq "Stable "){ $ErrorActionPreference = 'silentlycontinue' }
@@ -216,43 +216,14 @@ Function UpdateCheck {
         $VersionURL = "https://raw.GitHubusercontent.com/madbomb122/Win10Script/master/Version/Version.csv"
         (New-Object System.Net.WebClient).DownloadFile($VersionURL, $VersionFile)
         $CSV_Ver = Import-Csv $VersionFile
-        $DFilename = "Win10-Menu-Ver."
         If($Release_Type -ne "Stable") {
             $WebScriptVer = $($CSV_Ver[0].Version)
             $WebScriptMinorVer = $($CSV_Ver[0].MinorVersion)
-            $DFilename += $WebScriptVer + "-Testing"
-            $Script_Url = $URL_Base + "Testing/"
         } Else {
             $WebScriptVer = $($CSV_Ver[1].Version)
             $WebScriptMinorVer = $($CSV_Ver[1].MinorVersion)
-            $DFilename += $WebScriptVer
         }
-        If(($WebScriptVer -gt $Script_Version) -or ($WebScriptVer -eq $Script_Version -And $WebScriptMinorVer -gt $Minor_Version)) {
-            Clear-Host
-            MenuLine
-            LeftLine ;DisplayOutMenu "                  Update Found!                  " 13 0 0 ;RightLine
-            MenuLine
-            MenuBlankLine
-            LeftLine ;DisplayOutMenu "Downloading version " 15 0 0 ;DisplayOutMenu ("$WebScriptVer" +(" "*(29-$WebScriptVer.Lengthh))) 11 0 0 ;RightLine
-            LeftLine ;DisplayOutMenu "Will run " 15 0 0 ;DisplayOutMenu ("$DFilename" +(" "*(40-$DFilename.Lengthh))) 11 0 0 ;RightLine
-            LeftLine ;DisplayOutMenu "after download is complete.                       " 2 0 0 ;RightLine
-            MenuBlankLine
-            MenuLine
-            $DFilename += ".ps1"
-            $Script_Url = $URL_Base + "Win10-Menu.ps1"
-            $WebScriptFilePath = $filebase + $DFilename
-            (New-Object System.Net.WebClient).DownloadFile($Script_Url, $WebScriptFilePath)
-            $TempSetting = $TempFolder + "\TempSet.csv"
-            SaveSettingFiles $TempSetting 0
-            $UpArg = ""
-            If($Accept_ToS -ne 1){ $UpArg = $UpArg + "-atos" }
-            If($InternetCheck -eq 1){ $UpArg = $UpArg + "-sic" }
-            If($CreateRestorePoint -eq 1){ $UpArg = $UpArg + "-crp" }
-            If($Restart -eq 0){ $UpArg = $UpArg + "-dnr" }
-            If($RunScr){ $UpArg = $UpArg + "-run $TempSetting" } Else{ $UpArg = $UpArg + "-load $TempSetting" }
-            Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$WebScriptFilePath`" $UpArg" -Verb RunAs
-            Exit
-        }
+        If(($WebScriptVer -gt $Script_Version) -or ($WebScriptVer -eq $Script_Version -And $WebScriptMinorVer -gt $Minor_Version)) { ScriptUpdateFun }
     } Else {
         Clear-Host
         MenuLine
@@ -266,6 +237,65 @@ Function UpdateCheck {
         Write-Host "`nPress Any key to Close...                      " -ForegroundColor White -BackgroundColor Black
         $key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown,AllowCtrlC")
     }
+}
+
+Function ScriptUpdateFun {
+    $FullVer = "$WebScriptVer.$WebScriptMinorVer"
+    $UpdateFile = $filebase + "Update.bat"
+    If(Test-Path $UpdateFile -PathType Leaf){
+        $DFilename = "Win10-Menu.ps1"
+        $UpdateOptBat = $True
+        $UpArg = "-u -w10 "
+        If($Release_Type -ne "Stable"){ $UpArg += "-test " }
+    } Else {
+        $DFilename = "Win10-Menu-Ver."
+        $UpdateOptBat = $False
+        $UpArg = ""
+    }
+    Clear-Host
+    MenuLine
+    LeftLine ;DisplayOutMenu "                  Update Found!                  " 13 0 0 ;RightLine
+    MenuLine
+    MenuBlankLine
+    LeftLine ;DisplayOutMenu "Downloading version " 15 0 0 1 ;DisplayOutMenu ("$FullVer" + (" "*(29-$FullVer.Length))) 11 0 0 ;RightLine
+    LeftLine ;DisplayOutMenu "Will run " 15 0 0 ;DisplayOutMenu ("$DFilename" +(" "*(40-$DFilename.Lengthh))) 11 0 0 ;RightLine
+    LeftLine ;DisplayOutMenu "after download is complete.                       " 2 0 0 ;RightLine
+    MenuBlankLine
+    MenuLine
+
+    If($Accept_ToS -ne 1){ $UpArg = $UpArg + "-atos" }
+    If($InternetCheck -eq 1){ $UpArg = $UpArg + "-sic" }
+    If($CreateRestorePoint -eq 1){ $UpArg = $UpArg + "-crp" }
+    If($Restart -eq 0){ $UpArg = $UpArg + "-dnr" }
+    If($RunScr){ $UpArg = $UpArg + "-run $TempSetting" } Else{ $UpArg = $UpArg + "-load $TempSetting" }
+    If($UpdateOptBat){
+        cmd.exe /c "$UpdateFile $UpArg"
+    } Else {
+        If($Release_Type -ne "Stable") {
+            $DFilename += $WebScriptVer + "-Testing"
+            $Script_Url = $URL_Base + "Testing/"
+        } Else {
+            $DFilename += $FullVer
+        }
+        $DFilename += ".ps1"
+        $Script_Url = $URL_Base + "Win10-Menu.ps1"
+        $WebScriptFilePath = $filebase + $DFilename
+        (New-Object System.Net.WebClient).DownloadFile($Script_Url, $WebScriptFilePath)
+        $TempSetting = $TempFolder + "\TempSet.csv"
+        SaveSettingFiles $TempSetting 0
+        If($BatUpdateScriptFileName -eq 1) {
+            $BatFile = $filebase + "_Win10-Script.bat"
+            If(Test-Path $BatFile -PathType Leaf){ 
+                (Get-Content -LiteralPath $BatFile) | Foreach-Object {$_ -replace "Set Script_File=.*?$" , "Set Script_File=$DFilename"} | Set-Content -LiteralPath $BatFile -Force
+                MenuBlankLineLog
+                LeftLineLog ;DisplayOutMenu " Updated bat file with new script file name.     " 13 0 0 1 ;RightLineLog
+                MenuBlankLineLog
+                MenuLineLog
+            }
+        }
+        Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$WebScriptFilePath`" $UpArg" -Verb RunAs
+    }
+    Exit
 }
 
 Function InternetCheck { If($InternetCheck -eq 1 -or (Test-Connection -Computer GitHub.com -Count 1 -Quiet)){ Return $True } Return $False }
@@ -509,13 +539,14 @@ Function Gui-Start {
    <TextBox Name="RestorePointName_Txt" HorizontalAlignment="Left" Height="20" Margin="139,9,0,0" TextWrapping="Wrap" Text="Win10 Initial Setup Script" VerticalAlignment="Top" Width="188"/>
    <CheckBox Name="ShowSkipped_CB" Content="Show Skipped Items" HorizontalAlignment="Left" Margin="8,29,0,0" VerticalAlignment="Top"/>
    <CheckBox Name="Restart_CB" Content="Restart When Done" HorizontalAlignment="Left" Margin="8,49,0,0" VerticalAlignment="Top"/>
-   <CheckBox Name="VersionCheck_CB" Content="Check for Update" HorizontalAlignment="Left" Margin="8,69,0,0" VerticalAlignment="Top"/>
-   <CheckBox Name="InternetCheck_CB" Content="Skip Internet Check" HorizontalAlignment="Left" Margin="8,89,0,0" VerticalAlignment="Top"/>
+   <CheckBox Name="VersionCheck_CB" Content="Check for Update (If update found, will run and use current settings)" HorizontalAlignment="Left" Margin="8,69,0,0" VerticalAlignment="Top"/>
+   <CheckBox Name="BatUpdateScriptFileName_CB" Content="Update Bat file with new Script filename (If update.bat isnt avilable)" HorizontalAlignment="Left" Margin="8,89,0,0" VerticalAlignment="Top" Height="15" Width="380"/>
+   <CheckBox Name="InternetCheck_CB" Content="Skip Internet Check" HorizontalAlignment="Left" Margin="8,109,0,0" VerticalAlignment="Top"/>
    <Button Name="Save_Setting_Button" Content="Save Settings" HorizontalAlignment="Left" Margin="100,133,0,0" VerticalAlignment="Top" Width="77"/>
    <Button Name="Load_Setting_Button" Content="Load Settings" HorizontalAlignment="Left" Margin="8,133,0,0" VerticalAlignment="Top" Width="77"/>
    <Button Name="WinDefault_Button" Content="Windows Default*" HorizontalAlignment="Left" Margin="192,133,0,0" VerticalAlignment="Top" Width="100"/>
    <Button Name="ResetDefault_Button" Content="Reset All Items" HorizontalAlignment="Left" Margin="306,133,0,0" VerticalAlignment="Top" Width="85"/>
-   <Label Content="Notes:&#xD;&#xA;Options with items marked with * means &quot;Windows Default&quot;&#xA;Windows Default Button does not change Metro Apps or OneDrive Install" HorizontalAlignment="Left" Margin="8,158,0,0" VerticalAlignment="Top" FontStyle="Italic"/>
+   <Label Content="Notes:&#xD;&#xA;Options with items marked with * means &quot;Windows Default&quot;&#xA;Windows Default Button does not change Metro Apps or OneDrive Install" HorizontalAlignment="Left" Margin="8,160,0,0" VerticalAlignment="Top" FontStyle="Italic"/>
    <Label Content="Script Version:" HorizontalAlignment="Left" Margin="8,218,0,0" VerticalAlignment="Top" Height="25"/>
    <TextBox Name="Script_Ver_Txt" HorizontalAlignment="Left" Height="20" Margin="90,222,0,0" TextWrapping="Wrap" Text="2.8.0 (6-21-2017)" VerticalAlignment="Top" Width="124" IsEnabled="False"/>
    <TextBox Name="Release_Type_Txt" HorizontalAlignment="Left" Height="20" Margin="214,222,0,0" TextWrapping="Wrap" Text="Testing" VerticalAlignment="Top" Width="50" IsEnabled="False"/></Grid>
@@ -2531,9 +2562,11 @@ $Script:Automated = 0             #0-Pause at End/Error, Dont Pause at End/Error
 
 $Script:ShowSkipped = 1           #0-Dont Show Skipped, 1-Show Skipped
 
-#Checks
+#Update Related
 $Script:VersionCheck = 0          #0-Dont Check for Update, 1-Check for Update (Will Auto Download and run newer version)
 #File will be named 'Win10-Menu-Ver.(Version HERE).ps1 (For non Test version)
+
+$Script:BatUpdateScriptFileName = 1 #0-Dont ->, 1-Update Bat file with new script filename (if update is found)
 
 $Script:InternetCheck = 0         #0 = Checks if you have internet by doing a ping to GitHub.com
                                   #1 = Bypass check if your pings are blocked
