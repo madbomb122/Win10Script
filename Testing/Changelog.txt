@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
-3.0.3 (08-19-2017)
+3.0.4 (08-25-2017)
 
 Added List for what is Unpined for the Unpined Item
 
@@ -8,6 +8,9 @@ Fixed a typo
 Added check for windows 10
 
 Fixed Bug with script downloading Newer version of script
+Script has option updates bat file with new script name if update is downloaded using script
+
+Updates will use Update.bat if avaiable (will overwrite script file instead of creating new file)
 
 -----------------------------------------------------------------------------------
 3.0.0-GUI (08-16-2017)
