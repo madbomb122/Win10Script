@@ -1,9 +1,5 @@
-I am currently working on a seperate script file that will (Avilable in Testing folder)<br />
-1. Allow you to download my Black Viper Script or my Win 10 Script and the needed files (if any). <br />
-2. The script will use to Download updates (to replace the old file, instead of creating a new file, so you dont have to rename the file or edit the bat file). (If this script is present) <br />
-
 **Current Version** <br />
-**Script:** `3.0.1` (August 16, 2017) <br />
+**Script:** `3.1.0` (August 26, 2017) <br />
 
 ## Description
 
@@ -20,7 +16,7 @@ PS. Don't forget to check out my other Repo https://github.com/madbomb122/BlackV
 # Usage Requirements
 **OS:** `Windows 10` <br />
 **Needed Files:** `Win10-Menu.ps1` (Script File) <br />
-**Recommended Files:** `_Win10-Script-Run.bat` <br />
+**Recommended Files:** `_Win10-Script-Run.bat`, `Update.bat` <br />
 
 # How to Use/Run
 Download/Save the following files <br />
@@ -62,6 +58,23 @@ Use one of the following Methods you can
 Examples: <br />
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1 -auto -run mine.csv` <br />
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1 -atos -load WinDefault` <br />
+
+******
+# Update.Bat
+This file is EXACTLY the same as the one in my other Repo
+
+This file will <br />
+1. Allow you to download my Black Viper Script or my Win 10 Script and the needed files (if any). <br />
+2. The script will use to Download updates (to replace the old file, instead of creating a new file, so you dont have to rename the file or edit the bat file). (If this script is present) <br />
+
+|   Switch  | Description                                                                    | 
+| :-------- | :------------------------------------------------------------------------------| 
+| -bv       | Downloads My Black Viper Script                                                |
+| -w10      | Downloads My Windows 10 Script                                                 |
+| -both     | Downloads My Black Viper Script & My Windows 10 Script                         |
+| -test     | Downloads The Test Version of the Script                                       |
+| -run      | Run the Script after Downloading (Does ntow work with -both)                   |
+| -help     | Shows the list of switches                                                     |
 
 ******
 ## FAQ
