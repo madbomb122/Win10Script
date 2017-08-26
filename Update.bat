@@ -162,52 +162,50 @@ goto next
 
 :MainMenu
 cls
-echo  ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
-echo  ºÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿ Madbomb122's Script Updater/Downloader ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿º
-echo  º³                ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ                ³º
-echo  º³                                                                          ³º
+echo  ----------------------------------------------------------------------------
+echo  ^|_________________  Madbomb122's Script Updater/Downloader  _______________^|
+echo  ^|                 ------------------------------------------               ^|
+echo  ^|                                                                          ^|
 If /i !TestV!==no (
-echo  º³                              Stable Version                              ³º
+echo  ^|                              Stable Version                              ^|
 ) Else (
-echo  º³                               Test Version                               ³º
+echo  ^|                               Test Version                               ^|
 )
-echo  º³                     --------------------------------                     ³º
+echo  ^|                     --------------------------------                     ^|
 If !BatDownload!==no (
-echo  º³                      1^) Black Viper Script*                              ³º
-echo  º³                      2^) Windows 10 Script                                ³º
-echo  º³                      3^) Black Viper ^& Windows 10 Script                  ³º
+echo  ^|                      1^) Black Viper Script*                              ^|
+echo  ^|                      2^) Windows 10 Script                                ^|
+echo  ^|                      3^) Black Viper ^& Windows 10 Script                  ^|
 ) Else (
-echo  º³                      1^) Black Viper Script* ^& Bat File                   ³º
-echo  º³                      2^) Windows 10 Script ^& Bat File                     ³º
-echo  º³                      3^) Black Viper ^& Windows 10 Script ^& Bat Files      ³º
+echo  ^|                      1^) Black Viper Script* ^& Bat File                   ^|
+echo  ^|                      2^) Windows 10 Script ^& Bat File                     ^|
+echo  ^|                      3^) Black Viper ^& Windows 10 Script ^& Bat Files      ^|
 )
-echo  º³                                                                          ³º
-echo  º³                        Download Options (Toggles)                        ³º
-echo  º³                     --------------------------------                     ³º
+echo  ^|                                                                          ^|
+echo  ^|                        Download Options (Toggles)                        ^|
+echo  ^|                     --------------------------------                     ^|
 If /i !TestV!==no (
-echo  º³                      4^) Dont Download Test Version ^(Stable^) of Script    ³º
+echo  ^|                      4^) Dont Download Test Version ^(Stable^) of Script    ^|
 ) Else (
-echo  º³                      4^) Download Test Version of Script                  ³º
+echo  ^|                      4^) Download Test Version of Script                  ^|
 )
 If /i !BatDownload!==no (
-echo  º³                      5^) Dont Download bat file                           ³º
+echo  ^|                      5^) Dont Download bat file                           ^|
 ) Else (
-echo  º³                      5^) Download bat file                                ³º
+echo  ^|                      5^) Download bat file                                ^|
 )
 If /i !RunArg!==no (
-echo  º³                      6^) Dont Run Script after download**                 ³º
+echo  ^|                      6^) Dont Run Script after download**                 ^|
 ) Else (
-echo  º³                      6^) Run A Script after download**                    ³º
+echo  ^|                      6^) Run A Script after download**                    ^|
 )
-echo  º³                                                                          ³º
-echo  º³                     --------------------------------                     ³º
-echo  º³                      Q^) Quit                                             ³º
-echo  º³                                                                          ³º
-echo  º³  *Note: Will also download the Service file for Black Viper Script.      ³º
-echo  º³  **Note: Will NOT Run Script if downloading both Scripts. ^(Option 3^)     ³º
-echo  º³                                                                          ³º
-echo  ºÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙº
-echo  ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼
+echo  ^|                                                                          ^|
+echo  ^|                     --------------------------------                     ^|
+echo  ^|                      Q^) Quit                                             ^|
+echo  ^|                                                                          ^|
+echo  ^|  *Note: Will also download the Service file for Black Viper Script.      ^|
+echo  ^|  **Note: Will NOT Run Script if downloading both Scripts. ^(Option 3^)     ^|
+echo  ^|__________________________________________________________________________^|
 echo.
 CHOICE /C 123456Q /N /M "Please Input Choice:"
 IF %ERRORLEVEL%==1 goto BV
