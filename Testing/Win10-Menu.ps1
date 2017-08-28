@@ -3,16 +3,16 @@
 #
 # Original Basic Script By
 #  Author: Disassembler0
-# Website: https://GitHub.com/Disassembler0/Win10-Initial-Setup-Script/
+# Website: https://github.com/Disassembler0/Win10-Initial-Setup-Script/
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
 # Modded Script + Menu(GUI) By
 #  Author: Madbomb122
-# Website: https://GitHub.com/madbomb122/Win10Script/
+# Website: https://github.com/madbomb122/Win10Script/
 #
-$Script_Version = "3.0"
-$Minor_Version = "4"
-$Script_Date = "Aug-26-2017"
+$Script_Version = "3.1"
+$Minor_Version = "1"
+$Script_Date = "Aug-27-2017"
 #$Release_Type = "Stable "
 $Release_Type = "Testing"
 ##########
@@ -864,7 +864,7 @@ Function Gui-Start {
     $WPF_CreateRestorePoint_CB.Add_UnChecked({ $WPF_CreateRestorePoint_CB.IsChecked = $False ;$WPF_RestorePointName_Txt.IsEnabled = $False })
     $WPF_AllMetro_Combo.add_SelectionChanged({ SelectComboBoxAllMetro ($WPF_AllMetro_Combo.SelectedIndex) })
     $WPF_RunScriptButton.Add_Click({ Gui-Done })
-    $WPF_Madbomb122WSButton.Add_Click({ OpenWebsite "https://GitHub.com/madbomb122/" })
+    $WPF_Madbomb122WSButton.Add_Click({ OpenWebsite "https://github.com/madbomb122/" })
     $WPF_WinDefault_Button.Add_Click({ LoadWinDefault ;SelectComboBox $VarList })
     $WPF_ResetDefault_Button.Add_Click({ SetDefault ;SelectComboBox $VarList ;SelectComboBox $ListApp 1 })
     $WPF_Load_Setting_Button.Add_Click({ OpenSaveDiaglog 0 })
@@ -1063,9 +1063,9 @@ Function LoadWinDefault {
     $Script:WAPPush = 1
 
     #Windows Update
-    $Script:CheckForWinUpdate = 1    
+    $Script:CheckForWinUpdate = 1
     $Script:WinUpdateType = 3
-    $Script:WinUpdateDownload = 1    
+    $Script:WinUpdateDownload = 1
     $Script:UpdateMSRT = 1
     $Script:UpdateDriver = 1
     $Script:RestartOnUpdate = 1
@@ -1211,9 +1211,11 @@ Function RunScript {
         DisplayOut "Skipping Wi-Fi Sense..." 15 0
     } ElseIf($WiFiSense -eq 1) {
         DisplayOut "Enabling Wi-Fi Sense..." 11 0
-        $Path = "SOFTWARE\Microsoft\PolicyManager\default\WiFi"
-        Set-ItemProperty -Path "HKLM:\$Path\AllowWiFiHotSpotReporting" -Name "Value" -Type DWord -Value 1
-        Set-ItemProperty -Path "HKLM:\$Path\AllowAutoConnectToWiFiSenseHotspots" -Name "Value" -Type DWord -Value 1
+        $Path1 = "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi\"
+        $Path = Check-SetPath "$Path1\AllowWiFiHotSpotReporting"
+        Set-ItemProperty -Path $Path -Name "Value" -Type DWord -Value 1
+        $Path = Check-SetPath "$Path1\AllowAutoConnectToWiFiSenseHotspots"
+        Set-ItemProperty -Path $Path -Name "Value" -Type DWord -Value 1
     } ElseIf($WiFiSense -eq 2) {
         DisplayOut "Disabling Wi-Fi Sense..." 12 0
         $Path1 = "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi\"
@@ -1426,6 +1428,46 @@ Function RunScript {
         Set-ItemProperty -Path $Path -Name "SystemSettingsDownloadMode" -Type DWord -Value 3
         $Path = Check-SetPath "HKLM:\$Path1\Config"
         Set-ItemProperty -Path $Path -Name "DODownloadMode" -Type DWord -Value 0
+    }
+
+    If($RestartOnUpdate -eq 0 -And $ShowSkipped -eq 1) {
+        DisplayOut "Skipping Windows Update Automatic Restart..." 15 0
+    } ElseIf($RestartOnUpdate -eq 1) {
+        DisplayOut "Enabling Windows Update Automatic Restart..." 11 0
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings" -Name "UxOption" -Type DWord -Value 0
+        $Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU"
+        Remove-ItemProperty -Path $Path -Name "NoAutoRebootWithLoggedOnUsers"
+        Remove-ItemProperty -Path $Path -Name "AUPowerManagement"
+    } ElseIf($RestartOnUpdate -eq 2) {
+        DisplayOut "Disabling Windows Update Automatic Restart..." 12 0
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings" -Name "UxOption" -Type DWord -Value 1
+        $Path = Check-SetPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU"
+        Set-ItemProperty -Path $Path -Name "NoAutoRebootWithLoggedOnUsers" -Type DWord -Value 1
+        Set-ItemProperty -Path $Path -Name "AUPowerManagement" -Type DWord -Value 0
+    }
+
+    If($UpdateMSRT -eq 0 -And $ShowSkipped -eq 1) {
+        DisplayOut "Skipping Malicious Software Removal Tool Update..." 15 0
+    } ElseIf($UpdateMSRT -eq 1) {
+        DisplayOut "Enabling Malicious Software Removal Tool Update..." 11 0
+        Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\MRT" -Name "DontOfferThroughWUAU"
+    } ElseIf($UpdateMSRT -eq 2) {
+        DisplayOut "Disabling Malicious Software Removal Tool Update..." 12 0
+        $Path = Check-SetPath "HKLM:\SOFTWARE\Policies\Microsoft\MRT"
+        Set-ItemProperty -Path $Path -Name "DontOfferThroughWUAU" -Type DWord -Value 1
+    }
+
+    If($UpdateDriver -eq 0 -And $ShowSkipped -eq 1) {
+        DisplayOut "Skipping Driver Update Through Windows Update..." 15 0
+    } ElseIf($UpdateDriver -eq 1) {
+        DisplayOut "Enabling Driver Update Through Windows Update..." 11 0
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching" -Name "SearchOrderConfig" -Type DWord -Value 1
+        Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Name "ExcludeWUDriversInQualityUpdate"
+    } ElseIf($UpdateDriver -eq 2) {
+        DisplayOut "Disabling Driver Update Through Windows Update..." 12 0
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching" -Name "SearchOrderConfig" -Type DWord -Value 0
+        $Path = Check-SetPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
+        Set-ItemProperty -Path $Path -Name "ExcludeWUDriversInQualityUpdate" -Type DWord -Value 1
     }
 
     DisplayOut "`n----------------------`n-   Service Tweaks   -`n----------------------" 14 0
