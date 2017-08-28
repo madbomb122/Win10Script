@@ -1,4 +1,9 @@
 -----------------------------------------------------------------------------------
+3.1.1 (08-27-2017)
+
+Added Missing Items (MSRT Update, Driver Update, Restarte on Update)
+
+-----------------------------------------------------------------------------------
 3.1.0 (08-26-2017)
 
 Added List for what is Unpined for the Unpined Item
