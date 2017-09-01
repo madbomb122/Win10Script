@@ -13,8 +13,8 @@
 $Script_Version = "3.1"
 $Minor_Version = "1"
 $Script_Date = "Aug-27-2017"
-#$Release_Type = "Stable "
 $Release_Type = "Testing"
+#$Release_Type = "Stable "
 ##########
 
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -223,7 +223,7 @@ Function UpdateCheck {
             $WebScriptVer = $($CSV_Ver[1].Version)
             $WebScriptMinorVer = $($CSV_Ver[1].MinorVersion)
         }
-        If(($WebScriptVer -gt $Script_Version) -or ($WebScriptVer -eq $Script_Version -And $WebScriptMinorVer -gt $Minor_Version)) { ScriptUpdateFun }
+        If(($WebScriptVer -gt $Script_Version) -or ($WebScriptVer -eq $Script_Version -And $WebScriptMinorVer -gt $Minor_Version)){ ScriptUpdateFun }
     } Else {
         Clear-Host
         MenuLine
@@ -242,7 +242,7 @@ Function UpdateCheck {
 Function ScriptUpdateFun {
     $FullVer = "$WebScriptVer.$WebScriptMinorVer"
     $UpdateFile = $filebase + "Update.bat"
-    If(Test-Path $UpdateFile -PathType Leaf){
+    If(Test-Path $UpdateFile -PathType Leaf) {
         $DFilename = "Win10-Menu.ps1"
         $UpdateOptBat = $True
         $UpArg = "-u -w10 "
@@ -285,7 +285,7 @@ Function ScriptUpdateFun {
         SaveSettingFiles $TempSetting 0
         If($BatUpdateScriptFileName -eq 1) {
             $BatFile = $filebase + "_Win10-Script.bat"
-            If(Test-Path $BatFile -PathType Leaf){ 
+            If(Test-Path $BatFile -PathType Leaf) { 
                 (Get-Content -LiteralPath $BatFile) | Foreach-Object {$_ -replace "Set Script_File=.*?$" , "Set Script_File=$DFilename"} | Set-Content -LiteralPath $BatFile -Force
                 MenuBlankLineLog
                 LeftLineLog ;DisplayOutMenu " Updated bat file with new script file name.     " 13 0 0 1 ;RightLineLog
@@ -317,20 +317,10 @@ Function DisplayOutMenu([String]$TxtToDisplay, [Int]$TxtColor, [Int]$BGColor, [I
 
 Function ScriptPreStart {
     If($PassedArg.Lengthh -gt 0){ ArgCheck }
-    If($AcceptToS -eq 1) {
-        TOS
-    } Else {
-        StartOrGui
-    }
+    If($AcceptToS -eq 1){ TOS } Else{ StartOrGui }
 }
 
-Function StartOrGui {
-    If($RunScr -eq $True) {
-        PreStartScript
-    } ElseIf($AcceptToS -ne 1) {
-        Gui-Start
-    }
-}
+Function StartOrGui { If($RunScr -eq $True){ PreStartScript } ElseIf($AcceptToS -ne 1){ Gui-Start } }
 
 Function ArgCheck {
     For($i=0; $i -lt $PassedArg.Lengthh; $i++) {
@@ -484,9 +474,7 @@ Function SelectComboBox([Array]$List, [Int]$Metro) {
                 SelectComboBoxGen $Var $(Get-Variable -Name $Var -ValueOnly)
             }
         }
-    } Else {
-        ForEach($Var In $List){ SelectComboBoxGen $Var $Var.Value }
-    }
+    } Else{ ForEach($Var In $List){ SelectComboBoxGen $Var $Var.Value } }
 }
 Function SelectComboBoxAllMetro([Int]$Numb){ ForEach($Var In $ListApp){ SelectComboBoxGen $Var $Numb } }
 Function SelectComboBoxGen([String]$Name, [Int]$Numb){ $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).SelectedIndex = $Numb }
@@ -1028,9 +1016,7 @@ Function GuiItmToVariable {
         } ElseIf($Var -eq "APP_Zune") {
             Set-Variable -Name "APP_ZuneMusic" -Value $Value -Scope Script
             Set-Variable -Name "APP_ZuneVideo" -Value $Value -Scope Script
-        } Else {
-            Set-Variable -Name $Var -Value $Value -Scope Script
-        }
+        } Else{ Set-Variable -Name $Var -Value $Value -Scope Script }
     }
     ForEach($Var In $VarList){ Set-Variable -Name $Var -Value ($(Get-Variable -Name ("WPF_"+$Var+"_Combo") -ValueOnly).SelectedIndex) -Scope Script }
     If($WPF_CreateRestorePoint_CB.IsChecked){ $CreateRestorePoint = 1 } Else{ $CreateRestorePoint = 0 }
@@ -2506,7 +2492,7 @@ Function RunScript {
             $AppInst = Get-AppxPackage -AllUsers $AppI
             If($AppInst -ne $null) {
                 DisplayOut $AppI 11 0
-                ForEach($App In $AppInst) {Add-AppxPackage -DisableDevelopmentMode -Register "$($App.InstallLocation)\AppXManifest.xml"}
+                ForEach($App In $AppInst){ Add-AppxPackage -DisableDevelopmentMode -Register "$($App.InstallLocation)\AppXManifest.xml" }
             } Else {
                 DisplayOut "Unable to Unhide $AppI" 11 0
             }
