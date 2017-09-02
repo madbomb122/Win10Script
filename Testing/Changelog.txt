@@ -1,7 +1,9 @@
 -----------------------------------------------------------------------------------
-3.1.1 (08-27-2017)
+3.1.2 (09-02-2017)
 
 Added Missing Items (MSRT Update, Driver Update, Restarte on Update)
+
+Fixed a typo that caused switch/arguments to not work and loading of settings
 
 -----------------------------------------------------------------------------------
 3.1.0 (08-26-2017)
