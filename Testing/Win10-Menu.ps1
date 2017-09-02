@@ -11,10 +11,10 @@
 # Website: https://github.com/madbomb122/Win10Script/
 #
 $Script_Version = "3.1"
-$Minor_Version = "1"
-$Script_Date = "Aug-27-2017"
+$Minor_Version = "2"
+$Script_Date = "Sept-2-2017"
 $Release_Type = "Testing"
-#$Release_Type = "Stable "
+#$Release_Type = "Stable"
 ##########
 
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -103,7 +103,7 @@ If([Environment]::OSVersion.Version.Major -ne 10) {
     If($Automated -ne 1){ Read-Host -Prompt "`nPress Any key to Close..." } ;Exit
 }
 
-If($Release_Type -eq "Stable "){ $ErrorActionPreference = 'silentlycontinue' }
+If($Release_Type -eq "Stable"){ $ErrorActionPreference = 'silentlycontinue' }
 
 $Global:PassedArg = $args
 $Global:filebase = $PSScriptRoot + "\"
@@ -316,14 +316,14 @@ Function DisplayOut([String]$TxtToDisplay, [Int]$TxtColor, [Int]$BGColor){ If($T
 Function DisplayOutMenu([String]$TxtToDisplay, [Int]$TxtColor, [Int]$BGColor, [Int]$NewLine){ If($NewLine -eq 0){ Write-Host -NoNewline $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } Else{ Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } }
 
 Function ScriptPreStart {
-    If($PassedArg.Lengthh -gt 0){ ArgCheck }
+    If($PassedArg.Length -gt 0){ ArgCheck }
     If($AcceptToS -eq 1){ TOS } Else{ StartOrGui }
 }
 
 Function StartOrGui { If($RunScr -eq $True){ PreStartScript } ElseIf($AcceptToS -ne 1){ Gui-Start } }
 
 Function ArgCheck {
-    For($i=0; $i -lt $PassedArg.Lengthh; $i++) {
+    For($i=0; $i -lt $PassedArg.Length; $i++) {
         If($PassedArg[$i].StartsWith("-")) {
             $ArgVal = $PassedArg[$i].ToLower()
             $PasVal = $PassedArg[($i+1)]
@@ -474,7 +474,7 @@ Function SelectComboBox([Array]$List, [Int]$Metro) {
                 SelectComboBoxGen $Var $(Get-Variable -Name $Var -ValueOnly)
             }
         }
-    } Else{ ForEach($Var In $List){ SelectComboBoxGen $Var $Var.Value } }
+    } Else{ ForEach($Var In $List){ SelectComboBoxGen $Var $(Get-Variable -Name $Var -ValueOnly) } }
 }
 Function SelectComboBoxAllMetro([Int]$Numb){ ForEach($Var In $ListApp){ SelectComboBoxGen $Var $Numb } }
 Function SelectComboBoxGen([String]$Name, [Int]$Numb){ $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).SelectedIndex = $Numb }
@@ -504,7 +504,7 @@ Function OpenSaveDiaglog([Int]$SorO) {
     $SOFileDialog.InitialDirectory = $filebase
     $SOFileDialog.Filter = "CSV (*.csv)| *.csv"
     $SOFileDialog.ShowDialog() | Out-Null
-    If($SorO -eq 0){ LoadSettingFile $SOFileDialog.Filename ;ConfigGUIitms ;SelectComboBox $VarList ;SelectComboBox $ListApp 1 } Else{ GuiItmToVariable ;SaveSettingFiles $SOFileDialog.Filename }
+    If($SorO -eq 0){ LoadSettingFile $SOFileDialog.Filename ;ConfigGUIitms ;SelectComboBox $VarList 0 ;SelectComboBox $ListApp 1 } Else{ GuiItmToVariable ;SaveSettingFiles $SOFileDialog.Filename }
 }
 
 Function Gui-Start {
@@ -2508,7 +2508,7 @@ Function RunScript {
         If($AppxPackages.DisplayName.Contains($AppH)) {
             DisplayOut $AppH 12 0
             Get-AppxPackage $AppH | Remove-AppxPackage | Out-null
-        } ElseIf($Release_Type -ne "Stable ") {
+        } ElseIf($Release_Type -ne "Stable") {
             DisplayOut "$AppH Isn't Installed" 12 0
         }
       }
@@ -2527,7 +2527,7 @@ Function RunScript {
             # Alt removal: DISM /Online /Remove-ProvisionedAppxPackage /PackageName:
             Remove-AppxPackage -Package $PackageFullName | Out-null
             Remove-AppxProvisionedPackage -Online -PackageName $ProPackageFullName | Out-null
-        } ElseIf($Release_Type -ne "Stable ") {
+        } ElseIf($Release_Type -ne "Stable") {
             DisplayOut "$AppU Isn't Installed" 14 0
         }
       }
@@ -2535,7 +2535,7 @@ Function RunScript {
         DisplayOut "No Apps being Uninstalled" 14 0
     }
 
-    If($Restart -eq 1 -And $Release_Type -eq "Stable ") {
+    If($Restart -eq 1 -And $Release_Type -eq "Stable") {
         Clear-Host
         $Seconds = 10
         Write-Host "`nRestarting Computer in 10 Seconds..." -ForegroundColor Yellow -BackgroundColor Black
@@ -2544,7 +2544,7 @@ Function RunScript {
         ForEach($Count In (1..$Seconds)){ If($Count -ne 0){ Write-Host "$Message $($Seconds - $Count)" -ForegroundColor Yellow -BackgroundColor Black ;Start-Sleep -Seconds 1 } }
         Write-Host "Restarting Computer..." -ForegroundColor Red -BackgroundColor Black
         Restart-Computer
-    } ElseIf($Release_Type -eq "Stable ") {
+    } ElseIf($Release_Type -eq "Stable") {
         Write-Host "Goodbye..."
         If($Automated -eq 0){ Read-Host -Prompt "`nPress any key to exit" }
         Exit
