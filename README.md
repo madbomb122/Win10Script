@@ -20,8 +20,8 @@ PS. Don't forget to check out my other Repo https://github.com/madbomb122/BlackV
 
 # How to Use/Run
 Download/Save the following files <br />
-Script File: [Win10-Menu.ps1](https://github.com/madbomb122/Win10Script/raw/master/Win10-Menu.ps1) (Script) -Size about `65.0 KB`<br /> -Need <br />
-Bat File: [_Win10-Script-Run.bat](https://github.com/madbomb122/Win10Script/raw/master/_Win10-Script-Run.bat) -Recommended -Size about `2.38 KB` <br />
+Script File: [Win10-Menu.ps1](https://github.com/madbomb122/Win10Script/raw/master/Win10-Menu.ps1) (Script) -Size about `65.0 KB` -Need <br />
+Bat File: [_Win10-Script-Run.bat](https://github.com/madbomb122/Win10Script/raw/master/_Win10-Script-Run.bat) -Size about `2.38 KB` -Recommended <br />
 Update File: [Update.bat](https://github.com/madbomb122/Win10Script/raw/master/Update.bat) -Size about `12.3 KB`<br />
   **Note 1: DO NOT RENAME THE FILES**<br />
   **Note 2: HAVE THE FILES IN THE SAME DIRECTORY**<br />
