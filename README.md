@@ -9,7 +9,7 @@ This is by no means a complete set of settings. (There is ALOT that can be chang
 The original basic script created by https://github.com/Disassembler0/Win10-Initial-Setup-Script/
 
 This script is a Highly Modded version of the 2.0 script by Disaseembler0. <br />
-The script has added items with an easier way to change preferences and a menu.
+The script has added items with an easyer way to change preferences and a menu.
 
 PS. Don't forget to check out my other Repo https://github.com/madbomb122/BlackViperScript  <br />
 
