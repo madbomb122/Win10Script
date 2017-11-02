@@ -11,8 +11,8 @@
 # Website: https://github.com/madbomb122/Win10Script/
 #
 $Script_Version = "3.1"
-$Minor_Version = "3"
-$Script_Date = "Sept-5-2017"
+$Minor_Version = "6"
+$Script_Date = "Nov-02-2017"
 $Release_Type = "Testing"
 #$Release_Type = "Stable"
 ##########
@@ -161,22 +161,22 @@ $AppsList = @(
 'Microsoft.ZuneVideo')
 
 $colors = @(
-"black",       #0
-"blue",        #1
-"cyan",        #2
-"darkblue",    #3
-"darkcyan",    #4
-"darkgray",    #5
-"darkgreen",   #6
-"darkmagenta", #7
-"darkred",     #8
-"darkyellow",  #9
-"gray",        #10
-"green",       #11
-"magenta",     #12
-"red",         #13
-"white",       #14
-"yellow")      #15
+"black",      #0
+"blue",       #1
+"cyan",       #2
+"darkblue",   #3
+"darkcyan",   #4
+"darkgray",   #5
+"darkgreen",  #6
+"darkmagenta",#7
+"darkred",    #8
+"darkyellow", #9
+"gray",       #10
+"green",      #11
+"magenta",    #12
+"red",        #13
+"white",      #14
+"yellow")     #15
 
 $Pined_App = @(
 'Mail',
@@ -215,13 +215,9 @@ Function UpdateCheck {
 		$VersionURL = "https://raw.GitHubusercontent.com/madbomb122/Win10Script/master/Version/Version.csv"
 		(New-Object System.Net.WebClient).DownloadFile($VersionURL, $VersionFile)
 		$CSV_Ver = Import-Csv $VersionFile
-		If($Release_Type -ne "Stable") {
-			$WebScriptVer = $($CSV_Ver[0].Version)
-			$WebScriptMinorVer = $($CSV_Ver[0].MinorVersion)
-		} Else {
-			$WebScriptVer = $($CSV_Ver[1].Version)
-			$WebScriptMinorVer = $($CSV_Ver[1].MinorVersion)
-		}
+		If($Release_Type -ne "Stable"){ $Line = 0 } Else{ $Line = 1 }
+		$WebScriptVer = $($CSV_Ver[$Line].Version)
+		$WebScriptMinorVer = $($CSV_Ver[$Line].MinorVersion)
 		If(($WebScriptVer -gt $Script_Version) -or ($WebScriptVer -eq $Script_Version -And $WebScriptMinorVer -gt $Minor_Version)){ ScriptUpdateFun }
 	} Else {
 		Clear-Host
@@ -238,19 +234,7 @@ Function UpdateCheck {
 	}
 }
 
-Function ScriptUpdateFun {
-	$FullVer = "$WebScriptVer.$WebScriptMinorVer"
-	$UpdateFile = $filebase + "Update.bat"
-	If(Test-Path $UpdateFile -PathType Leaf) {
-		$DFilename = "Win10-Menu.ps1"
-		$UpdateOptBat = $True
-		$UpArg = "-u -w10 "
-		If($Release_Type -ne "Stable"){ $UpArg += "-test " }
-	} Else {
-		$DFilename = "Win10-Menu-Ver."
-		$UpdateOptBat = $False
-		$UpArg = ""
-	}
+Function UpdateDisplay([String]$FullVer,[String]$DFilename) {
 	Clear-Host
 	MenuLine
 	LeftLine ;DisplayOutMenu "                  Update Found!                  " 13 0 0 ;RightLine
@@ -261,22 +245,30 @@ Function ScriptUpdateFun {
 	LeftLine ;DisplayOutMenu "after download is complete.                       " 2 0 0 ;RightLine
 	MenuBlankLine
 	MenuLine
+}
 
-	If($Accept_ToS -ne 1){ $UpArg = $UpArg + "-atos" }
-	If($InternetCheck -eq 1){ $UpArg = $UpArg + "-sic" }
-	If($CreateRestorePoint -eq 1){ $UpArg = $UpArg + "-crp" }
-	If($Restart -eq 0){ $UpArg = $UpArg + "-dnr" }
-	If($RunScr){ $UpArg = $UpArg + "-run $TempSetting" } Else{ $UpArg = $UpArg + "-load $TempSetting" }
-	If($UpdateOptBat){
+Function ScriptUpdateFun {
+	$FullVer = "$WebScriptVer.$WebScriptMinorVer"
+	$UpdateFile = $filebase + "Update.bat"
+	$UpArg = ""
+
+	If($Accept_ToS -ne 1){ $UpArg += "-atos " }
+	If($InternetCheck -eq 1){ $UpArg += "-sic " }
+	If($CreateRestorePoint -eq 1){ $UpArg += "-crp " }
+	If($Restart -eq 0){ $UpArg += "-dnr" }
+	If($RunScr){ $UpArg += "-run $TempSetting " } Else{ $UpArg += "-load $TempSetting " }
+
+	If(Test-Path $UpdateFile -PathType Leaf) {
+		$DFilename = "Win10-Menu.ps1"
+		$UpArg += "-u -w10 "
+		If($Release_Type -ne "Stable"){ $UpArg += "-test " }
+		UpdateDisplay $FullVer $DFilename
 		cmd.exe /c "$UpdateFile $UpArg"
 	} Else {
-		If($Release_Type -ne "Stable") {
-			$DFilename += $WebScriptVer + "-Testing"
-			$Script_Url = $URL_Base + "Testing/"
-		} Else {
-			$DFilename += $FullVer
-		}
+		$DFilename = "Win10-Menu-Ver." + $FullVer
+		If($Release_Type -ne "Stable"){ $DFilename += $WebScriptVer + "-Testing" ;$Script_Url = $URL_Base + "Testing/" }
 		$DFilename += ".ps1"
+		UpdateDisplay $FullVer $DFilename
 		$Script_Url = $URL_Base + "Win10-Menu.ps1"
 		$WebScriptFilePath = $filebase + $DFilename
 		(New-Object System.Net.WebClient).DownloadFile($Script_Url, $WebScriptFilePath)
@@ -311,15 +303,14 @@ Function ShowInvalid([Int]$InvalidA){ If($InvalidA -eq 1){ Write-Host "`nInvalid
 Function unPin-App([String]$appname){ ((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.Replace('&','') -Match 'Unpin from Start'} | %{$_.DoIt()} }
 Function Check-SetPath([String]$RPath){ While(!(Test-Path "$RPath")){ New-Item -Path "$RPath" -Force | Out-Null } Return $RPath }
 Function Remove-SetPath([String]$RPath){ If(Test-Path $RPath){ Remove-Item -Path $RPath -Recurse } }
-Function DisplayOut([String]$TxtToDisplay, [Int]$TxtColor, [Int]$BGColor){ If($TxtColor -le 15){ Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } Else{ Write-Host $TxtToDisplay } }
-Function DisplayOutMenu([String]$TxtToDisplay, [Int]$TxtColor, [Int]$BGColor, [Int]$NewLine){ If($NewLine -eq 0){ Write-Host -NoNewline $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } Else{ Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } }
+Function DisplayOut([String]$TxtToDisplay,[Int]$TxtColor,[Int]$BGColor){ If($TxtColor -le 15){ Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } Else{ Write-Host $TxtToDisplay } }
+Function DisplayOutMenu([String]$TxtToDisplay,[Int]$TxtColor,[Int]$BGColor,[Int]$NewLine){ If($NewLine -eq 0){ Write-Host -NoNewline $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } Else{ Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } }
+Function StartOrGui { If($RunScr -eq $True){ PreStartScript } ElseIf($AcceptToS -ne 1){ Gui-Start } }
 
 Function ScriptPreStart {
 	If($PassedArg.Length -gt 0){ ArgCheck }
 	If($AcceptToS -eq 1){ TOS } Else{ StartOrGui }
 }
-
-Function StartOrGui { If($RunScr -eq $True){ PreStartScript } ElseIf($AcceptToS -ne 1){ Gui-Start } }
 
 Function ArgCheck {
 	For($i=0; $i -lt $PassedArg.Length; $i++) {
@@ -354,7 +345,7 @@ Function TOSDisplay {
 		DisplayOutMenu "| " $BorderColor 0 0 ;DisplayOutMenu "                    WARNING!!                    " 13 0 0 ;DisplayOutMenu " |" $BorderColor 0 1
 		DisplayOutMenu "|                                                   |" $BorderColor 0 1
 		DisplayOutMenu "| " $BorderColor 0 0 ;DisplayOutMenu "    This version is currently being Tested.      " 14 0 0 ;DisplayOutMenu " |" $BorderColor 0 1
-			DisplayOutMenu "|                                                   |" $BorderColor 0 1
+		DisplayOutMenu "|                                                   |" $BorderColor 0 1
 	}
 	DisplayOutMenu "|---------------------------------------------------|" $BorderColor 0 1
 	DisplayOutMenu "| " $BorderColor 0 0 ;DisplayOutMenu "                  Terms of Use                   " 11 0 0 ;DisplayOutMenu " |" $BorderColor 0 1
@@ -414,7 +405,7 @@ Function Update-Window {
 	$form.Dispatcher.Invoke([Action]{ If($PSBoundParameters['AppendContent']){ $Control.AppendText($Value) } Else{ $Control.$Property = $Value } }, "Normal")
 }
 
-Function SetCombo([String]$Name, [String]$Item) {
+Function SetCombo([String]$Name,[String]$Item) {
 	$Items = $Item.Split(',')
 	$combo =  $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly)
 	[void] $combo.Items.Add("Skip")
@@ -422,7 +413,7 @@ Function SetCombo([String]$Name, [String]$Item) {
 	SelectComboBoxGen $Name $(Get-Variable -Name $Name -ValueOnly)
 }
 
-Function SetComboM([String]$Name, [String]$Item) {
+Function SetComboM([String]$Name,[String]$Item) {
 	$Items = $Item.Split(',')
 	$combo =  $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly)
 	[void] $combo.Items.Add("Skip")
@@ -460,7 +451,7 @@ Function ConfigGUIitms {
 	RestorePointCBCheck
 }
 
-Function SelectComboBox([Array]$List, [Int]$Metro) { 
+Function SelectComboBox([Array]$List,[Int]$Metro) { 
 	If($Metro -eq 1) {
 		ForEach($Var In $List) {
 			If($Var -eq "APP_SkypeApp") {
@@ -476,7 +467,7 @@ Function SelectComboBox([Array]$List, [Int]$Metro) {
 	} Else{ ForEach($Var In $List){ SelectComboBoxGen $Var $(Get-Variable -Name $Var -ValueOnly) } }
 }
 Function SelectComboBoxAllMetro([Int]$Numb){ ForEach($Var In $ListApp){ SelectComboBoxGen $Var $Numb } }
-Function SelectComboBoxGen([String]$Name, [Int]$Numb){ $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).SelectedIndex = $Numb }
+Function SelectComboBoxGen([String]$Name,[Int]$Numb){ $(Get-Variable -Name ("WPF_"+$Name+"_Combo") -ValueOnly).SelectedIndex = $Numb }
 
 Function AppAraySet([String]$Get) {
 	[System.Collections.ArrayList]$ListTMP = Get-Variable -Name $Get
@@ -512,13 +503,13 @@ Function Gui-Start {
 
 [xml]$XAML = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
- Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="384" Width="545" ResizeMode="NoResize" BorderBrush="Black" Background="White" WindowStyle="ThreeDBorderWindow">
+ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="381" Width="541" ResizeMode="NoResize" BorderBrush="Black" Background="White">
 <Window.Effect><DropShadowEffect/></Window.Effect><Grid>
  <Label Content="Script Version:" HorizontalAlignment="Left" Margin="1,317,0,0" VerticalAlignment="Top" Height="25"/>
  <Button Name="RunScriptButton" Content="Run Script" HorizontalAlignment="Left" Margin="0,300,0,0" VerticalAlignment="Top" Width="525" Height="20" FontWeight="Bold"/>
- <Button Name="CopyrightButton" Content="Copyright" HorizontalAlignment="Left" Margin="394,321,0,0" VerticalAlignment="Top" Width="131" FontStyle="Italic"/>
- <Button Name="Madbomb122WSButton" Content="Madbomb122's Website" HorizontalAlignment="Left" Margin="262,321,0,0" VerticalAlignment="Top" Width="132" FontStyle="Italic"/>
- <Button Name="DonateButton" Content="Donate to me" HorizontalAlignment="Left" Margin="0,321,0,0" VerticalAlignment="Top" Width="131" FontStyle="Italic"/>
+ <Button Name="CopyrightButton" Content="Copyright" HorizontalAlignment="Left" Margin="394,321,0,0" VerticalAlignment="Top" Width="131" FontStyle="Italic" Background="#FF8ABEF0"/>
+ <Button Name="Madbomb122WSButton" Content="Madbomb122's Website" HorizontalAlignment="Left" Margin="262,321,0,0" VerticalAlignment="Top" Width="132" FontStyle="Italic" Background="#FFA7D24D"/>
+ <Button Name="DonateButton" Content="Donate to me" HorizontalAlignment="Left" Margin="0,321,0,0" VerticalAlignment="Top" Width="131" FontStyle="Italic" Background="#FFFFAD2F"/>
  <Button Name="EMail" Content="e-mail Madbomb122" HorizontalAlignment="Left" Margin="131,321,0,0" VerticalAlignment="Top" Width="131" FontStyle="Italic"/>
  <TabControl Name="TabControl" Height="300" VerticalAlignment="Top">
   <TabItem Name="Services_Tab" Header="Script Options" Margin="-2,0,2,0"><Grid Background="#FFE5E5E5">
@@ -695,6 +686,8 @@ Function Gui-Start {
    <ComboBox Name="PicturesIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,142,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Videos Folder:" HorizontalAlignment="Left" Margin="310,166,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="VideosIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,169,0,0" VerticalAlignment="Top" Width="72"/>
+   <Label Name="ThreeDobjectsIconInThisPCtxt" Content="3D Objects Folder:" HorizontalAlignment="Left" Margin="288,194,0,0" VerticalAlignment="Top"/>
+   <ComboBox Name="ThreeDobjectsIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,197,0,0" VerticalAlignment="Top" Width="72"/>
    <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="253" Margin="254,0,0,0" Stroke="Black" VerticalAlignment="Top" Width="1"/>
    <Label Content="Desktop" HorizontalAlignment="Left" Margin="99,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
    <Label Content="This PC" HorizontalAlignment="Left" Margin="364,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/></Grid>
@@ -825,8 +818,8 @@ Function Gui-Start {
  </TabControl>
  <Rectangle Fill="#FFFFFFFF" Height="1" Margin="0,299,0,0" Stroke="Black" VerticalAlignment="Top"/>
  <Rectangle Fill="#FFFFFFFF" Height="1" Margin="0,320,0,0" Stroke="Black" VerticalAlignment="Top"/>
- <Rectangle Fill="#FFB6B6B6" Stroke="Black" Margin="0,341,0,0" Height="14" VerticalAlignment="Top"/>
- <Rectangle Fill="#FFB6B6B6" Stroke="Black" HorizontalAlignment="Left" Width="14" Margin="525,0,0,0"/></Grid>
+ <Rectangle Fill="#FFB6B6B6" Stroke="Black" Margin="0,341,0,0" Height="11" VerticalAlignment="Top"/>
+ <Rectangle Fill="#FFB6B6B6" Stroke="Black" HorizontalAlignment="Left" Width="11" Margin="525,0,0,0"/></Grid>
 </Window>
 "@
 
@@ -936,6 +929,7 @@ $Skip_ShowD_Hide = @(
 "DesktopIconInThisPC",
 "DocumentsIconInThisPC",
 "DownloadsIconInThisPC",
+"ThreeDobjectsIconInThisPC",
 "MusicIconInThisPC",
 "PicturesIconInThisPC",
 "VideosIconInThisPC",
@@ -958,6 +952,7 @@ $Skip_InstalledD_Uninstall = @("OneDriveInstall","MediaPlayer","WorkFolders")
 
 	If($Release_Type -eq "Testing"){ $Script:Restart = 0 ;$WPF_Restart_CB.IsEnabled = $False ;$WPF_Restart_CB.Content += " (Disabled in Testing Version)" }
 	If($BuildVer -lt 14393){ $WPF_LinuxSubsystem_Combo.Visibility = 'Hidden' ;$WPF_LinuxSubsystemTxt.Visibility = 'Hidden' }
+	If($BuildVer -lt 16299){ $WPF_ThreeDobjectsIconInThisPC_Combo.Visibility = 'Hidden' ;$WPF_ThreeDobjectsIconInThisPCtxt.Visibility = 'Hidden' }
 	ForEach($Var In $Skip_EnableD_Disable){ SetCombo $Var "Enable*,Disable" }
 	ForEach($Var In $Skip_Enable_DisableD){ SetCombo $Var "Enable,Disable*" }
 	ForEach($Var In $Skip_ShowD_Hide){ SetCombo $Var "Show*,Hide" }
@@ -1118,6 +1113,7 @@ Function LoadWinDefault {
 	$Script:MusicIconInThisPC = 1
 	$Script:PicturesIconInThisPC = 1
 	$Script:VideosIconInThisPC = 1
+	$Script:ThreeDobjectsIconInThisPC = 1
 
 	#Desktop Items
 	$Script:ThisPCOnDesktop = 2
@@ -1316,11 +1312,19 @@ Function RunScript {
 		DisplayOut "Unrestricting AutoLogger Directory..." 11 0
 		$autoLoggerDir = "$Env:PROGRAMDATA\Microsoft\Diagnosis\ETLLogs\AutoLogger"
 		icacls $autoLoggerDir /grant:r SYSTEM:`(OI`)`(CI`)F | Out-Null
+		$Path = Check-SetPath "HKLM:\SYSTEM\ControlSet001\Control\WMI\AutoLogger\AutoLogger-Diagtrack-Listener"
+		Set-ItemProperty -Path $Path -Name "Start" -Type DWord -Value 1
+		$Path += "\{DD17FA14-CDA6-7191-9B61-37A28F7A10DA}"
+		Set-ItemProperty -Path $Path -Name "Start" -Type DWord -Value 1
 	} ElseIf($AutoLoggerFile -eq 2) {
-		DisplayOut "Removing AutoLogger File and Festricting Directory..." 12 0
+		DisplayOut "Removing AutoLogger File and Restricting Directory..." 12 0
 		$autoLoggerDir = "$Env:PROGRAMDATA\Microsoft\Diagnosis\ETLLogs\AutoLogger"
 		Remove-SetPath "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl"
 		icacls $autoLoggerDir /deny SYSTEM:`(OI`)`(CI`)F | Out-Null
+		$Path = Check-SetPath "HKLM:\SYSTEM\ControlSet001\Control\WMI\AutoLogger\AutoLogger-Diagtrack-Listener"
+		Set-ItemProperty -Path $Path -Name "Start" -Type DWord -Value 0
+		$Path += "\{DD17FA14-CDA6-7191-9B61-37A28F7A10DA}"
+		Set-ItemProperty -Path $Path -Name "Start" -Type DWord -Value 0
 	}
 
 	If($DiagTrack -eq 0 -And $ShowSkipped -eq 1) {
@@ -1827,13 +1831,21 @@ Function RunScript {
 	} ElseIf($StartSuggestions -eq 1) {
 		DisplayOut "Enabling Start Menu Suggestions..." 11 0
 		$Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManage"
-		Set-ItemProperty -Path $Path -Name "SystemPaneSuggestionsEnabled" -Type DWord -Value 1
-		Set-ItemProperty -Path $Path -Name "SilentInstalledAppsEnabled" -Type DWord -Value 1
+		If($BuildVer -lt 16299) {
+			Set-ItemProperty -Path $Path -Name "SystemPaneSuggestionsEnabled" -Type DWord -Value 1
+			Set-ItemProperty -Path $Path -Name "SilentInstalledAppsEnabled" -Type DWord -Value 1
+		} Else {
+			Remove-ItemProperty -Path $Path -Name "SubscribedContent-338388Enabled"
+		}
 	} ElseIf($StartSuggestions -eq 2) {
 		DisplayOut "Disabling Start Menu Suggestions..." 12 0
 		$Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManage"
-		Set-ItemProperty -Path $Path -Name "SystemPaneSuggestionsEnabled" -Type DWord -Value 0
-		Set-ItemProperty -Path $Path -Name "SilentInstalledAppsEnabled" -Type DWord -Value 0
+		If($BuildVer -lt 16299) {
+			Set-ItemProperty -Path $Path -Name "SystemPaneSuggestionsEnabled" -Type DWord -Value 0
+			Set-ItemProperty -Path $Path -Name "SilentInstalledAppsEnabled" -Type DWord -Value 0
+		} Else {
+			Set-ItemProperty -Path $Path -Name "SubscribedContent-338388Enabled" -Type DWord -Value 0
+		}
 	}
 
 	If($MostUsedAppStartMenu -eq 0 -And $ShowSkipped -eq 1) {
@@ -2121,6 +2133,23 @@ Function RunScript {
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide"
 		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
 	}
+
+	If($BuildVer -ge 16299){ 
+		If($ThreeDobjectsIconInThisPC -eq 0 -And $ShowSkipped -eq 1) {
+			DisplayOut "Skipping 3D Object folder in This PC..." 15 0
+		} ElseIf($ThreeDobjectsIconInThisPC -eq 1) {
+			DisplayOut "Showing 3D Object folder in This PC..." 11 0
+			$Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{31C0DD25-9439-4F12-BF41-7FF4EDA38722}\PropertyBag"
+			Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Show"
+			If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Show" }
+		} ElseIf($ThreeDobjectsIconInThisPC -eq 2) {
+			DisplayOut "Hiding 3D Object folder in This PC..." 12 0
+			$Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{31C0DD25-9439-4F12-BF41-7FF4EDA38722}\PropertyBag"
+			Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide"
+			If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
+		}
+	}
+	
 
 	DisplayOut "`n---------------------`n-   Desktop Items   -`n---------------------" 14 0
 	$Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu"
@@ -2487,15 +2516,15 @@ Function RunScript {
 
 	DisplayOut "Unhiding Apps...`n------------------" 11 0
 	If($Ai -ne $null) {
-		ForEach($AppI In $APPS_AppsUnhide) {
-			$AppInst = Get-AppxPackage -AllUsers $AppI
-			If($AppInst -ne $null) {
-				DisplayOut $AppI 11 0
-				ForEach($App In $AppInst){ Add-AppxPackage -DisableDevelopmentMode -Register "$($App.InstallLocation)\AppXManifest.xml" }
-			} Else {
-				DisplayOut "Unable to Unhide $AppI" 11 0
-			}
+	  ForEach($AppI In $APPS_AppsUnhide) {
+		$AppInst = Get-AppxPackage -AllUsers $AppI
+		If($AppInst -ne $null) {
+			DisplayOut $AppI 11 0
+			ForEach($App In $AppInst){ Add-AppxPackage -DisableDevelopmentMode -Register "$($App.InstallLocation)\AppXManifest.xml" }
+		} Else {
+			DisplayOut "Unable to Unhide $AppI" 11 0
 		}
+	  }
 	} Else {
 		DisplayOut "No Apps being Unhidden" 11 0
 	}
@@ -2701,6 +2730,7 @@ $Script:DownloadsIconInThisPC = 0   #0-Skip, 1-Show*, 2-Hide
 $Script:MusicIconInThisPC = 0       #0-Skip, 1-Show*, 2-Hide
 $Script:PicturesIconInThisPC = 0    #0-Skip, 1-Show*, 2-Hide
 $Script:VideosIconInThisPC = 0      #0-Skip, 1-Show*, 2-Hide
+$Script:ThreeDobjectsIconInThisPC = 0   #0-Skip, 1-Show, 2-Hide*
 
 #Desktop Items
 # Function = Option                 #Choices (* Indicates Windows Default)
