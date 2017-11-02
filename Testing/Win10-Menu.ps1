@@ -10,8 +10,8 @@
 #  Author: Madbomb122
 # Website: https://github.com/madbomb122/Win10Script/
 #
-$Script_Version = "3.1"
-$Minor_Version = "6"
+$Script_Version = "3.2"
+$Minor_Version = "0"
 $Script_Date = "Nov-02-2017"
 $Release_Type = "Testing"
 #$Release_Type = "Stable"
