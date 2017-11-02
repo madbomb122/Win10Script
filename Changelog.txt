@@ -1,11 +1,19 @@
 -----------------------------------------------------------------------------------
-3.1.3 (09-05-2017)
+3.2.0 (11-02-2017)
 
 Added Missing Items (MSRT Update, Driver Update, Restarte on Update)
 
 Fixed a typo that caused switch/arguments to not work and loading of settings
 
 Changed indent from spaces to tabs to decrease file size about 9 KB
+
+Added Registry entry for Auto Logger File
+Fixed a Typo
+Minor changes in script
+
+Added Color to Donate, Website and Copyright button
+
+Added Items for Fall Creator's Update
 
 -----------------------------------------------------------------------------------
 3.1.0 (08-26-2017)
