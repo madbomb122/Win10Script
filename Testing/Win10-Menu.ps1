@@ -11,8 +11,8 @@
 # Website: https://github.com/madbomb122/Win10Script/
 #
 $Script_Version = "3.2"
-$Minor_Version = "0"
-$Script_Date = "Nov-02-2017"
+$Minor_Version = "1"
+$Script_Date = "Nov-14-2017"
 $Release_Type = "Testing"
 #$Release_Type = "Stable"
 ##########
@@ -503,7 +503,7 @@ Function Gui-Start {
 
 [xml]$XAML = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
- Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="381" Width="541" ResizeMode="NoResize" BorderBrush="Black" Background="White">
+ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="381" Width="541" BorderBrush="Black" Background="White">
 <Window.Effect><DropShadowEffect/></Window.Effect><Grid>
  <Label Content="Script Version:" HorizontalAlignment="Left" Margin="1,317,0,0" VerticalAlignment="Top" Height="25"/>
  <Button Name="RunScriptButton" Content="Run Script" HorizontalAlignment="Left" Margin="0,300,0,0" VerticalAlignment="Top" Width="525" Height="20" FontWeight="Bold"/>
@@ -818,8 +818,8 @@ Function Gui-Start {
  </TabControl>
  <Rectangle Fill="#FFFFFFFF" Height="1" Margin="0,299,0,0" Stroke="Black" VerticalAlignment="Top"/>
  <Rectangle Fill="#FFFFFFFF" Height="1" Margin="0,320,0,0" Stroke="Black" VerticalAlignment="Top"/>
- <Rectangle Fill="#FFB6B6B6" Stroke="Black" Margin="0,341,0,0" Height="11" VerticalAlignment="Top"/>
- <Rectangle Fill="#FFB6B6B6" Stroke="Black" HorizontalAlignment="Left" Width="11" Margin="525,0,0,0"/></Grid>
+ <Rectangle Fill="Red" Stroke="Black" Margin="0,341,0,0" Height="11" VerticalAlignment="Top"/>
+ <Rectangle Fill="Red" Stroke="Black" HorizontalAlignment="Left" Width="11" Margin="525,0,0,0"/></Grid>
 </Window>
 "@
 
