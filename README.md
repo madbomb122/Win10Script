@@ -1,3 +1,6 @@
+To Download go to -> [Win 10 Script -Release](https://github.com/madbomb122/Win10Script/releases)<br />
+
+
 **Current Version** <br />
 **Script:** `3.2.1` (November 14, 2017) <br />
 
