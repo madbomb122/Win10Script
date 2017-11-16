@@ -11,7 +11,7 @@
 # Website: https://github.com/madbomb122/Win10Script/
 #
 $Script_Version = "3.2"
-$Minor_Version = "3"
+$Minor_Version = "4"
 $Script_Date = "Nov-16-2017"
 $Release_Type = "Testing"
 #$Release_Type = "Stable"
@@ -242,7 +242,7 @@ Function UpdateDisplay([String]$FullVer,[String]$DFilename) {
 	MenuBlankLine
 	LeftLine ;DisplayOutMenu "Downloading version " 15 0 0 1 ;DisplayOutMenu ("$FullVer" + (" "*(29-$FullVer.Length))) 11 0 0 ;RightLine
 	LeftLine ;DisplayOutMenu "Will run " 15 0 0 ;DisplayOutMenu ("$DFilename" +(" "*(40-$DFilename.Length))) 11 0 0 ;RightLine
-	LeftLine ;DisplayOutMenu "after download is complete.                       " 2 0 0 ;RightLine
+	LeftLine ;DisplayOutMenu "after download is complete.                      " 15 0 0 ;RightLine
 	MenuBlankLine
 	MenuLine
 }
@@ -518,7 +518,7 @@ Function Gui-Start {
    <CheckBox Name="ShowSkipped_CB" Content="Show Skipped Items" HorizontalAlignment="Left" Margin="8,29,0,0" VerticalAlignment="Top"/>
    <CheckBox Name="Restart_CB" Content="Restart When Done" HorizontalAlignment="Left" Margin="8,49,0,0" VerticalAlignment="Top"/>
    <CheckBox Name="VersionCheck_CB" Content="Check for Update (If update found, will run and use current settings)" HorizontalAlignment="Left" Margin="8,69,0,0" VerticalAlignment="Top"/>
-   <CheckBox Name="BatUpdateScriptFileName_CB" Content="Update Bat file with new Script filename (If update.bat isnt avilable)" HorizontalAlignment="Left" Margin="8,89,0,0" VerticalAlignment="Top" Height="15" Width="380"/>
+   <CheckBox Name="BatUpdateScriptFileName_CB" Content="Update Bat file with new Script filename" HorizontalAlignment="Left" Margin="8,89,0,0" VerticalAlignment="Top" Height="15" Width="450"/>
    <CheckBox Name="InternetCheck_CB" Content="Skip Internet Check" HorizontalAlignment="Left" Margin="8,109,0,0" VerticalAlignment="Top"/>
    <Button Name="Save_Setting_Button" Content="Save Settings" HorizontalAlignment="Left" Margin="100,133,0,0" VerticalAlignment="Top" Width="77"/>
    <Button Name="Load_Setting_Button" Content="Load Settings" HorizontalAlignment="Left" Margin="8,133,0,0" VerticalAlignment="Top" Width="77"/>
@@ -952,8 +952,10 @@ $Skip_Show_HideD = @(
 "ControlPanelOnDesktop")
 
 $Skip_InstalledD_Uninstall = @("OneDriveInstall","MediaPlayer","WorkFolders")
+$UpdateFile = $filebase + "Update.bat"
 
 	If($Release_Type -eq "Testing"){ $Script:Restart = 0 ;$WPF_Restart_CB.IsEnabled = $False ;$WPF_Restart_CB.Content += " (Disabled in Testing Version)" }
+	If(Test-Path $UpdateFile -PathType Leaf) { $WPF_BatUpdateScriptFileName_CB.IsEnabled = $False ;$WPF_BatUpdateScriptFileName_CB.Content += " (Update.bat Found, Option not needed)" }
 	If($BuildVer -lt 14393){ $WPF_LinuxSubsystem_Combo.Visibility = 'Hidden' ;$WPF_LinuxSubsystemTxt.Visibility = 'Hidden' }
 	If($BuildVer -lt 16299){ $WPF_ThreeDobjectsIconInThisPC_Combo.Visibility = 'Hidden' ;$WPF_ThreeDobjectsIconInThisPCtxt.Visibility = 'Hidden' }
 	ForEach($Var In $Skip_EnableD_Disable){ SetCombo $Var "Enable*,Disable" }
@@ -967,7 +969,7 @@ $Skip_InstalledD_Uninstall = @("OneDriveInstall","MediaPlayer","WorkFolders")
 
 	SetCombo "LinuxSubsystem" "Installed,Uninstall*"
 	SetCombo "HibernatePower" "Enable,Disable"
-	SetCombo "UAC" "Lower,Normal*,Higher"
+	SetCombo "UAC" "Disable,Normal*,Higher"
 	SetCombo "BatteryUIBar" "New*,Classic"
 	SetCombo "ClockUIBar" "New*,Classic"
 	SetCombo "VolumeControlBar" "New(Horizontal)*,Classic(Vertical)"
@@ -1016,12 +1018,12 @@ Function GuiItmToVariable {
 		} Else{ Set-Variable -Name $Var -Value $Value -Scope Script }
 	}
 	ForEach($Var In $VarList){ Set-Variable -Name $Var -Value ($(Get-Variable -Name ("WPF_"+$Var+"_Combo") -ValueOnly).SelectedIndex) -Scope Script }
-	If($WPF_CreateRestorePoint_CB.IsChecked){ $CreateRestorePoint = 1 } Else{ $CreateRestorePoint = 0 }
-	If($WPF_VersionCheck_CB.IsChecked){ $VersionCheck = 1 } Else{ $VersionCheck = 0 }
-	If($WPF_InternetCheck_CB.IsChecked){ $InternetCheck = 1 } Else{ $InternetCheck = 0 }
-	If($WPF_ShowSkipped_CB.IsChecked){ $ShowSkipped = 1 } Else{ $ShowSkipped = 0 }
-	If($WPF_Restart_CB.IsChecked){ $Restart = 1 } Else { $Restart = 0 }
-	$RestorePointName = $WPF_RestorePointName_Txt.Text 
+	If($WPF_CreateRestorePoint_CB.IsChecked){ $Script:CreateRestorePoint = 1 } Else{ $Script:CreateRestorePoint = 0 }
+	If($WPF_VersionCheck_CB.IsChecked){ $Script:VersionCheck = 1 } Else{ $Script:VersionCheck = 0 }
+	If($WPF_InternetCheck_CB.IsChecked){ $Script:InternetCheck = 1 } Else{ $Script:InternetCheck = 0 }
+	If($WPF_ShowSkipped_CB.IsChecked){ $Script:ShowSkipped = 1 } Else{ $Script:ShowSkipped = 0 }
+	If($WPF_Restart_CB.IsChecked){ $Script:Restart = 1 } Else { $Script:Restart = 0 }
+	$Script:RestorePointName = $WPF_RestorePointName_Txt.Text 
 }
 
 ##########
@@ -1159,6 +1161,7 @@ Function LoadWinDefault {
 
 Function PreStartScript {
 	If($VersionCheck -eq 1){ UpdateCheck }
+
 	Clear-Host
 	DisplayOut "------------------`n-   Pre-Script   -`n------------------" 14 0
 	If($CreateRestorePoint -eq 0 -And $ShowSkipped -eq 1) {
