@@ -11,8 +11,8 @@
 # Website: https://github.com/madbomb122/Win10Script/
 #
 $Script_Version = "3.2"
-$Minor_Version = "1"
-$Script_Date = "Nov-14-2017"
+$Minor_Version = "3"
+$Script_Date = "Nov-16-2017"
 $Release_Type = "Stable"
 ##########
 
@@ -299,9 +299,9 @@ Function InternetCheck { If($InternetCheck -eq 1 -or (Test-Connection -Computer 
 Function cmpv { Compare-Object (Get-Variable -Scope Script) $AutomaticVariables -Property Name -PassThru | Where -Property Name -ne "AutomaticVariables" | Where-Object { $_ -NotIn $WPFList } }
 Function Openwebsite([String]$Url){ [System.Diagnostics.Process]::Start($Url) }
 Function ShowInvalid([Int]$InvalidA){ If($InvalidA -eq 1){ Write-Host "`nInvalid Input" -ForegroundColor Red -BackgroundColor Black -NoNewline } Return 0 }
-Function unPin-App([String]$appname){ ((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.Replace('&','') -Match 'Unpin from Start'} | %{$_.DoIt()} }
+Function unPinApp([String]$appname){ ((New-Object -Com Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}').Items() | ?{$_.Name -eq $appname}).Verbs() | ?{$_.Name.Replace('&','') -Match 'Unpin from Start'} | %{$_.DoIt()} }
 Function Check-SetPath([String]$RPath){ While(!(Test-Path "$RPath")){ New-Item -Path "$RPath" -Force | Out-Null } Return $RPath }
-Function Remove-SetPath([String]$RPath){ If(Test-Path $RPath){ Remove-Item -Path $RPath -Recurse } }
+Function RemoveSetPath([String]$RPath){ If(Test-Path $RPath){ Remove-Item -Path $RPath -Recurse } }
 Function DisplayOut([String]$TxtToDisplay,[Int]$TxtColor,[Int]$BGColor){ If($TxtColor -le 15){ Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } Else{ Write-Host $TxtToDisplay } }
 Function DisplayOutMenu([String]$TxtToDisplay,[Int]$TxtColor,[Int]$BGColor,[Int]$NewLine){ If($NewLine -eq 0){ Write-Host -NoNewline $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } Else{ Write-Host $TxtToDisplay -ForegroundColor $colors[$TxtColor] -BackgroundColor $colors[$BGColor] } }
 Function StartOrGui { If($RunScr -eq $True){ PreStartScript } ElseIf($AcceptToS -ne 1){ Gui-Start } }
@@ -817,8 +817,11 @@ Function Gui-Start {
  </TabControl>
  <Rectangle Fill="#FFFFFFFF" Height="1" Margin="0,299,0,0" Stroke="Black" VerticalAlignment="Top"/>
  <Rectangle Fill="#FFFFFFFF" Height="1" Margin="0,320,0,0" Stroke="Black" VerticalAlignment="Top"/>
- <Rectangle Fill="Red" Stroke="Black" Margin="0,341,0,0" Height="11" VerticalAlignment="Top"/>
- <Rectangle Fill="Red" Stroke="Black" HorizontalAlignment="Left" Width="11" Margin="525,0,0,0"/></Grid>
+ <Rectangle Fill="Yellow" Stroke="Black" Margin="0,341,0,0" Height="16" VerticalAlignment="Top"/>
+ <Rectangle Fill="Yellow" Stroke="Black" HorizontalAlignment="Left" Width="16" Margin="525,0,0,0"/>
+ <Label Content="Dont Resize past this area" HorizontalAlignment="Left" Margin="176,335,0,-10" VerticalAlignment="Top" Width="152" Height="25"/>
+ <Label Content="Dont Resize past this area" HorizontalAlignment="Left" Margin="456,164,-75,0" VerticalAlignment="Top" Width="152" Height="25" RenderTransformOrigin="0.5,0.5">
+ <Label.RenderTransform> <RotateTransform Angle="-90"/></Label.RenderTransform></Label></Grid>
 </Window>
 "@
 
@@ -1318,7 +1321,7 @@ Function RunScript {
 	} ElseIf($AutoLoggerFile -eq 2) {
 		DisplayOut "Removing AutoLogger File and Restricting Directory..." 12 0
 		$autoLoggerDir = "$Env:PROGRAMDATA\Microsoft\Diagnosis\ETLLogs\AutoLogger"
-		Remove-SetPath "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl"
+		RemoveSetPath "$autoLoggerDir\AutoLogger-Diagtrack-Listener.etl"
 		icacls $autoLoggerDir /deny SYSTEM:`(OI`)`(CI`)F | Out-Null
 		$Path = Check-SetPath "HKLM:\SYSTEM\ControlSet001\Control\WMI\AutoLogger\AutoLogger-Diagtrack-Listener"
 		Set-ItemProperty -Path $Path -Name "Start" -Type DWord -Value 0
@@ -1370,10 +1373,10 @@ Function RunScript {
 		DisplayOut "Skipping Check for Windows Update..." 15 0
 	} ElseIf($CheckForWinUpdate -eq 1) {
 		DisplayOut "Enabling Check for Windows Update..." 11 0
-		Set-ItemProperty -Path $Path -Name "SetDisableUXWUAccess" -Type DWord -Value 0
+		Remove-ItemProperty -Path $Path -Name "SetDisableUXWUAccess" -Type DWord -Value 0
 	} ElseIf($CheckForWinUpdate -eq 2) {
 		DisplayOut "Disabling Check for Windows Update..." 12 0
-		Set-ItemProperty -Path $Path -Name "SetDisableUXWUAccess" -Type DWord -Value 1
+		New-ItemProperty -Path $Path -Name "SetDisableUXWUAccess" -Type DWord -Value 1
 	}
 
 	If($WinUpdateType -eq 0 -And $ShowSkipped -eq 1) {
@@ -1580,16 +1583,16 @@ Function RunScript {
 		DisplayOut "Skipping Previous Versions Context item..." 15 0
 	} ElseIf($PreviousVersions -eq 1) {
 		DisplayOut "Enabling Previous Versions Context item..." 11 0
-		Set-ItemProperty -Path "HKCR:\ApplicationsAllFilesystemObjects\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force | Out-Null
-		Set-ItemProperty -Path "HKCR:\ApplicationsCLSID\{450D8FBA-AD25-11D0-98A8-0800361B1103}\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force | Out-Null
-		Set-ItemProperty -Path "HKCR:\ApplicationsDirectory\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force | Out-Null
-		Set-ItemProperty -Path "HKCR:\ApplicationsDrive\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force | Out-Null
+		New-Item -Path "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force | Out-Null
+		New-Item -Path "HKCR:\CLSID\{450D8FBA-AD25-11D0-98A8-0800361B1103}\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force | Out-Null
+		New-Item -Path "HKCR:\Directory\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force | Out-Null
+		New-Item -Path "HKCR:\Drive\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}" -Force | Out-Null
 	} ElseIf($PreviousVersions -eq 2) {
 		DisplayOut "Disabling Previous Versions Context item..." 12 0
-		Remove-SetPath "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}"
-		Remove-SetPath "HKCR:\CLSID\{450D8FBA-AD25-11D0-98A8-0800361B1103}\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}"
-		Remove-SetPath "HKCR:\Directory\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}"
-		Remove-SetPath "HKCR:\Drive\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}"
+		RemoveSetPath "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}"
+		RemoveSetPath "HKCR:\CLSID\{450D8FBA-AD25-11D0-98A8-0800361B1103}\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}"
+		RemoveSetPath "HKCR:\Directory\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}"
+		RemoveSetPath "HKCR:\Drive\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}"
 	}
 
 	If($IncludeinLibrary -eq 0 -And $ShowSkipped -eq 1) {
@@ -1607,8 +1610,8 @@ Function RunScript {
 	} ElseIf($PinToStart -eq 1) {
 		DisplayOut "Enabling Pin To Start Context item..." 11 0
 		New-Item -Path "HKCR:\*\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -Force | Out-Null
-		Set-ItemProperty -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -Name "(Default)" -Type String -Value "Taskband Pin"
 		New-Item -Path "HKCR:\*\shellex\ContextMenuHandlers\{a2a9545d-a0c2-42b4-9708-a0b2badd77c8}" -Force | Out-Null
+		Set-ItemProperty -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\{90AA3A4E-1CBA-4233-B8BB-535773D48449}" -Name "(Default)" -Type String -Value "Taskband Pin"
 		Set-ItemProperty -LiteralPath "HKCR:\*\shellex\ContextMenuHandlers\{a2a9545d-a0c2-42b4-9708-a0b2badd77c8}" -Name "(Default)" -Type String -Value "Start Menu Pin"
 		Set-ItemProperty -Path "HKCR:\Folder\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value "{470C0EBD-5D73-4d58-9CED-E91E22E23282}"
 		Set-ItemProperty -Path "HKCR:\exefile\shellex\ContextMenuHandlers\PintoStartScreen" -Name "(Default)" -Type String -Value "{470C0EBD-5D73-4d58-9CED-E91E22E23282}"
@@ -1628,24 +1631,30 @@ Function RunScript {
 		DisplayOut "Skipping Pin To Quick Access Context item..." 15 0
 	} ElseIf($PinToQuickAccess -eq 1) {
 		DisplayOut "Enabling Pin To Quick Access Context item..." 11 0
-		$Path = "HKCR:\Folder\shell\pintohome"
-		Set-ItemProperty -Path $Path  -Name "MUIVerb" -Type String -Value "@shell32.dll,-51377"
-		Set-ItemProperty -Path $Path  -Name "AppliesTo" -Type String -Value 'System.ParsingName:<>"::{679f85cb-0220-4080-b29b-5540cc05aab6}" AND System.ParsingName:<>"::{645FF040-5081-101B-9F08-00AA002F954E}" AND System.IsFolder:=System.StructuredQueryType.Boolean#True'
-		Set-ItemProperty -Path "$Path\command"  -Name "DelegateExecute" -Type String -Value "{b455f46e-e4af-4035-b0a4-cf18d2f6f28e}"
-		$Path = "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome"
-		Set-ItemProperty -Path $Path  -Name "MUIVerb" -Type String -Value "@shell32.dll,-51377"
-		Set-ItemProperty -Path $Path  -Name "AppliesTo" -Type String -Value 'System.ParsingName:<>"::{679f85cb-0220-4080-b29b-5540cc05aab6}" AND System.ParsingName:<>"::{645FF040-5081-101B-9F08-00AA002F954E}" AND System.IsFolder:=System.StructuredQueryType.Boolean#True'
-		Set-ItemProperty -Path "$Path\command"  -Name "DelegateExecute" -Type String -Value "{b455f46e-e4af-4035-b0a4-cf18d2f6f28e}"
+		$Path = Check-SetPath "HKCR:\Folder\shell\pintohome"
+		New-ItemProperty -Path  $Path -Name "MUIVerb" -Type String -Value "@shell32.dll,-51377"
+		New-ItemProperty -Path $Path -Name "AppliesTo" -Type String -Value 'System.ParsingName:<>"::{679f85cb-0220-4080-b29b-5540cc05aab6}" AND System.ParsingName:<>"::{645FF040-5081-101B-9F08-00AA002F954E}" AND System.IsFolder:=System.StructuredQueryType.Boolean#True'
+		$Path = Check-SetPath  "$Path\command"
+		New-ItemProperty -Path "$Path" -Name "DelegateExecute" -Type String -Value "{b455f46e-e4af-4035-b0a4-cf18d2f6f28e}"
+		$Path = Check-SetPath "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome"
+		New-ItemProperty -Path $Path -Name "MUIVerb" -Type String -Value "@shell32.dll,-51377"
+		New-ItemProperty -Path $Path -Name "AppliesTo" -Type String -Value 'System.ParsingName:<>"::{679f85cb-0220-4080-b29b-5540cc05aab6}" AND System.ParsingName:<>"::{645FF040-5081-101B-9F08-00AA002F954E}" AND System.IsFolder:=System.StructuredQueryType.Boolean#True'
+		$Path = Check-SetPath  "$Path\command"
+		New-ItemProperty -Path "$Path" -Name "DelegateExecute" -Type String -Value "{b455f46e-e4af-4035-b0a4-cf18d2f6f28e}"
 	} ElseIf($PinToQuickAccess -eq 2) {
 		DisplayOut "Disabling Pin To Quick Access Context item..." 12 0
+		RemoveSetPath "HKCR:\Folder\shell\pintohome"
+		RemoveSetPath "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome"
+		<#
 		$Path = "HKCR:\Folder\shell\pintohome"
-		Set-ItemProperty -Path $Path  -Name "MUIVerb" -Type String -Value ""
-		Set-ItemProperty -Path $Path  -Name "AppliesTo" -Type String -Value ""
+		Set-ItemProperty -Path $Path -Name "MUIVerb" -Type String -Value ""
+		Set-ItemProperty -Path $Path -Name "AppliesTo" -Type String -Value ""
 		Set-ItemProperty -Path "$Path\command"  -Name "DelegateExecute" -Type String -Value ""
 		$Path = "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome"
-		Set-ItemProperty -Path $Path  -Name "MUIVerb" -Type String -Value ""
-		Set-ItemProperty -Path $Path  -Name "AppliesTo" -Type String -Value ""
-		Set-ItemProperty -Path "$Path\command"  -Name "DelegateExecute" -Type String -Value ""		
+		Set-ItemProperty -Path $Path -Name "MUIVerb" -Type String -Value ""
+		Set-ItemProperty -Path $Path -Name "AppliesTo" -Type String -Value ""
+		Set-ItemProperty -Path "$Path\command" -Name "DelegateExecute" -Type String -Value ""
+		#>
 	}
 
 	If($ShareWith -eq 0 -And $ShowSkipped -eq 1) {
@@ -1678,7 +1687,7 @@ Function RunScript {
 		Set-ItemProperty -Path $Path -Name "(Default)" -Type String -Value "{7BA4C740-9E81-11CF-99D3-00AA004AE837}" | Out-Null
 	} ElseIf($SendTo -eq 2) {
 		DisplayOut "Disabling Send To Context item..." 12 0
-		Remove-SetPath "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo"
+		RemoveSetPath "HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo"
 	}
 
 	DisplayOut "`n----------------------`n-   Task Bar Items   -`n----------------------" 14 0
@@ -1761,12 +1770,14 @@ Function RunScript {
 	If($TrayIcons -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut "Skipping Tray icons..." 15 0
 	} ElseIf($TrayIcons -eq 1) {
+		DisplayOut "Hiding Tray Icons..." 12 0
+		Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "EnableAutoTray" -Type DWord -Value 1
+		Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "EnableAutoTray" -Type DWord -Value 1
+	} ElseIf($TrayIcons -eq 2) {
 		DisplayOut "Showing All Tray Icons..." 11 0
 		Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "EnableAutoTray" -Type DWord -Value 0
-	} ElseIf($TrayIcons -eq 2) {
-		DisplayOut "Hiding Tray Icons..." 12 0
-		Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "EnableAutoTray"
-	}
+		Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "EnableAutoTray" -Type DWord -Value 0
+	} 
 
 	If($SecondsInClock -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut "Skipping Seconds in Taskbar Clock..." 15 0
@@ -1956,8 +1967,8 @@ Function RunScript {
 		DisplayOut "Removeing Recent Files in Quick Access..." 15 0
 		$Path = "Microsoft\Windows\CurrentVersion\Explorer"
 		Set-ItemProperty -Path "HKCU:\SOFTWARE\$Path" -Name "ShowRecent" -Type DWord -Value 0
-		Remove-SetPath "HKLM:\SOFTWARE\$Path\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}"
-		Remove-SetPath "HKLM:\SOFTWARE\Wow6432Node\$Path\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}"
+		RemoveSetPath "HKLM:\SOFTWARE\$Path\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}"
+		RemoveSetPath "HKLM:\SOFTWARE\Wow6432Node\$Path\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}"
 	}
 
 	If($FrequentFoldersQikAcc -eq 0 -And $ShowSkipped -eq 1) {
@@ -2235,13 +2246,13 @@ Function RunScript {
 		}
 	} ElseIf($PVFileAssociation -eq 2) {
 		DisplayOut "Unsetting Photo Viewer File Association for bmp, gif, jpg, png and tif..." 12 0
-		Remove-SetPath "HKCR:\Paint.Picture\shell\open"
+		RemoveSetPath "HKCR:\Paint.Picture\shell\open"
 		Remove-ItemProperty -Path "HKCR:\giffile\shell\open" -Name "MuiVerb"
 		Set-ItemProperty -Path "HKCR:\giffile\shell\open" -Name "CommandId" -Type String -Value "IE.File"
 		Set-ItemProperty -Path "HKCR:\giffile\shell\open\command" -Name "(Default)" -Type String -Value "`"$Env:SystemDrive\Program Files\Internet Explorer\iexplore.exe`" %1"
 		Set-ItemProperty -Path "HKCR:\giffile\shell\open\command" -Name "DelegateExecute" -Type String -Value "{17FE9752-0B5A-4665-84CD-569794602F5C}"
-		Remove-SetPath "HKCR:\jpegfile\shell\open"
-		Remove-SetPath "HKCR:\jpegfile\shell\open"
+		RemoveSetPath "HKCR:\jpegfile\shell\open"
+		RemoveSetPath "HKCR:\jpegfile\shell\open"
 	} 
 
 	If($PVOpenWithMenu -eq 0 -And $ShowSkipped -eq 1) {
@@ -2255,7 +2266,7 @@ Function RunScript {
 		Set-ItemProperty -Path "HKCR:\Applications\photoviewer.dll\shell\open\DropTarget" -Name "Clsid" -Type String -Value "{FFE2A43C-56B9-4bf5-9A79-CC6D4285608A}"
 	} ElseIf($PVOpenWithMenu -eq 2) {
 		DisplayOut "Removing Photo Viewer from Open with Menu..." 12 0
-		Remove-SetPath "HKCR:\Applications\photoviewer.dll\shell\open"
+		RemoveSetPath "HKCR:\Applications\photoviewer.dll\shell\open"
 	}
 
 	DisplayOut "`n------------------------`n-   Lockscreen Items   -`n------------------------" 14 0
@@ -2394,7 +2405,7 @@ Function RunScript {
 		DisplayOut "Skipping Unpinning Items..." 15 0
 	} ElseIf($UnpinItems -eq 1) {
 		DisplayOut "`nUnpinning Items...`n------------------" 12 0
-		ForEach($Pin In $Pined_App){ unPin-App $Pin }
+		ForEach($Pin In $Pined_App){ unPinApp $Pin }
 	}
 
 	DisplayOut "`n-------------------------`n-   Application Items   -`n-------------------------" 14 0
