@@ -1,8 +1,12 @@
 -----------------------------------------------------------------------------------
-3.2.1 (11-14-2017)
+3.2.3 (11-16-2017)
 
-Enabled Window Resize 
-(best to resize so the red on bottom and right size are not visable)
+Enabled Window Resize
+(best to resize so the yellow on bottom and right size are not visable)
+^ Yellow block shows "Dont Resize past this area"
+
+Bug fix with Enabling "Previous Versions Context"
+Bug fix with Showing/Hding Tray Icons
 
 -----------------------------------------------------------------------------------
 3.2.0 (11-02-2017)
