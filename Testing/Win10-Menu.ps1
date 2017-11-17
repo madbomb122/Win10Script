@@ -11,8 +11,8 @@
 # Website: https://github.com/madbomb122/Win10Script/
 #
 $Script_Version = "3.2"
-$Minor_Version = "4"
-$Script_Date = "Nov-16-2017"
+$Minor_Version = "5"
+$Script_Date = "Nov-17-2017"
 $Release_Type = "Testing"
 #$Release_Type = "Stable"
 ##########
@@ -1636,7 +1636,7 @@ Function RunScript {
 	} ElseIf($PinToQuickAccess -eq 1) {
 		DisplayOut "Enabling Pin To Quick Access Context item..." 11 0
 		$Path = Check-SetPath "HKCR:\Folder\shell\pintohome"
-		New-ItemProperty -Path  $Path -Name "MUIVerb" -Type String -Value "@shell32.dll,-51377"
+		New-ItemProperty -Path $Path -Name "MUIVerb" -Type String -Value "@shell32.dll,-51377"
 		New-ItemProperty -Path $Path -Name "AppliesTo" -Type String -Value 'System.ParsingName:<>"::{679f85cb-0220-4080-b29b-5540cc05aab6}" AND System.ParsingName:<>"::{645FF040-5081-101B-9F08-00AA002F954E}" AND System.IsFolder:=System.StructuredQueryType.Boolean#True'
 		$Path = Check-SetPath  "$Path\command"
 		New-ItemProperty -Path "$Path" -Name "DelegateExecute" -Type String -Value "{b455f46e-e4af-4035-b0a4-cf18d2f6f28e}"
@@ -1649,16 +1649,6 @@ Function RunScript {
 		DisplayOut "Disabling Pin To Quick Access Context item..." 12 0
 		RemoveSetPath "HKCR:\Folder\shell\pintohome"
 		RemoveSetPath "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome"
-		<#
-		$Path = "HKCR:\Folder\shell\pintohome"
-		Set-ItemProperty -Path $Path -Name "MUIVerb" -Type String -Value ""
-		Set-ItemProperty -Path $Path -Name "AppliesTo" -Type String -Value ""
-		Set-ItemProperty -Path "$Path\command"  -Name "DelegateExecute" -Type String -Value ""
-		$Path = "HKLM:\SOFTWARE\Classes\Folder\shell\pintohome"
-		Set-ItemProperty -Path $Path -Name "MUIVerb" -Type String -Value ""
-		Set-ItemProperty -Path $Path -Name "AppliesTo" -Type String -Value ""
-		Set-ItemProperty -Path "$Path\command" -Name "DelegateExecute" -Type String -Value ""
-		#>
 	}
 
 	If($ShareWith -eq 0 -And $ShowSkipped -eq 1) {
@@ -1899,10 +1889,10 @@ Function RunScript {
 		DisplayOut "Skipping Aero Snap..." 15 0
 	} ElseIf($AeroSnap -eq 1) {
 		DisplayOut "Enabling Aero Snap..." 11 0
-		Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "WindowArrangementActive" -Type DWord -Value 1
+		Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "WindowArrangementActive" -Type String -Value 1
 	} ElseIf($AeroSnap -eq 2) {
 		DisplayOut "Disabling Aero Snap..." 12 0
-		Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "WindowArrangementActive" -Type DWord -Value 0
+		Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "WindowArrangementActive" -Type String -Value 0
 	}
 
 	If($AeroShake -eq 0 -And $ShowSkipped -eq 1) {
