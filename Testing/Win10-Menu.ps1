@@ -2554,22 +2554,14 @@ Function RunScript {
 	$A = 0
 	ForEach($AppV In $APPProcess) {
 		If($AppV -eq 1) {
-			If($AppsList[$A] -ne "Xbox"){
-				$APPS_AppsUnhide.Add($AppsList[$A]) | Out-null
-			} Else {
-				$APPS_AppsUnhide.Add($Xbox_Apps) | Out-null
-			}
+			If($AppsList[$A] -ne "Xbox"){ $APPS_AppsUnhide.Add($AppsList[$A]) | Out-null
+			} Else { $APPS_AppsUnhide.Add($Xbox_Apps) | Out-null }
 		} ElseIf($AppV -eq 2) {
-			If($AppsList[$A] -ne "Xbox"){
-				$APPS_AppsHide.Add($AppsList[$A]) | Out-null
-			} Else {
-				$APPS_AppsHide.Add($Xbox_Apps) | Out-null
-			}
+			If($AppsList[$A] -ne "Xbox"){ $APPS_AppsHide.Add($AppsList[$A]) | Out-null
+			} Else { $APPS_AppsHide.Add($Xbox_Apps) | Out-null }
 		} ElseIf($AppV -eq 3) {
-				$APPS_AppsUninstall.Add($AppsList[$A]) | Out-null
-			} Else {
-				$APPS_AppsUninstall.Add($Xbox_Apps) | Out-null
-			}
+			If($AppsList[$A] -ne "Xbox"){ $APPS_AppsUninstall.Add($AppsList[$A]) | Out-null
+			} Else { $APPS_AppsUninstall.Add($Xbox_Apps) | Out-null }
 		} $A++
 	}
 
