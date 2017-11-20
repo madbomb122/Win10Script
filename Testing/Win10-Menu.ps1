@@ -11,8 +11,8 @@
 # Website: https://github.com/madbomb122/Win10Script/
 #
 $Script_Version = "3.2"
-$Minor_Version = "6"
-$Script_Date = "Nov-19-2017"
+$Minor_Version = "7"
+$Script_Date = "Nov-20-2017"
 $Release_Type = "Testing"
 #$Release_Type = "Stable"
 ##########
@@ -157,9 +157,17 @@ $AppsList = @(
 'Microsoft.WindowsMaps',
 'Microsoft.WindowsPhone',
 'Microsoft.WindowsStore',
-'Microsoft.XboxApp',
+#'Microsoft.XboxApp',
+'Xbox',
 'Microsoft.ZuneMusic',
 'Microsoft.ZuneVideo')
+
+$Xbox_Apps = @(
+'Microsoft.XboxApp',
+'Microsoft.XboxIdentityProvider',
+'Microsoft.XboxSpeechToTextOverlay',
+'Microsoft.XboxGameOverlay',
+'Microsoft.Xbox.TCUI')
 
 $colors = @(
 "black",      #0
@@ -779,7 +787,7 @@ Function Gui-Start {
    <ComboBox Name="APP_WindowsMaps_Combo" HorizontalAlignment="Left" Margin="442,155,0,0" VerticalAlignment="Top" Width="74"/>
    <Label Content="Phone Comp.:" HorizontalAlignment="Left" Margin="361,176,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="APP_WindowsPhone_Combo" HorizontalAlignment="Left" Margin="442,179,0,0" VerticalAlignment="Top" Width="74"/>
-   <Label Content="Xbox App:" HorizontalAlignment="Left" Margin="381,200,0,0" VerticalAlignment="Top"/>
+   <Label Content="All Xbox Apps:" HorizontalAlignment="Left" Margin="359,200,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="APP_XboxApp_Combo" HorizontalAlignment="Left" Margin="442,203,0,0" VerticalAlignment="Top" Width="74"/>
    <Label Content="Groove:" HorizontalAlignment="Left" Margin="394,224,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="APP_Zune_Combo" HorizontalAlignment="Left" Margin="442,227,0,0" VerticalAlignment="Top" Width="74"/>
@@ -2546,11 +2554,22 @@ Function RunScript {
 	$A = 0
 	ForEach($AppV In $APPProcess) {
 		If($AppV -eq 1) {
-			$APPS_AppsUnhide.Add($AppsList[$A]) | Out-null
+			If($AppsList[$A] -ne "Xbox"){
+				$APPS_AppsUnhide.Add($AppsList[$A]) | Out-null
+			} Else {
+				$APPS_AppsUnhide.Add($Xbox_Apps) | Out-null
+			}
 		} ElseIf($AppV -eq 2) {
-			$APPS_AppsHide.Add($AppsList[$A]) | Out-null
+			If($AppsList[$A] -ne "Xbox"){
+				$APPS_AppsHide.Add($AppsList[$A]) | Out-null
+			} Else {
+				$APPS_AppsHide.Add($Xbox_Apps) | Out-null
+			}
 		} ElseIf($AppV -eq 3) {
-			$APPS_AppsUninstall.Add($AppsList[$A]) | Out-null
+				$APPS_AppsUninstall.Add($AppsList[$A]) | Out-null
+			} Else {
+				$APPS_AppsUninstall.Add($Xbox_Apps) | Out-null
+			}
 		} $A++
 	}
 
@@ -2868,7 +2887,7 @@ $Script:APP_WindowsFeedbak2 = 0     # Microsoft.WindowsFeedbackHub
 $Script:APP_WindowsMaps = 0         # Maps app
 $Script:APP_WindowsPhone = 0        # Phone Companion app
 $Script:APP_WindowsStore = 0        # Windows Store
-$Script:APP_XboxApp = 0             # Xbox app
+$Script:APP_XboxApp = 0             # Xbox apps (There is a few)
 $Script:APP_ZuneMusic = 0           # Groove Music app
 $Script:APP_ZuneVideo = 0           # Groove Video app
 # --------------------------------------------------------------------------
