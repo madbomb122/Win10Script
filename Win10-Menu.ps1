@@ -11,8 +11,8 @@
 # Website: https://github.com/madbomb122/Win10Script/
 #
 $Script_Version = "3.2"
-$Minor_Version = "5"
-$Script_Date = "Nov-17-2017"
+$Minor_Version = "8"
+$Script_Date = "Nov-21-2017"
 $Release_Type = "Stable"
 ##########
 
@@ -95,6 +95,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ##########
 # Pre-Script -Start
 ##########
+#Get-ItemPropertyValue 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion' 'ProgramFilesDir'
 
 If([Environment]::OSVersion.Version.Major -ne 10) {
 	Clear-Host
@@ -155,9 +156,16 @@ $AppsList = @(
 'Microsoft.WindowsMaps',
 'Microsoft.WindowsPhone',
 'Microsoft.WindowsStore',
-'Microsoft.XboxApp',
+'XboxApps',
 'Microsoft.ZuneMusic',
 'Microsoft.ZuneVideo')
+
+$Xbox_Apps = @(
+'Microsoft.XboxApp',
+'Microsoft.XboxIdentityProvider',
+'Microsoft.XboxSpeechToTextOverlay',
+'Microsoft.XboxGameOverlay',
+'Microsoft.Xbox.TCUI')
 
 $colors = @(
 "black",      #0
@@ -663,6 +671,7 @@ Function Gui-Start {
    <ComboBox Name="WinXPowerShell_Combo" HorizontalAlignment="Left" Margin="133,206,0,0" VerticalAlignment="Top" Width="127"/></Grid>
   </TabItem>
   <TabItem Name="Desktop_Tab" Header="Desktop/This PC" Margin="-2,0,2,0"><Grid Background="#FFE5E5E5">
+   <Label Content="Desktop" HorizontalAlignment="Left" Margin="99,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
    <Label Content="This PC Icon:" HorizontalAlignment="Left" Margin="54,31,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="ThisPCOnDesktop_Combo" HorizontalAlignment="Left" Margin="128,34,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Network Icon:" HorizontalAlignment="Left" Margin="47,58,0,0" VerticalAlignment="Top"/>
@@ -674,22 +683,22 @@ Function Gui-Start {
    <Label Content="Control Panel Icon:" HorizontalAlignment="Left" Margin="21,139,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="ControlPanelOnDesktop_Combo" HorizontalAlignment="Left" Margin="128,142,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Desktop Folder:" HorizontalAlignment="Left" Margin="302,31,0,0" VerticalAlignment="Top"/>
-   <ComboBox Name="DesktopIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,34,0,0" VerticalAlignment="Top" Width="72"/>
-   <Label Content="Documents Folder:" HorizontalAlignment="Left" Margin="285,58,0,0" VerticalAlignment="Top"/>
-   <ComboBox Name="DocumentsIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,61,0,0" VerticalAlignment="Top" Width="72"/>
-   <Label Content="Downloads Folder:" HorizontalAlignment="Left" Margin="287,85,0,0" VerticalAlignment="Top"/>
-   <ComboBox Name="DownloadsIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,88,0,0" VerticalAlignment="Top" Width="72"/>
-   <Label Content="Music Folder:" HorizontalAlignment="Left" Margin="315,112,0,0" VerticalAlignment="Top"/>
-   <ComboBox Name="MusicIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,115,0,0" VerticalAlignment="Top" Width="72"/>
-   <Label Content="Pictures Folder:" HorizontalAlignment="Left" Margin="304,139,0,0" VerticalAlignment="Top"/>
-   <ComboBox Name="PicturesIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,142,0,0" VerticalAlignment="Top" Width="72"/>
-   <Label Content="Videos Folder:" HorizontalAlignment="Left" Margin="310,166,0,0" VerticalAlignment="Top"/>
-   <ComboBox Name="VideosIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,169,0,0" VerticalAlignment="Top" Width="72"/>
-   <Label Name="ThreeDobjectsIconInThisPCtxt" Content="3D Objects Folder:" HorizontalAlignment="Left" Margin="288,194,0,0" VerticalAlignment="Top"/>
-   <ComboBox Name="ThreeDobjectsIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,197,0,0" VerticalAlignment="Top" Width="72"/>
    <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="253" Margin="254,0,0,0" Stroke="Black" VerticalAlignment="Top" Width="1"/>
-   <Label Content="Desktop" HorizontalAlignment="Left" Margin="99,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-   <Label Content="This PC" HorizontalAlignment="Left" Margin="364,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/></Grid>
+   <Label Content="This PC" HorizontalAlignment="Left" Margin="364,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+   <ComboBox Name="DesktopIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,34,0,0" VerticalAlignment="Top" Width="80"/>
+   <Label Content="Documents Folder:" HorizontalAlignment="Left" Margin="285,58,0,0" VerticalAlignment="Top"/>
+   <ComboBox Name="DocumentsIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,61,0,0" VerticalAlignment="Top" Width="80"/>
+   <Label Content="Downloads Folder:" HorizontalAlignment="Left" Margin="287,85,0,0" VerticalAlignment="Top"/>
+   <ComboBox Name="DownloadsIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,88,0,0" VerticalAlignment="Top" Width="80"/>
+   <Label Content="Music Folder:" HorizontalAlignment="Left" Margin="315,112,0,0" VerticalAlignment="Top"/>
+   <ComboBox Name="MusicIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,115,0,0" VerticalAlignment="Top" Width="80"/>
+   <Label Content="Pictures Folder:" HorizontalAlignment="Left" Margin="304,139,0,0" VerticalAlignment="Top"/>
+   <ComboBox Name="PicturesIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,142,0,0" VerticalAlignment="Top" Width="80"/>
+   <Label Content="Videos Folder:" HorizontalAlignment="Left" Margin="310,166,0,0" VerticalAlignment="Top"/>
+   <ComboBox Name="VideosIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,169,0,0" VerticalAlignment="Top" Width="80"/>
+   <Label Name="ThreeDobjectsIconInThisPCtxt" Content="3D Objects Folder:" HorizontalAlignment="Left" Margin="288,194,0,0" VerticalAlignment="Top"/>
+   <ComboBox Name="ThreeDobjectsIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,197,0,0" VerticalAlignment="Top" Width="80"/>
+   <Label Content="**Remove may cause problems with a few things" HorizontalAlignment="Left" Margin="255,216,0,0" VerticalAlignment="Top"/></Grid>
   </TabItem>
   <TabItem Name="Misc_Tab" Header="Misc/Photo Viewer/LockScreen" Margin="-2,0,2,0"><Grid Background="#FFE5E5E5">
    <Label Content="Action Center:" HorizontalAlignment="Left" Margin="46,31,0,0" VerticalAlignment="Top"/>
@@ -776,7 +785,7 @@ Function Gui-Start {
    <ComboBox Name="APP_WindowsMaps_Combo" HorizontalAlignment="Left" Margin="442,155,0,0" VerticalAlignment="Top" Width="74"/>
    <Label Content="Phone Comp.:" HorizontalAlignment="Left" Margin="361,176,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="APP_WindowsPhone_Combo" HorizontalAlignment="Left" Margin="442,179,0,0" VerticalAlignment="Top" Width="74"/>
-   <Label Content="Xbox App:" HorizontalAlignment="Left" Margin="381,200,0,0" VerticalAlignment="Top"/>
+   <Label Content="All Xbox Apps:" HorizontalAlignment="Left" Margin="359,200,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="APP_XboxApp_Combo" HorizontalAlignment="Left" Margin="442,203,0,0" VerticalAlignment="Top" Width="74"/>
    <Label Content="Groove:" HorizontalAlignment="Left" Margin="394,224,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="APP_Zune_Combo" HorizontalAlignment="Left" Margin="442,227,0,0" VerticalAlignment="Top" Width="74"/>
@@ -928,15 +937,18 @@ $Skip_ShowD_Hide = @(
 "MostUsedAppStartMenu",
 "FrequentFoldersQikAcc",
 "WinContentWhileDrag",
+"RecycleBinOnDesktop",
+"PowerMenuLockScreen")
+
+$Skip_ShowD_Hide_Remove = @(
 "DesktopIconInThisPC",
 "DocumentsIconInThisPC",
 "DownloadsIconInThisPC",
 "ThreeDobjectsIconInThisPC",
 "MusicIconInThisPC",
 "PicturesIconInThisPC",
-"VideosIconInThisPC",
-"RecycleBinOnDesktop",
-"PowerMenuLockScreen")
+"VideosIconInThisPC")
+
 
 $Skip_Show_HideD = @(
 "SecondsInClock",
@@ -959,6 +971,7 @@ $UpdateFile = $filebase + "Update.bat"
 	If($BuildVer -lt 16299){ $WPF_ThreeDobjectsIconInThisPC_Combo.Visibility = 'Hidden' ;$WPF_ThreeDobjectsIconInThisPCtxt.Visibility = 'Hidden' }
 	ForEach($Var In $Skip_EnableD_Disable){ SetCombo $Var "Enable*,Disable" }
 	ForEach($Var In $Skip_Enable_DisableD){ SetCombo $Var "Enable,Disable*" }
+	ForEach($Var In $Skip_ShowD_Hide_Remove){ SetCombo $Var "Show*,Hide,Remove**" }
 	ForEach($Var In $Skip_ShowD_Hide){ SetCombo $Var "Show*,Hide" }
 	ForEach($Var In $Skip_Show_HideD){ SetCombo $Var "Show,Hide*" }
 	ForEach($Var In $Skip_InstalledD_Uninstall){ SetCombo $Var "Installed*,Uninstall" }
@@ -987,11 +1000,11 @@ $UpdateFile = $filebase + "Update.bat"
 	$WPF_Release_Type_Txt.Text = $Release_Type
 
 	ConfigGUIitms
-	Clear-Host
-	DisplayOutMenu "Displaying GUI Now" 14 0 1 0
 	$TmpTitle = " (v.$Script_Version.$Minor_Version -$Script_Date"
 	If($Release_Type -ne "Stable"){ $TmpTitle += " -$Release_Type)" } Else{ $TmpTitle += ")" }
 	$Form.Title += $TmpTitle
+	Clear-Host
+	DisplayOutMenu "Displaying GUI Now" 14 0 1 0
 	$Form.ShowDialog() | Out-Null
 }
 
@@ -1264,10 +1277,14 @@ Function RunScript {
 	} ElseIf($AdvertisingID -eq 1) {
 		DisplayOut "Enabling Advertising ID..." 11 0
 		Remove-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo" -Name "Enabled"
+		$Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Privacy"
+		Set-ItemProperty -Path $Path -Name "TailoredExperiencesWithDiagnosticDataEnabled" -Type DWord -Value 2
 	} ElseIf($AdvertisingID -eq 2) {
 		DisplayOut "Disabling Advertising ID..." 12 0
 		$Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo"
 		Set-ItemProperty -Path $Path -Name "Enabled" -Type DWord -Value 0
+		$Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Privacy"
+		Set-ItemProperty -Path $Path -Name "TailoredExperiencesWithDiagnosticDataEnabled" -Type DWord -Value 0
 	}
 
 	If($Cortana -eq 0 -And $ShowSkipped -eq 1) {
@@ -1523,12 +1540,17 @@ Function RunScript {
 		$Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
 		If($BuildVer -lt 15063) { $RegName = "WindowsDefender" } Else { $RegName = "SecurityHealth" }
 		Set-ItemProperty -Path $Path -Name "SecurityHealth" -Type ExpandString -Value "`"%ProgramFiles%\Windows Defender\MSASCuiL.exe`""
+		RemoveSetPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet"
 	} ElseIf($WinDefender -eq 2) {
 		DisplayOut "Disabling Windows Defender..." 12 0
 		$Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
 		If($BuildVer -lt 15063) { $RegName = "WindowsDefender" } Else { $RegName = "SecurityHealth" }
 		Remove-ItemProperty -Path $Path -Name $RegName
-		Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name "DisableAntiSpyware" -Type DWord -Value 1
+		$Path = Check-SetPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\"
+		Set-ItemProperty -Path $Path -Name "DisableAntiSpyware" -Type DWord -Value 1
+		$Path = Check-SetPath "$Path\Spynet"
+		Set-ItemProperty -Path $Path -Name "SpynetReporting" -Type DWord -Value 0
+		Set-ItemProperty -Path $Path -Name "SubmitSamplesConsent" -Type DWord -Value 2
 	}
 
 	If($HomeGroups -eq 0 -And $ShowSkipped -eq 1) {
@@ -1834,21 +1856,25 @@ Function RunScript {
 	} ElseIf($StartSuggestions -eq 1) {
 		DisplayOut "Enabling Start Menu Suggestions..." 11 0
 		$Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManage"
-		If($BuildVer -lt 16299) {
-			Set-ItemProperty -Path $Path -Name "SystemPaneSuggestionsEnabled" -Type DWord -Value 1
-			Set-ItemProperty -Path $Path -Name "SilentInstalledAppsEnabled" -Type DWord -Value 1
-		} Else {
-			Remove-ItemProperty -Path $Path -Name "SubscribedContent-338388Enabled"
-		}
+		Set-ItemProperty -Path $Path -Name "ContentDeliveryAllowed" -Type DWord -Value 1
+		Set-ItemProperty -Path $Path -Name "OemPreInstalledAppsEnabled" -Type DWord -Value 1
+		Set-ItemProperty -Path $Path -Name "PreInstalledAppsEnabled" -Type DWord -Value 1
+		Set-ItemProperty -Path $Path -Name "PreInstalledAppsEverEnabled" -Type DWord -Value 1
+	 	Set-ItemProperty -Path $Path -Name "SilentInstalledAppsEnabled" -Type DWord -Value 1
+		Set-ItemProperty -Path $Path -Name "SubscribedContent-338389Enabled" -Type DWord -Value 1
+		Set-ItemProperty -Path $Path -Name "SystemPaneSuggestionsEnabled" -Type DWord -Value 1
+		Remove-ItemProperty -Path $Path -Name "SubscribedContent-338388Enabled"
 	} ElseIf($StartSuggestions -eq 2) {
 		DisplayOut "Disabling Start Menu Suggestions..." 12 0
 		$Path = Check-SetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManage"
-		If($BuildVer -lt 16299) {
-			Set-ItemProperty -Path $Path -Name "SystemPaneSuggestionsEnabled" -Type DWord -Value 0
-			Set-ItemProperty -Path $Path -Name "SilentInstalledAppsEnabled" -Type DWord -Value 0
-		} Else {
-			Set-ItemProperty -Path $Path -Name "SubscribedContent-338388Enabled" -Type DWord -Value 0
-		}
+		Set-ItemProperty -Path $Path -Name "ContentDeliveryAllowed" -Type DWord -Value 0
+		Set-ItemProperty -Path $Path -Name "OemPreInstalledAppsEnabled" -Type DWord -Value 0
+		Set-ItemProperty -Path $Path -Name "PreInstalledAppsEnabled" -Type DWord -Value 0
+		Set-ItemProperty -Path $Path -Name "PreInstalledAppsEverEnabled" -Type DWord -Value 0
+	 	Set-ItemProperty -Path $Path -Name "SilentInstalledAppsEnabled" -Type DWord -Value 0
+		Set-ItemProperty -Path $Path -Name "SubscribedContent-338389Enabled" -Type DWord -Value 0
+		Set-ItemProperty -Path $Path -Name "SystemPaneSuggestionsEnabled" -Type DWord -Value 0
+	 	Set-ItemProperty -Path $Path -Name "SubscribedContent-338388Enabled" -Type DWord -Value 0
 	}
 
 	If($MostUsedAppStartMenu -eq 0 -And $ShowSkipped -eq 1) {
@@ -2059,12 +2085,15 @@ Function RunScript {
 		DisplayOut "Showing Desktop folder in This PC..." 11 0
 		$Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}\PropertyBag"
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Show"
-		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Show" }
+		New-Item -Path "HKLM:\SOFTWARE\$Path" -Force
+		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Show" }		
 	} ElseIf($DesktopIconInThisPC -eq 2) {
 		DisplayOut "Hiding Desktop folder in This PC..." 12 0
 		$Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}\PropertyBag"
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide"
 		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
+	} ElseIf($DesktopIconInThisPC -eq 3) {
+		RemoveSetPath "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}"
 	}
 
 	If($DocumentsIconInThisPC -eq 0 -And $ShowSkipped -eq 1) {
@@ -2073,12 +2102,15 @@ Function RunScript {
 		DisplayOut "Showing Documents folder in This PC..." 11 0
 		$Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{f42ee2d3-909f-4907-8871-4c22fc0bf756}\PropertyBag"
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Show"
+		New-Item -Path "HKLM:\SOFTWARE\$Path" -Force
 		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Show" }
 	}ElseIf($DocumentsIconInThisPC -eq 2) {
 		DisplayOut "Hiding Documents folder in This PC..." 12 0
 		$Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{f42ee2d3-909f-4907-8871-4c22fc0bf756}\PropertyBag"
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide"
 		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
+	} ElseIf($DocumentsIconInThisPC -eq 3) {
+		RemoveSetPath "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{f42ee2d3-909f-4907-8871-4c22fc0bf756}"
 	}
 
 	If($DownloadsIconInThisPC -eq 0 -And $ShowSkipped -eq 1) {
@@ -2087,12 +2119,15 @@ Function RunScript {
 		DisplayOut "Showing Downloads folder in This PC..." 11 0
 		$Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{7d83ee9b-2244-4e70-b1f5-5393042af1e4}\PropertyBag"
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Show"
+		New-Item -Path "HKLM:\SOFTWARE\$Path" -Force
 		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Show" }
 	} ElseIf($DownloadsIconInThisPC -eq 2) {
 		DisplayOut "Hiding Downloads folder in This PC..." 12 0
 		$Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{7d83ee9b-2244-4e70-b1f5-5393042af1e4}\PropertyBag"
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide"
 		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
+	} ElseIf($DownloadsIconInThisPC -eq 3) {
+		RemoveSetPath "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{7d83ee9b-2244-4e70-b1f5-5393042af1e4}"
 	}
 
 	If($MusicIconInThisPC -eq 0 -And $ShowSkipped -eq 1) {
@@ -2101,12 +2136,15 @@ Function RunScript {
 		DisplayOut "Showing Music folder in This PC..." 11 0
 		$Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{a0c69a99-21c8-4671-8703-7934162fcf1d}\PropertyBag"
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Show"
+		New-Item -Path "HKLM:\SOFTWARE\$Path" -Force
 		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Show" }
 	} ElseIf($MusicIconInThisPC -eq 2) {
 		DisplayOut "Hiding Music folder in This PC..." 12 0
 		$Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{a0c69a99-21c8-4671-8703-7934162fcf1d}\PropertyBag"
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide"
 		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
+	} ElseIf($MusicIconInThisPC -eq 3) {
+		RemoveSetPath "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{a0c69a99-21c8-4671-8703-7934162fcf1d}"
 	}
 
 	If($PicturesIconInThisPC -eq 0 -And $ShowSkipped -eq 1) {
@@ -2115,13 +2153,17 @@ Function RunScript {
 		DisplayOut "Showing Pictures folder in This PC..." 11 0
 		$Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{0ddd015d-b06c-45d5-8c4c-f59713854639}\PropertyBag"
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Show"
+		New-Item -Path "HKLM:\SOFTWARE\$Path" -Force
 		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Show" }
 	} ElseIf($PicturesIconInThisPC -eq 2) {
 		DisplayOut "Hiding Pictures folder in This PC..." 12 0
 		$Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{0ddd015d-b06c-45d5-8c4c-f59713854639}\PropertyBag"
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide"
 		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
+	} ElseIf($PicturesIconInThisPC -eq 3) {
+		RemoveSetPath "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0ddd015d-b06c-45d5-8c4c-f59713854639}"
 	}
+
 
 	If($VideosIconInThisPC -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut "Skipping Videos folder in This PC..." 15 0
@@ -2129,12 +2171,15 @@ Function RunScript {
 		DisplayOut "Showing Videos folder in This PC..." 11 0
 		$Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{35286a68-3c57-41a1-bbb1-0eae73d76c95}\PropertyBag"
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Show"
+		New-Item -Path "HKLM:\SOFTWARE\$Path" -Force
 		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Show" }
 	} ElseIf($VideosIconInThisPC -eq 2) {
 		DisplayOut "Hiding Videos folder in This PC..." 12 0
 		$Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{35286a68-3c57-41a1-bbb1-0eae73d76c95}\PropertyBag"
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide"
 		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
+	} ElseIf($PicturesIconInThisPC -eq 3) {
+		RemoveSetPath "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{35286a68-3c57-41a1-bbb1-0eae73d76c95}"
 	}
 
 	If($BuildVer -ge 16299){ 
@@ -2144,12 +2189,15 @@ Function RunScript {
 			DisplayOut "Showing 3D Object folder in This PC..." 11 0
 			$Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{31C0DD25-9439-4F12-BF41-7FF4EDA38722}\PropertyBag"
 			Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Show"
+			New-Item -Path "HKLM:\SOFTWARE\$Path" -Force
 			If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Show" }
 		} ElseIf($ThreeDobjectsIconInThisPC -eq 2) {
 			DisplayOut "Hiding 3D Object folder in This PC..." 12 0
 			$Path = "\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{31C0DD25-9439-4F12-BF41-7FF4EDA38722}\PropertyBag"
 			Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide"
 			If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
+		} ElseIf($ThreeDobjectsIconInThisPC -eq 3) {
+			RemoveSetPath "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{31C0DD25-9439-4F12-BF41-7FF4EDA38722}"
 		}
 	}
 	
@@ -2502,19 +2550,32 @@ Function RunScript {
 	DisplayOut "`n-----------------------`n-   Metro App Items   -`n-----------------------" 14 0
 	$APPProcess = Get-Variable -Name "APP_*" -ValueOnly -Scope Script
 	$A = 0
+
 	ForEach($AppV In $APPProcess) {
 		If($AppV -eq 1) {
-			$APPS_AppsUnhide.Add($AppsList[$A]) | Out-null
+			If($AppsList[$A] -ne "XboxApps"){ 
+				$APPS_AppsUnhide.Add($AppsList[$A]) | Out-null
+			} Else { 
+				ForEach($AppX In $Xbox_Apps) { $APPS_AppsUnhide.Add($AppX) | Out-null }
+			}
 		} ElseIf($AppV -eq 2) {
-			$APPS_AppsHide.Add($AppsList[$A]) | Out-null
+			If($AppsList[$A] -ne "XboxApps"){ 
+				$APPS_AppsHide.Add($AppsList[$A]) | Out-null
+			} Else { 
+				ForEach($AppX In $Xbox_Apps) { $APPS_AppsHide.Add($AppX) | Out-null }
+			}
 		} ElseIf($AppV -eq 3) {
-			$APPS_AppsUninstall.Add($AppsList[$A]) | Out-null
+			If($AppsList[$A] -ne "XboxApps"){ 
+				$APPS_AppsUninstall.Add($AppsList[$A]) | Out-null
+			} Else { 
+				ForEach($AppX In $Xbox_Apps) { $APPS_AppsUninstall.Add($AppX) | Out-null }
+			}
 		} $A++
 	}
 
 	$APPS_AppsUnhide.Remove("") ;$Ai = $APPS_AppsUnhide.Length
 	$APPS_AppsHide.Remove("") ;$Ah = $APPS_AppsHide.Length
-	$APPS_AppsUninstall.Remove("");$Au = $APPS_AppsUninstall.Length
+	$APPS_AppsUninstall.Remove("") ;$Au = $APPS_AppsUninstall.Length
 	If($Ah -ne $null -or $Au -ne $null){ $AppxPackages = Get-AppxProvisionedPackage -online | select-object PackageName,Displayname }
 
 	DisplayOut "Unhiding Apps...`n------------------" 11 0
@@ -2727,13 +2788,14 @@ $Script:TaskManagerDetails = 0      #0-Skip, 1-Show, 2-Hide*
 
 #'This PC' Items
 # Function = Option                 #Choices (* Indicates Windows Default)
-$Script:DesktopIconInThisPC = 0     #0-Skip, 1-Show*, 2-Hide
-$Script:DocumentsIconInThisPC = 0   #0-Skip, 1-Show*, 2-Hide
-$Script:DownloadsIconInThisPC = 0   #0-Skip, 1-Show*, 2-Hide
-$Script:MusicIconInThisPC = 0       #0-Skip, 1-Show*, 2-Hide
-$Script:PicturesIconInThisPC = 0    #0-Skip, 1-Show*, 2-Hide
-$Script:VideosIconInThisPC = 0      #0-Skip, 1-Show*, 2-Hide
-$Script:ThreeDobjectsIconInThisPC = 0   #0-Skip, 1-Show, 2-Hide*
+$Script:DesktopIconInThisPC = 0     #0-Skip, 1-Show*, 2-Hide, 3- Remove
+$Script:DocumentsIconInThisPC = 0   #0-Skip, 1-Show*, 2-Hide, 3- Remove
+$Script:DownloadsIconInThisPC = 0   #0-Skip, 1-Show*, 2-Hide, 3- Remove
+$Script:MusicIconInThisPC = 0       #0-Skip, 1-Show*, 2-Hide, 3- Remove
+$Script:PicturesIconInThisPC = 0    #0-Skip, 1-Show*, 2-Hide, 3- Remove
+$Script:VideosIconInThisPC = 0      #0-Skip, 1-Show*, 2-Hide, 3- Remove
+$Script:ThreeDobjectsIconInThisPC = 0   #0-Skip, 1-Show, 2-Hide*, 3- Remove
+# Removeing them can cause problems
 
 #Desktop Items
 # Function = Option                 #Choices (* Indicates Windows Default)
@@ -2825,7 +2887,7 @@ $Script:APP_WindowsFeedbak2 = 0     # Microsoft.WindowsFeedbackHub
 $Script:APP_WindowsMaps = 0         # Maps app
 $Script:APP_WindowsPhone = 0        # Phone Companion app
 $Script:APP_WindowsStore = 0        # Windows Store
-$Script:APP_XboxApp = 0             # Xbox app
+$Script:APP_XboxApp = 0             # Xbox apps (There is a few)
 $Script:APP_ZuneMusic = 0           # Groove Music app
 $Script:APP_ZuneVideo = 0           # Groove Video app
 # --------------------------------------------------------------------------
