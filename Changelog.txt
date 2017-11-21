@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
-3.2.5 (11-17-2017)
+3.2.8 (11-21-2017)
 
 Enabled Window Resize
 (best to resize so the yellow on bottom and right size are not visable)
@@ -12,6 +12,13 @@ Bug fix with Checkboxes on Script Option not working properly
 ^Create Restore Point, Skip Items, Restart when Done, Update Check, Update Bat, Internet Check
 
 Bug fix with Enabling Aero Snap
+
+Added Remove option for 'This PC' items
+Improved Advertising ID (Enable/Disable)
+Improved Windows Defender (Enable/Disable)
+Improved Start Suggestions (Enable/Disable)
+
+Added Multi Xbox Apps (No seperate option for each apps)
 
 -----------------------------------------------------------------------------------
 3.2.0 (11-02-2017)
@@ -145,7 +152,7 @@ Twitter
 
 Added Script update check option
 
-Decided to remove Black Viper Service configuration from this script.. May re-add at some point
+Decided to remove Black Viper Service configuration from this script..
 Please use the script for just the Black Viper Service configuration @
 https://github.com/madbomb122/BlackViperScript
 
@@ -183,9 +190,6 @@ Added Black Viper's service settings (Win 10 Home/Pro ONLY)
 Removed Lock Screen alt (script check run the correct lockscreen work around)
 Added a display of skipped items
 
-*Note: Seperate script for just the Black Viper's service settings avaiable
-https://github.com/madbomb122/BlackViperScript
-
 -----------------------------------------------------------------------------------
 1.3-Menu (02-27-2017)
 
@@ -211,7 +215,6 @@ Done With adding a Menu
 
 Cant Change the Apps to Install/Hide/Uninstall from within script menu..
   But you can from in the script file (or a loaded file).
-  *I might add it to Menu at some other point
 
 Note1: Settings file for Older script (3.5-mod and bellow) will NOT work
 Note2: 3.5-mod is the LAST of the old script
@@ -242,7 +245,7 @@ Also a few minor bug fixes
 -----------------------------------------------------------------------------------
 3.3-Mod (02-02-2017)
 
-Added Description to some items (May add more later)
+Added Description to some items
 Ability to Create Restore Point Before running Script
 
 Added 12 New Setting Items:
@@ -261,7 +264,7 @@ Added 12 New Setting Items:
 -----------------------------------------------------------------------------------
 3.2-Mod (02-01-2017)
 
-Added Description to some items (May add more later)
+Added Description to some items
 Ability to run Pre-defined setting (currently only -Set Set1)
 
 Added 4 New Setting Items:
