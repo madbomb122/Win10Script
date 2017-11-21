@@ -11,8 +11,8 @@
 # Website: https://github.com/madbomb122/Win10Script/
 #
 $Script_Version = "3.2"
-$Minor_Version = "7"
-$Script_Date = "Nov-20-2017"
+$Minor_Version = "8"
+$Script_Date = "Nov-21-2017"
 $Release_Type = "Testing"
 #$Release_Type = "Stable"
 ##########
@@ -157,8 +157,7 @@ $AppsList = @(
 'Microsoft.WindowsMaps',
 'Microsoft.WindowsPhone',
 'Microsoft.WindowsStore',
-#'Microsoft.XboxApp',
-'Xbox',
+'XboxApps',
 'Microsoft.ZuneMusic',
 'Microsoft.ZuneVideo')
 
@@ -2552,22 +2551,32 @@ Function RunScript {
 	DisplayOut "`n-----------------------`n-   Metro App Items   -`n-----------------------" 14 0
 	$APPProcess = Get-Variable -Name "APP_*" -ValueOnly -Scope Script
 	$A = 0
+
 	ForEach($AppV In $APPProcess) {
 		If($AppV -eq 1) {
-			If($AppsList[$A] -ne "Xbox"){ $APPS_AppsUnhide.Add($AppsList[$A]) | Out-null
-			} Else { $APPS_AppsUnhide.Add($Xbox_Apps) | Out-null }
+			If($AppsList[$A] -ne "XboxApps"){ 
+				$APPS_AppsUnhide.Add($AppsList[$A]) | Out-null
+			} Else { 
+				ForEach($AppX In $Xbox_Apps) { $APPS_AppsUnhide.Add($AppX) | Out-null }
+			}
 		} ElseIf($AppV -eq 2) {
-			If($AppsList[$A] -ne "Xbox"){ $APPS_AppsHide.Add($AppsList[$A]) | Out-null
-			} Else { $APPS_AppsHide.Add($Xbox_Apps) | Out-null }
+			If($AppsList[$A] -ne "XboxApps"){ 
+				$APPS_AppsHide.Add($AppsList[$A]) | Out-null
+			} Else { 
+				ForEach($AppX In $Xbox_Apps) { $APPS_AppsHide.Add($AppX) | Out-null }
+			}
 		} ElseIf($AppV -eq 3) {
-			If($AppsList[$A] -ne "Xbox"){ $APPS_AppsUninstall.Add($AppsList[$A]) | Out-null
-			} Else { $APPS_AppsUninstall.Add($Xbox_Apps) | Out-null }
+			If($AppsList[$A] -ne "XboxApps"){ 
+				$APPS_AppsUninstall.Add($AppsList[$A]) | Out-null
+			} Else { 
+				ForEach($AppX In $Xbox_Apps) { $APPS_AppsUninstall.Add($AppX) | Out-null }
+			}
 		} $A++
 	}
 
 	$APPS_AppsUnhide.Remove("") ;$Ai = $APPS_AppsUnhide.Length
 	$APPS_AppsHide.Remove("") ;$Ah = $APPS_AppsHide.Length
-	$APPS_AppsUninstall.Remove("");$Au = $APPS_AppsUninstall.Length
+	$APPS_AppsUninstall.Remove("") ;$Au = $APPS_AppsUninstall.Length
 	If($Ah -ne $null -or $Au -ne $null){ $AppxPackages = Get-AppxProvisionedPackage -online | select-object PackageName,Displayname }
 
 	DisplayOut "Unhiding Apps...`n------------------" 11 0
