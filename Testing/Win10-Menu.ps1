@@ -1,18 +1,18 @@
 ##########
 # Win 10 Setup Script/Tweaks with Menu(GUI)
 #
+# Modded Script + Menu(GUI) By
+#  Author: Madbomb122
+# Website: https://github.com/madbomb122/Win10Script/
+#
 # Original Basic Script By
 #  Author: Disassembler0
 # Website: https://github.com/Disassembler0/Win10-Initial-Setup-Script/
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
-# Modded Script + Menu(GUI) By
-#  Author: Madbomb122
-# Website: https://github.com/madbomb122/Win10Script/
-#
 $Script_Version = "3.2"
-$Minor_Version = "8"
-$Script_Date = "Nov-21-2017"
+$Minor_Version = "9"
+$Script_Date = "Dec-05-2017"
 $Release_Type = "Testing"
 #$Release_Type = "Stable"
 ##########
@@ -2058,12 +2058,12 @@ Function RunScript {
 	} ElseIf($TaskManagerDetails -eq 1) {
 		DisplayOut "Showing Task Manager Details..." 11 0
 		$Path =  "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager"
-		$TaskManKey = Get-ItemProperty -Path $Path -Name "Preferences" | Out-Null
+		$TaskManKey = Get-ItemProperty -Path $Path -Name "Preferences"
 		If(!($TaskManKey)) {
 			$taskmgr = Start-Process -WindowStyle Hidden -FilePath taskmgr.exe -PassThru
 			While(!($TaskManKey)) {
 				Start-Sleep -m 250
-				$TaskManKey = Get-ItemProperty -Path $Path -Name "Preferences" | Out-Null
+				$TaskManKey = Get-ItemProperty -Path $Path -Name "Preferences"
 			}
 			Stop-Process $taskmgr | Out-Null
 		}
@@ -2072,7 +2072,7 @@ Function RunScript {
 	} ElseIf($TaskManagerDetails -eq 2) {
 		DisplayOut "Hiding Task Manager Details..." 12 0
 		$Path = Check-SetPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager"
-		$TaskManKey = Get-ItemProperty -Path $Path -Name "Preferences" | Out-Null
+		$TaskManKey = Get-ItemProperty -Path $Path -Name "Preferences"
 		If($TaskManKey) {
 			$TaskManKey.Preferences[28] = 1
 			Set-ItemProperty -Path $Path -Name "Preferences" -Type Binary -Value $TaskManKey.Preferences
