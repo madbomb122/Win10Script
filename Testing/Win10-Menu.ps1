@@ -11,8 +11,8 @@
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
 $Script_Version = "3.2"
-$Minor_Version = "9"
-$Script_Date = "Dec-05-2017"
+$Minor_Version = "10"
+$Script_Date = "Dec-11-2017"
 $Release_Type = "Testing"
 #$Release_Type = "Stable"
 ##########
@@ -511,15 +511,15 @@ Function Gui-Start {
 
 [xml]$XAML = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
- Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="381" Width="541" BorderBrush="Black" Background="White">
+Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="372" Width="541" BorderBrush="Black" Background="White">
 <Window.Effect><DropShadowEffect/></Window.Effect><Grid>
- <Label Content="Script Version:" HorizontalAlignment="Left" Margin="1,317,0,0" VerticalAlignment="Top" Height="25"/>
- <Button Name="RunScriptButton" Content="Run Script" HorizontalAlignment="Left" Margin="0,300,0,0" VerticalAlignment="Top" Width="525" Height="20" FontWeight="Bold"/>
- <Button Name="CopyrightButton" Content="Copyright" HorizontalAlignment="Left" Margin="394,321,0,0" VerticalAlignment="Top" Width="131" FontStyle="Italic" Background="#FF8ABEF0"/>
- <Button Name="Madbomb122WSButton" Content="Madbomb122's Website" HorizontalAlignment="Left" Margin="262,321,0,0" VerticalAlignment="Top" Width="132" FontStyle="Italic" Background="#FFA7D24D"/>
- <Button Name="DonateButton" Content="Donate to me" HorizontalAlignment="Left" Margin="0,321,0,0" VerticalAlignment="Top" Width="131" FontStyle="Italic" Background="#FFFFAD2F"/>
- <Button Name="EMail" Content="e-mail Madbomb122" HorizontalAlignment="Left" Margin="131,321,0,0" VerticalAlignment="Top" Width="131" FontStyle="Italic"/>
- <TabControl Name="TabControl" Height="300" VerticalAlignment="Top">
+ <Label Content="Script Version:" HorizontalAlignment="Left" Margin="1,318,0,-1" VerticalAlignment="Top" Height="25"/>
+ <Button Name="RunScriptButton" Content="Run Script" HorizontalAlignment="Left" Margin="0,0,0,21" VerticalAlignment="Bottom" Width="525" Height="20" FontWeight="Bold"/>
+ <Button Name="CopyrightButton" Content="Copyright" HorizontalAlignment="Left" Margin="394,0,0,0" VerticalAlignment="Bottom" Width="131" FontStyle="Italic" Background="#FF8ABEF0"/>
+ <Button Name="Madbomb122WSButton" Content="Madbomb122's Website" HorizontalAlignment="Left" Margin="262,0,0,0" VerticalAlignment="Bottom" Width="132" FontStyle="Italic" Background="#FFA7D24D"/>
+ <Button Name="DonateButton" Content="Donate to me" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="131" FontStyle="Italic" Background="#FFFFAD2F"/>
+ <Button Name="EMail" Content="e-mail Madbomb122" HorizontalAlignment="Left" Margin="131,0,0,0" VerticalAlignment="Bottom" Width="131" FontStyle="Italic"/>
+ <TabControl Name="TabControl" Margin="0,0,0,42">
   <TabItem Name="Services_Tab" Header="Script Options" Margin="-2,0,2,0"><Grid Background="#FFE5E5E5">
    <CheckBox Name="CreateRestorePoint_CB" Content="Create Restore Point:" HorizontalAlignment="Left" Margin="8,10,0,0" VerticalAlignment="Top"/>
    <TextBox Name="RestorePointName_Txt" HorizontalAlignment="Left" Height="20" Margin="139,9,0,0" TextWrapping="Wrap" Text="Win10 Initial Setup Script" VerticalAlignment="Top" Width="188"/>
@@ -598,6 +598,7 @@ Function Gui-Start {
    <ComboBox Name="ShareWith_Combo" HorizontalAlignment="Left" Margin="128,169,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Send To:" HorizontalAlignment="Left" Margin="76,193,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="SendTo_Combo" HorizontalAlignment="Left" Margin="128,196,0,0" VerticalAlignment="Top" Width="72"/>
+   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Margin="254,0,0,-2" Stroke="Black" Width="1"/>
    <Label Content="Bing Search in Start Menu:" HorizontalAlignment="Left" Margin="293,31,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="StartMenuWebSearch_Combo" HorizontalAlignment="Left" Margin="439,34,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Start Suggestions:" HorizontalAlignment="Left" Margin="337,85,0,0" VerticalAlignment="Top"/>
@@ -609,7 +610,6 @@ Function Gui-Start {
    <Label Content="Unpin Items:" HorizontalAlignment="Left" Margin="365,139,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="UnpinItems_Combo" HorizontalAlignment="Left" Margin="439,142,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Unpin List:  Calendar, Candy Crush Soda Saga, &#xD;&#xA;Cortana, Get Office, Groove Music, Mail, Maps, &#xD;&#xA;Edge, Microsoft Solitaire, Movies &amp; TV, &#xD;&#xA;OneNote, Phone Companion, Photos, Skype, &#xD;&#xA;Store, Twitter, Weather, Xbox" HorizontalAlignment="Left" Margin="259,161,0,0" VerticalAlignment="Top"/>
-   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="253" Margin="254,0,0,0" Stroke="Black" VerticalAlignment="Top" Width="1"/>
    <Label Content="Context Menu" HorizontalAlignment="Left" Margin="82,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
    <Label Content="Start Menu" HorizontalAlignment="Left" Margin="352,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/></Grid>
   </TabItem>
@@ -684,7 +684,7 @@ Function Gui-Start {
    <Label Content="Control Panel Icon:" HorizontalAlignment="Left" Margin="21,139,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="ControlPanelOnDesktop_Combo" HorizontalAlignment="Left" Margin="128,142,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Desktop Folder:" HorizontalAlignment="Left" Margin="302,31,0,0" VerticalAlignment="Top"/>
-   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="253" Margin="254,0,0,0" Stroke="Black" VerticalAlignment="Top" Width="1"/>
+   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Margin="254,0,0,-2" Stroke="Black" Width="1"/>
    <Label Content="This PC" HorizontalAlignment="Left" Margin="364,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
    <ComboBox Name="DesktopIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,34,0,0" VerticalAlignment="Top" Width="80"/>
    <Label Content="Documents Folder:" HorizontalAlignment="Left" Margin="285,58,0,0" VerticalAlignment="Top"/>
@@ -716,18 +716,19 @@ Function Gui-Start {
    <ComboBox Name="HibernatePower_Combo" HorizontalAlignment="Left" Margin="128,142,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Sleep Option:" HorizontalAlignment="Left" Margin="49,166,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="SleepPower_Combo" HorizontalAlignment="Left" Margin="128,169,0,0" VerticalAlignment="Top" Width="72"/>
+   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Margin="254,0,0,-2" Stroke="Black" Width="1"/>
    <Label Content="File Association:" HorizontalAlignment="Left" Margin="301,31,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="PVFileAssociation_Combo" HorizontalAlignment="Left" Margin="392,34,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Add &quot;Open with...&quot;:" HorizontalAlignment="Left" Margin="285,58,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="PVOpenWithMenu_Combo" HorizontalAlignment="Left" Margin="392,61,0,0" VerticalAlignment="Top" Width="72"/>
+   <Rectangle Fill="#FFFFFFFF" Height="1" Margin="254,106,0,0" Stroke="Black" VerticalAlignment="Top"/>
    <Label Content="Lockscreen:" HorizontalAlignment="Left" Margin="323,139,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="LockScreen_Combo" HorizontalAlignment="Left" Margin="392,142,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Power Menu:" HorizontalAlignment="Left" Margin="316,166,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="PowerMenuLockScreen_Combo" HorizontalAlignment="Left" Margin="392,169,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Camera:" HorizontalAlignment="Left" Margin="342,193,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="CameraOnLockscreen_Combo" HorizontalAlignment="Left" Margin="392,196,0,0" VerticalAlignment="Top" Width="72"/>
-   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="1" Margin="254,106,0,0" Stroke="Black" VerticalAlignment="Top" Width="268"/>
-   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="253" Margin="254,0,0,0" Stroke="Black" VerticalAlignment="Top" Width="1"/>
+
    <Label Content="Lockscreen" HorizontalAlignment="Left" Margin="352,111,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
    <Label Content="Misc" HorizontalAlignment="Left" Margin="109,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
    <Label Content="Photo Viewer" HorizontalAlignment="Left" Margin="346,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/></Grid>
@@ -792,8 +793,8 @@ Function Gui-Start {
    <ComboBox Name="APP_Zune_Combo" HorizontalAlignment="Left" Margin="442,227,0,0" VerticalAlignment="Top" Width="74"/>
    <Label Content="Windows Store:" HorizontalAlignment="Left" Margin="353,8,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="APP_WindowsStore_Combo" HorizontalAlignment="Left" Margin="442,11,0,0" VerticalAlignment="Top" Width="74"/>
-   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="224" Margin="171,29,0,-1" Stroke="Black" VerticalAlignment="Top" Width="1"/>
-   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="253" Margin="346,0,0,-1" Stroke="Black" VerticalAlignment="Top" Width="1"/></Grid>
+   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Margin="171,29,0,-2" Stroke="Black" Width="1"/>
+   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Margin="346,0,0,-2" Stroke="Black" Width="1"/></Grid>
   </TabItem>
   <TabItem Name="Application_Tab" Header="Application/Windows Update" Margin="-2,0,2,0"><Grid Background="#FFE5E5E5">
    <Label Content="OneDrive:" HorizontalAlignment="Left" Margin="69,31,0,0" VerticalAlignment="Top"/>
@@ -820,18 +821,13 @@ Function Gui-Start {
    <ComboBox Name="UpdateDriver_Combo" HorizontalAlignment="Left" Margin="392,142,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Restart on Update:" HorizontalAlignment="Left" Margin="287,166,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="RestartOnUpdate_Combo" HorizontalAlignment="Left" Margin="392,169,0,0" VerticalAlignment="Top" Width="72"/>
-   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Height="253" Margin="254,0,0,0" Stroke="Black" VerticalAlignment="Top" Width="1"/>
+   <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Margin="254,0,0,-2" Stroke="Black" Width="1"/>
    <Label Content="Application" HorizontalAlignment="Left" Margin="89,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
    <Label Content="Windows Update" HorizontalAlignment="Left" Margin="336,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/></Grid>
   </TabItem>
  </TabControl>
- <Rectangle Fill="#FFFFFFFF" Height="1" Margin="0,299,0,0" Stroke="Black" VerticalAlignment="Top"/>
- <Rectangle Fill="#FFFFFFFF" Height="1" Margin="0,320,0,0" Stroke="Black" VerticalAlignment="Top"/>
- <Rectangle Fill="Yellow" Stroke="Black" Margin="0,341,0,0" Height="16" VerticalAlignment="Top"/>
- <Rectangle Fill="Yellow" Stroke="Black" HorizontalAlignment="Left" Width="16" Margin="525,0,0,0"/>
- <Label Content="Dont Resize past this area" HorizontalAlignment="Left" Margin="176,335,0,-10" VerticalAlignment="Top" Width="152" Height="25"/>
- <Label Content="Dont Resize past this area" HorizontalAlignment="Left" Margin="456,164,-75,0" VerticalAlignment="Top" Width="152" Height="25" RenderTransformOrigin="0.5,0.5">
- <Label.RenderTransform> <RotateTransform Angle="-90"/></Label.RenderTransform></Label></Grid>
+ <Rectangle Fill="#FFFFFFFF" Height="1" Margin="0,0,0,41" Stroke="Black" VerticalAlignment="Bottom"/>
+ <Rectangle Fill="#FFFFFFFF" Height="1" Margin="0,0,0,20" Stroke="Black" VerticalAlignment="Bottom"/></Grid>
 </Window>
 "@
 
