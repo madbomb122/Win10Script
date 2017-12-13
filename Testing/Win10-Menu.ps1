@@ -11,8 +11,8 @@
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
 $Script_Version = "3.2"
-$Minor_Version = "10"
-$Script_Date = "Dec-11-2017"
+$Minor_Version = "11"
+$Script_Date = "Dec-13-2017"
 $Release_Type = "Testing"
 #$Release_Type = "Stable"
 ##########
@@ -76,7 +76,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   -auto          (Implies -Atos...Closes on - User Errors, or End of Script)
   -crp           (Creates Restore Point)
   -dnr           (Do Not Restart when done)
-  
+
 -- Run Script Switches --
  Switches       Description of Switch
   -run           (Runs script with settings in script)
@@ -206,10 +206,10 @@ $Pined_App = @(
 'Get Office',
 'Onenote')
 
-Function MenuBlankLine { DisplayOutMenu "|                                                   |" 14 0 1 }
-Function MenuLine { DisplayOutMenu "|---------------------------------------------------|" 14 0 1 }
+Function MenuBlankLine { DisplayOut "|                                                   |" 14 0 }
+Function MenuLine { DisplayOut "|---------------------------------------------------|" 14 0 }
 Function LeftLine { DisplayOutMenu "| " 14 0 0 }
-Function RightLine { DisplayOutMenu " |" 14 0 1 }
+Function RightLine { DisplayOut " |" 14 0 }
 
 ##########
 # Needed Variable -End
@@ -339,9 +339,42 @@ Function ArgCheck {
 				"-dnr" { $Script:Restart = 0 ;Break }
 				"-auto" { $Script:Automated = 1 ;$Script:AcceptToS = "Accepted-Automated-Switch" ;Break }
 				"-crp" { $Script:CreateRestorePoint = 1 ;If(!($PasVal.StartsWith("-"))){ $Script:RestorePointName = $PasVal } ;Break }
+				{$_ -eq "-help" -or $_ -eq "-h"} { ShowHelp ;Break }
 			}
 		}
 	}
+}
+
+Function ShowHelp {
+	Clear-Host
+	DisplayOut "                  List of Switches                   " 13 0
+	DisplayOut "-----------------------------------------------------" 14 0
+	DisplayOut "" 13 0
+	DisplayOut "-- Basic Switches --" 2 0
+	DisplayOutMenu " Switch " 15 0 0 ;DisplayOut "          Description of Switch" 14 0
+	DisplayOutMenu "  -atos " 15 0 0 ;DisplayOut "           Accepts ToS" 14 0
+	DisplayOutMenu "  -auto " 15 0 0 ;DisplayOut "           Implies -Atos...Closes on - User Errors, or End of Script" 14 0
+	DisplayOutMenu "  -crp  " 15 0 0 ;DisplayOut "           Creates Restore Point" 14 0
+	DisplayOutMenu "  -dnr  " 15 0 0 ;DisplayOut "           Do Not Restart when done" 14 0
+	DisplayOut "" 13 0
+	DisplayOut "-- Run Script Switches --" 2 0
+	DisplayOutMenu " Switch " 15 0 0 ;DisplayOut "          Description of Switch" 14 0
+	DisplayOutMenu "  -run  " 15 0 0 ;DisplayOut "           Runs script with settings in script" 14 0
+	DisplayOutMenu "  -run " 15 0 0 ;DisplayOutMenu "FILENAME " 11 0 0 ;DisplayOutMenu "   Runs script with settings in the file" 14 0 0 ;DisplayOut " FILENAME" 11 0
+	DisplayOutMenu "  -run wd " 15 0 0 ;DisplayOut "         Runs script with win default settings" 14 0
+	DisplayOut "" 13 0
+	DisplayOut "-- Load Script Switches --" 2 0
+	DisplayOutMenu " Switch " 15 0 0 ;DisplayOut "          Description of Switch" 14 0
+	DisplayOutMenu "  -load " 15 0 0 ;DisplayOutMenu "FILENAME " 11 0 0 ;DisplayOutMenu "  Loads script with settings in the file" 14 0 0 ;DisplayOut " FILENAME" 11 0
+	DisplayOutMenu "  -load wd " 15 0 0 ;DisplayOut "        Loads script with win default settings" 14 0
+	DisplayOut "" 13 0
+	DisplayOut "--Update Switches--" 2 0
+	DisplayOutMenu " Switch " 15 0 0 ;DisplayOut "          Description of Switch" 14 0
+	DisplayOutMenu "  -usc  " 15 0 0 ;DisplayOut "           Checks for Update to Script file before running" 14 0
+	DisplayOutMenu "  -sic  " 15 0 0 ;DisplayOut "           Skips Internet Check" 14 0
+	Write-Host "`nPress Any key to Close..." -ForegroundColor White -BackgroundColor Black
+	$key = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown,AllowCtrlC")
+	Exit
 }
 
 Function TOSDisplay {
@@ -349,23 +382,23 @@ Function TOSDisplay {
 	$BorderColor = 14
 	If($Release_Type -eq "Testing" -or $Release_Type -eq "Beta   ") {
 		$BorderColor = 15
-		DisplayOutMenu "|---------------------------------------------------|" $BorderColor 0 1
-		DisplayOutMenu "| " $BorderColor 0 0 ;DisplayOutMenu "                    WARNING!!                    " 13 0 0 ;DisplayOutMenu " |" $BorderColor 0 1
-		DisplayOutMenu "|                                                   |" $BorderColor 0 1
-		DisplayOutMenu "| " $BorderColor 0 0 ;DisplayOutMenu "    This version is currently being Tested.      " 14 0 0 ;DisplayOutMenu " |" $BorderColor 0 1
-		DisplayOutMenu "|                                                   |" $BorderColor 0 1
+		DisplayOut "|---------------------------------------------------|" $BorderColor 0
+		DisplayOutMenu "| " $BorderColor 0 0 ;DisplayOutMenu "                    WARNING!!                    " 13 0 0 ;DisplayOut " |" $BorderColor 0
+		DisplayOut "|                                                   |" $BorderColor 0
+		DisplayOutMenu "| " $BorderColor 0 0 ;DisplayOutMenu "    This version is currently being Tested.      " 14 0 0 ;DisplayOut " |" $BorderColor 0
+		DisplayOut "|                                                   |" $BorderColor 0
 	}
-	DisplayOutMenu "|---------------------------------------------------|" $BorderColor 0 1
-	DisplayOutMenu "| " $BorderColor 0 0 ;DisplayOutMenu "                  Terms of Use                   " 11 0 0 ;DisplayOutMenu " |" $BorderColor 0 1
-	DisplayOutMenu "|---------------------------------------------------|" $BorderColor 0 1
-	DisplayOutMenu "|                                                   |" $BorderColor 0 1
-	DisplayOutMenu "| " $BorderColor 0 0 ;DisplayOutMenu "This program comes with ABSOLUTELY NO WARRANTY.  " 2 0 0 ;DisplayOutMenu " |" $BorderColor 0 1
-	DisplayOutMenu "| " $BorderColor 0 0 ;DisplayOutMenu "This is free software, and you are welcome to    " 2 0 0 ;DisplayOutMenu " |" $BorderColor 0 1
-	DisplayOutMenu "| " $BorderColor 0 0 ;DisplayOutMenu "redistribute it under certain conditions.        " 2 0 0 ;DisplayOutMenu " |" $BorderColor 0 1
-	DisplayOutMenu "|                                                   |" $BorderColor 0 1
-	DisplayOutMenu "| " $BorderColor 0 0 ;DisplayOutMenu "Read License file for full Terms.                " 2 0 0 ;DisplayOutMenu " |" $BorderColor 0 1
-	DisplayOutMenu "|                                                   |" $BorderColor 0 1
-	DisplayOutMenu "|---------------------------------------------------|" $BorderColor 0 1
+	DisplayOut "|---------------------------------------------------|" $BorderColor 0
+	DisplayOutMenu "| " $BorderColor 0 0 ;DisplayOutMenu "                  Terms of Use                   " 11 0 0 ;DisplayOut " |" $BorderColor 0
+	DisplayOut "|---------------------------------------------------|" $BorderColor 0
+	DisplayOut "|                                                   |" $BorderColor 0
+	DisplayOutMenu "| " $BorderColor 0 0 ;DisplayOutMenu "This program comes with ABSOLUTELY NO WARRANTY.  " 2 0 0 ;DisplayOut " |" $BorderColor 0
+	DisplayOutMenu "| " $BorderColor 0 0 ;DisplayOutMenu "This is free software, and you are welcome to    " 2 0 0 ;DisplayOut " |" $BorderColor 0
+	DisplayOutMenu "| " $BorderColor 0 0 ;DisplayOutMenu "redistribute it under certain conditions.        " 2 0 0 ;DisplayOut " |" $BorderColor 0
+	DisplayOut "|                                                   |" $BorderColor 0
+	DisplayOutMenu "| " $BorderColor 0 0 ;DisplayOutMenu "Read License file for full Terms.                " 2 0 0 ;DisplayOut " |" $BorderColor 0
+	DisplayOut "|                                                   |" $BorderColor 0
+	DisplayOut "|---------------------------------------------------|" $BorderColor 0
 }
 
 Function TOS {
