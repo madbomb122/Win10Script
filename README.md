@@ -2,7 +2,7 @@ To Download go to -> [Win 10 Script -Release](https://github.com/madbomb122/Win1
 
 
 **Current Version** <br />
-**Script:** `3.2.9` (December 05, 2017) <br />
+**Script:** `3.2.11` (December 13, 2017) <br />
 
 ## Description
 
@@ -60,6 +60,7 @@ Use one of the following Methods you can
 | -usc      | Checks for Update to Script file before running                                | Auto downloads and runs if found |
 | -crp      | Creates a Restore Point                                                        |  |
 | -dnr      | Do not restart when done                                                       |  |
+| -help     | Lists of all the switches                      | Alt `-h`   |
 
 Examples: <br />
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1 -auto -run mine.csv` <br />
@@ -80,8 +81,8 @@ This file will <br />
 | -W10      | Downloads My Windows 10 Script                                                 |
 | -Both     | Downloads My Black Viper Script & My Windows 10 Script                         |
 | -Test     | Downloads The Test Version of the Script                                       |
-| -Run      | Run the Script after Downloading (Does ntow work with -both)                   |
-| -Bat      | Download the bat file to run script easyer                                     |
+| -Run      | Run the Script after Downloading (Does not work with -both)                    |
+| -Bat      | Download the bat file to run script easier                                     |
 
 ******
 ## FAQ
