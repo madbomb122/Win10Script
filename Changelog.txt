@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
-3.2.9 (12-05-2017)
+3.2.11 (12-13-2017)
 
 Enabled Window Resize
 (best to resize so the yellow on bottom and right size are not visable)
@@ -21,6 +21,11 @@ Improved Start Suggestions (Enable/Disable)
 Added Multi Xbox Apps (No seperate option for each apps)
 
 Fixed issue with "Task Manager Details" (thanks to dhoffman98)
+
+Improved how resize works/shows (size of gui items wont change still)
+Removed the yellow "Dont Resize past this area" boxes
+
+Added switch "-h" to show a list of switches
 
 -----------------------------------------------------------------------------------
 3.2.0 (11-02-2017)
