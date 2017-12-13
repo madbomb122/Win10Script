@@ -64,5 +64,5 @@ If /i %Script%==yes Set Run_Option=!Run_Option! -usc
 If /i %Restart_when_Done%==no Set Run_Option=!Run_Option! -dnr
 
 echo "Running !Script_File!"
-PowerShell -NoProfile -ExecutionPolicy Bypass -Command "& {Start-Process PowerShell -ArgumentList '-NoProfile -ExecutionPolicy Bypass -File "!Script_Path! !Run_Option!"' -Verb RunAs}";
+PowerShell -NoProfile -ExecutionPolicy Bypass -Command "& '!Script_Path!' !Run_Option!" -Verb RunAs
 ENDLOCAL DISABLEDELAYEDEXPANSION
