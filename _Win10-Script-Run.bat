@@ -1,5 +1,6 @@
 @ECHO OFF
-:: Last Updated on August 16th, 2017
+:: Version 1.1
+:: December 14th, 2017
 
 :: Instructions
 :: Bat, Script, and setting MUST be in same Folder
