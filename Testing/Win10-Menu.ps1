@@ -622,6 +622,7 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="372" Width="541
    <ComboBox Name="RemoteDesktop_Combo" HorizontalAlignment="Left" Margin="142,205,0,0" VerticalAlignment="Top" Width="72"/></Grid>
   </TabItem>
   <TabItem Name="Context_Tab" Header="Context Menu/Start Menu" Margin="-2,0,2,0"><Grid Background="#FFE5E5E5">
+   <Label Content="Context Menu" HorizontalAlignment="Left" Margin="82,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
    <Label Content="Cast to Device:" HorizontalAlignment="Left" Margin="43,31,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="CastToDevice_Combo" HorizontalAlignment="Left" Margin="128,34,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Previous Versions:" HorizontalAlignment="Left" Margin="26,58,0,0" VerticalAlignment="Top"/>
@@ -636,6 +637,7 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="372" Width="541
    <ComboBox Name="ShareWith_Combo" HorizontalAlignment="Left" Margin="128,169,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Send To:" HorizontalAlignment="Left" Margin="76,193,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="SendTo_Combo" HorizontalAlignment="Left" Margin="128,196,0,0" VerticalAlignment="Top" Width="72"/>
+   <Label Content="Start Menu" HorizontalAlignment="Left" Margin="352,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
    <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Margin="254,0,0,-2" Stroke="Black" Width="1"/>
    <Label Content="Bing Search in Start Menu:" HorizontalAlignment="Left" Margin="293,31,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="StartMenuWebSearch_Combo" HorizontalAlignment="Left" Margin="439,34,0,0" VerticalAlignment="Top" Width="72"/>
@@ -647,9 +649,7 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="372" Width="541
    <ComboBox Name="RecentItemsFrequent_Combo" HorizontalAlignment="Left" Margin="439,61,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Unpin Items:" HorizontalAlignment="Left" Margin="365,139,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="UnpinItems_Combo" HorizontalAlignment="Left" Margin="439,142,0,0" VerticalAlignment="Top" Width="72"/>
-   <Label Content="Unpin List:  Calendar, Candy Crush Soda Saga, &#xD;&#xA;Cortana, Get Office, Groove Music, Mail, Maps, &#xD;&#xA;Edge, Microsoft Solitaire, Movies &amp; TV, &#xD;&#xA;OneNote, Phone Companion, Photos, Skype, &#xD;&#xA;Store, Twitter, Weather, Xbox" HorizontalAlignment="Left" Margin="259,161,0,0" VerticalAlignment="Top"/>
-   <Label Content="Context Menu" HorizontalAlignment="Left" Margin="82,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-   <Label Content="Start Menu" HorizontalAlignment="Left" Margin="352,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/></Grid>
+   <Label Content="Unpin List:  Calendar, Candy Crush Soda Saga, &#xD;&#xA;Cortana, Get Office, Groove Music, Mail, Maps, &#xD;&#xA;Edge, Microsoft Solitaire, Movies &amp; TV, &#xD;&#xA;OneNote, Phone Companion, Photos, Skype, &#xD;&#xA;Store, Twitter, Weather, Xbox" HorizontalAlignment="Left" Margin="259,161,0,0" VerticalAlignment="Top"/></Grid>
   </TabItem>
   <TabItem Name="TaskBar_Tab" Header="Task Bar" Margin="-3,0,2,0"><Grid Background="#FFE5E5E5">
    <Label Content="Battery UI Bar:" HorizontalAlignment="Left" Margin="61,10,0,0" VerticalAlignment="Top"/>
@@ -740,6 +740,7 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="372" Width="541
    <Label Content="**Remove may cause problems with a few things" HorizontalAlignment="Left" Margin="255,216,0,0" VerticalAlignment="Top"/></Grid>
   </TabItem>
   <TabItem Name="Misc_Tab" Header="Misc/Photo Viewer/LockScreen" Margin="-2,0,2,0"><Grid Background="#FFE5E5E5">
+   <Label Content="Misc" HorizontalAlignment="Left" Margin="109,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
    <Label Content="Action Center:" HorizontalAlignment="Left" Margin="46,31,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="ActionCenter_Combo" HorizontalAlignment="Left" Margin="128,34,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Sticky Key Prompt:" HorizontalAlignment="Left" Margin="23,58,0,0" VerticalAlignment="Top"/>
@@ -754,22 +755,20 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="372" Width="541
    <ComboBox Name="HibernatePower_Combo" HorizontalAlignment="Left" Margin="128,142,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Sleep Option:" HorizontalAlignment="Left" Margin="49,166,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="SleepPower_Combo" HorizontalAlignment="Left" Margin="128,169,0,0" VerticalAlignment="Top" Width="72"/>
+   <Label Content="Photo Viewer" HorizontalAlignment="Left" Margin="346,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
    <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Margin="254,0,0,-2" Stroke="Black" Width="1"/>
    <Label Content="File Association:" HorizontalAlignment="Left" Margin="301,31,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="PVFileAssociation_Combo" HorizontalAlignment="Left" Margin="392,34,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Add &quot;Open with...&quot;:" HorizontalAlignment="Left" Margin="285,58,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="PVOpenWithMenu_Combo" HorizontalAlignment="Left" Margin="392,61,0,0" VerticalAlignment="Top" Width="72"/>
    <Rectangle Fill="#FFFFFFFF" Height="1" Margin="254,106,0,0" Stroke="Black" VerticalAlignment="Top"/>
+   <Label Content="Lockscreen" HorizontalAlignment="Left" Margin="352,111,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
    <Label Content="Lockscreen:" HorizontalAlignment="Left" Margin="323,139,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="LockScreen_Combo" HorizontalAlignment="Left" Margin="392,142,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Power Menu:" HorizontalAlignment="Left" Margin="316,166,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="PowerMenuLockScreen_Combo" HorizontalAlignment="Left" Margin="392,169,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Camera:" HorizontalAlignment="Left" Margin="342,193,0,0" VerticalAlignment="Top"/>
-   <ComboBox Name="CameraOnLockscreen_Combo" HorizontalAlignment="Left" Margin="392,196,0,0" VerticalAlignment="Top" Width="72"/>
-
-   <Label Content="Lockscreen" HorizontalAlignment="Left" Margin="352,111,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-   <Label Content="Misc" HorizontalAlignment="Left" Margin="109,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-   <Label Content="Photo Viewer" HorizontalAlignment="Left" Margin="346,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/></Grid>
+   <ComboBox Name="CameraOnLockscreen_Combo" HorizontalAlignment="Left" Margin="392,196,0,0" VerticalAlignment="Top" Width="72"/></Grid>
   </TabItem>
   <TabItem Name="MetroApp_Tab" Header="Metro App" Margin="-2,0,2,0"><Grid Background="#FFE5E5E5">
    <Label Content="Set All Metro Apps:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="72,2,0,0"/>
@@ -835,6 +834,7 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="372" Width="541
    <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Margin="346,0,0,-2" Stroke="Black" Width="1"/></Grid>
   </TabItem>
   <TabItem Name="Application_Tab" Header="Application/Windows Update" Margin="-2,0,2,0"><Grid Background="#FFE5E5E5">
+   <Label Content="Application" HorizontalAlignment="Left" Margin="89,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
    <Label Content="OneDrive:" HorizontalAlignment="Left" Margin="69,31,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="OneDrive_Combo" HorizontalAlignment="Left" Margin="128,34,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="OneDrive Install:" HorizontalAlignment="Left" Margin="34,58,0,0" VerticalAlignment="Top"/>
@@ -847,6 +847,7 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="372" Width="541
    <ComboBox Name="WorkFolders_Combo" HorizontalAlignment="Left" Margin="128,142,0,0" VerticalAlignment="Top" Width="78"/>
    <Label Name="LinuxSubsystemTxt" Content="Linux Subsystem:" HorizontalAlignment="Left" Margin="31,166,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="LinuxSubsystem_Combo" HorizontalAlignment="Left" Margin="128,169,0,0" VerticalAlignment="Top" Width="78"/>
+   <Label Content="Windows Update" HorizontalAlignment="Left" Margin="336,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>   
    <Label Content="Check for Update:" HorizontalAlignment="Left" Margin="290,31,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="CheckForWinUpdate_Combo" HorizontalAlignment="Left" Margin="392,34,0,0" VerticalAlignment="Top" Width="72"/>
    <Label Content="Update Check Type:" HorizontalAlignment="Left" Margin="280,58,0,0" VerticalAlignment="Top"/>
@@ -860,8 +861,6 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="372" Width="541
    <Label Content="Restart on Update:" HorizontalAlignment="Left" Margin="287,166,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="RestartOnUpdate_Combo" HorizontalAlignment="Left" Margin="392,169,0,0" VerticalAlignment="Top" Width="72"/>
    <Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Margin="254,0,0,-2" Stroke="Black" Width="1"/>
-   <Label Content="Application" HorizontalAlignment="Left" Margin="89,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-   <Label Content="Windows Update" HorizontalAlignment="Left" Margin="336,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
    <Label Content="Update Available Popup:" HorizontalAlignment="Left" Margin="256,193,0,0" VerticalAlignment="Top"/>
    <ComboBox Name="UpdateAvailablePopup_Combo" HorizontalAlignment="Left" Margin="392,196,0,0" VerticalAlignment="Top" Width="72"/></Grid>
   </TabItem>
@@ -1426,27 +1425,6 @@ Function RunScript {
 		Set-ItemProperty -Path $Path -Name "DisableWindowsConsumerFeatures" -Type DWord -Value 1
 	}
 
-	If($UpdateAvailablePopup -eq 0 -And $ShowSkipped -eq 1) {
-		DisplayOut "Skipping Update Available Popup..." 15 0
-	} ElseIf($UpdateAvailablePopup -eq 1) {
-		DisplayOut "Enabling Update Available Popup..." 11 0
-		$owner = New-Object System.Security.Principal.NTAccount("NT SERVICE\TrustedInstaller")
-		ForEach($File In $musnotification_files){
-			ICACLS $File /remove:d '"everyone"' | out-null
-			ICACLS $File /grant ("Everyone" + ':(OI)(CI)F') | out-null
-			$acl = get-acl $File
-			$acl.SetOwner($owner) | out-null
-			set-acl $File $acl | out-null
-			ICACLS $File /remove:g '"everyone"' | out-null
-		}
-	} ElseIf($UpdateAvailablePopup -eq 2) {
-		DisplayOut "Disabling Update Available Popup..." 12 0
-		ForEach($File In $musnotification_files){
-			takeown /f $File | out-null
-			ICACLS $File /deny '"everyone":(F)' | out-null
-		}
-	}
-
 	DisplayOut "`n-------------------------------`n-   Windows Update Settings   -`n-------------------------------" 14 0
 	$Path = CheckSetPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
 	If($CheckForWinUpdate -eq 0 -And $ShowSkipped -eq 1) {
@@ -1539,6 +1517,27 @@ Function RunScript {
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching" -Name "SearchOrderConfig" -Type DWord -Value 0
 		$Path = CheckSetPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
 		Set-ItemProperty -Path $Path -Name "ExcludeWUDriversInQualityUpdate" -Type DWord -Value 1
+	}
+
+	If($UpdateAvailablePopup -eq 0 -And $ShowSkipped -eq 1) {
+		DisplayOut "Skipping Update Available Popup..." 15 0
+	} ElseIf($UpdateAvailablePopup -eq 1) {
+		DisplayOut "Enabling Update Available Popup..." 11 0
+		$owner = New-Object System.Security.Principal.NTAccount("NT SERVICE\TrustedInstaller")
+		ForEach($File In $musnotification_files){
+			ICACLS $File /remove:d '"everyone"' | out-null
+			ICACLS $File /grant ("Everyone" + ':(OI)(CI)F') | out-null
+			$acl = get-acl $File
+			$acl.SetOwner($owner) | out-null
+			set-acl $File $acl | out-null
+			ICACLS $File /remove:g '"everyone"' | out-null
+		}
+	} ElseIf($UpdateAvailablePopup -eq 2) {
+		DisplayOut "Disabling Update Available Popup..." 12 0
+		ForEach($File In $musnotification_files){
+			takeown /f $File | out-null
+			ICACLS $File /deny '"everyone":(F)' | out-null
+		}
 	}
 
 	DisplayOut "`n----------------------`n-   Service Tweaks   -`n----------------------" 14 0
