@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
-3.2.12 (12-25-2017)
+3.3.0 (12-29-2017)
 
 Enabled Window Resize
 (best to resize so the yellow on bottom and right size are not visable)
@@ -28,7 +28,9 @@ Removed the yellow "Dont Resize past this area" boxes
 Added switch "-h" to show a list of switches
 
 Changed some internal script stuff
-Added option to disable the "Update is Available popup" under Application/Windows Update tab 
+Added option to disable the "Update is Available popup" under Application/Windows Update tab
+
+Added More stuff for disableing Wifi sense
 
 -----------------------------------------------------------------------------------
 3.2.0 (11-02-2017)
