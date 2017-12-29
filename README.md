@@ -10,6 +10,7 @@ This is a PowerShell script for automation of routine tasks/setting on Windows 1
 This is by no means a complete set of settings. (There is ALOT that can be changed/done)
 
 The original basic script created by https://github.com/Disassembler0/Win10-Initial-Setup-Script/
+^ We have some of the same setting and a few different stuff too
 
 This script is a Highly Modded version of the 2.0 script by Disaseembler0. <br />
 The script has added items with an easyer way to change preferences and a menu.
