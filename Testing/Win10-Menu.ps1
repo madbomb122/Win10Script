@@ -10,9 +10,9 @@
 # Website: https://github.com/Disassembler0/Win10-Initial-Setup-Script/
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
-$Script_Version = "3.2"
-$Minor_Version = "12"
-$Script_Date = "Dec-25-2017"
+$Script_Version = "3.3"
+$Minor_Version = "0"
+$Script_Date = "Dec-29-2017"
 $Release_Type = "Testing"
 #$Release_Type = "Stable"
 ##########
@@ -1253,6 +1253,9 @@ Function RunScript {
 		Set-ItemProperty -Path $Path -Name "Value" -Type DWord -Value 1
 		$Path = CheckSetPath "$Path1\AllowAutoConnectToWiFiSenseHotspots"
 		Set-ItemProperty -Path $Path -Name "Value" -Type DWord -Value 1
+		$Path = CheckSetPath "HKLM:\SOFTWARE\Microsoft\WcmSvc\wifinetworkmanager\config"
+		Set-ItemProperty -Path $Path -Name "AutoConnectAllowedOEM" -Type Dword -Value 0
+		Set-ItemProperty -Path $Path -Name "WiFISenseAllowed" -Type Dword -Value 0
 	} ElseIf($WiFiSense -eq 2) {
 		DisplayOut "Disabling Wi-Fi Sense..." 12 0
 		$Path1 = "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi\"
@@ -1260,6 +1263,8 @@ Function RunScript {
 		Set-ItemProperty -Path $Path -Name "Value" -Type DWord -Value 0
 		$Path = CheckSetPath "$Path1\AllowAutoConnectToWiFiSenseHotspots"
 		Set-ItemProperty -Path $Path -Name "Value" -Type DWord -Value 0
+		Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\WcmSvc\wifinetworkmanager\config" -Name "AutoConnectAllowedOEM"
+		Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\WcmSvc\wifinetworkmanager\config" -Name "WiFISenseAllowed"
 	}
 
 	If($SmartScreen -eq 0 -And $ShowSkipped -eq 1) {
