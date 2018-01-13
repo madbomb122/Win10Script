@@ -11,8 +11,8 @@
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
 $Script_Version = "3.3"
-$Minor_Version = "0"
-$Script_Date = "Dec-29-2017"
+$Minor_Version = "1"
+$Script_Date = "Jan-12-2018"
 $Release_Type = "Testing"
 #$Release_Type = "Stable"
 ##########
@@ -1388,7 +1388,7 @@ Function RunScript {
 		icacls $autoLoggerDir /deny SYSTEM:`(OI`)`(CI`)F | Out-Null
 		$Path = CheckSetPath "HKLM:\SYSTEM\ControlSet001\Control\WMI\AutoLogger\AutoLogger-Diagtrack-Listener"
 		Set-ItemProperty -Path $Path -Name "Start" -Type DWord -Value 0
-		$Path += "\{DD17FA14-CDA6-7191-9B61-37A28F7A10DA}"
+		$Path = CheckSetPath "$Path\{DD17FA14-CDA6-7191-9B61-37A28F7A10DA}"
 		Set-ItemProperty -Path $Path -Name "Start" -Type DWord -Value 0
 	}
 
@@ -1425,7 +1425,8 @@ Function RunScript {
 		Remove-ItemProperty  -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent" -Name "DisableWindowsConsumerFeatures" 
 	} ElseIf($AppAutoDownload -eq 2) {
 		DisplayOut "Disabling App Auto Download..." 12 0
-		Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsStore\WindowsUpdate" -Name "AutoDownload" -Type DWord -Value 2
+		$Path = CheckSetPath "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsStore\WindowsUpdate"
+		Set-ItemProperty -Path $Path -Name "AutoDownload" -Type DWord -Value 2
 		$Path = CheckSetPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent"
 		Set-ItemProperty -Path $Path -Name "DisableWindowsConsumerFeatures" -Type DWord -Value 1
 	}
@@ -1603,7 +1604,7 @@ Function RunScript {
 		Remove-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name "DisableAntiSpyware"
 		$Path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
 		If($BuildVer -lt 15063) { $RegName = "WindowsDefender" } Else { $RegName = "SecurityHealth" }
-		Set-ItemProperty -Path $Path -Name "SecurityHealth" -Type ExpandString -Value "`"%ProgramFiles%\Windows Defender\MSASCuiL.exe`""
+		Set-ItemProperty -Path $Path -Name $RegName -Type ExpandString -Value "`"%ProgramFiles%\Windows Defender\MSASCuiL.exe`""
 		RemoveSetPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet"
 	} ElseIf($WinDefender -eq 2) {
 		DisplayOut "Disabling Windows Defender..." 12 0
