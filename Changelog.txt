@@ -1,4 +1,11 @@
 -----------------------------------------------------------------------------------
+3.3.1 (01-12-2018)
+
+Fixed an issue with enable windows defender on newer than Annivery update didnt work
+Fixed an issue that caused an entry for disableingn app auto download to not set
+Fixed an issue that caused an entry for Removing AutoLogger file to not set
+
+-----------------------------------------------------------------------------------
 3.3.0 (12-29-2017)
 
 Enabled Window Resize
