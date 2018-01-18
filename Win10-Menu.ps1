@@ -11,9 +11,10 @@
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
 $Script_Version = "3.3"
-$Minor_Version = "1"
-$Script_Date = "Jan-12-2018"
-$Release_Type = "Stable"
+$Minor_Version = "2"
+$Script_Date = "Jan-17-2018"
+$Release_Type = "Testing"
+#$Release_Type = "Stable"
 ##########
 
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1919,7 +1920,7 @@ Function RunScript {
 		DisplayOut "Skipping Start Menu Suggestions..." 15 0
 	} ElseIf($StartSuggestions -eq 1) {
 		DisplayOut "Enabling Start Menu Suggestions..." 11 0
-		$Path = CheckSetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManage"
+		$Path = CheckSetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
 		Set-ItemProperty -Path $Path -Name "ContentDeliveryAllowed" -Type DWord -Value 1
 		Set-ItemProperty -Path $Path -Name "OemPreInstalledAppsEnabled" -Type DWord -Value 1
 		Set-ItemProperty -Path $Path -Name "PreInstalledAppsEnabled" -Type DWord -Value 1
@@ -1930,7 +1931,7 @@ Function RunScript {
 		Remove-ItemProperty -Path $Path -Name "SubscribedContent-338388Enabled"
 	} ElseIf($StartSuggestions -eq 2) {
 		DisplayOut "Disabling Start Menu Suggestions..." 12 0
-		$Path = CheckSetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManage"
+		$Path = CheckSetPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
 		Set-ItemProperty -Path $Path -Name "ContentDeliveryAllowed" -Type DWord -Value 0
 		Set-ItemProperty -Path $Path -Name "OemPreInstalledAppsEnabled" -Type DWord -Value 0
 		Set-ItemProperty -Path $Path -Name "PreInstalledAppsEnabled" -Type DWord -Value 0
