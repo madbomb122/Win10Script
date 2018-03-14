@@ -7,6 +7,7 @@ Fixed an issue that caused an entry for Removing AutoLogger file to not set
 
 Fixed bug with enable/disable start suggestions
 
+Fixed some typos
 Changed how "Update Available Popup" sets ownership
 Added Enable/Disable "Various Scheduled Tasks" -Option Not in GUI
 ^^But can be done by editing script or setting file.. Since it may cause problems
