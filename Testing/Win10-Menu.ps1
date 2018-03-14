@@ -11,8 +11,8 @@
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
 $Script_Version = "3.3"
-$Minor_Version = "2"
-$Script_Date = "Jan-17-2018"
+$Minor_Version = "3"
+$Script_Date = "Mar-14-2018"
 $Release_Type = "Testing"
 #$Release_Type = "Stable"
 ##########
@@ -161,6 +161,40 @@ $AppsList = @(
 'Microsoft.ZuneMusic',
 'Microsoft.ZuneVideo')
 
+$TasksList = @(
+'AgentFallBack2016',
+'AitAgent',
+'Consolidator',
+'CreateObjectTask',
+#'Diagnostics',
+'DmClient',
+'DmClientOnScenarioDownload',
+'FamilySafetyMonitor',
+'FamilySafetyRefresh',
+'FamilySafetyRefreshTask',
+'FamilySafetyUpload',
+#'File History (maintenance mode)',
+'GatherNetworkInfo',
+'KernelCeipTask',
+'MapsUpdateTask',
+'Microsoft Compatibility Appraiser',
+#'Microsoft-Windows-DiskDiagnosticDataCollector',
+'MNO Metadata Parser',
+'Office 15 Subscription Heartbeat',
+'OfficeTelemetryAgentFallBack',
+'OfficeTelemetryAgentLogOn',
+'OfficeTelemetryAgentLogOn2016',
+'ProgramDataUpdater',
+'Proxy',
+'QueueReporting',
+'SmartScreenSpecific',
+'Sqm-Tasks',
+#'StartupAppTask',
+'Uploader',
+'UsbCeip',
+'XblGameSaveTask',
+'XblGameSaveTaskLogon')
+
 $Xbox_Apps = @(
 'Microsoft.XboxApp',
 'Microsoft.XboxIdentityProvider',
@@ -240,8 +274,13 @@ Function UpdateCheck {
 		LeftLine ;DisplayOutMenu "                      Error                      " 13 0 0 ;RightLine
 		MenuLine
 		MenuBlankLine
-		LeftLine ;DisplayOutMenu "No internet connection dectected.                " 2 0 0 ;RightLine
+		LeftLine ;DisplayOutMenu "No Internet connection detected.                 " 2 0 0 ;RightLine
 		LeftLine ;DisplayOutMenu "Tested by pinging GitHub.com                     " 2 0 0 ;RightLine
+		MenuBlankLine
+		LeftLine;DisplayOutMenu " To skip use one of the following methods        " 2 0 0 ;RightLine
+		LeftLine ;DisplayOutMenu " 1. Change " 2 0 0 ;DisplayOutMenu "InternetCheck" 15 0 0 ;DisplayOutMenu " to " 2 0 0 ;DisplayOutMenu "=1" 15 0 0 ;DisplayOutMenu " in script file   " 2 0 0 ;RightLine
+		LeftLine ;DisplayOutMenu " 2. Change " 2 0 0 ;DisplayOutMenu "InternetCheck" 15 0 0 ;DisplayOutMenu " to " 2 0 0 ;DisplayOutMenu "=no" 15 0 0 ;DisplayOutMenu " in bat file     " 2 0 0 ;RightLine
+		LeftLine ;DisplayOutMenu " 3. Run Script or Bat file with " 2 0 0 ;DisplayOutMenu "-sic" 15 0 0 ;DisplayOutMenu " argument    " 2 0 0 ;RightLine
 		MenuBlankLine
 		MenuLine
 		AnyKeyClose
@@ -311,6 +350,13 @@ Function InternetCheck { If($InternetCheck -eq 1 -or (Test-Connection -Computer 
 # Multi Use Functions -Start
 ##########
 
+Function ThanksDonate {
+	DisplayOut "`nThanks for using my script." 11 0
+	DisplayOut "If you like this script please consider giving me a donation." 11 0
+	DisplayOut "`nLink to donation:" 15 0
+	DisplayOut "https://www.amazon.com/gp/registry/wishlist/YBAYWBJES5DE/" 2 0
+}
+
 Function cmpv { Compare-Object (Get-Variable -Scope Script) $AutomaticVariables -Property Name -PassThru | Where-Object -Property Name -ne "AutomaticVariables" | Where-Object { $_ -NotIn $WPFList } }
 Function Openwebsite([String]$Url){ [System.Diagnostics.Process]::Start($Url) }
 Function ShowInvalid([Int]$InvalidA){ If($InvalidA -eq 1){ Write-Host "`nInvalid Input" -ForegroundColor Red -BackgroundColor Black -NoNewline } Return 0 }
@@ -355,26 +401,22 @@ Function ShowHelp {
 	Clear-Host
 	DisplayOut "                  List of Switches                   " 13 0
 	DisplayOut "-----------------------------------------------------" 14 0
-	DisplayOut "" 13 0
-	DisplayOut "-- Basic Switches --" 2 0
+	DisplayOut "`n-- Basic Switches --" 2 0
 	DisplayOutMenu " Switch " 15 0 0 ;DisplayOut "          Description of Switch" 14 0
 	DisplayOutMenu "  -atos " 15 0 0 ;DisplayOut "           Accepts ToS" 14 0
-	DisplayOutMenu "  -auto " 15 0 0 ;DisplayOut "           Implies -Atos...Closes on - User Errors, or End of Script" 14 0
+	DisplayOutMenu "  -auto " 15 0 0 ;DisplayOutMenu "           Implies " 14 0 0 ;DisplayOutMenu "-atos" 15 0 0 ;DisplayOut "...Runs the script to be Automated.. Closes on - User Input, Errors, or End of Script" 14 0
 	DisplayOutMenu "  -crp  " 15 0 0 ;DisplayOut "           Creates Restore Point" 14 0
 	DisplayOutMenu "  -dnr  " 15 0 0 ;DisplayOut "           Do Not Restart when done" 14 0
-	DisplayOut "" 13 0
-	DisplayOut "-- Run Script Switches --" 2 0
+	DisplayOut "`n-- Run Script Switches --" 2 0
 	DisplayOutMenu " Switch " 15 0 0 ;DisplayOut "          Description of Switch" 14 0
 	DisplayOutMenu "  -run  " 15 0 0 ;DisplayOut "           Runs script with settings in script" 14 0
 	DisplayOutMenu "  -run " 15 0 0 ;DisplayOutMenu "FILENAME " 11 0 0 ;DisplayOutMenu "   Runs script with settings in the file" 14 0 0 ;DisplayOut " FILENAME" 11 0
 	DisplayOutMenu "  -run wd " 15 0 0 ;DisplayOut "         Runs script with win default settings" 14 0
-	DisplayOut "" 13 0
-	DisplayOut "-- Load Script Switches --" 2 0
+	DisplayOut "`n-- Load Script Switches --" 2 0
 	DisplayOutMenu " Switch " 15 0 0 ;DisplayOut "          Description of Switch" 14 0
 	DisplayOutMenu "  -load " 15 0 0 ;DisplayOutMenu "FILENAME " 11 0 0 ;DisplayOutMenu "  Loads script with settings in the file" 14 0 0 ;DisplayOut " FILENAME" 11 0
 	DisplayOutMenu "  -load wd " 15 0 0 ;DisplayOut "        Loads script with win default settings" 14 0
-	DisplayOut "" 13 0
-	DisplayOut "--Update Switches--" 2 0
+	DisplayOut "`n--Update Switches--" 2 0
 	DisplayOutMenu " Switch " 15 0 0 ;DisplayOut "          Description of Switch" 14 0
 	DisplayOutMenu "  -usc  " 15 0 0 ;DisplayOut "           Checks for Update to Script file before running" 14 0
 	DisplayOutMenu "  -sic  " 15 0 0 ;DisplayOut "           Skips Internet Check" 14 0
@@ -1248,7 +1290,7 @@ Function RunScript {
 		DisplayOut "Skipping Wi-Fi Sense..." 15 0
 	} ElseIf($WiFiSense -eq 1) {
 		DisplayOut "Enabling Wi-Fi Sense..." 11 0
-		$Path1 = "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi\"
+		$Path1 = "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi"
 		$Path = CheckSetPath "$Path1\AllowWiFiHotSpotReporting"
 		Set-ItemProperty -Path $Path -Name "Value" -Type DWord -Value 1
 		$Path = CheckSetPath "$Path1\AllowAutoConnectToWiFiSenseHotspots"
@@ -1258,7 +1300,7 @@ Function RunScript {
 		Set-ItemProperty -Path $Path -Name "WiFISenseAllowed" -Type Dword -Value 0
 	} ElseIf($WiFiSense -eq 2) {
 		DisplayOut "Disabling Wi-Fi Sense..." 12 0
-		$Path1 = "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi\"
+		$Path1 = "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\WiFi"
 		$Path = CheckSetPath "$Path1\AllowWiFiHotSpotReporting"
 		Set-ItemProperty -Path $Path -Name "Value" -Type DWord -Value 0
 		$Path = CheckSetPath "$Path1\AllowAutoConnectToWiFiSenseHotspots"
@@ -1465,7 +1507,7 @@ Function RunScript {
 	If($WinUpdateDownload -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut "Skipping Windows Update P2P..." 15 0
 	} ElseIf($WinUpdateDownload -eq 1) {
-		DisplayOut "Unrestricting Windows Update P2P to internet..." 16 0
+		DisplayOut "Unrestricting Windows Update P2P to Internet..." 16 0
 		$Path = "SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization"
 		Remove-ItemProperty -Path "HKLM:\$Path\Config" -Name "DODownloadMode"
 		Remove-ItemProperty -Path "HKCU:\$Path" -Name "SystemSettingsDownloadMode"
@@ -1531,18 +1573,16 @@ Function RunScript {
 		DisplayOut "Enabling Update Available Popup..." 11 0
 		$owner = New-Object System.Security.Principal.NTAccount("NT SERVICE\TrustedInstaller")
 		ForEach($File In $musnotification_files){
-			ICACLS $File /remove:d '"everyone"' | out-null
+			ICACLS $File /remove:d '"Everyone"' | out-null
 			ICACLS $File /grant ("Everyone" + ':(OI)(CI)F') | out-null
-			$acl = get-acl $File
-			$acl.SetOwner($owner) | out-null
-			set-acl $File $acl | out-null
-			ICACLS $File /remove:g '"everyone"' | out-null
+			ICACLS $File /setowner "NT SERVICE\TrustedInstaller"
+			ICACLS $File /remove:g '"Everyone"' | out-null
 		}
 	} ElseIf($UpdateAvailablePopup -eq 2) {
 		DisplayOut "Disabling Update Available Popup..." 12 0
 		ForEach($File In $musnotification_files){
-			takeown /f $File | out-null
-			ICACLS $File /deny '"everyone":(F)' | out-null
+			Takeown /f $File | out-null
+			ICACLS $File /deny '"Everyone":(F)' | out-null
 		}
 	}
 
@@ -2048,7 +2088,7 @@ Function RunScript {
 		DisplayOut "Hiding Recent Files in Quick Access..." 12 0
 		Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Type DWord -Value 0
 	} ElseIf($RecentFileQikAcc -eq 3) {
-		DisplayOut "Removeing Recent Files in Quick Access..." 15 0
+		DisplayOut "Removing Recent Files in Quick Access..." 15 0
 		$Path = "Microsoft\Windows\CurrentVersion\Explorer"
 		Set-ItemProperty -Path "HKCU:\SOFTWARE\$Path" -Name "ShowRecent" -Type DWord -Value 0
 		RemoveSetPath "HKLM:\SOFTWARE\$Path\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}"
@@ -2514,6 +2554,14 @@ Function RunScript {
 		ForEach($Pin In $Pined_App){ unPinApp $Pin }
 	}
 
+	If($DisableVariousTasks -eq 2) {
+		DisplayOut "`nEnabling Various Scheduled Tasks...`n------------------" 12 0
+		ForEach($TaskN in $TasksList) { Get-ScheduledTask -TaskName $TaskN | Enable-ScheduledTask }
+	} ElseIf($DisableVariousTasks -eq 2) {
+		DisplayOut "`nDisableing Various Scheduled Tasks...`n------------------" 12 0
+		ForEach($TaskN in $TasksList) { Get-ScheduledTask -TaskName $TaskN | Disable-ScheduledTask }
+	}
+
 	DisplayOut "`n-------------------------`n-   Application Items   -`n-------------------------" 14 0
 	If($OneDrive -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut "Skipping OneDrive..." 15 0
@@ -2694,6 +2742,7 @@ Function RunScript {
 
 	If($Restart -eq 1 -And $Release_Type -eq "Stable") {
 		Clear-Host
+		ThanksDonate
 		$Seconds = 10
 		Write-Host "`nRestarting Computer in 10 Seconds..." -ForegroundColor Yellow -BackgroundColor Black
 		$Message = "Restarting in"
@@ -2706,6 +2755,7 @@ Function RunScript {
 		If($Automated -eq 0){ Read-Host -Prompt "`nPress any key to exit" }
 		Exit
 	} ElseIf($Automated -eq 0) {
+		ThanksDonate
 		Read-Host -Prompt "`nPress any key to Exit"
 	}
 }
@@ -2725,14 +2775,14 @@ $Script:AppsHide = ""
 $Script:AppsUninstall = ""
 
 Function SetDefault {
-# --------------------------------------------------------------------------
+#--------------------------------------------------------------------------
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## !!                                            !!
 ## !!            SAFE TO EDIT VALUES             !!
 ## !!                                            !!
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-# Edit values (Option) to your preferance
+# Edit values (Option) to your preference
 # Change to an Option not listed will Skip the Function/Setting
 
 # Note: If you're not sure what something does don't change it or do a web search 
@@ -2753,7 +2803,7 @@ $Script:VersionCheck = 0            #0-Don't Check for Update, 1-Check for Updat
 
 $Script:BatUpdateScriptFileName = 1 #0-Don't ->, 1-Update Bat file with new script filename (if update is found)
 
-$Script:InternetCheck = 0           #0 = Checks if you have internet by doing a ping to GitHub.com
+$Script:InternetCheck = 0           #0 = Checks if you have Internet by doing a ping to GitHub.com
                                     #1 = Bypass check if your pings are blocked
 
 #Restart when done? (I recommend restarting when done)
@@ -2768,7 +2818,7 @@ $Script:WinDefault = 2              #1-Yes*, 2-No
 # Function = Option                 #Choices (* Indicates Windows Default)
 $Script:Telemetry = 0               #0-Skip, 1-Enable*, 2-Disable
 $Script:WiFiSense = 0               #0-Skip, 1-Enable*, 2-Disable
-$Script:SmartScreen = 0             #0-Skip, 1-Enable*, 2-Disable --(phishing and malware filter for soe MS Apps/Prog)
+$Script:SmartScreen = 0             #0-Skip, 1-Enable*, 2-Disable --(phishing and malware filter for some MS Apps/Prog)
 $Script:LocationTracking = 0        #0-Skip, 1-Enable*, 2-Disable
 $Script:Feedback = 0                #0-Skip, 1-Enable*, 2-Disable
 $Script:AdvertisingID = 0           #0-Skip, 1-Enable*, 2-Disable
@@ -2861,7 +2911,7 @@ $Script:MusicIconInThisPC = 0       #0-Skip, 1-Show*, 2-Hide, 3- Remove
 $Script:PicturesIconInThisPC = 0    #0-Skip, 1-Show*, 2-Hide, 3- Remove
 $Script:VideosIconInThisPC = 0      #0-Skip, 1-Show*, 2-Hide, 3- Remove
 $Script:ThreeDobjectsIconInThisPC = 0   #0-Skip, 1-Show, 2-Hide*, 3- Remove
-# Removeing them can cause problems
+# Removing them can cause problems
 
 #Desktop Items
 # Function = Option                 #Choices (* Indicates Windows Default)
@@ -2886,6 +2936,7 @@ $Script:F8BootMenu = 0              #0-Skip, 1-Enable, 2-Disable*
 $Script:RemoteUACAcctToken = 0      #0-Skip, 1-Enable, 2-Disable*
 $Script:HibernatePower = 0          #0-Skip, 1-Enable, 2-Disable --(Hibernate Power Option)
 $Script:SleepPower = 0              #0-Skip, 1-Enable*, 2-Disable --(Sleep Power Option)
+$Script:DisableVariousTasks = 0     #0-Skip, 1-Enable*, 2-Disable some scheduled tasks (This is NOT show in GUI)
 
 # Photo Viewer Settings
 # Function = Option                 #Choices (* Indicates Windows Default)
@@ -2919,7 +2970,6 @@ New-Item C:\Mnt -Type Directory | Out-Null
 dism /Mount-Image /ImageFile:D:\sources\install.wim /index:1 /ReadOnly /MountDir:C:\Mnt
 robocopy /S /SEC /R:0 "C:\Mnt\Program Files\WindowsApps" "C:\Program Files\WindowsApps"
 dism /Unmount-Image /Discard /MountDir:C:\Mnt
-Remove-Item -Path C:\Mnt -Recurse
 #>
 
 # Metro Apps
