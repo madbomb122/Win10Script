@@ -1,11 +1,15 @@
 -----------------------------------------------------------------------------------
-3.3.2 (01-17-2018)
+3.3.3 (03-14-2018)
 
 Fixed an issue with enable windows defender on newer than Annivery update didnt work
 Fixed an issue that caused an entry for disableingn app auto download to not set
 Fixed an issue that caused an entry for Removing AutoLogger file to not set
 
 Fixed bug with enable/disable start suggestions
+
+Changed how "Update Available Popup" sets ownership
+Added Enable/Disable "Various Scheduled Tasks" -Option Not in GUI
+^^But can be done by editing script or setting file.. Since it may cause problems
 
 -----------------------------------------------------------------------------------
 3.3.0 (12-29-2017)
