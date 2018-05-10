@@ -13,7 +13,7 @@ The original basic script created by https://github.com/Disassembler0/Win10-Init
 ^ We have some of the same setting and a few different stuff too
 
 This script is a Highly Modded version of the 2.0 script by Disaseembler0. <br />
-The script has added items with an easyer way to change preferences and a menu.
+The script has added items with an easy way to change settings and options using a GUI.
 
 PS. Don't forget to check out my other Repo https://github.com/madbomb122/BlackViperScript  <br />
 
