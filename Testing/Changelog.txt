@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
-3.3.4 (05-10-2018)
+3.3.5 (05-13-2018)
 
 Fixed an issue with enable windows defender on newer than Annivery update didnt work
 Fixed an issue that caused an entry for disableingn app auto download to not set
@@ -17,6 +17,11 @@ Added Option to Enable/Disable "Re-Opening of apps on boot" (Windows Enabled by 
 Added Account Protection Warning (Warns if not on a Microsoft account)
 Changed Look of Gui a little (added Help button)
 Added a wait for each app section to finish before continuing
+
+Bug fix for remove 'This PC' items not showing that you are removing them
+Changed Unpin start menu items.. from unpinning Some to All items
+Metro App Unhide/Hide/Uninstall now are the first items to be set instead of last
+Internal Script changes
 
 -----------------------------------------------------------------------------------
 3.3.0 (12-29-2017)
