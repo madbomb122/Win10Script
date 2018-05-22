@@ -11,8 +11,8 @@
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
 $Script_Version = '3.3'
-$Minor_Version = '5'
-$Script_Date = 'May-13-2018'
+$Minor_Version = '6'
+$Script_Date = 'May-22-2018'
 $Release_Type = 'Testing'
 #$Release_Type = 'Stable'
 ##########
@@ -354,7 +354,7 @@ Function ScriptPreStart {
 }
 
 Function ArgCheck {
-	For($i=0; $i -lt $PassedArg.Length; $i++) {
+	For($i=0 ;$i -lt $PassedArg.Length ;$i++) {
 		If($PassedArg[$i].StartsWith('-')) {
 			$ArgVal = $PassedArg[$i].ToLower()
 			$PasVal = $PassedArg[($i+1)]
@@ -694,7 +694,7 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="405" Width="550
 					<ComboBox Name="MostUsedAppStartMenu_Combo" HorizontalAlignment="Left" Margin="439,115,0,0" VerticalAlignment="Top" Width="72"/>
 					<Label Content="Recent Items &amp; Frequent Places:" HorizontalAlignment="Left" Margin="262,58,0,0" VerticalAlignment="Top"/>
 					<ComboBox Name="RecentItemsFrequent_Combo" HorizontalAlignment="Left" Margin="439,61,0,0" VerticalAlignment="Top" Width="72"/>
-                    <Label Content="Unpin All Items:" HorizontalAlignment="Left" Margin="350,139,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Unpin All Items:" HorizontalAlignment="Left" Margin="349,139,0,0" VerticalAlignment="Top"/>
                     <ComboBox Name="UnpinItems_Combo" HorizontalAlignment="Left" Margin="439,142,0,0" VerticalAlignment="Top" Width="72"/>
 				</Grid>
 			</TabItem>
@@ -778,19 +778,19 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="405" Width="550
 					<Label Content="Desktop Folder:" HorizontalAlignment="Left" Margin="302,31,0,0" VerticalAlignment="Top"/>
 					<Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Margin="254,0,0,-2" Stroke="Black" Width="1"/>
 					<Label Content="This PC" HorizontalAlignment="Left" Margin="364,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-					<ComboBox Name="DesktopIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,34,0,0" VerticalAlignment="Top" Width="80"/>
+					<ComboBox Name="DesktopIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,34,0,0" VerticalAlignment="Top" Width="88"/>
 					<Label Content="Documents Folder:" HorizontalAlignment="Left" Margin="285,58,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="DocumentsIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,61,0,0" VerticalAlignment="Top" Width="80"/>
+					<ComboBox Name="DocumentsIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,61,0,0" VerticalAlignment="Top" Width="88"/>
 					<Label Content="Downloads Folder:" HorizontalAlignment="Left" Margin="287,85,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="DownloadsIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,88,0,0" VerticalAlignment="Top" Width="80"/>
+					<ComboBox Name="DownloadsIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,88,0,0" VerticalAlignment="Top" Width="88"/>
 					<Label Content="Music Folder:" HorizontalAlignment="Left" Margin="315,112,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="MusicIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,115,0,0" VerticalAlignment="Top" Width="80"/>
+					<ComboBox Name="MusicIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,115,0,0" VerticalAlignment="Top" Width="88"/>
 					<Label Content="Pictures Folder:" HorizontalAlignment="Left" Margin="304,139,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="PicturesIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,142,0,0" VerticalAlignment="Top" Width="80"/>
+					<ComboBox Name="PicturesIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,142,0,0" VerticalAlignment="Top" Width="88"/>
 					<Label Content="Videos Folder:" HorizontalAlignment="Left" Margin="310,166,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="VideosIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,169,0,0" VerticalAlignment="Top" Width="80"/>
+					<ComboBox Name="VideosIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,169,0,0" VerticalAlignment="Top" Width="88"/>
 					<Label Name="ThreeDobjectsIconInThisPC_Txt" Content="3D Objects Folder:" HorizontalAlignment="Left" Margin="288,194,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="ThreeDobjectsIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,197,0,0" VerticalAlignment="Top" Width="80"/>
+					<ComboBox Name="ThreeDobjectsIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,197,0,0" VerticalAlignment="Top" Width="88"/>
 					<Label Content="**Remove may cause problems with a few things" HorizontalAlignment="Left" Margin="255,216,0,0" VerticalAlignment="Top"/>
 				</Grid>
 			</TabItem>
@@ -1083,7 +1083,7 @@ $UpdateFile = $filebase + 'Update.bat'
 	If($BuildVer -lt 17133){ $WPF_AccountProtectionWarn_Combo.Visibility = 'Hidden' ;$WPF_AccountProtectionWarn_Txt.Visibility = 'Hidden' }	
 	ForEach($Var In $Skip_EnableD_Disable){ SetCombo $Var 'Enable*,Disable' }
 	ForEach($Var In $Skip_Enable_DisableD){ SetCombo $Var 'Enable,Disable*' }
-	ForEach($Var In $Skip_ShowD_Hide_Remove){ SetCombo $Var 'Show*,Hide,Remove**' }
+	ForEach($Var In $Skip_ShowD_Hide_Remove){ SetCombo $Var 'Show/Add*,Hide,Remove**' }
 	ForEach($Var In $Skip_ShowD_Hide){ SetCombo $Var 'Show*,Hide' }
 	ForEach($Var In $Skip_Show_HideD){ SetCombo $Var 'Show,Hide*' }
 	ForEach($Var In $Skip_InstalledD_Uninstall){ SetCombo $Var 'Installed*,Uninstall' }
@@ -2321,9 +2321,15 @@ Function RunScript {
 	} ElseIf($DesktopIconInThisPC -eq 1) {
 		DisplayOut 'Showing Desktop folder in This PC...' 11 0
 		$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}\PropertyBag'
-		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+		$Path1 = '\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}'
 		New-Item -Path "HKLM:\SOFTWARE\$Path" -Force
-		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show' }		
+		New-Item -Path "HKLM:\SOFTWARE\$Path1" -Force
+		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+		If($OSType -eq 64){
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Force
+			Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" -Force
+		}	
 	} ElseIf($DesktopIconInThisPC -eq 2) {
 		DisplayOut 'Hiding Desktop folder in This PC...' 12 0
 		$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}\PropertyBag'
@@ -2340,9 +2346,18 @@ Function RunScript {
 	} ElseIf($DocumentsIconInThisPC -eq 1) {
 		DisplayOut 'Showing Documents folder in This PC...' 11 0
 		$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{f42ee2d3-909f-4907-8871-4c22fc0bf756}\PropertyBag'
-		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+		$Path1 = '\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A8CDFF1C-4878-43be-B5FD-F8091C1C60D0}'
+		$Path2 = '\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{d3162b92-9365-467a-956b-92703aca08af}'
 		New-Item -Path "HKLM:\SOFTWARE\$Path" -Force
-		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show' }
+		New-Item -Path "HKLM:\SOFTWARE\$Path1" -Force
+		New-Item -Path "HKLM:\SOFTWARE\$Path2" -Force
+		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+		If($OSType -eq 64){
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Force
+			Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" -Force
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path2"
+		}
 	}ElseIf($DocumentsIconInThisPC -eq 2) {
 		DisplayOut 'Hiding Documents folder in This PC...' 12 0
 		$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{f42ee2d3-909f-4907-8871-4c22fc0bf756}\PropertyBag'
@@ -2350,8 +2365,10 @@ Function RunScript {
 		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
 	} ElseIf($DocumentsIconInThisPC -eq 3) {
 		DisplayOut 'Removing Documents folder in This PC...' 13 0
-		RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{f42ee2d3-909f-4907-8871-4c22fc0bf756}'
-		RemoveSetPath 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{f42ee2d3-909f-4907-8871-4c22fc0bf756}'
+		RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A8CDFF1C-4878-43be-B5FD-F8091C1C60D0}'
+		RemoveSetPath 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A8CDFF1C-4878-43be-B5FD-F8091C1C60D0}'
+		RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{d3162b92-9365-467a-956b-92703aca08af}'
+		RemoveSetPath 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{d3162b92-9365-467a-956b-92703aca08af}'
 	}
 
 	If($DownloadsIconInThisPC -eq 0 -And $ShowSkipped -eq 1) {
@@ -2359,9 +2376,18 @@ Function RunScript {
 	} ElseIf($DownloadsIconInThisPC -eq 1) {
 		DisplayOut 'Showing Downloads folder in This PC...' 11 0
 		$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{7d83ee9b-2244-4e70-b1f5-5393042af1e4}\PropertyBag'
-		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+		$Path1 = '\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{374DE290-123F-4565-9164-39C4925E467B}'
+		$Path2 = '\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{088e3905-0323-4b02-9826-5d99428e115f}'
 		New-Item -Path "HKLM:\SOFTWARE\$Path" -Force
-		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show' }
+		New-Item -Path "HKLM:\SOFTWARE\$Path1" -Force
+		New-Item -Path "HKLM:\SOFTWARE\$Path2" -Force
+		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+		If($OSType -eq 64){
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Force
+			Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" -Force
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path2"
+		}
 	} ElseIf($DownloadsIconInThisPC -eq 2) {
 		DisplayOut 'Hiding Downloads folder in This PC...' 12 0
 		$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{7d83ee9b-2244-4e70-b1f5-5393042af1e4}\PropertyBag'
@@ -2369,8 +2395,10 @@ Function RunScript {
 		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
 	} ElseIf($DownloadsIconInThisPC -eq 3) {
 		DisplayOut 'Removing Downloads folder in This PC...' 13 0
-		RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{7d83ee9b-2244-4e70-b1f5-5393042af1e4}'
-		RemoveSetPath 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{7d83ee9b-2244-4e70-b1f5-5393042af1e4}'
+		RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{374DE290-123F-4565-9164-39C4925E467B}'
+		RemoveSetPath 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{374DE290-123F-4565-9164-39C4925E467B}'
+		RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{088e3905-0323-4b02-9826-5d99428e115f}'
+		RemoveSetPath 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{088e3905-0323-4b02-9826-5d99428e115f}'
 	}
 
 	If($MusicIconInThisPC -eq 0 -And $ShowSkipped -eq 1) {
@@ -2378,9 +2406,18 @@ Function RunScript {
 	} ElseIf($MusicIconInThisPC -eq 1) {
 		DisplayOut 'Showing Music folder in This PC...' 11 0
 		$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{a0c69a99-21c8-4671-8703-7934162fcf1d}\PropertyBag'
-		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+		$Path1 = '\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{1CF1260C-4DD0-4ebb-811F-33C572699FDE}'
+		$Path2 = '\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{3dfdf296-dbec-4fb4-81d1-6a3438bcf4de}'
 		New-Item -Path "HKLM:\SOFTWARE\$Path" -Force
-		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show' }
+		New-Item -Path "HKLM:\SOFTWARE\$Path1" -Force
+		New-Item -Path "HKLM:\SOFTWARE\$Path2" -Force
+		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+		If($OSType -eq 64){
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Force
+			Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" -Force
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path2"
+		}
 	} ElseIf($MusicIconInThisPC -eq 2) {
 		DisplayOut 'Hiding Music folder in This PC...' 12 0
 		$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{a0c69a99-21c8-4671-8703-7934162fcf1d}\PropertyBag'
@@ -2388,8 +2425,10 @@ Function RunScript {
 		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Hide' }
 	} ElseIf($MusicIconInThisPC -eq 3) {
 		DisplayOut 'Removing Music folder in This PC...' 13 0
-		RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{a0c69a99-21c8-4671-8703-7934162fcf1d}'
-		RemoveSetPath 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{a0c69a99-21c8-4671-8703-7934162fcf1d}'
+		RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{1CF1260C-4DD0-4ebb-811F-33C572699FDE}'
+		RemoveSetPath 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{1CF1260C-4DD0-4ebb-811F-33C572699FDE}'
+		RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{3dfdf296-dbec-4fb4-81d1-6a3438bcf4de}'
+		RemoveSetPath 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{3dfdf296-dbec-4fb4-81d1-6a3438bcf4de}'
 	}
 
 	If($PicturesIconInThisPC -eq 0 -And $ShowSkipped -eq 1) {
@@ -2397,9 +2436,18 @@ Function RunScript {
 	} ElseIf($PicturesIconInThisPC -eq 1) {
 		DisplayOut 'Showing Pictures folder in This PC...' 11 0
 		$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{0ddd015d-b06c-45d5-8c4c-f59713854639}\PropertyBag'
-		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+		$Path1 = '\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{24ad3ad4-a569-4530-98e1-ab02f9417aa8}'
+		$Path2 = '\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{3ADD1653-EB32-4cb0-BBD7-DFA0ABB5ACCA}'
 		New-Item -Path "HKLM:\SOFTWARE\$Path" -Force
-		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show' }
+		New-Item -Path "HKLM:\SOFTWARE\$Path1" -Force
+		New-Item -Path "HKLM:\SOFTWARE\$Path2" -Force
+		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+		If($OSType -eq 64){
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Force
+			Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" -Force
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path2"
+		}
 	} ElseIf($PicturesIconInThisPC -eq 2) {
 		DisplayOut 'Hiding Pictures folder in This PC...' 12 0
 		$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{0ddd015d-b06c-45d5-8c4c-f59713854639}\PropertyBag'
@@ -2407,8 +2455,10 @@ Function RunScript {
 		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Hide' }
 	} ElseIf($PicturesIconInThisPC -eq 3) {
 		DisplayOut 'Removing Pictures folder in This PC...' 13 0
-		RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0ddd015d-b06c-45d5-8c4c-f59713854639}'
-		RemoveSetPath 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0ddd015d-b06c-45d5-8c4c-f59713854639}'
+		RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{24ad3ad4-a569-4530-98e1-ab02f9417aa8}'
+		RemoveSetPath 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{24ad3ad4-a569-4530-98e1-ab02f9417aa8}'
+		RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{3ADD1653-EB32-4cb0-BBD7-DFA0ABB5ACCA}'
+		RemoveSetPath 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{3ADD1653-EB32-4cb0-BBD7-DFA0ABB5ACCA}'		
 	}
 
 	If($VideosIconInThisPC -eq 0 -And $ShowSkipped -eq 1) {
@@ -2416,9 +2466,18 @@ Function RunScript {
 	} ElseIf($VideosIconInThisPC -eq 1) {
 		DisplayOut 'Showing Videos folder in This PC...' 11 0
 		$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{35286a68-3c57-41a1-bbb1-0eae73d76c95}\PropertyBag'
-		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+		$Path1 = '\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A0953C92-50DC-43bf-BE83-3742FED03C9C}'
+		$Path2 = '\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{f86fa3ab-70d2-4fc7-9c99-fcbf05467f3a}'
 		New-Item -Path "HKLM:\SOFTWARE\$Path" -Force
-		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show' }
+		New-Item -Path "HKLM:\SOFTWARE\$Path1" -Force
+		New-Item -Path "HKLM:\SOFTWARE\$Path2" -Force
+		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+		If($OSType -eq 64){
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Force
+			Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" -Force
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path2" -Force
+		}
 	} ElseIf($VideosIconInThisPC -eq 2) {
 		DisplayOut 'Hiding Videos folder in This PC...' 12 0
 		$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{35286a68-3c57-41a1-bbb1-0eae73d76c95}\PropertyBag'
@@ -2426,8 +2485,10 @@ Function RunScript {
 		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Hide' }
 	} ElseIf($PicturesIconInThisPC -eq 3) {
 		DisplayOut 'Removing Videos folder in This PC...' 13 0
-		RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{35286a68-3c57-41a1-bbb1-0eae73d76c95}'
-		RemoveSetPath 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{35286a68-3c57-41a1-bbb1-0eae73d76c95}'
+		RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A0953C92-50DC-43bf-BE83-3742FED03C9C}'
+		RemoveSetPath 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A0953C92-50DC-43bf-BE83-3742FED03C9C}'
+		RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{f86fa3ab-70d2-4fc7-9c99-fcbf05467f3a}'
+		RemoveSetPath 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{f86fa3ab-70d2-4fc7-9c99-fcbf05467f3a}'
 	}
 
 	If($BuildVer -ge 16299){
@@ -2436,9 +2497,15 @@ Function RunScript {
 		} ElseIf($ThreeDobjectsIconInThisPC -eq 1) {
 			DisplayOut 'Showing 3D Object folder in This PC...' 11 0
 			$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{31C0DD25-9439-4F12-BF41-7FF4EDA38722}\PropertyBag'
-			Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+			$Path1 = '\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}'
 			New-Item -Path "HKLM:\SOFTWARE\$Path" -Force
-			If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show' }
+			New-Item -Path "HKLM:\SOFTWARE\$Path1" -Force
+			Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+			If($OSType -eq 64){
+				New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Force
+				Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+				New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" -Force
+			}
 		} ElseIf($ThreeDobjectsIconInThisPC -eq 2) {
 			DisplayOut 'Hiding 3D Object folder in This PC...' 12 0
 			$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{31C0DD25-9439-4F12-BF41-7FF4EDA38722}\PropertyBag'
@@ -2446,8 +2513,8 @@ Function RunScript {
 			If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Hide' }
 		} ElseIf($ThreeDobjectsIconInThisPC -eq 3) {
 			DisplayOut 'Removing 3D Object folder in This PC...' 13 0
-			RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{31C0DD25-9439-4F12-BF41-7FF4EDA38722}'
-			RemoveSetPath 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{31C0DD25-9439-4F12-BF41-7FF4EDA38722}'
+			RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}'
+			RemoveSetPath 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}'
 		}
 	}
 
