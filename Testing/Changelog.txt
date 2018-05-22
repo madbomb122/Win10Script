@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
-3.3.5 (05-13-2018)
+3.3.6 (05-22-2018)
 
 Fixed an issue with enable windows defender on newer than Annivery update didnt work
 Fixed an issue that caused an entry for disableingn app auto download to not set
@@ -22,6 +22,9 @@ Bug fix for remove 'This PC' items not showing that you are removing them
 Changed Unpin start menu items.. from unpinning Some to All items
 Metro App Unhide/Hide/Uninstall now are the first items to be set instead of last
 Internal Script changes
+
+Bug fix for Hiding/Removing '3d Objects' in 'This PC' for April 2018 Update
+Bug fix for Showing 'This PC', now should Re-Add removed items
 
 -----------------------------------------------------------------------------------
 3.3.0 (12-29-2017)
