@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
-3.3.6 (05-22-2018)
+3.3.7 (06-11-2018)
 
 Fixed an issue with enable windows defender on newer than Annivery update didnt work
 Fixed an issue that caused an entry for disableingn app auto download to not set
@@ -25,6 +25,11 @@ Internal Script changes
 
 Bug fix for Hiding/Removing '3d Objects' in 'This PC' for April 2018 Update
 Bug fix for Showing 'This PC', now should Re-Add removed items
+
+Renamed 'Application' to 'Application/Feature'
+Added 'Fax And Scan' to Uninstall/Install to 'Application/Feature' list
+Fixed a problem with Onedrive uninstall
+Added 'Window's Timeline' to Enable/Disable to 'Explorer' List
 
 -----------------------------------------------------------------------------------
 3.3.0 (12-29-2017)
