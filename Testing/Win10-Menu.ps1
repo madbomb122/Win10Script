@@ -11,8 +11,8 @@
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
 $Script_Version = '3.3'
-$Minor_Version = '6'
-$Script_Date = 'May-22-2018'
+$Minor_Version = '7'
+$Script_Date = 'June-11-2018'
 $Release_Type = 'Testing'
 #$Release_Type = 'Stable'
 ##########
@@ -57,7 +57,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 .Prerequisite to run script
   System: Windows 10
   Files: This script
-    
+
 .DESCRIPTION
   Makes it easier to setup an existing or new install with moded setting
 
@@ -164,12 +164,23 @@ $AppsList = @(
 'Microsoft.ZuneVideo')
 
 $TasksList = @(
+'Application Experience',
+'Consolidator',
+'Customer Experience Improvement Program',
+'DmClient',
+'KernelCeipTask',
+'Microsoft Compatibility Appraiser',
+'ProgramDataUpdater',
+'Proxy',
+'QueueReporting',
+'SmartScreenSpecific',
+'UsbCeip')
+
+<#
 'AgentFallBack2016',
 'AitAgent',
-'Consolidator',
 'CreateObjectTask',
 #'Diagnostics',
-'DmClient',
 'DmClientOnScenarioDownload',
 'FamilySafetyMonitor',
 'FamilySafetyRefresh',
@@ -177,25 +188,17 @@ $TasksList = @(
 'FamilySafetyUpload',
 #'File History (maintenance mode)',
 'GatherNetworkInfo',
-'KernelCeipTask',
 'MapsUpdateTask',
-'Microsoft Compatibility Appraiser',
 #'Microsoft-Windows-DiskDiagnosticDataCollector',
 'MNO Metadata Parser',
-'Office 15 Subscription Heartbeat',
 'OfficeTelemetryAgentFallBack',
 'OfficeTelemetryAgentLogOn',
 'OfficeTelemetryAgentLogOn2016',
-'ProgramDataUpdater',
-'Proxy',
-'QueueReporting',
-'SmartScreenSpecific',
 'Sqm-Tasks',
 #'StartupAppTask',
 'Uploader',
-'UsbCeip',
 'XblGameSaveTask',
-'XblGameSaveTaskLogon')
+'XblGameSaveTaskLogon') #>
 
 $Xbox_Apps = @(
 'Microsoft.XboxApp',
@@ -311,7 +314,7 @@ Function ScriptUpdateFun {
 		SaveSettingFiles $TempSetting 0
 		If($BatUpdateScriptFileName -eq 1) {
 			$BatFile = $filebase + '_Win10-Script.bat'
-			If(Test-Path $BatFile -PathType Leaf) { 
+			If(Test-Path $BatFile -PathType Leaf) {
 				(Get-Content -LiteralPath $BatFile) | Foreach-Object {$_ -replace "Set Script_File=.*?$" , "Set Script_File=$DFilename"} | Set-Content -LiteralPath $BatFile -Force
 				MenuBlankLineLog
 				LeftLineLog ;DisplayOutMenu ' Updated bat file with new script file name.     ' 13 0 0 1 ;RightLineLog
@@ -520,7 +523,7 @@ Function ConfigGUIitms {
 	RestorePointCBCheck
 }
 
-Function SelectComboBox([Array]$List,[Int]$Metro) { 
+Function SelectComboBox([Array]$List,[Int]$Metro) {
 	If($Metro -eq 1) {
 		ForEach($Var In $List) {
 			If($Var -eq 'APP_SkypeApp') {
@@ -760,6 +763,8 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="405" Width="550
 					<ComboBox Name="WinXPowerShell_Combo" HorizontalAlignment="Left" Margin="133,206,0,0" VerticalAlignment="Top" Width="127"/>
 					<Label Name="ReopenAppsOnBoot_Txt" Content="Reopen Apps On Boot:" HorizontalAlignment="Left" Margin="309,203,0,0" VerticalAlignment="Top"/>
 					<ComboBox Name="ReopenAppsOnBoot_Combo" HorizontalAlignment="Left" Margin="436,205,0,0" VerticalAlignment="Top" Width="72"/>
+					<Label Name="TimeLine_Txt" Content="Window Timeline:" HorizontalAlignment="Left" Margin="336,231,0,0" VerticalAlignment="Top"/>
+					<ComboBox Name="Timeline_Combo" HorizontalAlignment="Left" Margin="436,233,0,0" VerticalAlignment="Top" Width="72"/>
 				</Grid>
 			</TabItem>
 			<TabItem Name="Desktop_Tab" Header="Desktop/This PC" Margin="-2,0,2,0">
@@ -900,7 +905,7 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="405" Width="550
 			</TabItem>
 			<TabItem Name="Application_Tab" Header="Application/Windows Update" Margin="-2,0,2,0">
 				<Grid Background="#FFE5E5E5">
-					<Label Content="Application" HorizontalAlignment="Left" Margin="89,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+					<Label Content="Application/Feature" HorizontalAlignment="Left" Margin="79,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
 					<Label Content="OneDrive:" HorizontalAlignment="Left" Margin="69,31,0,0" VerticalAlignment="Top"/>
 					<ComboBox Name="OneDrive_Combo" HorizontalAlignment="Left" Margin="128,34,0,0" VerticalAlignment="Top" Width="72"/>
 					<Label Content="OneDrive Install:" HorizontalAlignment="Left" Margin="34,58,0,0" VerticalAlignment="Top"/>
@@ -911,8 +916,8 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="405" Width="550
 					<ComboBox Name="MediaPlayer_Combo" HorizontalAlignment="Left" Margin="128,115,0,0" VerticalAlignment="Top" Width="78"/>
 					<Label Content="Work Folders:" HorizontalAlignment="Left" Margin="49,139,0,0" VerticalAlignment="Top"/>
 					<ComboBox Name="WorkFolders_Combo" HorizontalAlignment="Left" Margin="128,142,0,0" VerticalAlignment="Top" Width="78"/>
-					<Label Name="LinuxSubsystem_Txt" Content="Linux Subsystem:" HorizontalAlignment="Left" Margin="31,166,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="LinuxSubsystem_Combo" HorizontalAlignment="Left" Margin="128,169,0,0" VerticalAlignment="Top" Width="78"/>
+					<Label Name="LinuxSubsystem_Txt" Content="Linux Subsystem:" HorizontalAlignment="Left" Margin="31,193,0,0" VerticalAlignment="Top"/>
+					<ComboBox Name="LinuxSubsystem_Combo" HorizontalAlignment="Left" Margin="128,196,0,0" VerticalAlignment="Top" Width="78"/>
 					<Label Content="Windows Update" HorizontalAlignment="Left" Margin="336,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
 					<Label Content="Check for Update:" HorizontalAlignment="Left" Margin="290,31,0,0" VerticalAlignment="Top"/>
 					<ComboBox Name="CheckForWinUpdate_Combo" HorizontalAlignment="Left" Margin="392,34,0,0" VerticalAlignment="Top" Width="72"/>
@@ -929,6 +934,8 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="405" Width="550
 					<Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Margin="254,0,0,-2" Stroke="Black" Width="1"/>
 					<Label Content="Update Available Popup:" HorizontalAlignment="Left" Margin="256,193,0,0" VerticalAlignment="Top"/>
 					<ComboBox Name="UpdateAvailablePopup_Combo" HorizontalAlignment="Left" Margin="392,196,0,0" VerticalAlignment="Top" Width="72"/>
+					<Label Content="Fax And Scan:" HorizontalAlignment="Left" Margin="49,166,0,0" VerticalAlignment="Top"/>
+					<ComboBox Name="FaxAndScan_Combo" HorizontalAlignment="Left" Margin="128,169,0,0" VerticalAlignment="Top" Width="78"/>
 				</Grid>
 			</TabItem>
 		</TabControl>
@@ -1029,6 +1036,7 @@ $Skip_EnableD_Disable = @(
 'StickyKeyPrompt',
 'SleepPower',
 'ReopenAppsOnBoot',
+'Timeline',
 'UpdateAvailablePopup')
 
 $Skip_Enable_DisableD = @(
@@ -1072,7 +1080,7 @@ $Skip_Show_HideD = @(
 'UsersFileOnDesktop',
 'ControlPanelOnDesktop')
 
-$Skip_InstalledD_Uninstall = @('OneDriveInstall','MediaPlayer','WorkFolders')
+$Skip_InstalledD_Uninstall = @('OneDriveInstall','MediaPlayer','WorkFolders','FaxAndScan')
 $UpdateFile = $filebase + 'Update.bat'
 
 	If($Release_Type -eq 'Testing'){ $Script:Restart = 0 ;$WPF_Restart_CB.IsEnabled = $False ;$WPF_Restart_CB.Content += ' (Disabled in Testing Version)' }
@@ -1080,7 +1088,8 @@ $UpdateFile = $filebase + 'Update.bat'
 	If($BuildVer -lt 14393){ $WPF_LinuxSubsystem_Combo.Visibility = 'Hidden' ;$WPF_LinuxSubsystem_Txt.Visibility = 'Hidden' }
 	If($BuildVer -lt 16299){ $WPF_ThreeDobjectsIconInThisPC_Combo.Visibility = 'Hidden' ;$WPF_ThreeDobjectsIconInThisPC_txt.Visibility = 'Hidden' }
 	If($BuildVer -lt 16299){ $WPF_ReopenAppsOnBoot_Combo.Visibility = 'Hidden' ;$WPF_ReopenAppsOnBoot_txt.Visibility = 'Hidden' }
-	If($BuildVer -lt 17133){ $WPF_AccountProtectionWarn_Combo.Visibility = 'Hidden' ;$WPF_AccountProtectionWarn_Txt.Visibility = 'Hidden' }	
+	If($BuildVer -lt 17133){ $WPF_AccountProtectionWarn_Combo.Visibility = 'Hidden' ;$WPF_AccountProtectionWarn_Txt.Visibility = 'Hidden' }
+	If($BuildVer -lt 17133){ $WPF_Timeline_Combo.Visibility = 'Hidden' ;$WPF_Timeline_Txt.Visibility = 'Hidden' }
 	ForEach($Var In $Skip_EnableD_Disable){ SetCombo $Var 'Enable*,Disable' }
 	ForEach($Var In $Skip_Enable_DisableD){ SetCombo $Var 'Enable,Disable*' }
 	ForEach($Var In $Skip_ShowD_Hide_Remove){ SetCombo $Var 'Show/Add*,Hide,Remove**' }
@@ -1147,7 +1156,7 @@ Function GuiItmToVariable {
 	If($WPF_InternetCheck_CB.IsChecked){ $Script:InternetCheck = 1 } Else{ $Script:InternetCheck = 0 }
 	If($WPF_ShowSkipped_CB.IsChecked){ $Script:ShowSkipped = 1 } Else{ $Script:ShowSkipped = 0 }
 	If($WPF_Restart_CB.IsChecked){ $Script:Restart = 1 } Else { $Script:Restart = 0 }
-	$Script:RestorePointName = $WPF_RestorePointName_Txt.Text 
+	$Script:RestorePointName = $WPF_RestorePointName_Txt.Text
 }
 
 ##########
@@ -1181,7 +1190,7 @@ Function LoadWinDefault {
 	$Script:AppAutoDownload = 1
 	$Script:UpdateAvailablePopup = 1
 
-	#Service Tweaks    
+	#Service Tweaks
 	$Script:UAC = 2
 	$Script:SharingMappedDrives = 2
 	$Script:AdminShares = 1
@@ -1192,7 +1201,7 @@ Function LoadWinDefault {
 	$Script:RemoteDesktop = 2
 
 	#Context Menu Items
-	$Script:CastToDevice = 1 
+	$Script:CastToDevice = 1
 	$Script:PreviousVersions = 1
 	$Script:IncludeinLibrary = 1
 	$Script:PinToStart = 1
@@ -1236,6 +1245,7 @@ Function LoadWinDefault {
 	If($BuildVer -ge 15063){ $Script:WinXPowerShell = 1 } Else{ $Script:WinXPowerShell = 2 }
 	$Script:TaskManagerDetails = 2
 	$Script:ReopenAppsOnBoot = 1
+	$Script:Timeline = 1
 
 	#'This PC' Items
 	$Script:DesktopIconInThisPC = 1
@@ -1264,7 +1274,7 @@ Function LoadWinDefault {
 	$Script:StickyKeyPrompt = 1
 	$Script:NumblockOnStart = 2
 	$Script:F8BootMenu = 1
-	$Script:RemoteUACAcctToken = 2    
+	$Script:RemoteUACAcctToken = 2
 	$Script:SleepPower = 1
 
 	# Photo Viewer Settings
@@ -1277,6 +1287,7 @@ Function LoadWinDefault {
 	$Script:XboxDVR = 1
 	$Script:MediaPlayer = 1
 	$Script:WorkFolders = 1
+	$Script:FaxAndScan = 1
 	$Script:LinuxSubsystem = 2
 }
 
@@ -1299,11 +1310,12 @@ Function PreStartScript {
 		Checkpoint-Computer -Description $RestorePointName | Out-Null
 	}
 	Invoke-Expression RunScript
-} 
+}
 
 Function RunScript {
 	If(!(Test-Path 'HKCR:')){ New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null }
 	If(!(Test-Path 'HKU:')){ New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_USERS | Out-Null }
+	$AppxCount = 0
 
 	DisplayOut "`n-----------------------`n-   Metro App Items   -`n-----------------------" 14 0
 	$APPProcess = Get-Variable -Name 'APP_*' -ValueOnly -Scope Script
@@ -1311,21 +1323,21 @@ Function RunScript {
 
 	ForEach($AppV In $APPProcess) {
 		If($AppV -eq 1) {
-			If($AppsList[$A] -ne 'XboxApps'){ 
+			If($AppsList[$A] -ne 'XboxApps'){
 				$APPS_AppsUnhide.Add($AppsList[$A]) | Out-null
-			} Else { 
+			} Else {
 				ForEach($AppX In $Xbox_Apps) { $APPS_AppsUnhide.Add($AppX) | Out-null }
 			}
 		} ElseIf($AppV -eq 2) {
-			If($AppsList[$A] -ne 'XboxApps'){ 
+			If($AppsList[$A] -ne 'XboxApps'){
 				$APPS_AppsHide.Add($AppsList[$A]) | Out-null
-			} Else { 
+			} Else {
 				ForEach($AppX In $Xbox_Apps) { $APPS_AppsHide.Add($AppX) | Out-null }
 			}
 		} ElseIf($AppV -eq 3) {
-			If($AppsList[$A] -ne 'XboxApps'){ 
+			If($AppsList[$A] -ne 'XboxApps'){
 				$APPS_AppsUninstall.Add($AppsList[$A]) | Out-null
-			} Else { 
+			} Else {
 				ForEach($AppX In $Xbox_Apps) { $APPS_AppsUninstall.Add($AppX) | Out-null }
 			}
 		} $A++
@@ -1342,7 +1354,7 @@ Function RunScript {
 		$AppInst = Get-AppxPackage -AllUsers $AppI
 		If($AppInst -ne $null) {
 			DisplayOut $AppI 11 0
-			ForEach($App In $AppInst){ Add-AppxPackage -DisableDevelopmentMode -Register "$($App.InstallLocation)\AppXManifest.xml" }
+			ForEach($App In $AppInst){ Add-AppxPackage -DisableDevelopmentMode -Register "$($App.InstallLocation)\AppXManifest.xml" ;$AppxCount++ }
 		} Else {
 			DisplayOut "Unable to Unhide $AppI" 11 0
 		}
@@ -1357,6 +1369,7 @@ Function RunScript {
 		If($AppxPackages.DisplayName.Contains($AppH)) {
 			DisplayOut $AppH 12 0
 			Get-AppxPackage $AppH | Remove-AppxPackage | Out-null
+			$AppxCount++
 		} Else {
 			DisplayOut "$AppH Isn't Installed" 12 0
 		}
@@ -1376,6 +1389,7 @@ Function RunScript {
 			# Alt removal: DISM /Online /Remove-ProvisionedAppxPackage /PackageName:
 			Remove-AppxPackage -Package $PackageFullName | Out-null
 			Remove-AppxProvisionedPackage -Online -PackageName $ProPackageFullName | Out-null
+			$AppxCount++
 		} Else {
 			DisplayOut "$AppU Isn't Installed" 14 0
 		}
@@ -1430,7 +1444,7 @@ Function RunScript {
 		Remove-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppHost' -Name 'EnableWebContentEvaluation'
 		If($BuildVer -ge 15063) {
 			$AddPath = (Get-AppxPackage -AllUsers 'Microsoft.MicrosoftEdge').PackageFamilyName
-			$Path = 'HKCU:\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\$AddPath\MicrosoftEdge\PhishingFilter'
+			$Path = "HKCU:\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\$AddPath\MicrosoftEdge\PhishingFilter"
 			Remove-ItemProperty -Path $Path -Name 'EnabledV9'
 			Remove-ItemProperty -Path $Path -Name 'PreventOverride'
 		}
@@ -1441,11 +1455,11 @@ Function RunScript {
 		Set-ItemProperty -Path "HKCU:\$Path\AppHost" -Name 'EnableWebContentEvaluation' -Type DWord -Value 0
 		If($BuildVer -ge 15063) {
 			$AddPath = (Get-AppxPackage -AllUsers 'Microsoft.MicrosoftEdge').PackageFamilyName
-			$Path = CheckSetPath 'HKCU:\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\$AddPath\MicrosoftEdge\PhishingFilter'
+			$Path = CheckSetPath "HKCU:\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppContainer\Storage\$AddPath\MicrosoftEdge\PhishingFilter"
 			Set-ItemProperty -Path $Path -Name 'EnabledV9' -Type DWord -Value 0
 			Set-ItemProperty -Path $Path -Name 'PreventOverride' -Type DWord -Value 0
 		}
-	}    
+	}
 
 	If($LocationTracking -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut 'Skipping Location Tracking...' 15 0
@@ -1577,7 +1591,7 @@ Function RunScript {
 	} ElseIf($AppAutoDownload -eq 1) {
 		DisplayOut 'Enabling App Auto Download...' 11 0
 		Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsStore\WindowsUpdate' -Name 'AutoDownload' -Type DWord -Value 0
-		Remove-ItemProperty  -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent' -Name 'DisableWindowsConsumerFeatures' 
+		Remove-ItemProperty  -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent' -Name 'DisableWindowsConsumerFeatures'
 	} ElseIf($AppAutoDownload -eq 2) {
 		DisplayOut 'Disabling App Auto Download...' 12 0
 		$Path = CheckSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsStore\WindowsUpdate'
@@ -1893,7 +1907,7 @@ Function RunScript {
 		DisplayOut 'Skipping Share With Context item...' 15 0
 	} ElseIf($ShareWith -eq 1) {
 		DisplayOut 'Enabling Share With Context item...' 11 0
-		Set-ItemProperty -LiteralPath 'HKCR:\*\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value '{f81e9010-6ea4-11ce-a7ff-00aa003ca9f6}' 
+		Set-ItemProperty -LiteralPath 'HKCR:\*\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value '{f81e9010-6ea4-11ce-a7ff-00aa003ca9f6}'
 		Set-ItemProperty -Path 'HKCR:\Directory\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value '{f81e9010-6ea4-11ce-a7ff-00aa003ca9f6}'
 		Set-ItemProperty -Path 'HKCR:\Directory\shellex\CopyHookHandlers\Sharing' -Name '(Default)' -Type String -Value '{40dd6e20-7c17-11ce-a804-00aa003ca9f6}'
 		Set-ItemProperty -Path 'HKCR:\Directory\shellex\PropertySheetHandlers\Sharing' -Name '(Default)' -Type String -Value '{f81e9010-6ea4-11ce-a7ff-00aa003ca9f6}'
@@ -1902,7 +1916,7 @@ Function RunScript {
 		Set-ItemProperty -Path 'HKCR:\LibraryFolder\background\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value '{f81e9010-6ea4-11ce-a7ff-00aa003ca9f6}'
 	}  ElseIf($ShareWith -eq 2) {
 		DisplayOut 'Disabling Share With...' 12 0
-		Set-ItemProperty -LiteralPath 'HKCR:\*\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value '' 
+		Set-ItemProperty -LiteralPath 'HKCR:\*\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value ''
 		Set-ItemProperty -Path 'HKCR:\Directory\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value ''
 		Set-ItemProperty -Path 'HKCR:\Directory\shellex\CopyHookHandlers\Sharing' -Name '(Default)' -Type String -Value ''
 		Set-ItemProperty -Path 'HKCR:\Directory\shellex\PropertySheetHandlers\Sharing' -Name '(Default)' -Type String -Value ''
@@ -2009,7 +2023,7 @@ Function RunScript {
 		DisplayOut 'Showing All Tray Icons...' 11 0
 		Set-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer' -Name 'EnableAutoTray' -Type DWord -Value 0
 		Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer' -Name 'EnableAutoTray' -Type DWord -Value 0
-	} 
+	}
 
 	If($SecondsInClock -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut 'Skipping Seconds in Taskbar Clock...' 15 0
@@ -2079,7 +2093,7 @@ Function RunScript {
 		Set-ItemProperty -Path $Path -Name 'PreInstalledAppsEverEnabled' -Type DWord -Value 1
 	 	Set-ItemProperty -Path $Path -Name 'SilentInstalledAppsEnabled' -Type DWord -Value 1
 		Set-ItemProperty -Path $Path -Name 'SystemPaneSuggestionsEnabled' -Type DWord -Value 1
-		Set-ItemProperty -Path $Path -Name 'Start_TrackProgs' -Type DWord -Value 1		
+		Set-ItemProperty -Path $Path -Name 'Start_TrackProgs' -Type DWord -Value 1
 		Set-ItemProperty -Path $Path -Name 'SubscribedContent-338387Enabled' -Type DWord -Value 1
 		Set-ItemProperty -Path $Path -Name 'SubscribedContent-338388Enabled' -Type DWord -Value 1
 		Set-ItemProperty -Path $Path -Name 'SubscribedContent-338389Enabled' -Type DWord -Value 1
@@ -2255,7 +2269,7 @@ Function RunScript {
 		$Path = CheckSetPath 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer'
 		Set-ItemProperty -Path $Path -Name 'NoDriveTypeAutoRun' -Type DWord -Value 255
 	}
-	
+
 	If($StoreOpenWith -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut 'Skipping Search Windows Store for Unknown Extensions...' 15 0
 	} ElseIf($StoreOpenWith -eq 1) {
@@ -2303,7 +2317,7 @@ Function RunScript {
 		}
 	}
 
-	If($BuildVer -ge 16299) {	
+	If($BuildVer -ge 16299) {
 		If($ReopenAppsOnBoot -eq 0 -And $ShowSkipped -eq 1) {
 			DisplayOut 'Skipping Re-Opening Apps on Boot...' 15 0
 		} ElseIf($ReopenAppsOnBoot -eq 1) {
@@ -2312,6 +2326,18 @@ Function RunScript {
 		} ElseIf($ReopenAppsOnBoot -eq 2) {
 			DisplayOut "Disabling Re-Opening Apps on Boot (Apps won't reopen on boot)..." 12 0
 			Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System' -Name 'DisableAutomaticRestartSignOn' -Type DWord -Value 1
+		}
+	}
+
+	If($BuildVer -ge 17133){
+		If($Timeline -eq 0 -And $ShowSkipped -eq 1) {
+			DisplayOut 'Skipping Windows Timeline...' 15 0
+		} ElseIf($Timeline -eq 1) {
+			DisplayOut 'Enableing Windows Timeline...' 11 0
+			Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'EnableActivityFeed' -Type DWord -Value 1
+		} ElseIf($Timeline -eq 2) {
+			DisplayOut "Disabling Windows Timeline..." 12 0
+			Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'EnableActivityFeed' -Type DWord -Value 0
 		}
 	}
 
@@ -2329,7 +2355,7 @@ Function RunScript {
 			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Force
 			Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
 			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" -Force
-		}	
+		}
 	} ElseIf($DesktopIconInThisPC -eq 2) {
 		DisplayOut 'Hiding Desktop folder in This PC...' 12 0
 		$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}\PropertyBag'
@@ -2458,7 +2484,7 @@ Function RunScript {
 		RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{24ad3ad4-a569-4530-98e1-ab02f9417aa8}'
 		RemoveSetPath 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{24ad3ad4-a569-4530-98e1-ab02f9417aa8}'
 		RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{3ADD1653-EB32-4cb0-BBD7-DFA0ABB5ACCA}'
-		RemoveSetPath 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{3ADD1653-EB32-4cb0-BBD7-DFA0ABB5ACCA}'		
+		RemoveSetPath 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{3ADD1653-EB32-4cb0-BBD7-DFA0ABB5ACCA}'
 	}
 
 	If($VideosIconInThisPC -eq 0 -And $ShowSkipped -eq 1) {
@@ -2610,7 +2636,7 @@ Function RunScript {
 		Set-ItemProperty -Path 'HKCR:\giffile\shell\open\command' -Name 'DelegateExecute' -Type String -Value '{17FE9752-0B5A-4665-84CD-569794602F5C}'
 		RemoveSetPath 'HKCR:\jpegfile\shell\open'
 		RemoveSetPath 'HKCR:\jpegfile\shell\open'
-	} 
+	}
 
 	If($PVOpenWithMenu -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut 'Skipping Photo Viewer Open with Menu...' 15 0
@@ -2684,7 +2710,7 @@ Function RunScript {
 	}
 
 	DisplayOut "`n------------------`n-   Misc Items   -`n------------------" 14 0
-	If($BuildVer -ge 17133){ 
+	If($BuildVer -ge 17133){
 		If($AccountProtectionWarn -eq 0 -And $ShowSkipped -eq 1) {
 			DisplayOut 'Skipping Account Protection Warning...' 15 0
 		} ElseIf($AccountProtectionWarn -eq 1) {
@@ -2775,7 +2801,7 @@ Function RunScript {
 		DisplayOut 'Skipping Unpinning Items...' 15 0
 	} ElseIf($UnpinItems -eq 1) {
 		DisplayOut "`nUnpinning All Startmenu Items...`n------------------" 12 0
-		If($BuildVer -le 16299){ 
+		If($BuildVer -le 16299){
 			Get-ChildItem -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount' -Include '*.group' -Recurse | ForEach-Object {
 				$data = (Get-ItemProperty -Path "$($_.PsPath)\Current" -Name 'Data').Data -Join ','
 				$data = $data.Substring(0, $data.IndexOf(',0,202,30') + 9) + ',0,202,80,0,0'
@@ -2796,7 +2822,7 @@ Function RunScript {
 		ForEach($TaskN in $TasksList) { Get-ScheduledTask -TaskName $TaskN | Disable-ScheduledTask }
 	}
 
-	DisplayOut "`n-------------------------`n-   Application Items   -`n-------------------------" 14 0
+	DisplayOut "`n-------------------------`n-   Application/Feature Items   -`n-------------------------" 14 0
 	If($OneDrive -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut 'Skipping OneDrive...' 15 0
 	} ElseIf($OneDrive -eq 1) {
@@ -2814,13 +2840,13 @@ Function RunScript {
 		DisplayOut 'Skipping OneDrive Installing...' 15 0
 	} ElseIf($OneDriveInstall -eq 1) {
 		DisplayOut 'Installing OneDrive...' 11 0
-		$onedriveS = "$Env:SYSTEMROOT\"
+		$onedriveS = "$Env:WINDIR\"
 		If($OSType -eq 64){ $onedriveS += 'SysWOW64' } Else{ $onedriveS += 'System32' }
 		$onedriveS += '\OneDriveSetup.exe'
 		If(Test-Path $onedriveS -PathType Leaf) { Start-Process $onedriveS -NoNewWindow }
 	} ElseIf($OneDriveInstall -eq 2) {
 		DisplayOut 'Uninstalling OneDrive...' 15 0
-		$onedriveS = "$Env:SYSTEMROOT\"
+		$onedriveS = "$Env:WINDIR\"
 		If($OSType -eq 64){ $onedriveS += 'SysWOW64' } Else{ $onedriveS += 'System32' }
 		$onedriveS += '\OneDriveSetup.exe'
 		If(Test-Path $onedriveS -PathType Leaf) {
@@ -2833,7 +2859,7 @@ Function RunScript {
 			Remove-Item "$Env:USERPROFILE\OneDrive" -Force -Recurse
 			Remove-Item "$Env:LOCALAPPDATA\Microsoft\OneDrive" -Force -Recurse
 			Remove-Item "$Env:PROGRAMDATA\Microsoft OneDrive" -Force -Recurse
-			Remove-Item "$Env:SYSTEMDRIVE\OneDriveTemp" -Force -Recurse
+			Remove-Item "$Env:WINDIR\OneDriveTemp" -Force -Recurse
 			Remove-Item -Path 'HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Recurse
 			Remove-Item -Path 'HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Force -Recurse
 		}
@@ -2872,12 +2898,22 @@ Function RunScript {
 		If(!((Get-WindowsOptionalFeature -Online | Where-Object featurename -Like 'WorkFolders-Client').State)){ Disable-WindowsOptionalFeature -Online -FeatureName 'WorkFolders-Client' -NoRestart | Out-Null }
 	}
 
+	If($FaxAndScan -eq 0 -And $ShowSkipped -eq 1) {
+		DisplayOut 'Skipping Fax And Scan...' 15 0
+	} ElseIf($FaxAndScan -eq 1) {
+		DisplayOut 'Installing Fax And Scan....' 11 0
+		If((Get-WindowsOptionalFeature -Online | Where-Object featurename -Like 'FaxServicesClientPackage').State){ Enable-WindowsOptionalFeature -Online -FeatureName 'FaxServicesClientPackage' -NoRestart | Out-Null }
+	} ElseIf($WFaxAndScan -eq 2) {
+		DisplayOut 'Uninstalling Fax And Scan....' 14 0
+		If(!((Get-WindowsOptionalFeature -Online | Where-Object featurename -Like 'FaxServicesClientPackage').State)){ Disable-WindowsOptionalFeature -Online -FeatureName 'FaxServicesClientPackage' -NoRestart | Out-Null }
+	}
+
 	If($BuildVer -ge 14393) {
 		If($LinuxSubsystem -eq 0 -And $ShowSkipped -eq 1) {
 			DisplayOut 'Skipping Linux Subsystem...' 15 0
 		} ElseIf($LinuxSubsystem -eq 1) {
 			DisplayOut 'Installing Linux Subsystem...' 11 0
-			If((Get-WindowsOptionalFeature -Online | Where-Object featurename -Like 'Microsoft-Windows-Subsystem-Linux').State){ 
+			If((Get-WindowsOptionalFeature -Online | Where-Object featurename -Like 'Microsoft-Windows-Subsystem-Linux').State){
 				$Path = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock'
 				Set-ItemProperty -Path $Path -Name 'AllowDevelopmentWithoutDevLicense' -Type DWord -Value 1
 				Set-ItemProperty -Path $Path -Name 'AllowAllTrustedApps' -Type DWord -Value 1
@@ -2885,7 +2921,7 @@ Function RunScript {
 			}
 		} ElseIf($LinuxSubsystem -eq 2) {
 			DisplayOut 'Uninstalling Linux Subsystem...' 14 0
-			If(!((Get-WindowsOptionalFeature -Online | Where-Object featurename -Like 'Microsoft-Windows-Subsystem-Linux').State)){ 
+			If(!((Get-WindowsOptionalFeature -Online | Where-Object featurename -Like 'Microsoft-Windows-Subsystem-Linux').State)){
 				$Path = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock'
 				Set-ItemProperty -Path $Path -Name 'AllowDevelopmentWithoutDevLicense' -Type DWord -Value 0
 				Set-ItemProperty -Path $Path -Name 'AllowAllTrustedApps' -Type DWord -Value 0
@@ -2941,7 +2977,7 @@ Function SetDefault {
 # Edit values (Option) to your preference
 # Change to an Option not listed will Skip the Function/Setting
 
-# Note: If you're not sure what something does don't change it or do a web search 
+# Note: If you're not sure what something does don't change it or do a web search
 
 # Can ONLY create 1 per 24 hours with this script (Will give an error)
 $Script:CreateRestorePoint = 0      #0-Skip, 1-Create --(Restore point before script runs)
@@ -2965,7 +3001,7 @@ $Script:InternetCheck = 0           #0 = Checks if you have Internet by doing a 
 #Restart when done? (I recommend restarting when done)
 $Script:Restart = 1                 #0-Don't Restart, 1-Restart
 
-#Windows Default for ALL Settings 
+#Windows Default for ALL Settings
 $Script:WinDefault = 2              #1-Yes*, 2-No
 # IF 1 is set then Everything Other than the following will use the Default Win Settings
 # ALL Values Above this one, All Metro Apps and OneDriveInstall (Will use what you set)
@@ -3006,7 +3042,7 @@ $Script:WinDefender = 0             #0-Skip, 1-Enable*, 2-Disable
 $Script:HomeGroups = 0              #0-Skip, 1-Enable*, 2-Disable
 $Script:RemoteAssistance = 0        #0-Skip, 1-Enable*, 2-Disable
 $Script:RemoteDesktop = 0           #0-Skip, 1-Enable, 2-Disable* --(Remote Desktop w/o Network Level Authentication)
- 
+
 #Context Menu Items
 # Function = Option                 #Choices (* Indicates Windows Default)
 $Script:CastToDevice = 0            #0-Skip, 1-Enable*, 2-Disable
@@ -3058,17 +3094,18 @@ $Script:StoreOpenWith = 0           #0-Skip, 1-Enable*, 2-Disable
 $Script:WinXPowerShell = 0          #0-Skip, 1-Powershell*, 2-Command Prompt
 $Script:TaskManagerDetails = 0      #0-Skip, 1-Show, 2-Hide*
 $Script:ReopenAppsOnBoot = 0        #0-Skip, 1-Enable*, 2-Disable
+$Script:Timeline = 0                #0-Skip, 1-Enable*, 2-Disable 
 
 #'This PC' Items
 # Function = Option                 #Choices (* Indicates Windows Default)
-$Script:DesktopIconInThisPC = 0     #0-Skip, 1-Show*, 2-Hide, 3- Remove
-$Script:DocumentsIconInThisPC = 0   #0-Skip, 1-Show*, 2-Hide, 3- Remove
-$Script:DownloadsIconInThisPC = 0   #0-Skip, 1-Show*, 2-Hide, 3- Remove
-$Script:MusicIconInThisPC = 0       #0-Skip, 1-Show*, 2-Hide, 3- Remove
-$Script:PicturesIconInThisPC = 0    #0-Skip, 1-Show*, 2-Hide, 3- Remove
-$Script:VideosIconInThisPC = 0      #0-Skip, 1-Show*, 2-Hide, 3- Remove
-$Script:ThreeDobjectsIconInThisPC = 0   #0-Skip, 1-Show, 2-Hide*, 3- Remove
-# Removing them can cause problems
+$Script:DesktopIconInThisPC = 0     #0-Skip, 1-Show/Add*, 2-Hide, 3- Remove
+$Script:DocumentsIconInThisPC = 0   #0-Skip, 1-Show/Add*, 2-Hide, 3- Remove
+$Script:DownloadsIconInThisPC = 0   #0-Skip, 1-Show/Add*, 2-Hide, 3- Remove
+$Script:MusicIconInThisPC = 0       #0-Skip, 1-Show/Add*, 2-Hide, 3- Remove
+$Script:PicturesIconInThisPC = 0    #0-Skip, 1-Show/Add*, 2-Hide, 3- Remove
+$Script:VideosIconInThisPC = 0      #0-Skip, 1-Show/Add*, 2-Hide, 3- Remove
+$Script:ThreeDobjectsIconInThisPC = 0   #0-Skip, 1-Show/Add*, 2-Hide, 3- Remove
+# CAUTION: Removing them can cause problems
 
 #Desktop Items
 # Function = Option                 #Choices (* Indicates Windows Default)
@@ -3101,13 +3138,14 @@ $Script:DisableVariousTasks = 0     #0-Skip, 1-Enable*, 2-Disable some scheduled
 $Script:PVFileAssociation = 0       #0-Skip, 1-Enable, 2-Disable*
 $Script:PVOpenWithMenu = 0          #0-Skip, 1-Enable, 2-Disable*
 
-# Remove unwanted applications
+# Application/Feature
 # Function = Option                 #Choices (* Indicates Windows Default)
 $Script:OneDrive = 0                #0-Skip, 1-Enable*, 2-Disable
 $Script:OneDriveInstall = 0         #0-Skip, 1-Installed*, 2-Uninstall
 $Script:XboxDVR = 0                 #0-Skip, 1-Enable*, 2-Disable
 $Script:MediaPlayer = 0             #0-Skip, 1-Installed*, 2-Uninstall
 $Script:WorkFolders = 0             #0-Skip, 1-Installed*, 2-Uninstall
+$Script:FaxAndScan = 0              #0-Skip, 1-Installed*, 2-Uninstall
 $Script:LinuxSubsystem = 0          #0-Skip, 1-Installed, 2-Uninstall* (Anniversary Update or Higher)
 
 # Custom List of App to Install, Hide or Uninstall
