@@ -10,9 +10,9 @@
 # Website: https://github.com/Disassembler0/Win10-Initial-Setup-Script/
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
-$Script_Version = '3.3'
-$Minor_Version = '7'
-$Script_Date = 'June-11-2018'
+$Script_Version = '3.4'
+$Minor_Version = '0'
+$Script_Date = 'June-16-2018'
 $Release_Type = 'Testing'
 #$Release_Type = 'Stable'
 ##########
@@ -245,10 +245,8 @@ Function AnyKeyClose {
 
 Function UpdateCheck {
 	If(InternetCheck) {
-		$VersionFile = $TempFolder + '\Temp.csv'
 		$VersionURL = 'https://raw.GitHubusercontent.com/madbomb122/Win10Script/master/Version/Version.csv'
-		(New-Object System.Net.WebClient).DownloadFile($VersionURL, $VersionFile)
-		$CSV_Ver = Import-Csv $VersionFile
+		$CSV_Ver = Invoke-WebRequest $VersionURL | ConvertFrom-Csv
 		If($Release_Type -ne 'Stable'){ $Line = 0 } Else{ $Line = 1 }
 		$WebScriptVer = $($CSV_Ver[$Line].Version)
 		$WebScriptMinorVer = $($CSV_Ver[$Line].MinorVersion)
@@ -327,7 +325,7 @@ Function ScriptUpdateFun {
 	Exit
 }
 
-Function InternetCheck{ If($InternetCheck -eq 1 -or (Test-Connection -Computer GitHub.com -Count 1 -Quiet)){ Return $True } Return $False }
+Function InternetCheck{ If($InternetCheck -eq 1 -or (Test-Connection www.GitHub.com -Count 1 -Quiet)){ Return $True } Return $False }
 
 ##########
 # Update Check -End
@@ -453,9 +451,9 @@ Function LoadSettingFile([String]$Filename) {
 }
 
 Function SaveSettingFiles([String]$Filename) {
-	ForEach($temp In $APPS_AppsUnhide){$Script:AppsUnhide+=$temp+','}
-	ForEach($temp In $APPS_AppsHide){$Script:AppsHide+=$temp+','}
-	ForEach($temp In $APPS_Uninstall){$Script:AppsUninstall+=$temp+','}
+	ForEach($temp In $APPS_AppsUnhide){$Script:AppsUnhide += $temp + ','}
+	ForEach($temp In $APPS_AppsHide){$Script:AppsHide += $temp + ','}
+	ForEach($temp In $APPS_Uninstall){$Script:AppsUninstall += $temp + ','}
 	If(Test-Path $Filename -PathType Leaf) {
 		If($ShowConf -eq 1){ $Conf = ConfirmMenu 2 } Else{ $Conf = $True }
 		If($Conf){ cmpv | Select-Object Name,Value | Export-Csv -LiteralPath $Filename -Encoding 'unicode' -Force -Delimiter ';' }
@@ -1309,7 +1307,7 @@ Function PreStartScript {
 		DisplayOut 'Please Wait...' 11 1
 		Checkpoint-Computer -Description $RestorePointName | Out-Null
 	}
-	Invoke-Expression RunScript
+	RunScript
 }
 
 Function RunScript {
@@ -1348,52 +1346,60 @@ Function RunScript {
 	$APPS_AppsUninstall.Remove('') ;$Au = $APPS_AppsUninstall.Length
 	If($Ah -ne $null -or $Au -ne $null){ $AppxPackages = Get-AppxProvisionedPackage -online | select-object PackageName,Displayname }
 
-	DisplayOut "Unhiding Apps...`n------------------" 11 0
+	DisplayOut "List of Apps Being Unhidden...`n------------------" 11 0
 	If($Ai -ne $null) {
-	  ForEach($AppI In $APPS_AppsUnhide) {
-		$AppInst = Get-AppxPackage -AllUsers $AppI
-		If($AppInst -ne $null) {
-			DisplayOut $AppI 11 0
-			ForEach($App In $AppInst){ Add-AppxPackage -DisableDevelopmentMode -Register "$($App.InstallLocation)\AppXManifest.xml" ;$AppxCount++ }
-		} Else {
-			DisplayOut "Unable to Unhide $AppI" 11 0
+		ForEach($AppI In $APPS_AppsUnhide) {
+			$AppInst = Get-AppxPackage -AllUsers $AppI
+			If($AppInst -ne $null) {
+				DisplayOut $AppI 11 0
+				ForEach($App In $AppInst){
+					$Job = "Win10Script"+$AppxCount
+					Start-Job -Name $Job -ScriptBlock { Add-AppxPackage -DisableDevelopmentMode -Register "$($App.InstallLocation)\AppXManifest.xml" }
+					$AppxCount++
+				}
+			} Else {
+				DisplayOut "Unable to Unhide $AppI" 11 0
+			}
 		}
-	  }
 	} Else {
 		DisplayOut 'No Apps being Unhidden' 11 0
 	}
 
-	DisplayOut "`nHidding Apps...`n-----------------" 12 0
+	DisplayOut "`nList of Apps Being Hiddden...`n-----------------" 12 0
 	If($Ah -ne $null) {
-	  ForEach($AppH In $APPS_AppsHide) {
-		If($AppxPackages.DisplayName.Contains($AppH)) {
-			DisplayOut $AppH 12 0
-			Get-AppxPackage $AppH | Remove-AppxPackage | Out-null
-			$AppxCount++
-		} Else {
-			DisplayOut "$AppH Isn't Installed" 12 0
+		ForEach($AppH In $APPS_AppsHide) {
+			If($AppxPackages.DisplayName.Contains($AppH)) {
+				DisplayOut $AppH 12 0
+				$Job = "Win10Script"+$AppxCount
+				Start-Job -Name $Job -ScriptBlock { Get-AppxPackage $AppH | Remove-AppxPackage | Out-null }
+				$AppxCount++
+			} Else {
+				DisplayOut "$AppH Isn't Installed" 12 0
+			}
 		}
-	  }
 	} Else {
 		DisplayOut 'No Apps being Hidden' 12 0
 	}
 
-	DisplayOut "`nUninstalling Apps...`n--------------------" 14 0
+	DisplayOut "`nList of Apps Being Uninstalled...`n--------------------" 14 0
 	If($Au -ne $null) {
-	  ForEach($AppU In $APPS_AppsUninstall) {
-		If($AppxPackages.DisplayName.Contains($AppU)) {
-			DisplayOut $AppU 14 0
-			$PackageFullName = (Get-AppxPackage $AppU).PackageFullName
-			$ProPackageFullName = ($AppxPackages.Where{$_.Displayname -eq $AppU}).PackageName
+		ForEach($AppU In $APPS_AppsUninstall) {
+			If($AppxPackages.DisplayName.Contains($AppU)) {
+				DisplayOut $AppU 14 0
+				$PackageFullName = (Get-AppxPackage $AppU).PackageFullName
+				$ProPackageFullName = ($AppxPackages.Where{$_.Displayname -eq $AppU}).PackageName
 
-			# Alt removal: DISM /Online /Remove-ProvisionedAppxPackage /PackageName:
-			Remove-AppxPackage -Package $PackageFullName | Out-null
-			Remove-AppxProvisionedPackage -Online -PackageName $ProPackageFullName | Out-null
-			$AppxCount++
-		} Else {
-			DisplayOut "$AppU Isn't Installed" 14 0
+				# Alt removal: DISM /Online /Remove-ProvisionedAppxPackage /PackageName:
+				$Job = "Win10Script"+$AppxCount
+				Start-Job -Name $Job -ScriptBlock {
+					Remove-AppxPackage -Package $using:PackageFullName | Out-null
+					Remove-AppxProvisionedPackage -Online -PackageName $using:ProPackageFullName | Out-null
+				}
+				$AppxCount++
+			} Else {
+				DisplayOut "$AppU Isn't Installed" 14 0
+			}
 		}
-	  }
 	} Else {
 		DisplayOut 'No Apps being Uninstalled' 14 0
 	}
@@ -2932,6 +2938,12 @@ Function RunScript {
 		DisplayOut "Windows 10 Build isn't new enough for Linux Subsystem..." 14 0
 	}
 
+	If($AppxCount -ne 0) {
+		DisplayOutMenu "`n---------------------------------------`n-" 14 0 0 ;DisplayOutMenu "   Waiting for Appx Task to Finish   " 15 0 0 ;DisplayOutMenu "-`n---------------------------------------" 14 0 1
+		Wait-Job -Name "Win10Script*"
+		Remove-Job -Name "Win10Script*"
+	}
+
 	If($Restart -eq 1 -And $Release_Type -eq 'Stable') {
 		Clear-Host
 		ThanksDonate
@@ -3094,7 +3106,7 @@ $Script:StoreOpenWith = 0           #0-Skip, 1-Enable*, 2-Disable
 $Script:WinXPowerShell = 0          #0-Skip, 1-Powershell*, 2-Command Prompt
 $Script:TaskManagerDetails = 0      #0-Skip, 1-Show, 2-Hide*
 $Script:ReopenAppsOnBoot = 0        #0-Skip, 1-Enable*, 2-Disable
-$Script:Timeline = 0                #0-Skip, 1-Enable*, 2-Disable 
+$Script:Timeline = 0                #0-Skip, 1-Enable*, 2-Disable
 
 #'This PC' Items
 # Function = Option                 #Choices (* Indicates Windows Default)
