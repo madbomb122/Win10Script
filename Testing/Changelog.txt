@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
-3.3.7 (06-11-2018)
+3.4.0 (06-16-2018)
 
 Fixed an issue with enable windows defender on newer than Annivery update didnt work
 Fixed an issue that caused an entry for disableingn app auto download to not set
@@ -30,6 +30,9 @@ Renamed 'Application' to 'Application/Feature'
 Added 'Fax And Scan' to Uninstall/Install to 'Application/Feature' list
 Fixed a problem with Onedrive uninstall
 Added 'Window's Timeline' to Enable/Disable to 'Explorer' List
+
+Script will now Wait for Appx Tasks to finish before script closes/restarts computer
+^to make sure appx task isnt inturrupted while doing it's job
 
 -----------------------------------------------------------------------------------
 3.3.0 (12-29-2017)
