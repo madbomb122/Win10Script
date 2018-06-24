@@ -1,4 +1,9 @@
 -----------------------------------------------------------------------------------
+3.4.1 (06-24-2018)
+
+Share with Renamed to Share with/Share (it removes the share context too)
+
+-----------------------------------------------------------------------------------
 3.4.0 (06-16-2018)
 
 Fixed an issue with enable windows defender on newer than Annivery update didnt work
