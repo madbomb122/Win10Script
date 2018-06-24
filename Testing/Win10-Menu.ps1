@@ -11,8 +11,8 @@
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
 $Script_Version = '3.4'
-$Minor_Version = '0'
-$Script_Date = 'June-16-2018'
+$Minor_Version = '1'
+$Script_Date = 'June-24-2018'
 $Release_Type = 'Testing'
 #$Release_Type = 'Stable'
 ##########
@@ -445,9 +445,9 @@ Function TOS {
 
 Function LoadSettingFile([String]$Filename) {
 	Import-Csv $Filename -Delimiter ';' | ForEach-Object { Set-Variable $_.Name $_.Value -Scope Script }
-	[System.Collections.ArrayList]$APPS_AppsUnhide = $AppsUnhide.Split(',')
-	[System.Collections.ArrayList]$APPS_AppsHidel = $AppsHide.Split(',')
-	[System.Collections.ArrayList]$APPS_AppsUninstall = $AppsUninstall.Split(',')
+	[System.Collections.ArrayList]$Script:APPS_AppsUnhide = $AppsUnhide.Split(',')
+	[System.Collections.ArrayList]$Script:APPS_AppsHidel = $AppsHide.Split(',')
+	[System.Collections.ArrayList]$Script:APPS_AppsUninstall = $AppsUninstall.Split(',')
 }
 
 Function SaveSettingFiles([String]$Filename) {
@@ -681,7 +681,7 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="405" Width="550
 					<ComboBox Name="PinToStart_Combo" HorizontalAlignment="Left" Margin="128,115,0,0" VerticalAlignment="Top" Width="72"/>
 					<Label Content="Pin To Quick Access:" HorizontalAlignment="Left" Margin="14,139,0,0" VerticalAlignment="Top"/>
 					<ComboBox Name="PinToQuickAccess_Combo" HorizontalAlignment="Left" Margin="128,142,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Share With:" HorizontalAlignment="Left" Margin="60,166,0,0" VerticalAlignment="Top"/>
+					<Label Content="Share With/Share:" HorizontalAlignment="Left" Margin="26,166,0,0" VerticalAlignment="Top"/>
 					<ComboBox Name="ShareWith_Combo" HorizontalAlignment="Left" Margin="128,169,0,0" VerticalAlignment="Top" Width="72"/>
 					<Label Content="Send To:" HorizontalAlignment="Left" Margin="76,193,0,0" VerticalAlignment="Top"/>
 					<ComboBox Name="SendTo_Combo" HorizontalAlignment="Left" Margin="128,196,0,0" VerticalAlignment="Top" Width="72"/>
@@ -946,7 +946,7 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="405" Width="550
 	[void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
 	$Form = [Windows.Markup.XamlReader]::Load( (New-Object System.Xml.XmlNodeReader $xaml) )
 	$xaml.SelectNodes("//*[@Name]") | ForEach-Object {Set-Variable -Name "WPF_$($_.Name)" -Value $Form.FindName($_.Name) -Scope Script }
-	$WPFList = Get-Variable -Name 'WPF_*'
+	$Script:WPFList = Get-Variable -Name 'WPF_*'
 
 	[System.Collections.ArrayList]$VarList = AppAraySet 'WPF_*_Combo'
 	[System.Collections.ArrayList]$ListApp = AppAraySet 'APP_*'
@@ -1353,9 +1353,9 @@ Function RunScript {
 			If($AppInst -ne $null) {
 				DisplayOut $AppI 11 0
 				ForEach($App In $AppInst){
-					$Job = "Win10Script"+$AppxCount
-					Start-Job -Name $Job -ScriptBlock { Add-AppxPackage -DisableDevelopmentMode -Register "$($App.InstallLocation)\AppXManifest.xml" }
 					$AppxCount++
+					$Job = "Win10Script$AppxCount"
+					Start-Job -Name $Job -ScriptBlock { Add-AppxPackage -DisableDevelopmentMode -Register "$($App.InstallLocation)\AppXManifest.xml" }
 				}
 			} Else {
 				DisplayOut "Unable to Unhide $AppI" 11 0
@@ -1370,9 +1370,9 @@ Function RunScript {
 		ForEach($AppH In $APPS_AppsHide) {
 			If($AppxPackages.DisplayName.Contains($AppH)) {
 				DisplayOut $AppH 12 0
-				$Job = "Win10Script"+$AppxCount
-				Start-Job -Name $Job -ScriptBlock { Get-AppxPackage $AppH | Remove-AppxPackage | Out-null }
 				$AppxCount++
+				$Job = "Win10Script$AppxCount"
+				Start-Job -Name $Job -ScriptBlock { Get-AppxPackage $AppH | Remove-AppxPackage | Out-null }
 			} Else {
 				DisplayOut "$AppH Isn't Installed" 12 0
 			}
@@ -1390,12 +1390,12 @@ Function RunScript {
 				$ProPackageFullName = ($AppxPackages.Where{$_.Displayname -eq $AppU}).PackageName
 
 				# Alt removal: DISM /Online /Remove-ProvisionedAppxPackage /PackageName:
-				$Job = "Win10Script"+$AppxCount
+				$AppxCount++
+				$Job = "Win10Script$AppxCount"
 				Start-Job -Name $Job -ScriptBlock {
 					Remove-AppxPackage -Package $using:PackageFullName | Out-null
 					Remove-AppxProvisionedPackage -Online -PackageName $using:ProPackageFullName | Out-null
 				}
-				$AppxCount++
 			} Else {
 				DisplayOut "$AppU Isn't Installed" 14 0
 			}
@@ -1838,7 +1838,7 @@ Function RunScript {
 	} ElseIf($CastToDevice -eq 2) {
 		DisplayOut 'Disabling Cast to Device Context item...' 12 0
 		$Path = CheckSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked'
-		Set-ItemProperty -Path $Path -Name '{7AD84985-87B4-4a16-BE58-8B72A5B390F7}' -Type String -Value ''
+		Set-ItemProperty -Path $Path -Name '{7AD84985-87B4-4a16-BE58-8B72A5B390F7}' -Type String -Value 'Play to Menu'
 	}
 
 	If($PreviousVersions -eq 0 -And $ShowSkipped -eq 1) {
@@ -1910,18 +1910,19 @@ Function RunScript {
 	}
 
 	If($ShareWith -eq 0 -And $ShowSkipped -eq 1) {
-		DisplayOut 'Skipping Share With Context item...' 15 0
+		DisplayOut 'Skipping Share With/Share Context item...' 15 0
 	} ElseIf($ShareWith -eq 1) {
-		DisplayOut 'Enabling Share With Context item...' 11 0
+		DisplayOut 'Enabling Share With/Share Context item...' 11 0
 		Set-ItemProperty -LiteralPath 'HKCR:\*\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value '{f81e9010-6ea4-11ce-a7ff-00aa003ca9f6}'
 		Set-ItemProperty -Path 'HKCR:\Directory\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value '{f81e9010-6ea4-11ce-a7ff-00aa003ca9f6}'
 		Set-ItemProperty -Path 'HKCR:\Directory\shellex\CopyHookHandlers\Sharing' -Name '(Default)' -Type String -Value '{40dd6e20-7c17-11ce-a804-00aa003ca9f6}'
+		Set-ItemProperty -Path 'HKCR:\Drive\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value '{f81e9010-6ea4-11ce-a7ff-00aa003ca9f6}'
 		Set-ItemProperty -Path 'HKCR:\Directory\shellex\PropertySheetHandlers\Sharing' -Name '(Default)' -Type String -Value '{f81e9010-6ea4-11ce-a7ff-00aa003ca9f6}'
 		Set-ItemProperty -Path 'HKCR:\Directory\Background\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value '{f81e9010-6ea4-11ce-a7ff-00aa003ca9f6}'
-		Set-ItemProperty -Path 'HKCR:\Drive\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value '{f81e9010-6ea4-11ce-a7ff-00aa003ca9f6}'
 		Set-ItemProperty -Path 'HKCR:\LibraryFolder\background\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value '{f81e9010-6ea4-11ce-a7ff-00aa003ca9f6}'
+		Set-ItemProperty -Path 'HKCR:\*\shellex\ContextMenuHandlers\ModernSharing' -Name '(Default)' -Type String -Value '{e2bf9676-5f8f-435c-97eb-11607a5bedf7}'
 	}  ElseIf($ShareWith -eq 2) {
-		DisplayOut 'Disabling Share With...' 12 0
+		DisplayOut 'Disabling Share/Share With...' 12 0
 		Set-ItemProperty -LiteralPath 'HKCR:\*\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value ''
 		Set-ItemProperty -Path 'HKCR:\Directory\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value ''
 		Set-ItemProperty -Path 'HKCR:\Directory\shellex\CopyHookHandlers\Sharing' -Name '(Default)' -Type String -Value ''
@@ -1929,6 +1930,7 @@ Function RunScript {
 		Set-ItemProperty -Path 'HKCR:\Directory\Background\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value ''
 		Set-ItemProperty -Path 'HKCR:\Drive\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value ''
 		Set-ItemProperty -Path 'HKCR:\LibraryFolder\background\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value ''
+		Set-ItemProperty -Path 'HKCR:\*\shellex\ContextMenuHandlers\ModernSharing' -Name '(Default)' -Type String -Value ''
 	}
 
 	If($SendTo -eq 0 -And $ShowSkipped -eq 1) {
@@ -1941,6 +1943,7 @@ Function RunScript {
 		DisplayOut 'Disabling Send To Context item...' 12 0
 		RemoveSetPath 'HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo'
 	}
+
 
 	DisplayOut "`n----------------------`n-   Task Bar Items   -`n----------------------" 14 0
 	If($BatteryUIBar -eq 0 -And $ShowSkipped -eq 1) {
