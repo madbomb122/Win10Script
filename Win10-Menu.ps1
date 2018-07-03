@@ -11,8 +11,8 @@
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
 $Script_Version = '3.4'
-$Minor_Version = '1'
-$Script_Date = 'June-24-2018'
+$Minor_Version = '2'
+$Script_Date = 'July-03-2018'
 $Release_Type = 'Stable'
 ##########
 
@@ -226,15 +226,12 @@ $colors = @(
 
 $musnotification_files = @("$Env:windir\System32\musnotification.exe","$Env:windir\System32\musnotificationux.exe")
 
-Function MenuBlankLine { DisplayOut '|                                                   |' 14 0 }
-Function MenuLine { DisplayOut '|---------------------------------------------------|' 14 0 }
+Function MenuBlankLine { DisplayOutMenu '|'.PadRight(51) 14 0 0 ;RightLine }
+Function MenuLine { DisplayOutMenu '|'.PadRight(52,'-') 14 0 0 ;DisplayOut '|' 14 0 1 }
 Function LeftLine { DisplayOutMenu '| ' 14 0 0 }
 Function RightLine { DisplayOut ' |' 14 0 }
 
-Function AnyKeyClose {
-	Write-Host "`nPress Any key to Close..." -ForegroundColor White -BackgroundColor Black
-	$host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown,AllowCtrlC') | out-null
-}
+Function AnyKeyClose { Read-Host -Prompt "`nPress Any key to Close..." }
 
 ##########
 # Needed Variable -End
@@ -253,11 +250,11 @@ Function UpdateCheck {
 	} Else {
 		Clear-Host
 		MenuLine
-		LeftLine ;DisplayOutMenu '                      Error                      ' 13 0 0 ;RightLine
+		LeftLine ;DisplayOutMenu '                      Error'.PadRight(49) 13 0 0 ;RightLine
 		MenuLine
 		MenuBlankLine
-		LeftLine ;DisplayOutMenu 'No Internet connection detected.                 ' 2 0 0 ;RightLine
-		LeftLine ;DisplayOutMenu 'Tested by pinging GitHub.com                     ' 2 0 0 ;RightLine
+		LeftLine ;DisplayOutMenu 'No Internet connection detected.'.PadRight(49) 2 0 0 ;RightLine
+		LeftLine ;DisplayOutMenu 'Tested by pinging GitHub.com'.PadRight(49) 2 0 0 ;RightLine
 		MenuBlankLine
 		LeftLine ;DisplayOutMenu ' To skip use one of the following methods        ' 2 0 0 ;RightLine
 		LeftLine ;DisplayOutMenu ' 1. Change ' 2 0 0 ;DisplayOutMenu 'InternetCheck' 15 0 0 ;DisplayOutMenu ' to ' 2 0 0 ;DisplayOutMenu '=1' 15 0 0 ;DisplayOutMenu ' in script file   ' 2 0 0 ;RightLine
@@ -272,12 +269,12 @@ Function UpdateCheck {
 Function UpdateDisplay([String]$FullVer,[String]$DFilename) {
 	Clear-Host
 	MenuLine
-	LeftLine ;DisplayOutMenu '                  Update Found!                  ' 13 0 0 ;RightLine
+	LeftLine ;DisplayOutMenu '                  Update Found!'.PadRight(49) 13 0 0 ;RightLine
 	MenuLine
 	MenuBlankLine
-	LeftLine ;DisplayOutMenu 'Downloading version ' 15 0 0 1 ;DisplayOutMenu ($FullVer + (' '*(29-$FullVer.Length))) 11 0 0 ;RightLine
-	LeftLine ;DisplayOutMenu 'Will run ' 15 0 0 ;DisplayOutMenu ($DFilename +(' '*(40-$DFilename.Length))) 11 0 0 ;RightLine
-	LeftLine ;DisplayOutMenu 'after download is complete.                      ' 15 0 0 ;RightLine
+	LeftLine ;DisplayOutMenu 'Downloading version ' 15 0 0 1 ;DisplayOutMenu $FullVer.PadRight(29) 11 0 0 ;RightLine
+	LeftLine ;DisplayOutMenu 'Will run ' 15 0 0 ;DisplayOutMenu $DFilename.PadRight(40) 11 0 0 ;RightLine
+	LeftLine ;DisplayOutMenu 'after download is complete.'.PadRight(49) 15 0 0 ;RightLine
 	MenuBlankLine
 	MenuLine
 }
@@ -380,25 +377,25 @@ Function ArgCheck {
 
 Function ShowHelp {
 	Clear-Host
-	DisplayOut '                  List of Switches                   ' 13 0
-	DisplayOut '-----------------------------------------------------' 14 0
+	DisplayOut '                  List of Switches'.PadRight(53) 13 0
+	DisplayOut ''.PadRight(53,'-') 14 0
 	DisplayOut "`n-- Basic Switches --" 2 0
-	DisplayOutMenu ' Switch ' 15 0 0 ;DisplayOut '          Description of Switch' 14 0
-	DisplayOutMenu '  -atos ' 15 0 0 ;DisplayOut '           Accepts ToS' 14 0
+	DisplayOutMenu ' Switch ' 15 0 0 ;DisplayOut 'Description of Switch'.PadLeft(31) 14 0
+	DisplayOutMenu '  -atos ' 15 0 0 ;DisplayOut 'Accepts ToS'.PadLeft(22) 14 0
 	DisplayOutMenu '  -auto ' 15 0 0 ;DisplayOutMenu '           Implies ' 14 0 0 ;DisplayOutMenu '-atos' 15 0 0 ;DisplayOut '...Runs the script to be Automated.. Closes on - User Input, Errors, or End of Script' 14 0
 	DisplayOutMenu '  -crp  ' 15 0 0 ;DisplayOut '           Creates Restore Point' 14 0
 	DisplayOutMenu '  -dnr  ' 15 0 0 ;DisplayOut '           Do Not Restart when done' 14 0
 	DisplayOut "`n-- Run Script Switches --" 2 0
-	DisplayOutMenu ' Switch ' 15 0 0 ;DisplayOut '          Description of Switch' 14 0
+	DisplayOutMenu ' Switch ' 15 0 0 ;DisplayOut 'Description of Switch'.PadLeft(31) 14 0
 	DisplayOutMenu '  -run  ' 15 0 0 ;DisplayOut '           Runs script with settings in script' 14 0
 	DisplayOutMenu '  -run ' 15 0 0 ;DisplayOutMenu 'FILENAME ' 11 0 0 ;DisplayOutMenu '   Runs script with settings in the file' 14 0 0 ;DisplayOut ' FILENAME' 11 0
 	DisplayOutMenu '  -run wd ' 15 0 0 ;DisplayOut '         Runs script with win default settings' 14 0
 	DisplayOut "`n-- Load Script Switches --" 2 0
-	DisplayOutMenu ' Switch ' 15 0 0 ;DisplayOut '          Description of Switch' 14 0
+	DisplayOutMenu ' Switch ' 15 0 0 ;DisplayOut 'Description of Switch'.PadLeft(31) 14 0
 	DisplayOutMenu '  -load ' 15 0 0 ;DisplayOutMenu 'FILENAME ' 11 0 0 ;DisplayOutMenu '  Loads script with settings in the file' 14 0 0 ;DisplayOut ' FILENAME' 11 0
 	DisplayOutMenu '  -load wd ' 15 0 0 ;DisplayOut '        Loads script with win default settings' 14 0
 	DisplayOut "`n--Update Switches--" 2 0
-	DisplayOutMenu ' Switch ' 15 0 0 ;DisplayOut '          Description of Switch' 14 0
+	DisplayOutMenu ' Switch ' 15 0 0 ;DisplayOut 'Description of Switch'.PadLeft(31) 14 0
 	DisplayOutMenu '  -usc  ' 15 0 0 ;DisplayOut '           Checks for Update to Script file before running' 14 0
 	DisplayOutMenu '  -sic  ' 15 0 0 ;DisplayOut '           Skips Internet Check' 14 0
 	AnyKeyClose
@@ -408,25 +405,25 @@ Function ShowHelp {
 Function TOSDisplay {
 	Clear-Host
 	$BorderColor = 14
-	If($Release_Type -eq 'Testing' -or $Release_Type -eq 'Beta   ') {
+	If($Release_Type -eq 'Testing') {
 		$BorderColor = 15
-		DisplayOut '|---------------------------------------------------|' $BorderColor 0
-		DisplayOutMenu '| ' $BorderColor 0 0 ;DisplayOutMenu '                    WARNING!!                    ' 13 0 0 ;DisplayOut ' |' $BorderColor 0
-		DisplayOut '|                                                   |' $BorderColor 0
-		DisplayOutMenu '| ' $BorderColor 0 0 ;DisplayOutMenu '    This version is currently being Tested.      ' 14 0 0 ;DisplayOut ' |' $BorderColor 0
-		DisplayOut '|                                                   |' $BorderColor 0
+		DisplayOutMenu '|'.PadRight(52,'-') $BorderColor 0 0 ;DisplayOut '|' $BorderColor 0
+		DisplayOutMenu '|'.PadRight(20) $BorderColor 0 0 ;DisplayOutMenu 'WARNING!!'.PadRight(31) 13 0 0 ;DisplayOut ' |' $BorderColor 0
+		DisplayOutMenu '|'.PadRight(52) $BorderColor 0 0 ;DisplayOut '|' $BorderColor 0
+		DisplayOutMenu '| ' $BorderColor 0 0 ;DisplayOutMenu '    This version is currently being Tested.'.PadRight(49) 14 0 0 ;DisplayOut ' |' $BorderColor 0
+		DisplayOutMenu '|'.PadRight(52) $BorderColor 0 0 ;DisplayOut '|' $BorderColor 0
 	}
-	DisplayOut '|---------------------------------------------------|' $BorderColor 0
-	DisplayOutMenu '| ' $BorderColor 0 0 ;DisplayOutMenu '                  Terms of Use                   ' 11 0 0 ;DisplayOut ' |' $BorderColor 0
-	DisplayOut '|---------------------------------------------------|' $BorderColor 0
-	DisplayOut '|                                                   |' $BorderColor 0
+	DisplayOutMenu '|'.PadRight(52,'-') $BorderColor 0 0 ;DisplayOut '|' $BorderColor 0
+	DisplayOutMenu '|'.PadRight(20) $BorderColor 0 0 ;DisplayOutMenu 'Terms of Use'.PadRight(31) 11 0 0 ;DisplayOut ' |' $BorderColor 0
+	DisplayOutMenu '|'.PadRight(52,'-') $BorderColor 0 0 ;DisplayOut '|' $BorderColor 0
+	DisplayOutMenu '|'.PadRight(52) $BorderColor 0 0 ;DisplayOut '|' $BorderColor 0
 	DisplayOutMenu '| ' $BorderColor 0 0 ;DisplayOutMenu 'This program comes with ABSOLUTELY NO WARRANTY.  ' 2 0 0 ;DisplayOut ' |' $BorderColor 0
 	DisplayOutMenu '| ' $BorderColor 0 0 ;DisplayOutMenu 'This is free software, and you are welcome to    ' 2 0 0 ;DisplayOut ' |' $BorderColor 0
 	DisplayOutMenu '| ' $BorderColor 0 0 ;DisplayOutMenu 'redistribute it under certain conditions.        ' 2 0 0 ;DisplayOut ' |' $BorderColor 0
-	DisplayOut '|                                                   |' $BorderColor 0
-	DisplayOutMenu '| ' $BorderColor 0 0 ;DisplayOutMenu 'Read License file for full Terms.                ' 2 0 0 ;DisplayOut ' |' $BorderColor 0
-	DisplayOut '|                                                   |' $BorderColor 0
-	DisplayOut '|---------------------------------------------------|' $BorderColor 0
+	DisplayOutMenu '|'.PadRight(52) $BorderColor 0 0 ;DisplayOut '|' $BorderColor 0
+	DisplayOutMenu '| ' $BorderColor 0 0 ;DisplayOutMenu 'Read License file for full Terms.'.PadRight(49) 2 0 0 ;DisplayOut ' |' $BorderColor 0
+	DisplayOutMenu '|'.PadRight(52) $BorderColor 0 0 ;DisplayOut '|' $BorderColor 0
+	DisplayOutMenu '|'.PadRight(52,'-') $BorderColor 0 0 ;DisplayOut '|' $BorderColor 0
 }
 
 Function TOS {
@@ -740,8 +737,8 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="405" Width="550
 					<ComboBox Name="HiddenFiles_Combo" HorizontalAlignment="Left" Margin="133,123,0,0" VerticalAlignment="Top" Width="72"/>
 					<Label Content="System Files:" HorizontalAlignment="Left" Margin="59,147,0,0" VerticalAlignment="Top"/>
 					<ComboBox Name="SystemFiles_Combo" HorizontalAlignment="Left" Margin="133,150,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Default Explorer View:" HorizontalAlignment="Left" Margin="10,174,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="ExplorerOpenLoc_Combo" HorizontalAlignment="Left" Margin="133,177,0,0" VerticalAlignment="Top" Width="102"/>
+					<Label Content="Default Explorer View:" HorizontalAlignment="Left" Margin="10,201,0,0" VerticalAlignment="Top"/>
+					<ComboBox Name="ExplorerOpenLoc_Combo" HorizontalAlignment="Left" Margin="133,204,0,0" VerticalAlignment="Top" Width="102"/>
 					<Label Content="Recent Files in Quick Access:" HorizontalAlignment="Left" Margin="279,11,0,0" VerticalAlignment="Top"/>
 					<ComboBox Name="RecentFileQikAcc_Combo" HorizontalAlignment="Left" Margin="436,14,0,0" VerticalAlignment="Top" Width="72"/>
 					<Label Content="Frequent folders in Quick_access:" HorizontalAlignment="Left" Margin="259,39,0,0" VerticalAlignment="Top"/>
@@ -756,12 +753,14 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="405" Width="550
 					<ComboBox Name="StoreOpenWith_Combo" HorizontalAlignment="Left" Margin="436,96,0,0" VerticalAlignment="Top" Width="72"/>
 					<Label Content="Task Manager Details:" HorizontalAlignment="Left" Margin="315,175,0,0" VerticalAlignment="Top"/>
 					<ComboBox Name="TaskManagerDetails_Combo" HorizontalAlignment="Left" Margin="436,177,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Powershell to Cmd:" HorizontalAlignment="Left" Margin="24,203,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="WinXPowerShell_Combo" HorizontalAlignment="Left" Margin="133,206,0,0" VerticalAlignment="Top" Width="127"/>
+					<Label Content="Powershell to Cmd:" HorizontalAlignment="Left" Margin="24,228,0,0" VerticalAlignment="Top"/>
+					<ComboBox Name="WinXPowerShell_Combo" HorizontalAlignment="Left" Margin="133,231,0,0" VerticalAlignment="Top" Width="127"/>
 					<Label Name="ReopenAppsOnBoot_Txt" Content="Reopen Apps On Boot:" HorizontalAlignment="Left" Margin="309,203,0,0" VerticalAlignment="Top"/>
 					<ComboBox Name="ReopenAppsOnBoot_Combo" HorizontalAlignment="Left" Margin="436,205,0,0" VerticalAlignment="Top" Width="72"/>
 					<Label Name="TimeLine_Txt" Content="Window Timeline:" HorizontalAlignment="Left" Margin="336,231,0,0" VerticalAlignment="Top"/>
 					<ComboBox Name="Timeline_Combo" HorizontalAlignment="Left" Margin="436,233,0,0" VerticalAlignment="Top" Width="72"/>
+					<Label Content="Long File Path:" HorizontalAlignment="Left" Margin="49,174,0,0" VerticalAlignment="Top"/>
+					<ComboBox Name="LongFilePath_Combo" HorizontalAlignment="Left" Margin="133,177,0,0" VerticalAlignment="Top" Width="72"/>
 				</Grid>
 			</TabItem>
 			<TabItem Name="Desktop_Tab" Header="Desktop/This PC" Margin="-2,0,2,0">
@@ -1044,7 +1043,8 @@ $Skip_Enable_DisableD = @(
 'F8BootMenu',
 'RemoteUACAcctToken',
 'PVFileAssociation',
-'PVOpenWithMenu')
+'PVOpenWithMenu',
+'LongFilePath')
 
 $Skip_ShowD_Hide = @(
 'TaskbarSearchBox',
@@ -1243,6 +1243,7 @@ Function LoadWinDefault {
 	$Script:TaskManagerDetails = 2
 	$Script:ReopenAppsOnBoot = 1
 	$Script:Timeline = 1
+	$Script:LongFilePath = 2
 
 	#'This PC' Items
 	$Script:DesktopIconInThisPC = 1
@@ -2349,6 +2350,18 @@ Function RunScript {
 		}
 	}
 
+	If($LongFilePath -eq 0 -And $ShowSkipped -eq 1) {
+		DisplayOut 'Skipping Long File Path...' 15 0
+	} ElseIf($LongFilePath -eq 1) {
+		DisplayOut 'Enableing Long File Path...' 11 0
+		Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name 'LongPathsEnabled' -Type DWord -Value 1
+		Set-ItemProperty -Path 'HKLM:\SYSTEM\ControlSet001\Control\FileSystem' -Name 'LongPathsEnabled' -Type DWord -Value 1
+	} ElseIf($LongFilePath -eq 2) {
+		DisplayOut "Disabling Long File Path..." 12 0
+		Remove-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name 'LongPathsEnabled'
+		Remove-ItemProperty -Path 'HKLM:\SYSTEM\ControlSet001\Control\FileSystem' -Name 'LongPathsEnabled'
+	}
+
 	DisplayOut "`n-----------------------`n-   'This PC' Items   -`n-----------------------" 14 0
 	If($DesktopIconInThisPC -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut 'Skipping Desktop folder in This PC...' 15 0
@@ -2949,12 +2962,12 @@ Function RunScript {
 	If($Restart -eq 1 -And $Release_Type -eq 'Stable') {
 		Clear-Host
 		ThanksDonate
-		$Seconds = 10
-		Write-Host "`nRestarting Computer in 10 Seconds..." -ForegroundColor Yellow -BackgroundColor Black
+		$Seconds = 15
+		DisplayOutMenu "`nRestarting Computer in " 15 0 0 ;DisplayOutMenu $Seconds 11 0 0 ;DisplayOutMenu ' Seconds...' 15 0 1
 		$Message = 'Restarting in'
 		Start-Sleep -Seconds 1
-		ForEach($Count In (1..$Seconds)){ If($Count -ne 0){ Write-Host "$Message $($Seconds - $Count)" -ForegroundColor Yellow -BackgroundColor Black ;Start-Sleep -Seconds 1 } }
-		Write-Host 'Restarting Computer...' -ForegroundColor Red -BackgroundColor Black
+		ForEach($Count In (1..$Seconds)){ If($Count -ne 0){ DisplayOutMenu $Message 15 0 0 ;DisplayOutMenu " $($Seconds - $Count)" 11 0 1 ;Start-Sleep -Seconds 1 } }
+		DisplayOut 'Restarting Computer...' 13 0
 		Restart-Computer
 	} ElseIf($Release_Type -eq 'Stable') {
 		Write-Host 'Goodbye...'
@@ -3109,6 +3122,7 @@ $Script:WinXPowerShell = 0          #0-Skip, 1-Powershell*, 2-Command Prompt
 $Script:TaskManagerDetails = 0      #0-Skip, 1-Show, 2-Hide*
 $Script:ReopenAppsOnBoot = 0        #0-Skip, 1-Enable*, 2-Disable
 $Script:Timeline = 0                #0-Skip, 1-Enable*, 2-Disable
+$Script:LongFilePath = 0            #0-Skip, 1-Enable, 2-Disable*
 
 #'This PC' Items
 # Function = Option                 #Choices (* Indicates Windows Default)
