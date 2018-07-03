@@ -1,7 +1,10 @@
 -----------------------------------------------------------------------------------
-3.4.1 (06-24-2018)
+3.4.2 (07-03-2018)
 
 Share with Renamed to Share with/Share (it removes the share context too)
+
+Internal Script Changes
+Added Enable/Disable Long File Path
 
 -----------------------------------------------------------------------------------
 3.4.0 (06-16-2018)
