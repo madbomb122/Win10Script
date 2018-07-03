@@ -2,7 +2,7 @@ To Download go to -> [Win 10 Script -Release](https://github.com/madbomb122/Win1
 
 
 **Current Version** <br />
-**Script:** `3.4.1` (June 24, 2018) <br />
+**Script:** `3.4.2` (July 03, 2018) <br />
 
 ## Description
 
@@ -24,7 +24,7 @@ PS. Don't forget to check out my other Repo https://github.com/madbomb122/BlackV
 
 # How to Use/Run
 Download/Save the following files <br />
-Script File: [Win10-Menu.ps1](https://github.com/madbomb122/Win10Script/raw/master/Win10-Menu.ps1) (Script) -Size about `188.0 KB` -Need <br />
+Script File: [Win10-Menu.ps1](https://github.com/madbomb122/Win10Script/raw/master/Win10-Menu.ps1) (Script) -Size about `189.0 KB` -Need <br />
 Bat File: [_Win10-Script-Run.bat](https://github.com/madbomb122/Win10Script/raw/master/_Win10-Script-Run.bat) -Size about `2.29 KB` -Recommended <br />
 Update File: [Update.bat](https://github.com/madbomb122/Win10Script/raw/master/Update.bat) -Size about `11.7 KB`<br />
   **Note 1: DO NOT RENAME THE FILES**<br />
