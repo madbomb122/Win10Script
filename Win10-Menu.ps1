@@ -11,8 +11,8 @@
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
 $Script_Version = '3.4'
-$Minor_Version = '2'
-$Script_Date = 'July-03-2018'
+$Minor_Version = '3'
+$Script_Date = 'July-10-2018'
 $Release_Type = 'Stable'
 ##########
 
@@ -231,6 +231,17 @@ Function MenuLine { DisplayOutMenu '|'.PadRight(52,'-') 14 0 0 ;DisplayOut '|' 1
 Function LeftLine { DisplayOutMenu '| ' 14 0 0 }
 Function RightLine { DisplayOut ' |' 14 0 }
 
+Function BoxItem([String]$TxtToDisplay) {
+	$TLen = $TxtToDisplay.Length
+	$LLen = $TLen+9
+	DisplayOutMenu "`n".PadRight($LLen,'-') 14 0 1
+	DisplayOutMenu '-' 14 0 0 ;DisplayOutMenu "   $TxtToDisplay   " 15 0 0 ;DisplayOutMenu '-' 14 0 1
+	DisplayOutMenu ''.PadRight($LLen-1,'-') 14 0 1
+}
+
+Function TOSLine([Int]$BC){ DisplayOutMenu '|'.PadRight(52,'-') $BC 0 0 ;DisplayOut '|' $BC 0 }
+Function TOSBlankLine([Int]$BC){ DisplayOutMenu '|'.PadRight(52) $BC 0 0 ;DisplayOut '|' $BC  0 }
+
 Function AnyKeyClose { Read-Host -Prompt "`nPress Any key to Close..." }
 
 ##########
@@ -250,7 +261,7 @@ Function UpdateCheck {
 	} Else {
 		Clear-Host
 		MenuLine
-		LeftLine ;DisplayOutMenu '                      Error'.PadRight(49) 13 0 0 ;RightLine
+		LeftLine ;DisplayOutMenu (''.PadRight(22)+'Error'.PadRight(27)) 13 0 0 ;RightLine
 		MenuLine
 		MenuBlankLine
 		LeftLine ;DisplayOutMenu 'No Internet connection detected.'.PadRight(49) 2 0 0 ;RightLine
@@ -407,23 +418,23 @@ Function TOSDisplay {
 	$BorderColor = 14
 	If($Release_Type -eq 'Testing') {
 		$BorderColor = 15
-		DisplayOutMenu '|'.PadRight(52,'-') $BorderColor 0 0 ;DisplayOut '|' $BorderColor 0
-		DisplayOutMenu '|'.PadRight(20) $BorderColor 0 0 ;DisplayOutMenu 'WARNING!!'.PadRight(31) 13 0 0 ;DisplayOut ' |' $BorderColor 0
-		DisplayOutMenu '|'.PadRight(52) $BorderColor 0 0 ;DisplayOut '|' $BorderColor 0
-		DisplayOutMenu '| ' $BorderColor 0 0 ;DisplayOutMenu '    This version is currently being Tested.'.PadRight(49) 14 0 0 ;DisplayOut ' |' $BorderColor 0
-		DisplayOutMenu '|'.PadRight(52) $BorderColor 0 0 ;DisplayOut '|' $BorderColor 0
+		TOSLine 15
+		DisplayOutMenu '|'.PadRight(20) 15 0 0 ;DisplayOutMenu 'WARNING!!'.PadRight(32) 13 0 0 ;DisplayOut '|' 15 0
+		TOSBlankLine 15
+		DisplayOutMenu '|' 15 0 0 ;DisplayOutMenu '     This version is currently being Tested.'.PadRight(51) 14 0 0 ;DisplayOut '|' 15 0
+		TOSBlankLine 15
 	}
-	DisplayOutMenu '|'.PadRight(52,'-') $BorderColor 0 0 ;DisplayOut '|' $BorderColor 0
-	DisplayOutMenu '|'.PadRight(20) $BorderColor 0 0 ;DisplayOutMenu 'Terms of Use'.PadRight(31) 11 0 0 ;DisplayOut ' |' $BorderColor 0
-	DisplayOutMenu '|'.PadRight(52,'-') $BorderColor 0 0 ;DisplayOut '|' $BorderColor 0
-	DisplayOutMenu '|'.PadRight(52) $BorderColor 0 0 ;DisplayOut '|' $BorderColor 0
-	DisplayOutMenu '| ' $BorderColor 0 0 ;DisplayOutMenu 'This program comes with ABSOLUTELY NO WARRANTY.  ' 2 0 0 ;DisplayOut ' |' $BorderColor 0
-	DisplayOutMenu '| ' $BorderColor 0 0 ;DisplayOutMenu 'This is free software, and you are welcome to    ' 2 0 0 ;DisplayOut ' |' $BorderColor 0
-	DisplayOutMenu '| ' $BorderColor 0 0 ;DisplayOutMenu 'redistribute it under certain conditions.        ' 2 0 0 ;DisplayOut ' |' $BorderColor 0
-	DisplayOutMenu '|'.PadRight(52) $BorderColor 0 0 ;DisplayOut '|' $BorderColor 0
-	DisplayOutMenu '| ' $BorderColor 0 0 ;DisplayOutMenu 'Read License file for full Terms.'.PadRight(49) 2 0 0 ;DisplayOut ' |' $BorderColor 0
-	DisplayOutMenu '|'.PadRight(52) $BorderColor 0 0 ;DisplayOut '|' $BorderColor 0
-	DisplayOutMenu '|'.PadRight(52,'-') $BorderColor 0 0 ;DisplayOut '|' $BorderColor 0
+	TOSLine $BorderColor
+	DisplayOutMenu '|'.PadRight(20) $BorderColor 0 0 ;DisplayOutMenu 'Terms of Use'.PadRight(32) 11 0 0 ;DisplayOut '|' $BorderColor 0
+	TOSLine $BorderColor
+	TOSBlankLine $BorderColor
+	DisplayOutMenu '|' $BorderColor 0 0 ;DisplayOutMenu ' This program comes with ABSOLUTELY NO WARRANTY.   ' 2 0 0 ;DisplayOut '|' $BorderColor 0
+	DisplayOutMenu '|' $BorderColor 0 0 ;DisplayOutMenu ' This is free software, and you are welcome to     ' 2 0 0 ;DisplayOut '|' $BorderColor 0
+	DisplayOutMenu '|' $BorderColor 0 0 ;DisplayOutMenu ' redistribute it under certain conditions.         ' 2 0 0 ;DisplayOut '|' $BorderColor 0
+	TOSBlankLine $BorderColor
+	DisplayOutMenu '|' $BorderColor 0 0 ;DisplayOutMenu ' Read License file for full Terms.'.PadRight(51) 2 0 0 ;DisplayOut '|' $BorderColor 0
+	TOSBlankLine $BorderColor
+	TOSLine $BorderColor
 }
 
 Function TOS {
@@ -1299,7 +1310,7 @@ Function PreStartScript {
 	If($VersionCheck -eq 1){ UpdateCheck }
 
 	Clear-Host
-	DisplayOut "------------------`n-   Pre-Script   -`n------------------" 14 0
+	BoxItem 'Pre-Script'
 	If($CreateRestorePoint -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut 'Skipping Creation of System Restore Point...' 15 0
 	} ElseIf($CreateRestorePoint -eq 1) {
@@ -1315,7 +1326,7 @@ Function RunScript {
 	If(!(Test-Path 'HKU:')){ New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_USERS | Out-Null }
 	$AppxCount = 0
 
-	DisplayOut "`n-----------------------`n-   Metro App Items   -`n-----------------------" 14 0
+	BoxItem 'Metro App Items'
 	$APPProcess = Get-Variable -Name 'APP_*' -ValueOnly -Scope Script
 	$A = 0
 
@@ -1404,7 +1415,7 @@ Function RunScript {
 		DisplayOut 'No Apps being Uninstalled' 14 0
 	}
 
-	DisplayOut "`n------------------------`n-   Privacy Settings   -`n------------------------" 14 0
+	BoxItem 'Privacy Settings'
 	If($Telemetry -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut 'Skipping Telemetry...' 15 0
 	} ElseIf($Telemetry -eq 1) {
@@ -1606,7 +1617,7 @@ Function RunScript {
 		Set-ItemProperty -Path $Path -Name 'DisableWindowsConsumerFeatures' -Type DWord -Value 1
 	}
 
-	DisplayOut "`n-------------------------------`n-   Windows Update Settings   -`n-------------------------------" 14 0
+	BoxItem 'Windows Update Settings'
 	$Path = CheckSetPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate'
 	If($CheckForWinUpdate -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut 'Skipping Check for Windows Update...' 15 0
@@ -1718,7 +1729,7 @@ Function RunScript {
 		}
 	}
 
-	DisplayOut "`n----------------------`n-   Service Tweaks   -`n----------------------" 14 0
+	BoxItem 'Service Tweaks'
 	If($UAC -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut 'Skipping UAC Level...' 15 0
 	} ElseIf($UAC -eq 1) {
@@ -1829,7 +1840,7 @@ Function RunScript {
 		Set-ItemProperty -Path "$Path\WinStations\RDP-Tcp" -Name 'UserAuthentication' -Type DWord -Value 1
 	}
 
-	DisplayOut "`n--------------------------`n-   Context Menu Items   -`n--------------------------" 14 0
+	BoxItem 'Context Menu Items'
 	If($CastToDevice -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut 'Skipping Cast to Device Context item...' 15 0
 	} ElseIf($CastToDevice -eq 1) {
@@ -1944,8 +1955,7 @@ Function RunScript {
 		RemoveSetPath 'HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\SendTo'
 	}
 
-
-	DisplayOut "`n----------------------`n-   Task Bar Items   -`n----------------------" 14 0
+	BoxItem 'Task Bar Items'
 	If($BatteryUIBar -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut 'Skipping Battery UI Bar...' 15 0
 	} ElseIf($BatteryUIBar -eq 1) {
@@ -2077,7 +2087,7 @@ Function RunScript {
 		Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'MMTaskbarMode' -Type DWord -Value 1
 	}
 
-	DisplayOut "`n-----------------------`n-   Star Menu Items   -`n-----------------------" 14 0
+	BoxItem 'Star Menu Items'
 	If($StartMenuWebSearch -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut 'Skipping Bing Search in Start Menu...' 15 0
 	} ElseIf($StartMenuWebSearch -eq 1) {
@@ -2147,7 +2157,7 @@ Function RunScript {
 		Set-ItemProperty -Path $Path -Name 'Start_TrackDocs' -Type DWord -Value 0
 	}
 
-	DisplayOut "`n----------------------`n-   Explorer Items   -`n----------------------" 14 0
+	BoxItem 'Explorer Items'
 	If($PidInTitleBar -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut 'Skipping Process ID on Title Bar...' 15 0
 	} ElseIf($PidInTitleBar -eq 1) {
@@ -2362,7 +2372,7 @@ Function RunScript {
 		Remove-ItemProperty -Path 'HKLM:\SYSTEM\ControlSet001\Control\FileSystem' -Name 'LongPathsEnabled'
 	}
 
-	DisplayOut "`n-----------------------`n-   'This PC' Items   -`n-----------------------" 14 0
+	BoxItem "'This PC' Items"
 	If($DesktopIconInThisPC -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut 'Skipping Desktop folder in This PC...' 15 0
 	} ElseIf($DesktopIconInThisPC -eq 1) {
@@ -2565,7 +2575,7 @@ Function RunScript {
 		}
 	}
 
-	DisplayOut "`n---------------------`n-   Desktop Items   -`n---------------------" 14 0
+	BoxItem 'Desktop Items'
 	$Path = CheckSetPath 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu'
 	If($ThisPCOnDesktop -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut 'Skipping This PC Icon on Desktop...' 15 0
@@ -2637,7 +2647,7 @@ Function RunScript {
 		Set-ItemProperty -Path "$Path\NewStartPanel" -Name '{5399E694-6CE5-4D6C-8FCE-1D8870FDCBA0}' -Type DWord -Value 1
 	}
 
-	DisplayOut "`n-----------------------------`n-   Photo Viewer Settings   -`n-----------------------------" 14 0
+	BoxItem 'Photo Viewer Settings'
 	If($PVFileAssociation -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut 'Skipping Photo Viewer File Association...' 15 0
 	} ElseIf($PVFileAssociation -eq 1) {
@@ -2673,7 +2683,7 @@ Function RunScript {
 		RemoveSetPath 'HKCR:\Applications\photoviewer.dll\shell\open'
 	}
 
-	DisplayOut "`n------------------------`n-   Lockscreen Items   -`n------------------------" 14 0
+	BoxItem 'Lockscreen Items'
 	If($LockScreen -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut 'Skipping Lock Screen...' 15 0
 	} ElseIf($LockScreen -eq 1) {
@@ -2730,7 +2740,7 @@ Function RunScript {
 		Set-ItemProperty -Path $Path -Name 'NoLockScreenCamera' -Type DWord -Value 1
 	}
 
-	DisplayOut "`n------------------`n-   Misc Items   -`n------------------" 14 0
+	BoxItem 'Misc Items'
 	If($BuildVer -ge 17133){
 		If($AccountProtectionWarn -eq 0 -And $ShowSkipped -eq 1) {
 			DisplayOut 'Skipping Account Protection Warning...' 15 0
@@ -2821,7 +2831,7 @@ Function RunScript {
 	If($UnpinItems -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut 'Skipping Unpinning Items...' 15 0
 	} ElseIf($UnpinItems -eq 1) {
-		DisplayOut "`nUnpinning All Startmenu Items...`n------------------" 12 0
+		DisplayOut "`nUnpinning All Startmenu Items..." 12 0
 		If($BuildVer -le 16299){
 			Get-ChildItem -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount' -Include '*.group' -Recurse | ForEach-Object {
 				$data = (Get-ItemProperty -Path "$($_.PsPath)\Current" -Name 'Data').Data -Join ','
@@ -2843,7 +2853,7 @@ Function RunScript {
 		ForEach($TaskN in $TasksList) { Get-ScheduledTask -TaskName $TaskN | Disable-ScheduledTask }
 	}
 
-	DisplayOut "`n-------------------------`n-   Application/Feature Items   -`n-------------------------" 14 0
+	BoxItem 'Application/Feature Items'
 	If($OneDrive -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut 'Skipping OneDrive...' 15 0
 	} ElseIf($OneDrive -eq 1) {
@@ -2954,7 +2964,7 @@ Function RunScript {
 	}
 
 	If($AppxCount -ne 0) {
-		DisplayOutMenu "`n---------------------------------------`n-" 14 0 0 ;DisplayOutMenu "   Waiting for Appx Task to Finish   " 15 0 0 ;DisplayOutMenu "-`n---------------------------------------" 14 0 1
+		BoxItem 'Waiting for Appx Task to Finish'
 		Wait-Job -Name "Win10Script*"
 		Remove-Job -Name "Win10Script*"
 	}
