@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
-3.4.3 (07-10-2018)
+3.4.4 (07-14-2018)
 
 Share with Renamed to Share with/Share (it removes the share context too)
 
@@ -7,6 +7,9 @@ Internal Script Changes
 Added Enable/Disable Long File Path
 
 More Interal Script Changes (decreased size of script a little)
+
+More Internal Script Improvements (decreased size of script a little, slight speed improvement)
+Fixed Issue with Symbols/Special Characters in filename and/or path
 
 -----------------------------------------------------------------------------------
 3.4.0 (06-16-2018)
