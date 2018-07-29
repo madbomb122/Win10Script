@@ -87,15 +87,17 @@ This file will <br />
 
 ******
 ## FAQ
-**Q:** Do you accept any donations? <br />
-**A:** If you would like to donate to me Please Contact me about donating or pick an item from my amazon wishlist. <br />
-**Wishlist:** https://www.amazon.com/gp/registry/wishlist/YBAYWBJES5DE/
+**Q:** The script file looks all messy in notepad, How do i view it? <br/>
+**A:** Try using wordpad or what I recommend, Notepad++ [https://notepad-plus-plus.org/](https://notepad-plus-plus.org/) 
 
-**Q:** How can I contact you? <br />
-**A:** You can email me @ madbomb122@gmail.com
+**Q:** Do you accept any donations? <br/>
+**A:** If you would like to donate to me Please pick an item/giftcard from my amazon wishlist or Contact me about donating, Thanks. BTW The giftcard amount can be changed to a min of $1. <br/>
+**Wishlist:** [https://www.amazon.com/gp/registry/wishlist/YBAYWBJES5DE/](https://www.amazon.com/gp/registry/wishlist/YBAYWBJES5DE/)<br/>
 
-**Q:** The script file looks all messy in notepad, How do i view/change it? <br />
-**A:** Try using wordpad or what I recommend, Notepad++ https://notepad-plus-plus.org/
+**Q:** How can I contact you? <br/>
+**A:** 1. You can also PM me on reddit /u/madbomb122 [https://www.reddit.com/user/madbomb122](https://www.reddit.com/user/madbomb122) <br/>
+2. You can email me @ madbomb122@gmail.com. <br/>
+**Note** Before contacting me, please make sure you have ALL the needed files and the size is right (Look above under requirements). 
 
 **Q:** The script window closes or gives an error saying script is blocked, what do i do? <br />
 **A:** By default windows blocks ps1 scripts, you can use one of the following <br />
@@ -103,7 +105,7 @@ This file will <br />
          2. On an admin powershell console `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unrestricted` <br />
 
 **Q:** Can I run the script safely? <br />
-**A:** The script itself is safe, however some setting it can change may compromise your computer.
+**A:** Yes and No, it depends on what you do, some items may cause problems and some items will not cause any issues.
 
 **Q:** Can I run the script repeatedly? <br />
 **A:** Yes, with same or different settings.
