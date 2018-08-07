@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
-3.4.4 (07-14-2018)
+3.5.0 (08-07-2018)
 
 Share with Renamed to Share with/Share (it removes the share context too)
 
@@ -10,6 +10,9 @@ More Interal Script Changes (decreased size of script a little)
 
 More Internal Script Improvements (decreased size of script a little, slight speed improvement)
 Fixed Issue with Symbols/Special Characters in filename and/or path
+
+Reverted some changes due to some changes being slower rather than faster
+Fixed Windows Update P2P type for 1803
 
 -----------------------------------------------------------------------------------
 3.4.0 (06-16-2018)
