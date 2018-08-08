@@ -2,7 +2,7 @@ To Download go to -> [Win 10 Script -Release](https://github.com/madbomb122/Win1
 
 
 **Current Version** <br />
-**Script:** `3.5.0` (August 07, 2018) <br />
+**Script:** `3.5.1` (August 08, 2018) <br />
 
 ## Description
 
