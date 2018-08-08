@@ -1,4 +1,9 @@
 -----------------------------------------------------------------------------------
+3.5.1 (08-08-2018)
+
+Fixed an issue with 'Share/Share with' that causes the script to stall (thanks to Cpt0r for letting me know)
+
+-----------------------------------------------------------------------------------
 3.5.0 (08-07-2018)
 
 Share with Renamed to Share with/Share (it removes the share context too)
