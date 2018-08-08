@@ -10,8 +10,8 @@
 # Website: https://github.com/Disassembler0/Win10-Initial-Setup-Script/
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
-$Script_Version = '3.5.0'
-$Script_Date = 'Aug-07-2018'
+$Script_Version = '3.5.1'
+$Script_Date = 'Aug-08-2018'
 $Release_Type = 'Stable'
 ##########
 
@@ -1937,17 +1937,17 @@ Function RunScript {
 		Set-ItemProperty -Path 'HKCR:\Directory\shellex\PropertySheetHandlers\Sharing' -Name '(Default)' -Type String -Value '{f81e9010-6ea4-11ce-a7ff-00aa003ca9f6}'
 		Set-ItemProperty -Path 'HKCR:\Directory\Background\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value '{f81e9010-6ea4-11ce-a7ff-00aa003ca9f6}'
 		Set-ItemProperty -Path 'HKCR:\LibraryFolder\background\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value '{f81e9010-6ea4-11ce-a7ff-00aa003ca9f6}'
-		Set-ItemProperty -Path 'HKCR:\*\shellex\ContextMenuHandlers\ModernSharing' -Name '(Default)' -Type String -Value '{e2bf9676-5f8f-435c-97eb-11607a5bedf7}'
+		Set-ItemProperty -LiteralPath 'HKCR:\*\shellex\ContextMenuHandlers\ModernSharing' -Name '(Default)' -Type String -Value '{e2bf9676-5f8f-435c-97eb-11607a5bedf7}'
 	}  ElseIf($ShareWith -eq 2) {
 		DisplayOut 'Disabling Share/Share With...' 12 0
-		Set-ItemProperty -LiteralPath 'HKCR:\*\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value ''
+		Set-ItemProperty -LiteralPath 'HKCR:\*\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value '1'
 		Set-ItemProperty -Path 'HKCR:\Directory\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value ''
 		Set-ItemProperty -Path 'HKCR:\Directory\shellex\CopyHookHandlers\Sharing' -Name '(Default)' -Type String -Value ''
 		Set-ItemProperty -Path 'HKCR:\Directory\shellex\PropertySheetHandlers\Sharing' -Name '(Default)' -Type String -Value ''
 		Set-ItemProperty -Path 'HKCR:\Directory\Background\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value ''
 		Set-ItemProperty -Path 'HKCR:\Drive\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value ''
 		Set-ItemProperty -Path 'HKCR:\LibraryFolder\background\shellex\ContextMenuHandlers\Sharing' -Name '(Default)' -Type String -Value ''
-		Set-ItemProperty -Path 'HKCR:\*\shellex\ContextMenuHandlers\ModernSharing' -Name '(Default)' -Type String -Value ''
+		Set-ItemProperty -LiteralPath 'HKCR:\*\shellex\ContextMenuHandlers\ModernSharing' -Name '(Default)' -Type String -Value '1'
 	}
 
 	If($SendTo -eq 0) {
