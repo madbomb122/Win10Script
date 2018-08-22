@@ -1,7 +1,10 @@
 -----------------------------------------------------------------------------------
-3.5.1 (08-08-2018)
+3.6.0 (08-21-2018)
 
 Fixed an issue with 'Share/Share with' that causes the script to stall (thanks to Cpt0r for letting me know)
+
+Reworked some internal script stuff (text display is easyer to read in script)
+Fixed bug with app Unhide/Hide/Uninstall were the wrong item 
 
 -----------------------------------------------------------------------------------
 3.5.0 (08-07-2018)
