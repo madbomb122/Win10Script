@@ -1337,8 +1337,7 @@ Function RunScript {
 	$AppxCount = 0
 
 	BoxItem 'Metro App Items'
-	#$APPProcess = Get-Variable -Name 'APP_*' -ValueOnly -Scope Script
-	$APPProcess = Get-Variable -Name 'APP_*' -Scope Script
+	$APPProcess = Get-Variable -Name 'APP_*' -ValueOnly -Scope Script
 	$A = 0
 	
 	ForEach($AppV In $APPProcess) {
