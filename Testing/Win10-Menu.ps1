@@ -3,15 +3,15 @@
 #
 # Modded Script + Menu(GUI) By
 #  Author: Madbomb122
-# Website: https://github.com/madbomb122/Win10Script/
+# Website: https://GitHub.com/Madbomb122/Win10Script/
 #
 # Original Basic Script By
 #  Author: Disassembler0
-# Website: https://github.com/Disassembler0/Win10-Initial-Setup-Script/
+# Website: https://GitHub.com/Disassembler0/Win10-Initial-Setup-Script/
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
-$Script_Version = '3.6.0'
-$Script_Date = 'Aug-21-2018'
+$Script_Version = '3.6.2'
+$Script_Date = 'Sept-27-2018'
 $Release_Type = 'Testing'
 #$Release_Type = 'Stable'
 ##########
@@ -28,30 +28,39 @@ $Release_Type = 'Testing'
 ## !!                                            !!
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-<#------------------------------------------------------------------------------
-The MIT License (MIT)
+<#------------------------------------------------------------------------------#>
 
-Copyright (c) 2017 Disassembler -Original Basic Version of Script
-Copyright (c) 2017 Madbomb122 -Modded + Menu Version of Script
+$Copyright ='                                                                        
+ The MIT License (MIT)                                                  
+                                                                        
+ Copyright (c) 2017 Disassembler                                        
+        -Original Basic Version of Script                               
+                                                                        
+ Copyright (c) 2017-2018 Madbomb122                                     
+        -Modded + Menu Version of Script                                
+                                                                        
+ Permission is hereby granted, free of charge, to any person obtaining  
+ a copy of this software and associated documentation files (the        
+ "Software"), to deal in the Software without restriction, including    
+ without limitation the rights to use, copy, modify, merge, publish,    
+ distribute, sublicense, and/or sell copies of the Software, and to     
+ permit persons to whom the Software is furnished to do so, subject to  
+ the following conditions:                                              
+                                                                        
+ The above copyright notice(s), this permission notice shall be         
+ included in all copies or substantial portions of the Software.        
+                                                                        
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY  
+ KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE 
+ WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR    
+ PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS 
+ OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR   
+ OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR 
+ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE  
+ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.     
+                                                            '
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-of the Software, and to permit persons to whom the Software is furnished to do
-so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
---------------------------------------------------------------------------------
+<#--------------------------------------------------------------------------------
 
 .Prerequisite to run script
   System: Windows 10
@@ -69,26 +78,24 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   2. Edit bat file and run
   3. Run the script with one of these arguments/switches (space between multiple)
 
+
+  Switch          Description of Switch
 -- Basic Switches --
- Switches       Description of Switch
   -atos           Accepts ToS
   -auto           Implies -Atos...Closes on - User Errors, or End of Script
   -crp            Creates Restore Point
   -dnr            Do Not Restart when done
 
 -- Run Script Switches --
- Switches       Description of Switch
   -run            Runs script with settings in script
   -run FILENME    Runs script with settings in the file FILENME
   -run wd         Runs script with win default settings
 
 -- Load Script Switches --
- Switches       Description of Switch
   -load FILENME   Loads script with settings in the file FILENME
   -load wd        Loads script with win default settings
 
 --Update Switches--
- Switches       Description of Switch
   -usc            Checks for Update to Script file before running
   -sic            Skips Internet Check
 
@@ -96,7 +103,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ##########
 # Pre-Script -Start
 ##########
-#Get-ItemPropertyValue 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion' 'ProgramFilesDir'
 
 If([Environment]::OSVersion.Version.Major -ne 10) {
 	Clear-Host
@@ -114,12 +120,12 @@ If(!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::
 	Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $PassedArg" -Verb RunAs ;Exit
 }
 
-$URL_Base = 'https://raw.githubusercontent.com/madbomb122/Win10Script/master/'
+$URL_Base = 'https://raw.GitHub.com/madbomb122/Win10Script/master/'
 $Version_Url = $URL_Base + 'Version/Version.csv'
 
 #$Script:BuildVer = [Environment]::OSVersion.Version.build
 $Script:Win10Ver = (Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion' -Name ReleaseID).ReleaseId
-If([System.Environment]::Is64BitProcess){ $Script:OSType = 64 }
+If([System.Environment]::Is64BitProcess){ $Script:OSType = 64 } Else{ $Script:OSType = 32 }
 
 ##########
 # Pre-Script -End
@@ -127,9 +133,9 @@ If([System.Environment]::Is64BitProcess){ $Script:OSType = 64 }
 # Needed Variable -Start
 ##########
 
-[Array]$Script:APPS_AppsUnhide = @()
-[Array]$Script:APPS_AppsHide = @()
-[Array]$Script:APPS_AppsUninstall = @()
+[Array]$APPS_AppsUnhide = @()
+[Array]$APPS_AppsHide = @()
+[Array]$APPS_AppsUninstall = @()
 
 $AppsList = @(
 'Microsoft.3DBuilder',
@@ -230,8 +236,11 @@ $colors = @(
 
 $musnotification_files = @("$Env:windir\System32\musnotification.exe","$Env:windir\System32\musnotificationux.exe")
 
-Function MenuBlankLine { DisplayOut '|'.PadRight(53), '|' -C 14,14 }
-Function MenuLine { DisplayOut '|'.PadRight(53,'-'),'|' -C 14,14 }
+$MLine = '|'.PadRight(53,'-') + '|'
+$MBLine = '|'.PadRight(53) + '|'
+
+Function MenuBlankLine{ DisplayOut DisplayOut $MBLine -C 14 }
+Function MenuLine{ DisplayOut DisplayOut $MLine -C 14 }
 
 Function BoxItem([String]$TxtToDisplay) {
 	$TLen = $TxtToDisplay.Length
@@ -241,20 +250,20 @@ Function BoxItem([String]$TxtToDisplay) {
 	DisplayOut ''.PadRight($LLen-1,'-') -C 14
 }
 
-Function AnyKeyClose { Read-Host -Prompt "`nPress Any key to Close..." }
+Function AnyKeyClose{ Read-Host -Prompt "`nPress Any key to Close..." }
 
 ##########
 # Needed Variable -End
 ##########
-# Update Check -Start
+# Update Functions -Start
 ##########
 
 Function UpdateCheck {
 	If(InternetCheck) {
 		$CSV_Ver = Invoke-WebRequest $Version_Url | ConvertFrom-Csv
-		If($Release_Type -ne 'Stable'){ $Line = 0 } Else{ $Line = 1 }
-		$WebScriptVer = $CSV_Ver[$Line].Version + "." + $CSV_Ver[$Line].MinorVersion
-		If($WebScriptVer -gt $Script_Version){ ScriptUpdateFun }
+		If($Release_Type -eq 'Stable'){ $CSVLine = 0 ;$RT = '' } Else{ $CSVLine = 1 ;$RT = 'Testing/' }
+		$WebScriptVer = $CSV_Ver[$CSVLine].Version + "." + $CSV_Ver[$CSVLine].MinorVersion
+		If($WebScriptVer -gt $Script_Version){ ScriptUpdateFun $RT }
 	} Else {
 		Clear-Host
 		MenuLine
@@ -275,22 +284,8 @@ Function UpdateCheck {
 	}
 }
 
-Function UpdateDisplay([String]$FullVer,[String]$DFilename) {
-	Clear-Host
-	MenuLine
-	DisplayOutLML (''.PadRight(18)+'Update Found!') -C 13
-	MenuLine
-	MenuBlankLine
-	DisplayOut '|',' Downloading version ',"$FullVer".PadRight(31),'|' -C 14,15,11,14
-	DisplayOut '|',' Will run ',$DFilename.PadRight(42),'|' -C 14,15,11,14
-	DisplayOutLML 'after download is complete.' -C 15
-	MenuBlankLine
-	MenuLine
-}
-
-Function ScriptUpdateFun {
+Function ScriptUpdateFun([String]$RT) {
 	$FullVer = "$WebScriptVer.$WebScriptMinorVer"
-	$UpdateFile = $filebase + 'Update.bat'
 	$UpArg = ''
 
 	If($Accept_ToS -ne 1){ $UpArg += '-atos ' }
@@ -299,41 +294,30 @@ Function ScriptUpdateFun {
 	If($Restart -eq 0){ $UpArg += '-dnr' }
 	If($RunScr){ $UpArg += "-run $TempSetting " } Else{ $UpArg += "-load $TempSetting " }
 
-	If(Test-Path $UpdateFile -PathType Leaf) {
-		$DFilename = 'Win10-Menu.ps1'
-		$UpArg += '-u -w10 '
-		If($Release_Type -ne 'Stable'){ $UpArg += '-test ' }
-		UpdateDisplay $FullVer $DFilename
-		cmd.exe /c "$UpdateFile $UpArg"
-	} Else {
-		$DFilename = 'Win10-Menu-Ver.' + $FullVer
-		If($Release_Type -ne 'Stable'){ $DFilename += $WebScriptVer + '-Testing' ;$Script_Url = $URL_Base + 'Testing/' }
-		$DFilename += '.ps1'
-		UpdateDisplay $FullVer $DFilename
-		$Script_Url = $URL_Base + 'Win10-Menu.ps1'
-		$WebScriptFilePath = $filebase + $DFilename
-		(New-Object System.Net.WebClient).DownloadFile($Script_Url, $WebScriptFilePath)
-		$TempSetting = $TempFolder + '\TempSet.csv'
-		SaveSettingFiles $TempSetting 0
-		If($BatUpdateScriptFileName -eq 1) {
-			$BatFile = $filebase + '_Win10-Script.bat'
-			If(Test-Path -LiteralPath $BatFile -PathType Leaf) {
-				(Get-Content -LiteralPath $BatFile) | Foreach-Object {$_ -replace "Set Script_File=.*?$" , "Set Script_File=$DFilename"} | Set-Content -LiteralPath $BatFile -Force
-				MenuBlankLine
-				DisplayOutLML 'Updated bat file with new script file name.' 13
-				MenuBlankLine
-				MenuLine
-			}
-		}
-		Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$WebScriptFilePath`" $UpArg" -Verb RunAs
-	}
+	$Script_Url = $URL_Base + $RT + 'Win10-Menu.ps1'
+	$ScrpFilePath = $FileBase + 'Win10-Menu.ps1'
+
+	Clear-Host
+	MenuLine -L
+	MenuBlankLine -L
+	DisplayOutLML (''.PadRight(18)+'Update Found!') -C 13 -L
+	MenuBlankLine -L
+	DisplayOut '|',' Updating from version ',"$Script_Version".PadRight(30),'|' -C 14,15,11,14 -L
+	MenuBlankLine -L
+	DisplayOut '|',' Downloading version ',"$FullVer".PadRight(31),'|' -C 14,15,11,14 -L
+	DisplayOutLML 'Will run after download is complete.' -C 15 -L
+	MenuBlankLine -L
+	MenuLine -L
+
+	(New-Object System.Net.WebClient).DownloadFile($Script_Url, $ScrpFilePath)
+	Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$ScrpFilePath`" $UpArg" -Verb RunAs
 	Exit
 }
 
 Function InternetCheck{ If($InternetCheck -eq 1 -or (Test-Connection www.GitHub.com -Count 1 -Quiet)){ Return $True } Return $False }
 
 ##########
-# Update Check -End
+# Update Functions -End
 ##########
 # Multi Use Functions -Start
 ##########
@@ -345,17 +329,17 @@ Function ThanksDonate {
 	DisplayOut 'https://www.amazon.com/gp/registry/wishlist/YBAYWBJES5DE/' -C 2
 }
 
-Function cmpv { Compare-Object (Get-Variable -Scope Script) $AutomaticVariables -Property Name -PassThru | Where-Object -Property Name -ne 'AutomaticVariables' | Where-Object { $_ -NotIn $WPFList } }
+Function cmpv{ Compare-Object (Get-Variable -Scope Script) $AutomaticVariables -Property Name -PassThru | Where-Object -Property Name -ne 'AutomaticVariables' | Where-Object { $_ -NotIn $WPFList } }
 Function Openwebsite([String]$Url){ [System.Diagnostics.Process]::Start($Url) }
 Function ShowInvalid([Int]$InvalidA){ If($InvalidA -eq 1){ Write-Host "`nInvalid Input" -ForegroundColor Red -BackgroundColor Black -NoNewline } Return 0 }
 Function CheckSetPath([String]$RPath){ While(!(Test-Path $RPath)){ New-Item -Path $RPath -Force | Out-Null } Return $RPath }
 Function RemoveSetPath([String]$RPath){ If(Test-Path $RPath){ Remove-Item -Path $RPath -Recurse } }
-Function StartOrGui{ If($RunScr -eq $True){ PreStartScript } ElseIf($AcceptToS -ne 1){ GuiStart } }
+Function StartOrGui{ If($RunScr -eq $True){ RunScript } ElseIf($AcceptToS -ne 1){ GuiStart } }
 
 Function DisplayOut {
 	Param (
 		[alias ("T")] [String[]]$Text,
-		[alias ("C")] [Int[]]$Color = 14
+		[alias ("C")] [Int[]]$Color
 	)
 	For($i=0 ;$i -lt $Text.Length ;$i++){ Write-Host $Text[$i] -ForegroundColor $colors[$Color[$i]] -BackgroundColor 'Black' -NoNewLine } ;Write-Host
 }
@@ -363,38 +347,44 @@ Function DisplayOut {
 Function DisplayOutLML {
 	Param (
 		[alias ("T")] [String]$Text,
-		[alias ("C")] [Int]$Color = 14
+		[alias ("C")] [Int]$Color
 	)
 	DisplayOut '| ',$Text.PadRight(50),' |' -C 14,$Color,14
 }
 
 Function ScriptPreStart {
+	SetDefault
 	If($PassedArg.Length -gt 0){ ArgCheck }
 	If($AcceptToS -eq 1){ TOS } Else{ StartOrGui }
 }
 
+Function PassVal([String]$Pass){ Return $PassedArg[$PassedArg.IndexOf($Pass)+1] }
 Function ArgCheck {
-	For($i=0 ;$i -lt $PassedArg.Length ;$i++) {
-		If($PassedArg[$i].StartsWith('-')) {
-			$ArgVal = $PassedArg[$i].ToLower()
-			$PasVal = $PassedArg[($i+1)]
-			Switch($ArgVal) {
-				'-run' { If(Test-Path -LiteralPath $PasVal -PathType Leaf) {
-							LoadSettingFile $PasVal ;$Script:RunScr = $True
-						} ElseIf($PasVal -eq 'wd' -or $PasVal -eq 'windefault') {
-							LoadWinDefault ;$Script:RunScr = $True
-						} ElseIf($PasVal.StartsWith('-')){ $Script:RunScr = $True} Break
-				}
-				'-load' { If(Test-Path -LiteralPath $PasVal -PathType Leaf){ LoadSettingFile $PasVal } ElseIf($PasVal -eq 'wd' -or $PasVal -eq 'windefault'){ LoadWinDefault } ;Break }
-				'-sic' { $Script:InternetCheck = 1 ;Break }
-				'-usc' { $Script:VersionCheck  = 1 ;Break }
-				'-atos' { $Script:AcceptToS = 'Accepted-Switch' ;Break }
-				'-dnr' { $Script:Restart = 0 ;Break }
-				'-auto' { $Script:Automated = 1 ;$Script:AcceptToS = 'Accepted-Automated-Switch' ;Break }
-				'-crp' { $Script:CreateRestorePoint = 1 ;If(!($PasVal.StartsWith('-'))){ $Script:RestorePointName = $PasVal } ;Break }
-				{$_ -in'-help','-h'} { ShowHelp ;Break }
-			}
+	If($PassedArg -In '-help','-h'){ ShowHelp }
+	If($PassedArg -Contains '-copy'){ ShowCopyright ;Exit }
+	If($PassedArg -Contains '-run') {
+		$tmp = PassVal '-run'
+		If(Test-Path -LiteralPath $tmp -PathType Leaf) {
+			LoadSettingFile $tmp ;$Script:RunScr = $True
+		} ElseIf($tmp -In 'wd','windefault') {
+			LoadWinDefault ;$Script:RunScr = $True
+		} ElseIf($tmp.StartsWith('-') -or $PassedArg.IndexOf('-run') -eq  $PassedArg.Length) {
+			$Script:RunScr = $True
 		}
+	}
+	If($PassedArg -Contains '-load') {
+		$tmp = PassVal '-load'
+		If(Test-Path -LiteralPath $tmp -PathType Leaf){ LoadSettingFile $tmp } ElseIf($tmp -In 'wd','windefault'){ LoadWinDefault }
+	}
+	If($PassedArg -Contains '-sic'){ $Script:InternetCheck = 1 }
+	If($PassedArg -Contains '-usc'){ $Script:VersionCheck  = 1 }
+	If($PassedArg -Contains '-atos'){ $Script:AcceptToS = 'Accepted-Switch' }
+	If($PassedArg -Contains '-dnr'){ $Script:Restart = 0 }
+	If($PassedArg -Contains '-auto'){ $Script:Automated = 1 ;$Script:AcceptToS = 'Accepted-Automated-Switch' }
+	If($PassedArg -Contains '-crp') {
+		$Script:CreateRestorePoint = 1
+		$tmp = PassVal '-crp'
+		If(!($tmp.StartsWith('-'))){ $Script:RestorePointName = $tmp }
 	}
 }
 
@@ -418,15 +408,19 @@ Function ShowHelp {
 	DisplayOut "`n--Update Switches--" -C 2
 	DisplayOut '  -usc ','            Checks for Update to Script file before running' -C 14,15
 	DisplayOut '  -sic ',"            Skips Internet Check, if you can't ping GitHub.com for some reason" -C 14,15
+	DisplayOut "`n--Help--" -C 2
+	DisplayOut '  -help ','           Shows list of switches, then exits script.. alt ','-h' -C 14,15,14
+	DisplayOut '  -copy ','           Shows Copyright/License Information, then exits script' -C 14,15
 	AnyKeyClose
 	Exit
 }
 
-Function TOSLine([Int]$BC){ DisplayOut '|'.PadRight(53,'-'),'|' -C $BC,$BC }
-Function TOSBlankLine([Int]$BC){ DisplayOut '|'.PadRight(53), '|' -C $BC,$BC }
+Function TOSLine([Int]$BC){ DisplayOut $MLine -C $BC}
+Function TOSBlankLine([Int]$BC){ DisplayOut $MBLine -C $BC }
+Function ShowCopyright { Clear-Host ;DisplayOut $Copyright -C 14 }
 
-Function TOSDisplay {
-	Clear-Host
+Function TOSDisplay([Switch]$C) {
+	If(!$C){ Clear-Host }
 	$BorderColor = 14
 	If($Release_Type -ne 'Stable') {
 		$BorderColor = 15
@@ -447,12 +441,16 @@ Function TOSDisplay {
 	TOSBlankLine $BorderColor
 	DisplayOut '|',' Read License file for full Terms.'.PadRight(52),'|' -C $BorderColor,2,$BorderColor
 	TOSBlankLine $BorderColor
+	DisplayOut '|',' Use the switch ','-copy',' to see License Information or ','|' -C $BorderColor,2,14,2,$BorderColor
+	DisplayOut '|',' enter ','L',' bellow.'.PadRight(44),'|' -C $BorderColor,2,14,2,$BorderColor
+	TOSBlankLine $BorderColor
 	TOSLine $BorderColor
+	$CopyR = $False
 }
 
 Function TOS {
 	While($TOS -ne 'Out') {
-		TOSDisplay
+		TOSDisplay -c:$CopyR
 		$Invalid = ShowInvalid $Invalid
 		$TOS = Read-Host "`nDo you Accept? (Y)es/(N)o"
 		$TOS = $TOS.ToLower()
@@ -460,6 +458,8 @@ Function TOS {
 			Exit
 		} ElseIf($TOS -In 'y','yes') {
 			$Script:AcceptToS = 'Accepted-Script' ;$TOS = 'Out' ;StartOrGui
+		} ElseIf($TOS -eq 'l') {
+			$CopyR = $True ;ShowCopyright
 		} Else {
 			$Invalid = 1
 		}
@@ -490,13 +490,6 @@ Function SaveSettingFiles([String]$Filename) {
 ##########
 # GUI -Start
 ##########
-
-Function Update-Window {
-	[cmdletBinding()]
-	Param($Control, $Property, $Value, [Switch]$AppendContent)
-	If($Property -eq 'Close'){ $syncHash.Window.Dispatcher.invoke([action]{$syncHash.Window.Close()},'Normal') ;Return }
-	$form.Dispatcher.Invoke([Action]{ If($PSBoundParameters['AppendContent']){ $Control.AppendText($Value) } Else{ $Control.$Property = $Value } }, 'Normal')
-}
 
 Function SetCombo([String]$Name,[String]$Item) {
 	$Items = $Item.Split(',')
@@ -620,18 +613,17 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="405" Width="550
 					<CheckBox Name="CreateRestorePoint_CB" Content="Create Restore Point:" HorizontalAlignment="Left" Margin="8,10,0,0" VerticalAlignment="Top"/>
 					<TextBox Name="RestorePointName_Txt" HorizontalAlignment="Left" Height="20" Margin="139,9,0,0" TextWrapping="Wrap" Text="Win10 Initial Setup Script" VerticalAlignment="Top" Width="188"/>
 					<CheckBox Name="ShowSkipped_CB" Content="Show Skipped Items" HorizontalAlignment="Left" Margin="8,29,0,0" VerticalAlignment="Top"/>
-					<CheckBox Name="Restart_CB" Content="Restart When Done" HorizontalAlignment="Left" Margin="8,49,0,0" VerticalAlignment="Top"/>
+					<CheckBox Name="Restart_CB" Content="Restart When Done (Restart is Recommended)" HorizontalAlignment="Left" Margin="8,49,0,0" VerticalAlignment="Top"/>
 					<CheckBox Name="VersionCheck_CB" Content="Check for Update (If update found, will run and use current settings)" HorizontalAlignment="Left" Margin="8,69,0,0" VerticalAlignment="Top"/>
-					<CheckBox Name="BatUpdateScriptFileName_CB" Content="Update Bat file with new Script filename" HorizontalAlignment="Left" Margin="8,89,0,0" VerticalAlignment="Top" Height="15" Width="450"/>
-					<CheckBox Name="InternetCheck_CB" Content="Skip Internet Check" HorizontalAlignment="Left" Margin="8,109,0,0" VerticalAlignment="Top"/>
-					<Button Name="Save_Setting_Button" Content="Save Settings" HorizontalAlignment="Left" Margin="100,133,0,0" VerticalAlignment="Top" Width="77"/>
-					<Button Name="Load_Setting_Button" Content="Load Settings" HorizontalAlignment="Left" Margin="8,133,0,0" VerticalAlignment="Top" Width="77"/>
-					<Button Name="WinDefault_Button" Content="Windows Default*" HorizontalAlignment="Left" Margin="192,133,0,0" VerticalAlignment="Top" Width="100"/>
-					<Button Name="ResetDefault_Button" Content="Reset All Items" HorizontalAlignment="Left" Margin="306,133,0,0" VerticalAlignment="Top" Width="85"/>
-					<Label Content="Notes:&#xD;&#xA;Options with items marked with * means &quot;Windows Default&quot;&#xA;Windows Default Button does not change Metro Apps or OneDrive Install" HorizontalAlignment="Left" Margin="8,160,0,0" VerticalAlignment="Top" FontStyle="Italic"/>
-					<Label Content="Script Version:" HorizontalAlignment="Left" Margin="8,218,0,0" VerticalAlignment="Top" Height="25"/>
-					<TextBox Name="Script_Ver_Txt" HorizontalAlignment="Left" Height="20" Margin="90,222,0,0" TextWrapping="Wrap" Text="2.8.0 (6-21-2017)" VerticalAlignment="Top" Width="124" IsEnabled="False"/>
-					<TextBox Name="Release_Type_Txt" HorizontalAlignment="Left" Height="20" Margin="214,222,0,0" TextWrapping="Wrap" Text="Testing" VerticalAlignment="Top" Width="50" IsEnabled="False"/>
+					<CheckBox Name="InternetCheck_CB" Content="Skip Internet Check" HorizontalAlignment="Left" Margin="8,89,0,0" VerticalAlignment="Top"/>
+					<Button Name="Save_Setting_Button" Content="Save Settings" HorizontalAlignment="Left" Margin="100,113,0,0" VerticalAlignment="Top" Width="77"/>
+					<Button Name="Load_Setting_Button" Content="Load Settings" HorizontalAlignment="Left" Margin="8,113,0,0" VerticalAlignment="Top" Width="77"/>
+					<Button Name="WinDefault_Button" Content="Windows Default*" HorizontalAlignment="Left" Margin="192,113,0,0" VerticalAlignment="Top" Width="100"/>
+					<Button Name="ResetDefault_Button" Content="Reset All Items" HorizontalAlignment="Left" Margin="306,113,0,0" VerticalAlignment="Top" Width="85"/>
+					<Label Content="Notes:&#xD;&#xA;Options with items marked with * means &quot;Windows Default&quot;&#xA;Windows Default Button does not change Metro Apps or OneDrive Install" HorizontalAlignment="Left" Margin="8,141,0,0" VerticalAlignment="Top" FontStyle="Italic"/>
+					<Label Content="Script Version:" HorizontalAlignment="Left" Margin="8,199,0,0" VerticalAlignment="Top" Height="25"/>
+					<TextBox Name="Script_Ver_Txt" HorizontalAlignment="Left" Height="20" Margin="90,203,0,0" TextWrapping="Wrap" Text="2.8.0 (6-21-2017)" VerticalAlignment="Top" Width="124" IsEnabled="False"/>
+					<TextBox Name="Release_Type_Txt" HorizontalAlignment="Left" Height="20" Margin="214,203,0,0" TextWrapping="Wrap" Text="Testing" VerticalAlignment="Top" Width="50" IsEnabled="False"/>
 				</Grid>
 			</TabItem>
 			<TabItem Name="Privacy_tab" Header="Privacy" Margin="-2,0,2,0">
@@ -975,9 +967,9 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="405" Width="550
 	$Runspace.Open()
 	[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms') | Out-Null
 
-	$WPF_Madbomb122WSButton.Add_Click({ OpenWebsite 'https://github.com/madbomb122/' })
-	$WPF_FeedbackButton.Add_Click({ OpenWebsite 'https://github.com/madbomb122/Win10Script/issues' })
-	$WPF_FAQButton.Add_Click({ OpenWebsite 'https://github.com/madbomb122/Win10Script/blob/master/README.md' })
+	$WPF_Madbomb122WSButton.Add_Click({ OpenWebsite 'https://GitHub.com/madbomb122/' })
+	$WPF_FeedbackButton.Add_Click({ OpenWebsite 'https://GitHub.com/madbomb122/Win10Script/issues' })
+	$WPF_FAQButton.Add_Click({ OpenWebsite 'https://GitHub.com/madbomb122/Win10Script/blob/master/README.md' })
 	$WPF_DonateButton.Add_Click({ OpenWebsite 'https://www.amazon.com/gp/registry/wishlist/YBAYWBJES5DE/' })
 
 	$WPF_CreateRestorePoint_CB.Add_Checked({ $WPF_CreateRestorePoint_CB.IsChecked = $True ;$WPF_RestorePointName_Txt.IsEnabled = $True })
@@ -989,20 +981,7 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="405" Width="550
 	$WPF_Load_Setting_Button.Add_Click({ OpenSaveDiaglog 0 })
 	$WPF_Save_Setting_Button.Add_Click({ OpenSaveDiaglog 1 })
 	$WPF_AboutButton.Add_Click({ [Windows.Forms.MessageBox]::Show('This script lets you do Various Settings and Tweaks for Windows 10. For manual or Automated use.','About', 'OK') | Out-Null })
-
-	$WPF_CopyrightButton.Add_Click({ [Windows.Forms.MessageBox]::Show($CopyrightItems,'Copyright', 'OK') })
-
-	$CopyrightItems = 'Copyright (c) 1999-2017 Charles "Black Viper" Sparks - Services Configuration
-
-The MIT License (MIT)
-
-Copyright (c) 2017 Madbomb122 - Black Viper Service Configuration Script
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.'
+	$WPF_CopyrightButton.Add_Click({ [Windows.Forms.MessageBox]::Show($Copyright,'Copyright', 'OK') | Out-Null })
 
 $Skip_EnableD_Disable = @(
 'Telemetry',
@@ -1098,10 +1077,8 @@ $Skip_Show_HideD = @(
 'ControlPanelOnDesktop')
 
 $Skip_InstalledD_Uninstall = @('OneDriveInstall','MediaPlayer','WorkFolders','FaxAndScan')
-$UpdateFile = $filebase + 'Update.bat'
 
 	If($Release_Type -eq 'Testing'){ $Script:Restart = 0 ;$WPF_Restart_CB.IsEnabled = $False ;$WPF_Restart_CB.Content += ' (Disabled in Testing Version)' }
-	If(Test-Path $UpdateFile -PathType Leaf) { $WPF_BatUpdateScriptFileName_CB.IsEnabled = $False ;$WPF_BatUpdateScriptFileName_CB.Content += ' (Update.bat Found, Option not needed)' }
 	If($Win10Ver -lt 1607){ $WPF_LinuxSubsystem_Combo.Visibility = 'Hidden' ;$WPF_LinuxSubsystem_Txt.Visibility = 'Hidden' }
 	If($Win10Ver -lt 1709){
 		$WPF_ThreeDobjectsIconInThisPC_Combo.Visibility = 'Hidden' ;$WPF_ThreeDobjectsIconInThisPC_txt.Visibility = 'Hidden'
@@ -1155,7 +1132,7 @@ Function GuiDone {
 	GuiItmToVariable
 	$Form.Close()
 	$Script:RunScr = $True
-	PreStartScript
+	RunScript
 }
 
 Function GuiItmToVariable {
@@ -1316,10 +1293,9 @@ Function LoadWinDefault {
 # Script -Start
 ##########
 
-Function PreStartScript {
+Function RunScript {
 	If($VersionCheck -eq 1){ UpdateCheck }
 
-	Clear-Host
 	BoxItem 'Pre-Script'
 	If($CreateRestorePoint -eq 0 -And $ShowSkipped -eq 1) {
 		DisplayOut 'Skipping Creation of System Restore Point...' -C 15
@@ -1328,10 +1304,7 @@ Function PreStartScript {
 		DisplayOut 'Please Wait...' -C 11
 		Checkpoint-Computer -Description $RestorePointName | Out-Null
 	}
-	RunScript
-}
 
-Function RunScript {
 	If(!(Test-Path 'HKCR:')){ New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-Null }
 	If(!(Test-Path 'HKU:')){ New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_USERS | Out-Null }
 	$AppxCount = 0
@@ -1339,7 +1312,7 @@ Function RunScript {
 	BoxItem 'Metro App Items'
 	$APPProcess = Get-Variable -Name 'APP_*' -ValueOnly -Scope Script
 	$A = 0
-	
+
 	ForEach($AppV In $APPProcess) {
 		$AP = $AppsList[$A]
 		If($AppV -eq 1) {
@@ -1668,7 +1641,7 @@ Function RunScript {
 		$Path1 = 'SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization'
 		$Path = CheckSetPath "HKCU:\$Path1"
 		Set-ItemProperty -Path $Path -Name 'SystemSettingsDownloadMode' -Type DWord -Value 3
-		If($Win10Ver -lt 1803){
+		If($Win10Ver -lt 1709){
 			$Path = CheckSetPath "HKLM:\$Path1\Config"
 			Set-ItemProperty -Path $Path -Name 'DODownloadMode' -Type DWord -Value 1
 		} Else {
@@ -1680,7 +1653,7 @@ Function RunScript {
 		$Path1 = 'SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization'
 		$Path = CheckSetPath "HKCU:\$Path1"
 		Set-ItemProperty -Path $Path -Name 'SystemSettingsDownloadMode' -Type DWord -Value 3
-		If($Win10Ver -lt 1803){
+		If($Win10Ver -lt 1709){
 			$Path = CheckSetPath "HKLM:\$Path1\Config"
 			Set-ItemProperty -Path $Path -Name 'DODownloadMode' -Type DWord -Value 0
 		} Else {
@@ -2334,9 +2307,9 @@ Function RunScript {
 		DisplayOut 'Showing Task Manager Details...' -C 11
 		$Path =  'HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager'
 		$TaskManKey = Get-ItemProperty -Path $Path -Name 'Preferences'
-		If(!($TaskManKey)) {
+		If(!$TaskManKey) {
 			$taskmgr = Start-Process -WindowStyle Hidden -FilePath taskmgr.exe -PassThru
-			While(!($TaskManKey)) {
+			While(!$TaskManKey) {
 				Start-Sleep -m 250
 				$TaskManKey = Get-ItemProperty -Path $Path -Name 'Preferences'
 			}
@@ -2867,10 +2840,10 @@ Function RunScript {
 		#If($ShowSkipped -eq 1){ DisplayOut 'Skipping  Various Scheduled Tasks...' -C 15 }
 	} ElseIf($DisableVariousTasks -eq 1) {
 		DisplayOut "`nEnabling Various Scheduled Tasks...`n------------------" -C 12
-		ForEach($TaskN in $TasksList) { Get-ScheduledTask -TaskName $TaskN | Enable-ScheduledTask }
+		ForEach($TaskN in $TasksList){ Get-ScheduledTask -TaskName $TaskN | Enable-ScheduledTask }
 	} ElseIf($DisableVariousTasks -eq 2) {
 		DisplayOut "`nDisableing Various Scheduled Tasks...`n------------------" -C 12
-		ForEach($TaskN in $TasksList) { Get-ScheduledTask -TaskName $TaskN | Disable-ScheduledTask }
+		ForEach($TaskN in $TasksList){ Get-ScheduledTask -TaskName $TaskN | Disable-ScheduledTask }
 	}
 
 	BoxItem 'Application/Feature Items'
@@ -2905,12 +2878,13 @@ Function RunScript {
 			Start-Sleep -s 3
 			Start-Process $onedriveS '/uninstall' -NoNewWindow -Wait | Out-Null
 			Start-Sleep -s 3
-			Stop-Process -Name explorer -Force
+			Stop-Process -Name Explorer -Force
 			Start-Sleep -s 3
 			Remove-Item "$Env:USERPROFILE\OneDrive" -Force -Recurse
 			Remove-Item "$Env:LOCALAPPDATA\Microsoft\OneDrive" -Force -Recurse
 			Remove-Item "$Env:PROGRAMDATA\Microsoft OneDrive" -Force -Recurse
 			Remove-Item "$Env:WINDIR\OneDriveTemp" -Force -Recurse
+			Remove-Item "$Env:SYSTEMDRIVE\OneDriveTemp" -Force -Recurse
 			Remove-Item -Path 'HKCR:\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Recurse
 			Remove-Item -Path 'HKCR:\Wow6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Force -Recurse
 		}
@@ -3048,9 +3022,7 @@ $Script:ShowSkipped = 1             #0-Don't Show Skipped, 1-Show Skipped
 
 #Update Related
 $Script:VersionCheck = 0            #0-Don't Check for Update, 1-Check for Update (Will Auto Download and run newer version)
-#File will be named 'Win10-Menu-Ver.(Version HERE).ps1 (For non Test version)
-
-$Script:BatUpdateScriptFileName = 1 #0-Don't ->, 1-Update Bat file with new script filename (if update is found)
+# Note: If found will Auto download and runs that, File name will be "Win10-Menu.ps1"
 
 $Script:InternetCheck = 0           #0 = Checks if you have Internet by doing a ping to GitHub.com
                                     #1 = Bypass check if your pings are blocked
@@ -3215,16 +3187,6 @@ $Script:LinuxSubsystem = 0          #0-Skip, 1-Installed, 2-Uninstall* (Annivers
 # To get list of Packages Installed (in PowerShell)
 # DISM /Online /Get-ProvisionedAppxPackages | Select-string Packagename
 
-<#          -----> NOTE!!!! <-----
-App Uninstall will remove them to reinstall you can
-
-1. Install some from Windows Store
-2. Restore the files using installation medium as follows
-New-Item C:\Mnt -Type Directory | Out-Null
-dism /Mount-Image /ImageFile:D:\sources\install.wim /index:1 /ReadOnly /MountDir:C:\Mnt
-robocopy /S /SEC /R:0 "C:\Mnt\Program Files\WindowsApps" "C:\Program Files\WindowsApps"
-dism /Unmount-Image /Discard /MountDir:C:\Mnt
-#>
 
 # Metro Apps
 # By Default Most of these are installed
@@ -3269,5 +3231,4 @@ $Script:APP_ZuneVideo = 0           # Groove Video app
 ## !!                                            !!
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 }
-SetDefault
 ScriptPreStart
