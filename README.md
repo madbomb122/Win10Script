@@ -1,7 +1,7 @@
 To Download go to -> [Win 10 Script -Release](https://github.com/madbomb122/Win10Script/releases)
 
 **Current Version**
-**Script:** `3.6.0` (August 21, 2018)
+**Script:** `3.6.2` (September 27, 2018)
 
 
 ## Contents
@@ -29,7 +29,7 @@ PS. Don't forget to check out my other Repo https://github.com/madbomb122/BlackV
 ## Requirements
 **OS:** `Windows 10`  
 **Needed Files:** `Win10-Menu.ps1` (Script File)  
-**Recommended Files:** `_Win10-Script-Run.bat`, `Update.bat`  
+**Recommended Files:** `_Win10-Script-Run.bat` 
 
 
 ## How to Use
