@@ -1,4 +1,14 @@
 -----------------------------------------------------------------------------------
+3.6.2 (09-27-2018)
+
+Added ability to see Copyright/License Information from ToS, by inputting L
+Added Switch:
+  -copy            Shows Copyright/License Information, then exits script
+
+Internal Script Improvements
+'Update.bat' file is no longer used
+
+-----------------------------------------------------------------------------------
 3.6.0 (08-21-2018)
 
 Fixed an issue with 'Share/Share with' that causes the script to stall (thanks to Cpt0r for letting me know)
