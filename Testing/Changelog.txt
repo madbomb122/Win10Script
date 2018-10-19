@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
-3.6.3 (10-19-2018)
+3.6.4 (10-19-2018)
 
 Added ability to see Copyright/License Information from ToS, by inputting L
 Added Switch:
@@ -14,6 +14,8 @@ Update for 'Disabling App Auto Download'
 Update/Fix for 'Start Menu Suggestions'
 Changed how 'Unpinning Startmenu Items' does it's job
 Change for 'Showing Task Manager Details'.. if it takes too long it will skip
+
+Fixed a messup that caused script to not run at all
 
 -----------------------------------------------------------------------------------
 3.6.0 (08-21-2018)
