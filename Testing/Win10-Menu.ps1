@@ -10,9 +10,8 @@
 # Website: https://GitHub.com/Disassembler0/Win10-Initial-Setup-Script/
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
-$Script_Version = '3.6.2'
-$Script_Date = 'Sept-27-2018'
-$Release_Type = 'Testing'
+$Script_Version = '3.6.3'
+$Script_Date = 'Oct-19-2018'
 #$Release_Type = 'Stable'
 ##########
 
@@ -76,7 +75,7 @@ $Copyright ='
  One of the following Methods...
   1. Edit values at bottom of the script
   2. Edit bat file and run
-  3. Run the script with one of these arguments/switches (space between multiple)
+  3. Run the script with one of these switches (space between multiple)
 
 
   Switch          Description of Switch
@@ -110,10 +109,10 @@ If([Environment]::OSVersion.Version.Major -ne 10) {
 	If($Automated -ne 1){ Read-Host -Prompt "`nPress Any key to Close..." } ;Exit
 }
 
-If($Release_Type -eq 'Stable'){ $ErrorActionPreference = 'silentlycontinue' }
+If($Release_Type -eq 'Stable'){ $ErrorActionPreference = 'SilentlyContinue' } Else{ $Release_Type = 'Testing' }
 
 $Script:PassedArg = $args
-$Script:filebase = $PSScriptRoot + '\'
+$Script:FileBase = $PSScriptRoot + '\'
 $TempFolder = $Env:Temp
 
 If(!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
@@ -125,7 +124,7 @@ $Version_Url = $URL_Base + 'Version/Version.csv'
 
 #$Script:BuildVer = [Environment]::OSVersion.Version.build
 $Script:Win10Ver = (Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion' -Name ReleaseID).ReleaseId
-If([System.Environment]::Is64BitProcess){ $Script:OSType = 64 } Else{ $Script:OSType = 32 }
+If([System.Environment]::Is64BitProcess){ $Script:OSBit = 64 } Else{ $Script:OSBit = 32 }
 
 ##########
 # Pre-Script -End
@@ -277,7 +276,7 @@ Function UpdateCheck {
 		DisplayOutLML 'To skip use one of the following methods' -C 2
 		DisplayOut '|',' 1. Change ','InternetCheck',' in bat file'.PadRight(28),'|' -C 14,2,15,2,14
 		DisplayOut '|',' 2. Change ','InternetCheck',' in bat file'.PadRight(28),'|' -C 14,2,15,2,14
-		DisplayOut '|',' 3. Run Script or Bat file with ','-sic',' argument       ','|' -C 14,2,15,2,14
+		DisplayOut '|',' 3. Run Script or Bat file with ','-sic',' switch         ','|' -C 14,2,15,2,14
 		MenuBlankLine
 		MenuLine
 		AnyKeyClose
@@ -285,6 +284,8 @@ Function UpdateCheck {
 }
 
 Function ScriptUpdateFun([String]$RT) {
+	$Script_Url = $URL_Base + $RT + 'Win10-Menu.ps1'
+	$ScrpFilePath = $FileBase + 'Win10-Menu.ps1'
 	$FullVer = "$WebScriptVer.$WebScriptMinorVer"
 	$UpArg = ''
 
@@ -293,9 +294,6 @@ Function ScriptUpdateFun([String]$RT) {
 	If($CreateRestorePoint -eq 1){ $UpArg += '-crp ' }
 	If($Restart -eq 0){ $UpArg += '-dnr' }
 	If($RunScr){ $UpArg += "-run $TempSetting " } Else{ $UpArg += "-load $TempSetting " }
-
-	$Script_Url = $URL_Base + $RT + 'Win10-Menu.ps1'
-	$ScrpFilePath = $FileBase + 'Win10-Menu.ps1'
 
 	Clear-Host
 	MenuLine -L
@@ -337,19 +335,12 @@ Function RemoveSetPath([String]$RPath){ If(Test-Path $RPath){ Remove-Item -Path 
 Function StartOrGui{ If($RunScr -eq $True){ RunScript } ElseIf($AcceptToS -ne 1){ GuiStart } }
 
 Function DisplayOut {
-	Param (
-		[alias ("T")] [String[]]$Text,
-		[alias ("C")] [Int[]]$Color
-	)
+	Param (	[alias ("T")] [String[]]$Text, [alias ("C")] [Int[]]$Color )
 	For($i=0 ;$i -lt $Text.Length ;$i++){ Write-Host $Text[$i] -ForegroundColor $colors[$Color[$i]] -BackgroundColor 'Black' -NoNewLine } ;Write-Host
 }
 
-Function DisplayOutLML {
-	Param (
-		[alias ("T")] [String]$Text,
-		[alias ("C")] [Int]$Color
-	)
-	DisplayOut '| ',$Text.PadRight(50),' |' -C 14,$Color,14
+Function DisplayOutLML([String]$Text,[Alias ("C")] [Int]$Color) {
+	DisplayOut '| ',"$Text".PadRight(50),' |' -C 14,$Color,14 -L:$Log
 }
 
 Function ScriptPreStart {
@@ -384,7 +375,7 @@ Function ArgCheck {
 	If($PassedArg -Contains '-crp') {
 		$Script:CreateRestorePoint = 1
 		$tmp = PassVal '-crp'
-		If(!($tmp.StartsWith('-'))){ $Script:RestorePointName = $tmp }
+		If(!$tmp.StartsWith('-')){ $Script:RestorePointName = $tmp }
 	}
 }
 
@@ -494,7 +485,7 @@ Function SaveSettingFiles([String]$Filename) {
 Function SetCombo([String]$Name,[String]$Item) {
 	$Items = $Item.Split(',')
 	$combo =  $(Get-Variable -Name ('WPF_'+$Name+'_Combo') -ValueOnly)
-	[void] $combo.Items.Add('Skip')
+	[Void] $combo.Items.Add('Skip')
 	ForEach($CmbItm In $Items){ [void] $combo.Items.Add($CmbItm) }
 	SelectComboBoxGen $Name $(Get-Variable -Name $Name -ValueOnly)
 }
@@ -502,14 +493,18 @@ Function SetCombo([String]$Name,[String]$Item) {
 Function SetComboM([String]$Name,[String]$Item) {
 	$Items = $Item.Split(',')
 	$combo =  $(Get-Variable -Name ('WPF_'+$Name+'_Combo') -ValueOnly)
-	[void] $combo.Items.Add('Skip')
-	ForEach($CmbItm In $Items){ [void] $combo.Items.Add($CmbItm) }
-	Switch($Name) {
-		'AllMetro' { $WPF_AllMetro_Combo.SelectedIndex = 0 ;Break }
-		'APP_SkypeApp' { $WPF_APP_SkypeApp_Combo.SelectedIndex = $APP_SkypeApp1 ;Break }
-		'APP_WindowsFeedbak' { $WPF_APP_WindowsFeedbak_Combo.SelectedIndex = $APP_WindowsFeedbak1 ;Break }
-		'APP_Zune' { $WPF_APP_Zune_Combo.SelectedIndex = $APP_ZuneMusic ;Break }
-		Default { SelectComboBoxGen $Name $(Get-Variable -Name $Name -ValueOnly) ;Break }
+	[Void] $combo.Items.Add('Skip')
+	ForEach($CmbItm In $Items){ [Void] $combo.Items.Add($CmbItm) }
+	If($Name -eq 'AllMetro') {
+		$WPF_AllMetro_Combo.SelectedIndex = 0
+	} ElseIf($Name -eq 'APP_SkypeApp') {
+		$WPF_APP_SkypeApp_Combo.SelectedIndex = $APP_SkypeApp1
+	} ElseIf($Name -eq 'APP_WindowsFeedbak') {
+		$WPF_APP_WindowsFeedbak_Combo.SelectedIndex = $APP_WindowsFeedbak1
+	} ElseIf($Name -eq 'APP_Zune') {
+		$WPF_APP_Zune_Combo.SelectedIndex = $APP_ZuneMusic
+	} Else {
+		SelectComboBoxGen $Name $(Get-Variable -Name $Name -ValueOnly)
 	}
 }
 
@@ -536,11 +531,14 @@ Function ConfigGUIitms {
 Function SelectComboBox([Array]$List,[Int]$Metro) {
 	If($Metro -eq 1) {
 		ForEach($Var In $List) {
-			Switch($Var) {
-				'APP_SkypeApp' { $WPF_APP_SkypeApp_Combo.SelectedIndex = $APP_SkypeApp1 ;Break }
-				'APP_WindowsFeedbak' { $WPF_APP_WindowsFeedbak_Combo.SelectedIndex = $APP_WindowsFeedbak1 ;Break }
-				'APP_Zune' { $WPF_APP_Zune_Combo.SelectedIndex = $APP_ZuneMusic ;Break }
-				Default { SelectComboBoxGen $Var $(Get-Variable -Name $Var -ValueOnly) ;Break }
+			If($Var -eq 'APP_SkypeApp') {
+				$WPF_APP_SkypeApp_Combo.SelectedIndex = $APP_SkypeApp1
+			} ElseIf($Var -eq 'APP_WindowsFeedbak') {
+				$WPF_APP_WindowsFeedbak_Combo.SelectedIndex = $APP_WindowsFeedbak1
+			} ElseIf($Var -eq 'APP_Zune') {
+				$WPF_APP_Zune_Combo.SelectedIndex = $APP_ZuneMusic
+			} Else {
+				SelectComboBoxGen $Var $(Get-Variable -Name $Var -ValueOnly)
 			}
 		}
 	} Else{ ForEach($Var In $List){ SelectComboBoxGen $Var $(Get-Variable -Name $Var -ValueOnly) } }
@@ -552,7 +550,7 @@ Function AppAraySet([String]$Get) {
 	[System.Collections.ArrayList]$ListTMP = Get-Variable -Name $Get
 	[System.Collections.ArrayList]$List = @()
 	If($Get -eq 'WPF_*_Combo'){
-		ForEach($Var In $ListTMP){ If(!($Var.Name -like 'WPF_APP_*')){ $List += $Var.Name.Split('_')[1] } }
+		ForEach($Var In $ListTMP){ If($Var.Name -NotLike 'WPF_APP_*'){ $List += $Var.Name.Split('_')[1] } }
 		$List.Remove('AllMetro')
 	} Else {
 		ForEach($Var In $ListTMP){ $List += $Var.Name }
@@ -562,15 +560,15 @@ Function AppAraySet([String]$Get) {
 		$List.Remove('APP_WindowsFeedbak2')
 		$List.Remove('APP_ZuneMusic')
 		$List.Remove('APP_ZuneVideo')
-		$List.Add('APP_SkypeApp') | Out-Null
-		$List.Add('APP_WindowsFeedbak') | Out-Null
-		$List.Add('APP_Zune') | Out-Null
+		[Void] $List.Add('APP_SkypeApp')
+		[Void] $List.Add('APP_WindowsFeedbak')
+		[Void] $List.Add('APP_Zune')
 	} Return $List
 }
 
 Function OpenSaveDiaglog([Int]$SorO) {
 	If($SorO -eq 0){ $SOFileDialog = New-Object System.Windows.Forms.OpenFileDialog } Else{ $SOFileDialog = New-Object System.Windows.Forms.SaveFileDialog }
-	$SOFileDialog.InitialDirectory = $filebase
+	$SOFileDialog.InitialDirectory = $FileBase
 	$SOFileDialog.Filter = "CSV (*.csv)| *.csv"
 	$SOFileDialog.ShowDialog() | Out-Null
 	If($SorO -eq 0){ LoadSettingFile $SOFileDialog.Filename ;ConfigGUIitms ;SelectComboBox $VarList 0 ;SelectComboBox $ListApp 1 } Else{ GuiItmToVariable ;SaveSettingFiles $SOFileDialog.Filename }
@@ -1138,11 +1136,14 @@ Function GuiDone {
 Function GuiItmToVariable {
 	ForEach($Var In $ListApp) {
 		$Value = ($(Get-Variable -Name ('WPF_'+$Var+'_Combo') -ValueOnly).SelectedIndex)
-		Switch($Var) {
-			'APP_SkypeApp' { Set-Variable -Name 'APP_SkypeApp1' -Value $Value -Scope Script ;Set-Variable -Name 'APP_SkypeApp2' -Value $Value -Scope Script ;Break }
-			'APP_WindowsFeedbak' { Set-Variable -Name 'APP_WindowsFeedbak1' -Value $Value -Scope Script ;Set-Variable -Name 'APP_WindowsFeedbak2' -Value $Value -Scope Script ;Break }
-			'APP_Zune' { Set-Variable -Name 'APP_ZuneMusic' -Value $Value -Scope Script ;Set-Variable -Name 'APP_ZuneVideo' -Value $Value -Scope Script ;Break }
-			Default { Set-Variable -Name $Var -Value $Value -Scope Script ;Break }
+		If($Var -eq 'APP_SkypeApp') {
+			Set-Variable -Name 'APP_SkypeApp1' -Value $Value -Scope Script ;Set-Variable -Name 'APP_SkypeApp2' -Value $Value -Scope Script
+		} ElseIf($Var -eq 'APP_WindowsFeedbak') {
+			Set-Variable -Name 'APP_WindowsFeedbak1' -Value $Value -Scope Script ;Set-Variable -Name 'APP_WindowsFeedbak2' -Value $Value -Scope Script
+		} ElseIf($Var -eq 'APP_Zune') {
+			Set-Variable -Name 'APP_ZuneMusic' -Value $Value -Scope Script ;Set-Variable -Name 'APP_ZuneVideo' -Value $Value -Scope Script
+		} Else {
+			Set-Variable -Name $Var -Value $Value -Scope Script
 		}
 	}
 	ForEach($Var In $VarList){ Set-Variable -Name $Var -Value ($(Get-Variable -Name ('WPF_'+$Var+'_Combo') -ValueOnly).SelectedIndex) -Scope Script }
@@ -1317,21 +1318,21 @@ Function RunScript {
 		$AP = $AppsList[$A]
 		If($AppV -eq 1) {
 			If($AP -ne 'XboxApps'){
-				$APPS_AppsUnhide.Add($AP) | Out-null
+				[Void] $APPS_AppsUnhide.Add($AP)
 			} Else {
-				ForEach($AppX In $Xbox_Apps) { $APPS_AppsUnhide.Add($AppX) | Out-null }
+				ForEach($AppX In $Xbox_Apps) { [Void] $APPS_AppsUnhide.Add($AppX) }
 			}
 		} ElseIf($AppV -eq 2) {
 			If($AP -ne 'XboxApps'){
-				$APPS_AppsHide.Add($AP) | Out-null
+				[Void] $APPS_AppsHide.Add($AP)
 			} Else {
-				ForEach($AppX In $Xbox_Apps) { $APPS_AppsHide.Add($AppX) | Out-null }
+				ForEach($AppX In $Xbox_Apps) { [Void] $APPS_AppsHide.Add($AppX) }
 			}
 		} ElseIf($AppV -eq 3) {
 			If($AP -ne 'XboxApps'){
-				$APPS_AppsUninstall.Add($AP) | Out-null
+				[Void] $APPS_AppsUninstall.Add($AP)
 			} Else {
-				ForEach($AppX In $Xbox_Apps) { $APPS_AppsUninstall.Add($AppX) | Out-null }
+				ForEach($AppX In $Xbox_Apps) { [Void] $APPS_AppsUninstall.Add($AppX) }
 			}
 		} $A++
 	}
@@ -1339,7 +1340,7 @@ Function RunScript {
 	$APPS_AppsUnhide.Remove('') ;$Ai = $APPS_AppsUnhide.Length
 	$APPS_AppsHide.Remove('') ;$Ah = $APPS_AppsHide.Length
 	$APPS_AppsUninstall.Remove('') ;$Au = $APPS_AppsUninstall.Length
-	If($Ah -ne $null -or $Au -ne $null){ $AppxPackages = Get-AppxProvisionedPackage -online | select-object PackageName,Displayname }
+	If($null -Notin $Ah,$Au){ $AppxPackages = Get-AppxProvisionedPackage -online | select-object PackageName,Displayname }
 
 	DisplayOut "List of Apps Being Unhidden...`n------------------" 11 0
 	If($Ai -ne $null) {
@@ -1403,12 +1404,12 @@ Function RunScript {
 		DisplayOut 'Enabling Telemetry...' -C 11
 		Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 3
 		Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 3
-		If($OSType -eq 64){ Set-ItemProperty -Path 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 3 }
+		If($OSBit -eq 64){ Set-ItemProperty -Path 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 3 }
 	} ElseIf($Telemetry -eq 2) {
 		DisplayOut 'Disabling Telemetry...' -C 12
 		Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 0
 		Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 0
-		If($OSType -eq 64){ Set-ItemProperty -Path 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 0 }
+		If($OSBit -eq 64){ Set-ItemProperty -Path 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 0 }
 	}
 
 	If($WiFiSense -eq 0) {
@@ -1596,6 +1597,13 @@ Function RunScript {
 		Set-ItemProperty -Path $Path -Name 'AutoDownload' -Type DWord -Value 2
 		$Path = CheckSetPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent'
 		Set-ItemProperty -Path $Path -Name 'DisableWindowsConsumerFeatures' -Type DWord -Value 1
+		If ([System.Environment]::OSVersion.Version.Build -ge 17134) {
+		If($Win10Ver -le 1803) {
+			$key = Get-ChildItem -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount" -Recurse | Where-Object { $_ -like "*windows.data.placeholdertilecollection\Current" }
+			$data = (Get-ItemProperty -Path $key.PSPath -Name "Data").Data[0..15]
+			Set-ItemProperty -Path $key.PSPath -Name "Data" -Type Binary -Value $data
+			Stop-Process -Name "ShellExperienceHost" -Force
+		}
 	}
 
 	BoxItem 'Windows Update Settings'
@@ -1641,24 +1649,26 @@ Function RunScript {
 		$Path1 = 'SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization'
 		$Path = CheckSetPath "HKCU:\$Path1"
 		Set-ItemProperty -Path $Path -Name 'SystemSettingsDownloadMode' -Type DWord -Value 3
-		If($Win10Ver -lt 1709){
+		If($Win10Ver -eq 1507) {
 			$Path = CheckSetPath "HKLM:\$Path1\Config"
 			Set-ItemProperty -Path $Path -Name 'DODownloadMode' -Type DWord -Value 1
+		} ElseIf($Win10Ver -le 1607) {
+			$Path = CheckSetPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\DeliveryOptimization'
+			Set-ItemProperty -Path $Path -Name 'DODownloadMode' -Type DWord -Value 1
 		} Else {
-			$Path = CheckSetPath "HKLM:\$Path1\Settings"
-			Set-ItemProperty -Path $Path -Name 'DownloadMode' -Type DWord -Value 1
+			Remove-ItemProperty -Path "HKLM:\$Path1" -Name "DODownloadMode"
 		}
 	} ElseIf($WinUpdateDownload -eq 3) {
 		DisplayOut 'Disabling Windows Update P2P...' -C 12
 		$Path1 = 'SOFTWARE\Microsoft\Windows\CurrentVersion\DeliveryOptimization'
 		$Path = CheckSetPath "HKCU:\$Path1"
 		Set-ItemProperty -Path $Path -Name 'SystemSettingsDownloadMode' -Type DWord -Value 3
-		If($Win10Ver -lt 1709){
+		If($Win10Ver -eq 1507){
 			$Path = CheckSetPath "HKLM:\$Path1\Config"
 			Set-ItemProperty -Path $Path -Name 'DODownloadMode' -Type DWord -Value 0
 		} Else {
-			$Path = CheckSetPath "HKLM:\$Path1\Settings"
-			Set-ItemProperty -Path $Path -Name 'DownloadMode' -Type DWord -Value 0
+			$Path = CheckSetPath "HKLM:\$Path1"
+			Set-ItemProperty -Path $Path -Name 'DODownloadMode' -Type DWord -Value 100
 		}
 	}
 
@@ -2104,11 +2114,13 @@ Function RunScript {
 	 	Set-ItemProperty -Path $Path -Name 'SilentInstalledAppsEnabled' -Type DWord -Value 1
 		Set-ItemProperty -Path $Path -Name 'SystemPaneSuggestionsEnabled' -Type DWord -Value 1
 		Set-ItemProperty -Path $Path -Name 'Start_TrackProgs' -Type DWord -Value 1
+		Set-ItemProperty -Path $Path -Name 'SubscribedContent-310093Enabled' -Type DWord -Value 1
 		Set-ItemProperty -Path $Path -Name 'SubscribedContent-338387Enabled' -Type DWord -Value 1
 		Set-ItemProperty -Path $Path -Name 'SubscribedContent-338388Enabled' -Type DWord -Value 1
 		Set-ItemProperty -Path $Path -Name 'SubscribedContent-338389Enabled' -Type DWord -Value 1
 		Set-ItemProperty -Path $Path -Name 'SubscribedContent-338393Enabled' -Type DWord -Value 1
-		Set-ItemProperty -Path $Path -Name 'SubscribedContent-338398Enabled' -Type DWord -Value 1
+		Set-ItemProperty -Path $Path -Name 'SubscribedContent-358398Enabled' -Type DWord -Value 1
+		Set-ItemProperty -Path $Path -Name 'SubscribedContent-353696Enabled' -Type DWord -Value 1
 	} ElseIf($StartSuggestions -eq 2) {
 		DisplayOut 'Disabling Start Menu Suggestions...' -C 12
 		$Path = CheckSetPath 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager'
@@ -2119,11 +2131,18 @@ Function RunScript {
 	 	Set-ItemProperty -Path $Path -Name 'SilentInstalledAppsEnabled' -Type DWord -Value 0
 		Set-ItemProperty -Path $Path -Name 'SystemPaneSuggestionsEnabled' -Type DWord -Value 0
 		Set-ItemProperty -Path $Path -Name 'Start_TrackProgs' -Type DWord -Value 0
+		Set-ItemProperty -Path $Path -Name 'SubscribedContent-310093Enabled' -Type DWord -Value 0
 		Set-ItemProperty -Path $Path -Name 'SubscribedContent-338387Enabled' -Type DWord -Value 0
 		Set-ItemProperty -Path $Path -Name 'SubscribedContent-338388Enabled' -Type DWord -Value 0
 		Set-ItemProperty -Path $Path -Name 'SubscribedContent-338389Enabled' -Type DWord -Value 0
 		Set-ItemProperty -Path $Path -Name 'SubscribedContent-338393Enabled' -Type DWord -Value 0
-		Set-ItemProperty -Path $Path -Name 'SubscribedContent-338398Enabled' -Type DWord -Value 0
+		Set-ItemProperty -Path $Path -Name 'SubscribedContent-358398Enabled' -Type DWord -Value 0
+		Set-ItemProperty -Path $Path -Name 'SubscribedContent-353696Enabled' -Type DWord -Value 0
+		If($Win10Ver -ge 1803) {
+			$key = Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount\*windows.data.placeholdertilecollection\Current"
+			Set-ItemProperty -Path $key.PSPath -Name "Data" -Type Binary -Value $key.Data[0..15]
+			Stop-Process -Name "ShellExperienceHost" -Force
+		}
 	}
 
 	If($MostUsedAppStartMenu -eq 0) {
@@ -2227,7 +2246,7 @@ Function RunScript {
 		$Path = 'Microsoft\Windows\CurrentVersion\Explorer'
 		Set-ItemProperty -Path "HKCU:\SOFTWARE\$Path" -Name 'ShowRecent' -Type DWord -Value 1
 		Set-ItemProperty -Path "HKLM:\$Path\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Name '(Default)' -Type String -Value 'Recent Items Instance Folder'
-		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Name '(Default)' -Type String -Value 'Recent Items Instance Folder' }
+		If($OSBit -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path\HomeFolderDesktop\NameSpace\DelegateFolders\{3134ef9c-6b18-4996-ad04-ed5912e00eb5}" -Name '(Default)' -Type String -Value 'Recent Items Instance Folder' }
 	} ElseIf($RecentFileQikAcc -eq 2) {
 		DisplayOut 'Hiding Recent Files in Quick Access...' -C 12
 		Set-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer' -Name 'ShowRecent' -Type DWord -Value 0
@@ -2304,19 +2323,25 @@ Function RunScript {
 	If($TaskManagerDetails -eq 0) {
 		If($ShowSkipped -eq 1){ DisplayOut 'Skipping Task Manager Details...' -C 15 }
 	} ElseIf($TaskManagerDetails -eq 1) {
-		DisplayOut 'Showing Task Manager Details...' -C 11
+		DisplayOut 'Attempting to Show Task Manager Details...' -C 11
 		$Path =  'HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager'
-		$TaskManKey = Get-ItemProperty -Path $Path -Name 'Preferences'
-		If(!$TaskManKey) {
-			$taskmgr = Start-Process -WindowStyle Hidden -FilePath taskmgr.exe -PassThru
-			While(!$TaskManKey) {
-				Start-Sleep -m 250
-				$TaskManKey = Get-ItemProperty -Path $Path -Name 'Preferences'
-			}
-			Stop-Process $taskmgr | Out-Null
+		$Taskmgr = Start-Process -WindowStyle Hidden -FilePath taskmgr.exe -PassThru
+		$timeout = 30000
+		$sleep = 100
+		$Path =  'HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager'
+		Do {
+			Start-Sleep -Milliseconds $sleep
+			$timeout -= $sleep
+			$TaskManKey = Get-ItemProperty -Path $Path -Name 'Preferences'
+		} Until ($TaskManKey -or $timeout -le 0)
+		Stop-Process $Taskmgr
+		If ($TaskManKey) {
+			DisplayOut '----Showing Task Manager Details...' -C 11
+			$TaskManKey.Preferences[28] = 0
+			Set-ItemProperty -Path $Path -Name 'Preferences' -Type Binary -Value $TaskManKey.Preferences
+		} Else {
+			DisplayOut '----Unable to Show Task Manager Details...' -C 13
 		}
-		$TaskManKey.Preferences[28] = 0
-		Set-ItemProperty -Path $Path -Name 'Preferences' -Type Binary -Value $TaskManKey.Preferences
 	} ElseIf($TaskManagerDetails -eq 2) {
 		DisplayOut 'Hiding Task Manager Details...' -C 12
 		$Path = CheckSetPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\TaskManager'
@@ -2373,7 +2398,7 @@ Function RunScript {
 		New-Item -Path "HKLM:\SOFTWARE\$Path" -Force
 		New-Item -Path "HKLM:\SOFTWARE\$Path1" -Force
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
-		If($OSType -eq 64){
+		If($OSBit -eq 64){
 			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Force
 			Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
 			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" -Force
@@ -2382,7 +2407,7 @@ Function RunScript {
 		DisplayOut 'Hiding Desktop folder in This PC...' -C 12
 		$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}\PropertyBag'
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Hide'
-		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Hide' }
+		If($OSBit -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Hide' }
 	} ElseIf($DesktopIconInThisPC -eq 3) {
 		DisplayOut 'Removing Desktop folder in This PC...' -C 13
 		RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}'
@@ -2400,7 +2425,7 @@ Function RunScript {
 		New-Item -Path "HKLM:\SOFTWARE\$Path1" -Force
 		New-Item -Path "HKLM:\SOFTWARE\$Path2" -Force
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
-		If($OSType -eq 64){
+		If($OSBit -eq 64){
 			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Force
 			Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
 			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" -Force
@@ -2410,7 +2435,7 @@ Function RunScript {
 		DisplayOut 'Hiding Documents folder in This PC...' -C 12
 		$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{f42ee2d3-909f-4907-8871-4c22fc0bf756}\PropertyBag'
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Hide'
-		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
+		If($OSBit -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
 	} ElseIf($DocumentsIconInThisPC -eq 3) {
 		DisplayOut 'Removing Documents folder in This PC...' -C 13
 		RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A8CDFF1C-4878-43be-B5FD-F8091C1C60D0}'
@@ -2430,7 +2455,7 @@ Function RunScript {
 		New-Item -Path "HKLM:\SOFTWARE\$Path1" -Force
 		New-Item -Path "HKLM:\SOFTWARE\$Path2" -Force
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
-		If($OSType -eq 64){
+		If($OSBit -eq 64){
 			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Force
 			Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
 			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" -Force
@@ -2440,7 +2465,7 @@ Function RunScript {
 		DisplayOut 'Hiding Downloads folder in This PC...' -C 12
 		$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{7d83ee9b-2244-4e70-b1f5-5393042af1e4}\PropertyBag'
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Hide'
-		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
+		If($OSBit -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide" }
 	} ElseIf($DownloadsIconInThisPC -eq 3) {
 		DisplayOut 'Removing Downloads folder in This PC...' -C 13
 		RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{374DE290-123F-4565-9164-39C4925E467B}'
@@ -2460,7 +2485,7 @@ Function RunScript {
 		New-Item -Path "HKLM:\SOFTWARE\$Path1" -Force
 		New-Item -Path "HKLM:\SOFTWARE\$Path2" -Force
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
-		If($OSType -eq 64){
+		If($OSBit -eq 64){
 			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Force
 			Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
 			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" -Force
@@ -2470,7 +2495,7 @@ Function RunScript {
 		DisplayOut 'Hiding Music folder in This PC...' -C 12
 		$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{a0c69a99-21c8-4671-8703-7934162fcf1d}\PropertyBag'
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Hide'
-		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Hide' }
+		If($OSBit -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Hide' }
 	} ElseIf($MusicIconInThisPC -eq 3) {
 		DisplayOut 'Removing Music folder in This PC...' -C 13
 		RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{1CF1260C-4DD0-4ebb-811F-33C572699FDE}'
@@ -2490,7 +2515,7 @@ Function RunScript {
 		New-Item -Path "HKLM:\SOFTWARE\$Path1" -Force
 		New-Item -Path "HKLM:\SOFTWARE\$Path2" -Force
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
-		If($OSType -eq 64){
+		If($OSBit -eq 64){
 			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Force
 			Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
 			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" -Force
@@ -2500,7 +2525,7 @@ Function RunScript {
 		DisplayOut 'Hiding Pictures folder in This PC...' -C 12
 		$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{0ddd015d-b06c-45d5-8c4c-f59713854639}\PropertyBag'
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Hide'
-		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Hide' }
+		If($OSBit -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Hide' }
 	} ElseIf($PicturesIconInThisPC -eq 3) {
 		DisplayOut 'Removing Pictures folder in This PC...' -C 13
 		RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{24ad3ad4-a569-4530-98e1-ab02f9417aa8}'
@@ -2520,7 +2545,7 @@ Function RunScript {
 		New-Item -Path "HKLM:\SOFTWARE\$Path1" -Force
 		New-Item -Path "HKLM:\SOFTWARE\$Path2" -Force
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
-		If($OSType -eq 64){
+		If($OSBit -eq 64){
 			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Force
 			Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
 			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" -Force
@@ -2530,7 +2555,7 @@ Function RunScript {
 		DisplayOut 'Hiding Videos folder in This PC...' -C 12
 		$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{35286a68-3c57-41a1-bbb1-0eae73d76c95}\PropertyBag'
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name "ThisPCPolicy" -Type String -Value "Hide"
-		If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Hide' }
+		If($OSBit -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Hide' }
 	} ElseIf($PicturesIconInThisPC -eq 3) {
 		DisplayOut 'Removing Videos folder in This PC...' -C 13
 		RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A0953C92-50DC-43bf-BE83-3742FED03C9C}'
@@ -2549,7 +2574,7 @@ Function RunScript {
 			New-Item -Path "HKLM:\SOFTWARE\$Path" -Force
 			New-Item -Path "HKLM:\SOFTWARE\$Path1" -Force
 			Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
-			If($OSType -eq 64){
+			If($OSBit -eq 64){
 				New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Force
 				Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
 				New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" -Force
@@ -2558,7 +2583,7 @@ Function RunScript {
 			DisplayOut 'Hiding 3D Object folder in This PC...' -C 12
 			$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{31C0DD25-9439-4F12-BF41-7FF4EDA38722}\PropertyBag'
 			Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Hide'
-			If($OSType -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Hide' }
+			If($OSBit -eq 64){ Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Hide' }
 		} ElseIf($ThreeDobjectsIconInThisPC -eq 3) {
 			DisplayOut 'Removing 3D Object folder in This PC...' -C 13
 			RemoveSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}'
@@ -2678,7 +2703,7 @@ Function RunScript {
 	If($LockScreen -eq 0) {
 		If($ShowSkipped -eq 1){ DisplayOut 'Skipping Lock Screen...' -C 15 }
 	} ElseIf($LockScreen -eq 1) {
-		If($Win10Ver -eq 1507 -or $Win10Ver -eq 1511) {
+		If($Win10Ver -In 1507,1511) {
 			DisplayOut 'Enabling Lock Screen...' -C 11
 			Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization' -Name 'NoLockScreen'
 		} ElseIf($Win10Ver -ge 1607) {
@@ -2688,7 +2713,7 @@ Function RunScript {
 			DisplayOut 'Unable to Enable Lock screen...' -C 13
 		}
 	} ElseIf($LockScreen -eq 2) {
-		If($Win10Ver -eq 1507 -or $Win10Ver -eq 1511) {
+		If($Win10Ver -In 1507,1511) {
 			DisplayOut 'Disabling Lock Screen...' -C 12
 			$Path = CheckSetPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization'
 			Set-ItemProperty -Path $Path -Name 'NoLockScreen' -Type DWord -Value 1
@@ -2803,9 +2828,11 @@ Function RunScript {
 	} ElseIf($HibernatePower -eq 1) {
 		DisplayOut 'Enabling Hibernate Option...' -C 11
 		Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Power' -Name 'HibernateEnabled' -Type DWord -Value 1
+		powercfg /HIBERNATE ON
 	} ElseIf($HibernatePower -eq 2) {
 		DisplayOut 'Disabling Hibernate Option...' -C 12
 		Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Power' -Name 'HibernateEnabled' -Type DWord -Value 0
+		powercfg /HIBERNATE OFF
 	}
 
 	If($SleepPower -eq 0) {
@@ -2823,16 +2850,17 @@ Function RunScript {
 		If($ShowSkipped -eq 1){ DisplayOut 'Skipping Unpinning Items...' -C 15 }
 	} ElseIf($UnpinItems -eq 1) {
 		DisplayOut "`nUnpinning All Startmenu Items..." -C 12
-		If($Win10Ver -le 1709){
-			Get-ChildItem -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount' -Include '*.group' -Recurse | ForEach-Object {
-				$data = (Get-ItemProperty -Path "$($_.PsPath)\Current" -Name 'Data').Data -Join ','
-				$data = $data.Substring(0, $data.IndexOf(',0,202,30') + 9) + ',0,202,80,0,0'
-				Set-ItemProperty -Path "$($_.PsPath)\Current" -Name 'Data' -Type Binary -Value $data.Split(',')
+		If($Win10Ver -le 1709) {
+			Get-ChildItem -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount" -Include "*.group" -Recurse | ForEach-Object {
+				$data = (Get-ItemProperty -Path "$($_.PsPath)\Current" -Name "Data").Data -Join ","
+				$data = $data.Substring(0, $data.IndexOf(",0,202,30") + 9) + ",0,202,80,0,0"
+				Set-ItemProperty -Path "$($_.PsPath)\Current" -Name "Data" -Type Binary -Value $data.Split(",")
 			}
 		} Else {
-			$key = Get-ChildItem -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount' -Recurse | Where-Object { $_ -like "*start.tilegrid`$windows.data.curatedtilecollection.tilecollection\Current" }
-			$data = (Get-ItemProperty -Path $key.PSPath -Name 'Data').Data[0..25] + ([byte[]](202,50,0,226,44,1,1,0,0))
-			Set-ItemProperty -Path $key.PSPath -Name 'Data' -Type Binary -Value $data
+			$key = Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount\*start.tilegrid`$windows.data.curatedtilecollection.tilecollection\Current"
+			$data = $key.Data[0..25] + ([byte[]](202,50,0,226,44,1,1,0,0))
+			Set-ItemProperty -Path $key.PSPath -Name "Data" -Type Binary -Value $data
+			Stop-Process -Name "ShellExperienceHost" -Force
 		}
 	}
 
@@ -2865,13 +2893,13 @@ Function RunScript {
 	} ElseIf($OneDriveInstall -eq 1) {
 		DisplayOut 'Installing OneDrive...' -C 11
 		$onedriveS = "$Env:WINDIR\"
-		If($OSType -eq 64){ $onedriveS += 'SysWOW64' } Else{ $onedriveS += 'System32' }
+		If($OSBit -eq 64){ $onedriveS += 'SysWOW64' } Else{ $onedriveS += 'System32' }
 		$onedriveS += '\OneDriveSetup.exe'
 		If(Test-Path $onedriveS -PathType Leaf) { Start-Process $onedriveS -NoNewWindow }
 	} ElseIf($OneDriveInstall -eq 2) {
 		DisplayOut 'Uninstalling OneDrive...' -C 15
 		$onedriveS = "$Env:WINDIR\"
-		If($OSType -eq 64){ $onedriveS += 'SysWOW64' } Else{ $onedriveS += 'System32' }
+		If($OSBit -eq 64){ $onedriveS += 'SysWOW64' } Else{ $onedriveS += 'System32' }
 		$onedriveS += '\OneDriveSetup.exe'
 		If(Test-Path $onedriveS -PathType Leaf) {
 			Stop-Process -Name OneDrive -Force
