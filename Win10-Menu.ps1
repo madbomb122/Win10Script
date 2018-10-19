@@ -10,7 +10,7 @@
 # Website: https://GitHub.com/Disassembler0/Win10-Initial-Setup-Script/
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
-$Script_Version = '3.6.3'
+$Script_Version = '3.6.4'
 $Script_Date = 'Oct-19-2018'
 $Release_Type = 'Stable'
 ##########
@@ -1597,7 +1597,6 @@ Function RunScript {
 		Set-ItemProperty -Path $Path -Name 'AutoDownload' -Type DWord -Value 2
 		$Path = CheckSetPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent'
 		Set-ItemProperty -Path $Path -Name 'DisableWindowsConsumerFeatures' -Type DWord -Value 1
-		If ([System.Environment]::OSVersion.Version.Build -ge 17134) {
 		If($Win10Ver -le 1803) {
 			$key = Get-ChildItem -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount" -Recurse | Where-Object { $_ -like "*windows.data.placeholdertilecollection\Current" }
 			$data = (Get-ItemProperty -Path $key.PSPath -Name "Data").Data[0..15]
