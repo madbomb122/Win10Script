@@ -78,26 +78,6 @@ Examples:
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1 -auto -run mine.csv`  
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File Win10-Menu.ps1 -atos -load WinDefault`
 
-
-******
-# Update.Bat
-This file is EXACTLY the same as the one in my other Repo
-
-This file will
-1. Allow you to download my Black Viper Script or my Win 10 Script and the needed files (if any).
-2. The script will use to Download updates (to replace the old file, instead of creating a new file, so you dont have to rename the file or edit the bat file). (If this script is present)
-
-|   Switch  | Description                                                                    |
-| :-------- | :------------------------------------------------------------------------------|
-| -Help     | Shows the list of switches                                                     |
-| -BV       | Downloads My Black Viper Script                                                |
-| -W10      | Downloads My Windows 10 Script                                                 |
-| -Both     | Downloads My Black Viper Script & My Windows 10 Script                         |
-| -Test     | Downloads The Test Version of the Script                                       |
-| -Run      | Run the Script after Downloading (Does not work with -both)                    |
-| -Bat      | Download the bat file to run script easier                                     |
-
-
 ******
 ## FAQ
 **Q:** The script file looks all messy in notepad, How do i view it?  
