@@ -10,9 +10,9 @@
 # Website: https://GitHub.com/Disassembler0/Win10-Initial-Setup-Script/
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
-$Script_Version = '3.6.4'
-$Script_Date = 'Oct-19-2018'
-$Release_Type = 'Stable'
+$Script_Version = '3.6.5'
+$Script_Date = 'Dec-20-2018'
+#$Release_Type = 'Stable'
 ##########
 
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -113,7 +113,6 @@ If($Release_Type -eq 'Stable'){ $ErrorActionPreference = 'SilentlyContinue' } El
 
 $Script:PassedArg = $args
 $Script:FileBase = $PSScriptRoot + '\'
-$TempFolder = $Env:Temp
 
 If(!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
 	Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $PassedArg" -Verb RunAs ;Exit
@@ -121,6 +120,8 @@ If(!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::
 
 $URL_Base = 'https://raw.GitHub.com/madbomb122/Win10Script/master/'
 $Version_Url = $URL_Base + 'Version/Version.csv'
+$Donate_Url = 'https://www.amazon.com/gp/registry/wishlist/YBAYWBJES5DE/'
+$MySite = 'https://GitHub.com/madbomb122/Win10Script'
 
 #$Script:BuildVer = [Environment]::OSVersion.Version.build
 $Script:Win10Ver = (Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion' -Name ReleaseID).ReleaseId
@@ -324,7 +325,7 @@ Function ThanksDonate {
 	DisplayOut "`nThanks for using my script." -C 11
 	DisplayOut 'If you like this script please consider giving me a donation.' -C 11
 	DisplayOut "`nLink to donation:" -C 15
-	DisplayOut 'https://www.amazon.com/gp/registry/wishlist/YBAYWBJES5DE/' -C 2
+	DisplayOut $Donate_Url -C 2
 }
 
 Function cmpv{ Compare-Object (Get-Variable -Scope Script) $AutomaticVariables -Property Name -PassThru | Where-Object -Property Name -ne 'AutomaticVariables' | Where-Object { $_ -NotIn $WPFList } }
@@ -369,9 +370,9 @@ Function ArgCheck {
 	}
 	If($PassedArg -Contains '-sic'){ $Script:InternetCheck = 1 }
 	If($PassedArg -Contains '-usc'){ $Script:VersionCheck  = 1 }
-	If($PassedArg -Contains '-atos'){ $Script:AcceptToS = 'Accepted-Switch' }
+	If($PassedArg -Contains '-atos'){ $Script:AcceptToS = 'Accepted' }
 	If($PassedArg -Contains '-dnr'){ $Script:Restart = 0 }
-	If($PassedArg -Contains '-auto'){ $Script:Automated = 1 ;$Script:AcceptToS = 'Accepted-Automated-Switch' }
+	If($PassedArg -Contains '-auto'){ $Script:Automated = 1 ;$Script:AcceptToS = 'Accepted' }
 	If($PassedArg -Contains '-crp') {
 		$Script:CreateRestorePoint = 1
 		$tmp = PassVal '-crp'
@@ -436,12 +437,13 @@ Function TOSDisplay([Switch]$C) {
 	DisplayOut '|',' enter ','L',' bellow.'.PadRight(44),'|' -C $BorderColor,2,14,2,$BorderColor
 	TOSBlankLine $BorderColor
 	TOSLine $BorderColor
-	$CopyR = $False
 }
 
 Function TOS {
+	$CopyR = $False
 	While($TOS -ne 'Out') {
 		TOSDisplay -c:$CopyR
+		$CopyR = $False
 		$Invalid = ShowInvalid $Invalid
 		$TOS = Read-Host "`nDo you Accept? (Y)es/(N)o"
 		$TOS = $TOS.ToLower()
@@ -458,7 +460,7 @@ Function TOS {
 }
 
 Function LoadSettingFile([String]$Filename) {
-	Import-Csv -LiteralPath $Filename -Delimiter ';' | ForEach-Object { Set-Variable $_.Name $_.Value -Scope Script }
+	(Import-Csv -LiteralPath $Filename -Delimiter ';').ForEach{ Set-Variable $_.Name $_.Value -Scope Script }
 	[System.Collections.ArrayList]$Script:APPS_AppsUnhide = $AppsUnhide.Split(',')
 	[System.Collections.ArrayList]$Script:APPS_AppsHidel = $AppsHide.Split(',')
 	[System.Collections.ArrayList]$Script:APPS_AppsUninstall = $AppsUninstall.Split(',')
@@ -950,36 +952,32 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="405" Width="550
 	</Grid>
 </Window>
 "@
-
-	[void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
+	[Void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
 	$Form = [Windows.Markup.XamlReader]::Load( (New-Object System.Xml.XmlNodeReader $xaml) )
-	$xaml.SelectNodes("//*[@Name]") | ForEach-Object {Set-Variable -Name "WPF_$($_.Name)" -Value $Form.FindName($_.Name) -Scope Script }
-	$Script:WPFList = Get-Variable -Name 'WPF_*'
-
-	[System.Collections.ArrayList]$VarList = AppAraySet 'WPF_*_Combo'
-	[System.Collections.ArrayList]$ListApp = AppAraySet 'APP_*'
-
-	$Runspace = [runspacefactory]::CreateRunspace()
+	$xaml.SelectNodes('//*[@Name]').ForEach{Set-Variable -Name "WPF_$($_.Name)" -Value $Form.FindName($_.Name) -Scope Script}
+	$Runspace = [RunSpaceFactory]::CreateRunspace()
 	$PowerShell = [PowerShell]::Create()
 	$PowerShell.RunSpace = $Runspace
 	$Runspace.Open()
 	[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms') | Out-Null
 
-	$WPF_Madbomb122WSButton.Add_Click({ OpenWebsite 'https://GitHub.com/madbomb122/' })
-	$WPF_FeedbackButton.Add_Click({ OpenWebsite 'https://GitHub.com/madbomb122/Win10Script/issues' })
-	$WPF_FAQButton.Add_Click({ OpenWebsite 'https://GitHub.com/madbomb122/Win10Script/blob/master/README.md' })
-	$WPF_DonateButton.Add_Click({ OpenWebsite 'https://www.amazon.com/gp/registry/wishlist/YBAYWBJES5DE/' })
+	$Script:WPFList = Get-Variable -Name 'WPF_*'
+	[System.Collections.ArrayList]$VarList = AppAraySet 'WPF_*_Combo'
+	[System.Collections.ArrayList]$ListApp = AppAraySet 'APP_*'
 
-	$WPF_CreateRestorePoint_CB.Add_Checked({ $WPF_CreateRestorePoint_CB.IsChecked = $True ;$WPF_RestorePointName_Txt.IsEnabled = $True })
-	$WPF_CreateRestorePoint_CB.Add_UnChecked({ $WPF_CreateRestorePoint_CB.IsChecked = $False ;$WPF_RestorePointName_Txt.IsEnabled = $False })
-	$WPF_AllMetro_Combo.add_SelectionChanged({ SelectComboBoxAllMetro ($WPF_AllMetro_Combo.SelectedIndex) })
-	$WPF_RunScriptButton.Add_Click({ GuiDone })
-	$WPF_WinDefault_Button.Add_Click({ LoadWinDefault ;SelectComboBox $VarList })
-	$WPF_ResetDefault_Button.Add_Click({ SetDefault ;SelectComboBox $VarList ;SelectComboBox $ListApp 1 })
-	$WPF_Load_Setting_Button.Add_Click({ OpenSaveDiaglog 0 })
-	$WPF_Save_Setting_Button.Add_Click({ OpenSaveDiaglog 1 })
-	$WPF_AboutButton.Add_Click({ [Windows.Forms.MessageBox]::Show('This script lets you do Various Settings and Tweaks for Windows 10. For manual or Automated use.','About', 'OK') | Out-Null })
-	$WPF_CopyrightButton.Add_Click({ [Windows.Forms.MessageBox]::Show($Copyright,'Copyright', 'OK') | Out-Null })
+	$WPF_Madbomb122WSButton.Add_Click{ OpenWebsite 'https://GitHub.com/madbomb122/' }
+	$WPF_FeedbackButton.Add_Click{ OpenWebsite "$MySite/issues" }
+	$WPF_FAQButton.Add_Click{ OpenWebsite "$MySite/blob/master/README.md" }
+	$WPF_DonateButton.Add_Click{ OpenWebsite $Donate_Url }
+	$WPF_CreateRestorePoint_CB.Add_Click{ $WPF_RestorePointName_Txt.IsEnabled = $WPF_CreateRestorePoint_CB.IsChecked }
+	$WPF_RunScriptButton.Add_Click{ GuiDone }
+	$WPF_WinDefault_Button.Add_Click{ LoadWinDefault ;SelectComboBox $VarList }
+	$WPF_ResetDefault_Button.Add_Click{ SetDefault ;SelectComboBox $VarList ;SelectComboBox $ListApp 1 }
+	$WPF_Load_Setting_Button.Add_Click{ OpenSaveDiaglog 0 }
+	$WPF_Save_Setting_Button.Add_Click{ OpenSaveDiaglog 1 }
+	$WPF_AboutButton.Add_Click{ [Windows.Forms.Messagebox]::Show('This script lets you do Various Settings and Tweaks for Windows 10. For manual or Automated use.','About', 'OK') | Out-Null }
+	$WPF_CopyrightButton.Add_Click{ [Windows.Forms.Messagebox]::Show($Copyright,'Copyright', 'OK') | Out-Null }
+	$WPF_AllMetro_Combo.add_SelectionChanged{ SelectComboBoxAllMetro ($WPF_AllMetro_Combo.SelectedIndex) }
 
 $Skip_EnableD_Disable = @(
 'Telemetry',
