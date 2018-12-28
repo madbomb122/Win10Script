@@ -10,7 +10,7 @@
 # Website: https://GitHub.com/Disassembler0/Win10-Initial-Setup-Script/
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
-$Script_Version = '3.6.5'
+$Script_Version = '3.6.6'
 $Script_Date = 'Dec-20-2018'
 #$Release_Type = 'Stable'
 ##########
@@ -1854,10 +1854,10 @@ Function RunScript {
 		If($ShowSkipped -eq 1){ DisplayOut 'Skipping Previous Versions Context item...' -C 15 }
 	} ElseIf($PreviousVersions -eq 1) {
 		DisplayOut 'Enabling Previous Versions Context item...' -C 11
-		New-Item -Path 'HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}' -Force | Out-Null
-		New-Item -Path 'HKCR:\CLSID\{450D8FBA-AD25-11D0-98A8-0800361B1103}\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}' -Force | Out-Null
-		New-Item -Path 'HKCR:\Directory\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}' -Force | Out-Null
-		New-Item -Path 'HKCR:\Drive\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}' -Force | Out-Null
+		New-Item -Path 'HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}' | Out-Null
+		New-Item -Path 'HKCR:\CLSID\{450D8FBA-AD25-11D0-98A8-0800361B1103}\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}' | Out-Null
+		New-Item -Path 'HKCR:\Directory\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}' | Out-Null
+		New-Item -Path 'HKCR:\Drive\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}' | Out-Null
 	} ElseIf($PreviousVersions -eq 2) {
 		DisplayOut 'Disabling Previous Versions Context item...' -C 12
 		RemoveSetPath 'HKCR:\AllFilesystemObjects\shellex\ContextMenuHandlers\{596AB062-B4D2-4215-9F74-E9109B0A8153}'
@@ -2392,13 +2392,13 @@ Function RunScript {
 		DisplayOut 'Showing Desktop folder in This PC...' -C 11
 		$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}\PropertyBag'
 		$Path1 = '\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}'
-		New-Item -Path "HKLM:\SOFTWARE\$Path" -Force
-		New-Item -Path "HKLM:\SOFTWARE\$Path1" -Force
+		New-Item -Path "HKLM:\SOFTWARE\$Path" | Out-Null
+		New-Item -Path "HKLM:\SOFTWARE\$Path1" | Out-Null
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
 		If($OSBit -eq 64){
-			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Force
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" | Out-Null
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" | Out-Null
 			Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
-			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" -Force
 		}
 	} ElseIf($DesktopIconInThisPC -eq 2) {
 		DisplayOut 'Hiding Desktop folder in This PC...' -C 12
@@ -2418,15 +2418,16 @@ Function RunScript {
 		$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{f42ee2d3-909f-4907-8871-4c22fc0bf756}\PropertyBag'
 		$Path1 = '\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A8CDFF1C-4878-43be-B5FD-F8091C1C60D0}'
 		$Path2 = '\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{d3162b92-9365-467a-956b-92703aca08af}'
-		New-Item -Path "HKLM:\SOFTWARE\$Path" -Force
-		New-Item -Path "HKLM:\SOFTWARE\$Path1" -Force
-		New-Item -Path "HKLM:\SOFTWARE\$Path2" -Force
+		New-Item -Path "HKLM:\SOFTWARE\$Path" | Out-Null
+		New-Item -Path "HKLM:\SOFTWARE\$Path1" | Out-Null
+		New-Item -Path "HKLM:\SOFTWARE\$Path2" | Out-Null
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'BaseFolderId' -Type String -Value '{FDD39AD0-238F-46AF-ADB4-6C85480369C7}'
 		If($OSBit -eq 64){
-			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Force
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" | Out-Null
 			Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
-			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" -Force
-			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path2"
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" | Out-Null
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path2" | Out-Null
 		}
 	}ElseIf($DocumentsIconInThisPC -eq 2) {
 		DisplayOut 'Hiding Documents folder in This PC...' -C 12
@@ -2448,15 +2449,16 @@ Function RunScript {
 		$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{7d83ee9b-2244-4e70-b1f5-5393042af1e4}\PropertyBag'
 		$Path1 = '\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{374DE290-123F-4565-9164-39C4925E467B}'
 		$Path2 = '\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{088e3905-0323-4b02-9826-5d99428e115f}'
-		New-Item -Path "HKLM:\SOFTWARE\$Path" -Force
-		New-Item -Path "HKLM:\SOFTWARE\$Path1" -Force
-		New-Item -Path "HKLM:\SOFTWARE\$Path2" -Force
+		New-Item -Path "HKLM:\SOFTWARE\$Path" | Out-Null
+		New-Item -Path "HKLM:\SOFTWARE\$Path1" | Out-Null
+		New-Item -Path "HKLM:\SOFTWARE\$Path2" | Out-Null
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'BaseFolderId' -Type String -Value '{374DE290-123F-4565-9164-39C4925E467B}'
 		If($OSBit -eq 64){
-			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Force
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path"
 			Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
-			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" -Force
-			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path2"
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" | Out-Null
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path2" | Out-Null
 		}
 	} ElseIf($DownloadsIconInThisPC -eq 2) {
 		DisplayOut 'Hiding Downloads folder in This PC...' -C 12
@@ -2478,15 +2480,16 @@ Function RunScript {
 		$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{a0c69a99-21c8-4671-8703-7934162fcf1d}\PropertyBag'
 		$Path1 = '\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{1CF1260C-4DD0-4ebb-811F-33C572699FDE}'
 		$Path2 = '\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{3dfdf296-dbec-4fb4-81d1-6a3438bcf4de}'
-		New-Item -Path "HKLM:\SOFTWARE\$Path" -Force
-		New-Item -Path "HKLM:\SOFTWARE\$Path1" -Force
-		New-Item -Path "HKLM:\SOFTWARE\$Path2" -Force
+		New-Item -Path "HKLM:\SOFTWARE\$Path" | Out-Null
+		New-Item -Path "HKLM:\SOFTWARE\$Path1" | Out-Null
+		New-Item -Path "HKLM:\SOFTWARE\$Path2" | Out-Null
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'BaseFolderId' -Type String -Value '{4BD8D571-6D19-48D3-BE97-422220080E43}'
 		If($OSBit -eq 64){
-			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Force
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" | Out-Null
 			Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
-			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" -Force
-			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path2"
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" | Out-Null
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path2" | Out-Null
 		}
 	} ElseIf($MusicIconInThisPC -eq 2) {
 		DisplayOut 'Hiding Music folder in This PC...' -C 12
@@ -2508,15 +2511,16 @@ Function RunScript {
 		$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{0ddd015d-b06c-45d5-8c4c-f59713854639}\PropertyBag'
 		$Path1 = '\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{24ad3ad4-a569-4530-98e1-ab02f9417aa8}'
 		$Path2 = '\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{3ADD1653-EB32-4cb0-BBD7-DFA0ABB5ACCA}'
-		New-Item -Path "HKLM:\SOFTWARE\$Path" -Force
-		New-Item -Path "HKLM:\SOFTWARE\$Path1" -Force
-		New-Item -Path "HKLM:\SOFTWARE\$Path2" -Force
+		New-Item -Path "HKLM:\SOFTWARE\$Path" | Out-Null
+		New-Item -Path "HKLM:\SOFTWARE\$Path1" | Out-Null
+		New-Item -Path "HKLM:\SOFTWARE\$Path2" | Out-Null
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'BaseFolderId' -Type String -Value '{33E28130-4E1E-4676-835A-98395C3BC3BB}'
 		If($OSBit -eq 64){
-			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Force
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" | Out-Null
 			Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
-			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" -Force
-			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path2"
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" | Out-Null
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path2" | Out-Null
 		}
 	} ElseIf($PicturesIconInThisPC -eq 2) {
 		DisplayOut 'Hiding Pictures folder in This PC...' -C 12
@@ -2538,15 +2542,16 @@ Function RunScript {
 		$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{35286a68-3c57-41a1-bbb1-0eae73d76c95}\PropertyBag'
 		$Path1 = '\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{A0953C92-50DC-43bf-BE83-3742FED03C9C}'
 		$Path2 = '\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{f86fa3ab-70d2-4fc7-9c99-fcbf05467f3a}'
-		New-Item -Path "HKLM:\SOFTWARE\$Path" -Force
-		New-Item -Path "HKLM:\SOFTWARE\$Path1" -Force
-		New-Item -Path "HKLM:\SOFTWARE\$Path2" -Force
+		New-Item -Path "HKLM:\SOFTWARE\$Path" | Out-Null
+		New-Item -Path "HKLM:\SOFTWARE\$Path1" | Out-Null
+		New-Item -Path "HKLM:\SOFTWARE\$Path2" | Out-Null
 		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
+		Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'BaseFolderId' -Type String -Value '{18989B1D-99B5-455B-841C-AB7C74E4DDFC}"'
 		If($OSBit -eq 64){
-			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Force
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" | Out-Null
 			Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
-			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" -Force
-			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path2" -Force
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" | Out-Null
+			New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path2" | Out-Null
 		}
 	} ElseIf($VideosIconInThisPC -eq 2) {
 		DisplayOut 'Hiding Videos folder in This PC...' -C 12
@@ -2568,13 +2573,13 @@ Function RunScript {
 			DisplayOut 'Showing 3D Object folder in This PC...' -C 11
 			$Path = '\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{31C0DD25-9439-4F12-BF41-7FF4EDA38722}\PropertyBag'
 			$Path1 = '\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\{0DB7E03F-FC29-4DC6-9020-FF41B59E513A}'
-			New-Item -Path "HKLM:\SOFTWARE\$Path" -Force
-			New-Item -Path "HKLM:\SOFTWARE\$Path1" -Force
+			New-Item -Path "HKLM:\SOFTWARE\$Path" | Out-Null
+			New-Item -Path "HKLM:\SOFTWARE\$Path1" | Out-Null
 			Set-ItemProperty -Path "HKLM:\SOFTWARE\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
 			If($OSBit -eq 64){
-				New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Force
+				New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" | Out-Null
 				Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\$Path" -Name 'ThisPCPolicy' -Type String -Value 'Show'
-				New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" -Force
+				New-Item -Path "HKLM:\SOFTWARE\Wow6432Node\$Path1" | Out-Null
 			}
 		} ElseIf($ThreeDobjectsIconInThisPC -eq 2) {
 			DisplayOut 'Hiding 3D Object folder in This PC...' -C 12
