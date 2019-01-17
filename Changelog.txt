@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
-3.6.6 (12-28-2018)
+3.6.7 (01-17-2018)
 
 Added ability to see Copyright/License Information from ToS, by inputting L
 Added Switch:
@@ -20,6 +20,10 @@ Fixed a messup that caused script to not run at all
 Minor Script Improvement/Changes
 
 Fixed an Issue with 'This PC' Folders not showing (when selecting 'Show/Add') the folders in some cases -Solves issue #6
+
+License/Copyright Date Update for my script
+Added ability to Enable/Disable App Hibernation File (Swapfile.sys)
+Minor Script Improvement/Changes
 
 -----------------------------------------------------------------------------------
 3.6.0 (08-21-2018)
