@@ -10,8 +10,8 @@
 # Website: https://GitHub.com/Disassembler0/Win10-Initial-Setup-Script/
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
-$Script_Version = '3.6.6'
-$Script_Date = 'Dec-20-2018'
+$Script_Version = '3.6.7'
+$Script_Date = 'Jan-17-2018'
 #$Release_Type = 'Stable'
 ##########
 
@@ -29,13 +29,12 @@ $Script_Date = 'Dec-20-2018'
 
 <#------------------------------------------------------------------------------#>
 
-$Copyright ='                                                                        
- The MIT License (MIT)                                                  
+$Copyright =' The MIT License (MIT)                                                  
                                                                         
  Copyright (c) 2017 Disassembler                                        
         -Original Basic Version of Script                               
                                                                         
- Copyright (c) 2017-2018 Madbomb122                                     
+ Copyright (c) 2017-2019 Madbomb122                                     
         -Modded + Menu Version of Script                                
                                                                         
  Permission is hereby granted, free of charge, to any person obtaining  
@@ -582,7 +581,7 @@ Function GuiStart {
 
 [xml]$XAML = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Name="Win10_Script"
-Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="405" Width="550" BorderBrush="Black" Background="White">
+Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Script_Date" Height="405" Width="550" BorderBrush="Black" Background="White">
 	<Window.Resources>
 		<Style x:Key="SeparatorStyle1" TargetType="{x:Type Separator}">
 			<Setter Property="SnapsToDevicePixels" Value="True"/>
@@ -622,8 +621,8 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="405" Width="550
 					<Button Name="ResetDefault_Button" Content="Reset All Items" HorizontalAlignment="Left" Margin="306,113,0,0" VerticalAlignment="Top" Width="85"/>
 					<Label Content="Notes:&#xD;&#xA;Options with items marked with * means &quot;Windows Default&quot;&#xA;Windows Default Button does not change Metro Apps or OneDrive Install" HorizontalAlignment="Left" Margin="8,141,0,0" VerticalAlignment="Top" FontStyle="Italic"/>
 					<Label Content="Script Version:" HorizontalAlignment="Left" Margin="8,199,0,0" VerticalAlignment="Top" Height="25"/>
-					<TextBox Name="Script_Ver_Txt" HorizontalAlignment="Left" Height="20" Margin="90,203,0,0" TextWrapping="Wrap" Text="2.8.0 (6-21-2017)" VerticalAlignment="Top" Width="124" IsEnabled="False"/>
-					<TextBox Name="Release_Type_Txt" HorizontalAlignment="Left" Height="20" Margin="214,203,0,0" TextWrapping="Wrap" Text="Testing" VerticalAlignment="Top" Width="50" IsEnabled="False"/>
+					<TextBox Name="Script_Ver_Txt" HorizontalAlignment="Left" Height="20" Margin="90,203,0,0" TextWrapping="Wrap" Text="$Script_Version ($Script_Date)" VerticalAlignment="Top" Width="124" IsEnabled="False"/>
+					<TextBox Name="Release_Type_Txt" HorizontalAlignment="Left" Height="20" Margin="214,203,0,0" TextWrapping="Wrap" Text="$Release_Type" VerticalAlignment="Top" Width="50" IsEnabled="False"/>
 				</Grid>
 			</TabItem>
 			<TabItem Name="Privacy_tab" Header="Privacy" Margin="-2,0,2,0">
@@ -739,40 +738,42 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122" Height="405" Width="550
 				<Grid Background="#FFE5E5E5">
 					<Label Content="Process ID on Title Bar:" HorizontalAlignment="Left" Margin="308,120,0,0" VerticalAlignment="Top"/>
 					<ComboBox Name="PidInTitleBar_Combo" HorizontalAlignment="Left" Margin="436,123,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Aero Snap:" HorizontalAlignment="Left" Margin="69,38,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="AeroSnap_Combo" HorizontalAlignment="Left" Margin="133,41,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Aero Shake:" HorizontalAlignment="Left" Margin="63,66,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="AeroShake_Combo" HorizontalAlignment="Left" Margin="133,69,0,0" VerticalAlignment="Top" Width="72"/>
+					<Label Content="Aero Snap:" HorizontalAlignment="Left" Margin="69,30,0,0" VerticalAlignment="Top"/>
+					<ComboBox Name="AeroSnap_Combo" HorizontalAlignment="Left" Margin="133,33,0,0" VerticalAlignment="Top" Width="72"/>
+					<Label Content="Aero Shake:" HorizontalAlignment="Left" Margin="63,58,0,0" VerticalAlignment="Top"/>
+					<ComboBox Name="AeroShake_Combo" HorizontalAlignment="Left" Margin="133,61,0,0" VerticalAlignment="Top" Width="72"/>
 					<Label Content="Known Extensions:" HorizontalAlignment="Left" Margin="331,147,0,0" VerticalAlignment="Top"/>
 					<ComboBox Name="KnownExtensions_Combo" HorizontalAlignment="Left" Margin="436,150,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Hidden Files:" HorizontalAlignment="Left" Margin="58,120,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="HiddenFiles_Combo" HorizontalAlignment="Left" Margin="133,123,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="System Files:" HorizontalAlignment="Left" Margin="59,147,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="SystemFiles_Combo" HorizontalAlignment="Left" Margin="133,150,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Default Explorer View:" HorizontalAlignment="Left" Margin="10,201,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="ExplorerOpenLoc_Combo" HorizontalAlignment="Left" Margin="133,204,0,0" VerticalAlignment="Top" Width="102"/>
+					<Label Content="Hidden Files:" HorizontalAlignment="Left" Margin="58,112,0,0" VerticalAlignment="Top"/>
+					<ComboBox Name="HiddenFiles_Combo" HorizontalAlignment="Left" Margin="133,115,0,0" VerticalAlignment="Top" Width="72"/>
+					<Label Content="System Files:" HorizontalAlignment="Left" Margin="59,139,0,0" VerticalAlignment="Top"/>
+					<ComboBox Name="SystemFiles_Combo" HorizontalAlignment="Left" Margin="133,142,0,0" VerticalAlignment="Top" Width="72"/>
+					<Label Content="Default Explorer View:" HorizontalAlignment="Left" Margin="10,193,0,0" VerticalAlignment="Top"/>
+					<ComboBox Name="ExplorerOpenLoc_Combo" HorizontalAlignment="Left" Margin="133,196,0,0" VerticalAlignment="Top" Width="102"/>
 					<Label Content="Recent Files in Quick Access:" HorizontalAlignment="Left" Margin="279,11,0,0" VerticalAlignment="Top"/>
 					<ComboBox Name="RecentFileQikAcc_Combo" HorizontalAlignment="Left" Margin="436,14,0,0" VerticalAlignment="Top" Width="72"/>
 					<Label Content="Frequent folders in Quick_access:" HorizontalAlignment="Left" Margin="259,39,0,0" VerticalAlignment="Top"/>
 					<ComboBox Name="FrequentFoldersQikAcc_Combo" HorizontalAlignment="Left" Margin="436,41,0,0" VerticalAlignment="Top" Width="72"/>
 					<Label Content="Window Content while Dragging:" HorizontalAlignment="Left" Margin="253,66,0,0" VerticalAlignment="Top"/>
 					<ComboBox Name="WinContentWhileDrag_Combo" HorizontalAlignment="Left" Margin="436,69,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Autoplay:" HorizontalAlignment="Left" Margin="76,11,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="Autoplay_Combo" HorizontalAlignment="Left" Margin="133,14,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Autorun:" HorizontalAlignment="Left" Margin="80,93,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="Autorun_Combo" HorizontalAlignment="Left" Margin="133,96,0,0" VerticalAlignment="Top" Width="72"/>
+					<Label Content="Autoplay:" HorizontalAlignment="Left" Margin="76,3,0,0" VerticalAlignment="Top"/>
+					<ComboBox Name="Autoplay_Combo" HorizontalAlignment="Left" Margin="133,6,0,0" VerticalAlignment="Top" Width="72"/>
+					<Label Content="Autorun:" HorizontalAlignment="Left" Margin="80,85,0,0" VerticalAlignment="Top"/>
+					<ComboBox Name="Autorun_Combo" HorizontalAlignment="Left" Margin="133,88,0,0" VerticalAlignment="Top" Width="72"/>
 					<Label Content="Search Store for Unkn. Extensions:" HorizontalAlignment="Left" Margin="249,94,0,0" VerticalAlignment="Top"/>
 					<ComboBox Name="StoreOpenWith_Combo" HorizontalAlignment="Left" Margin="436,96,0,0" VerticalAlignment="Top" Width="72"/>
 					<Label Content="Task Manager Details:" HorizontalAlignment="Left" Margin="315,175,0,0" VerticalAlignment="Top"/>
 					<ComboBox Name="TaskManagerDetails_Combo" HorizontalAlignment="Left" Margin="436,177,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="PowerShell to Cmd:" HorizontalAlignment="Left" Margin="24,228,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="WinXPowerShell_Combo" HorizontalAlignment="Left" Margin="133,231,0,0" VerticalAlignment="Top" Width="127"/>
+					<Label Content="Powershell to Cmd:" HorizontalAlignment="Left" Margin="24,220,0,0" VerticalAlignment="Top"/>
+					<ComboBox Name="WinXPowerShell_Combo" HorizontalAlignment="Left" Margin="133,223,0,0" VerticalAlignment="Top" Width="127"/>
 					<Label Name="ReopenAppsOnBoot_Txt" Content="Reopen Apps On Boot:" HorizontalAlignment="Left" Margin="309,203,0,0" VerticalAlignment="Top"/>
 					<ComboBox Name="ReopenAppsOnBoot_Combo" HorizontalAlignment="Left" Margin="436,205,0,0" VerticalAlignment="Top" Width="72"/>
 					<Label Name="TimeLine_Txt" Content="Window Timeline:" HorizontalAlignment="Left" Margin="336,231,0,0" VerticalAlignment="Top"/>
 					<ComboBox Name="Timeline_Combo" HorizontalAlignment="Left" Margin="436,233,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Long File Path:" HorizontalAlignment="Left" Margin="49,174,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="LongFilePath_Combo" HorizontalAlignment="Left" Margin="133,177,0,0" VerticalAlignment="Top" Width="72"/>
+					<Label Content="Long File Path:" HorizontalAlignment="Left" Margin="49,166,0,0" VerticalAlignment="Top"/>
+					<ComboBox Name="LongFilePath_Combo" HorizontalAlignment="Left" Margin="133,169,0,0" VerticalAlignment="Top" Width="72"/>
+					<Label Content="App Hibernation File (Swapfile.sys):" HorizontalAlignment="Left" Margin="6,245,0,0" VerticalAlignment="Top"/>
+					<ComboBox Name="AppHibernationFile_Combo" HorizontalAlignment="Left" Margin="197,248,0,0" VerticalAlignment="Top" Width="72"/>
 				</Grid>
 			</TabItem>
 			<TabItem Name="Desktop_Tab" Header="Desktop/This PC" Margin="-2,0,2,0">
@@ -1028,7 +1029,8 @@ $Skip_EnableD_Disable = @(
 'SleepPower',
 'ReopenAppsOnBoot',
 'Timeline',
-'UpdateAvailablePopup')
+'UpdateAvailablePopup',
+'AppHibernationFile')
 
 $Skip_Enable_DisableD = @(
 'SharingMappedDrives',
@@ -1111,13 +1113,8 @@ $Skip_InstalledD_Uninstall = @('OneDriveInstall','MediaPlayer','WorkFolders','Fa
 	SetCombo 'WinUpdateType' 'Notify,Auto DL,Auto DL+Install*,Admin Config'
 	SetCombo 'WinUpdateDownload' 'P2P*,Local Only,Disable'
 
-	$WPF_Script_Ver_Txt.Text = "$Script_Version ($Script_Date)"
-	$WPF_Release_Type_Txt.Text = $Release_Type
-
 	ConfigGUIitms
-	$TmpTitle = " (v.$Script_Version -$Script_Date"
-	If($Release_Type -ne 'Stable'){ $TmpTitle += " -$Release_Type)" } Else{ $TmpTitle += ')' }
-	$Form.Title += $TmpTitle
+	If($Release_Type -ne 'Stable'){ $Form.Title += " -$Release_Type)" } Else{ $Form.Title += ')' }
 	Clear-Host
 	DisplayOut 'Displaying GUI Now' -C 14
 	DisplayOut "`nTo exit you can close the GUI or PowerShell Window." -C 14
@@ -1241,6 +1238,7 @@ Function LoadWinDefault {
 	$Script:ReopenAppsOnBoot = 1
 	$Script:Timeline = 1
 	$Script:LongFilePath = 2
+	$Script:AppHibernationFile = 1
 
 	#'This PC' Items
 	$Script:DesktopIconInThisPC = 1
@@ -2385,6 +2383,16 @@ Function RunScript {
 		Remove-ItemProperty -Path 'HKLM:\SYSTEM\ControlSet001\Control\FileSystem' -Name 'LongPathsEnabled'
 	}
 
+	If($AppHibernationFile -eq 0) {
+		If($ShowSkipped -eq 1){ DisplayOut 'Skipping App Hibernation File (Swapfile.sys)...' -C 15 }
+	} ElseIf($AppHibernationFile -eq 1) {
+		DisplayOut 'Enabling App Hibernation File (Swapfile.sys)...' -C 11
+		Remove-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" -Name "SwapfileControl"
+	} ElseIf($AppHibernationFile -eq 2) {
+		DisplayOut 'Disabling App Hibernation File (Swapfile.sys)...' -C 12
+		Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" -Name "SwapfileControl" -Type Dword -Value 0
+	}
+
 	BoxItem "'This PC' Items"
 	If($DesktopIconInThisPC -eq 0) {
 		If($ShowSkipped -eq 1){ DisplayOut 'Skipping Desktop folder in This PC...' -C 15 }
@@ -3155,6 +3163,7 @@ $Script:TaskManagerDetails = 0      #0-Skip, 1-Show, 2-Hide*
 $Script:ReopenAppsOnBoot = 0        #0-Skip, 1-Enable*, 2-Disable
 $Script:Timeline = 0                #0-Skip, 1-Enable*, 2-Disable
 $Script:LongFilePath = 0            #0-Skip, 1-Enable, 2-Disable*
+$Script:AppHibernationFile = 0      #0-Skip, 1-Enable*, 2-Disable
 
 #'This PC' Items
 # Function = Option                 #Choices (* Indicates Windows Default)
