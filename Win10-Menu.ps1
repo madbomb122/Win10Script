@@ -12,7 +12,7 @@
 #
 $Script_Version = '3.6.7'
 $Script_Date = 'Jan-17-2019'
-#$Release_Type = 'Stable'
+$Release_Type = 'Stable'
 ##########
 
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
