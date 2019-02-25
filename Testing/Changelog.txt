@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
-3.6.7 (01-17-2019)
+3.6.9 (02-25-2019)
 
 Added ability to see Copyright/License Information from ToS, by inputting L
 Added Switch:
@@ -24,6 +24,10 @@ Fixed an Issue with 'This PC' Folders not showing (when selecting 'Show/Add') th
 License/Copyright Date Update for my script
 Added ability to Enable/Disable App Hibernation File (Swapfile.sys)
 Minor Script Improvement/Changes
+
+Fixed Issue with Metro Apps not displaying 'No Apps being *' messages
+
+Cortana Enable/Disable does more changes now
 
 -----------------------------------------------------------------------------------
 3.6.0 (08-21-2018)
