@@ -10,8 +10,8 @@
 # Website: https://GitHub.com/Disassembler0/Win10-Initial-Setup-Script/
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
-$Script_Version = '3.6.7'
-$Script_Date = 'Jan-17-2019'
+$Script_Version = '3.6.9'
+$Script_Date = 'Feb-25-2019'
 $Release_Type = 'Stable'
 ##########
 
@@ -131,10 +131,6 @@ If([System.Environment]::Is64BitProcess){ $Script:OSBit = 64 } Else{ $Script:OSB
 ##########
 # Needed Variable -Start
 ##########
-
-[Array]$APPS_AppsUnhide = @()
-[Array]$APPS_AppsHide = @()
-[Array]$APPS_AppsUninstall = @()
 
 $AppsList = @(
 'Microsoft.3DBuilder',
@@ -445,8 +441,7 @@ Function TOS {
 		$CopyR = $False
 		$Invalid = ShowInvalid $Invalid
 		$TOS = Read-Host "`nDo you Accept? (Y)es/(N)o"
-		$TOS = $TOS.ToLower()
-		If($TOS -In 'n','no'){
+		If($TOS.ToLower() -In 'n','no'){
 			Exit
 		} ElseIf($TOS -In 'y','yes') {
 			$Script:AcceptToS = 'Accepted-Script' ;$TOS = 'Out' ;StartOrGui
@@ -1314,28 +1309,28 @@ Function RunScript {
 		$AP = $AppsList[$A]
 		If($AppV -eq 1) {
 			If($AP -ne 'XboxApps'){
-				[Void] $APPS_AppsUnhide.Add($AP)
+				[Void]$APPS_AppsUnhide.Add($AP)
 			} Else {
-				ForEach($AppX In $Xbox_Apps) { [Void] $APPS_AppsUnhide.Add($AppX) }
+				ForEach($AppX In $Xbox_Apps){ [Void]$APPS_AppsUnhide.Add($AppX) }
 			}
 		} ElseIf($AppV -eq 2) {
 			If($AP -ne 'XboxApps'){
 				[Void] $APPS_AppsHide.Add($AP)
 			} Else {
-				ForEach($AppX In $Xbox_Apps) { [Void] $APPS_AppsHide.Add($AppX) }
+				ForEach($AppX In $Xbox_Apps){ [Void]$APPS_AppsHide.Add($AppX) }
 			}
 		} ElseIf($AppV -eq 3) {
 			If($AP -ne 'XboxApps'){
 				[Void] $APPS_AppsUninstall.Add($AP)
 			} Else {
-				ForEach($AppX In $Xbox_Apps) { [Void] $APPS_AppsUninstall.Add($AppX) }
+				ForEach($AppX In $Xbox_Apps){ [Void]$APPS_AppsUninstall.Add($AppX) }
 			}
 		} $A++
 	}
 
-	$APPS_AppsUnhide.Remove('') ;$Ai = $APPS_AppsUnhide.Length
-	$APPS_AppsHide.Remove('') ;$Ah = $APPS_AppsHide.Length
-	$APPS_AppsUninstall.Remove('') ;$Au = $APPS_AppsUninstall.Length
+	$Ai = $APPS_AppsUnhide.Length
+	$Ah = $APPS_AppsHide.Length
+	$Au = $APPS_AppsUninstall.Length
 	If($null -Notin $Ah,$Au){ $AppxPackages = Get-AppxProvisionedPackage -online | select-object PackageName,Displayname }
 
 	DisplayOut "List of Apps Being Unhidden...`n------------------" 11 0
@@ -1503,6 +1498,13 @@ Function RunScript {
 		Remove-ItemProperty -Path "$Path\TrainedDataStore" -Name 'HarvestContacts'
 		Set-ItemProperty -Path $Path -Name 'RestrictImplicitTextCollection' -Type DWord -Value 0
 		Set-ItemProperty -Path $Path -Name 'RestrictImplicitInkCollection' -Type DWord -Value 0
+		$Path = CheckSetPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search'
+		Remove-ItemProperty -Path $Path -Name 'AllowCortanaAboveLock'
+		Remove-ItemProperty -Path $Path -Name 'ConnectedSearchUseWeb'
+		Remove-ItemProperty -Path $Path -Name 'ConnectedSearchPrivacy'
+		Set-ItemProperty -Path $Path -Name 'DisableWebSearch' -Type DWord -Value 1
+		$Path = CheckSetPath 'HKCU:\SOFTWARE\Microsoft\Speech_OneCore\Preferences\'
+		Set-ItemProperty -Path $Path -Name 'VoiceActivationEnableAboveLockscreen' -Type DWord -Value 1
 	} ElseIf($Cortana -eq 2) {
 		DisplayOut 'Disabling Cortana...' -C 12
 		$Path = CheckSetPath 'HKCU:\SOFTWARE\Microsoft\Personalization\Settings'
@@ -1512,6 +1514,13 @@ Function RunScript {
 		Set-ItemProperty -Path $Path -Name 'RestrictImplicitInkCollection' -Type DWord -Value 1
 		$Path = CheckSetPath "$Path\TrainedDataStore"
 		Set-ItemProperty -Path $Path -Name 'HarvestContacts' -Type DWord -Value 0
+		$Path = CheckSetPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search'
+		Set-ItemProperty -Path $Path -Name 'AllowCortanaAboveLock' -Type DWord -Value 0
+		Set-ItemProperty -Path $Path -Name 'ConnectedSearchUseWeb' -Type DWord -Value 1
+		Set-ItemProperty -Path $Path -Name 'ConnectedSearchPrivacy' -Type DWord -Value 3
+		Remove-ItemProperty -Path $Path -Name 'DisableWebSearch'
+		$Path = CheckSetPath 'HKCU:\SOFTWARE\Microsoft\Speech_OneCore\Preferences\'
+		Set-ItemProperty -Path $Path -Name 'VoiceActivationEnableAboveLockscreen' -Type DWord -Value 0
 	}
 
 	If($CortanaSearch -eq 0) {
@@ -2330,7 +2339,7 @@ Function RunScript {
 			$TaskManKey = Get-ItemProperty -Path $Path -Name 'Preferences'
 		} Until ($TaskManKey -or $timeout -le 0)
 		Stop-Process $Taskmgr
-		If ($TaskManKey) {
+		If($TaskManKey) {
 			DisplayOut '----Showing Task Manager Details...' -C 11
 			$TaskManKey.Preferences[28] = 0
 			Set-ItemProperty -Path $Path -Name 'Preferences' -Type Binary -Value $TaskManKey.Preferences
