@@ -93,6 +93,10 @@ Examples:
          2. You can email me @ madbomb122@gmail.com.  
 **Note** Before contacting me, please make sure you have ALL the needed files and the size is right (Look above under requirements). 
 
+**Q:** Can you add *BLAH* to the apps list?  
+**A:** Mabye, post [here](https://github.com/madbomb122/Win10Script/issues/8) and follow the instructions, and I may add it. 
+
+
 **Q:** The script window closes or gives an error saying script is blocked, what do I do?  
 **A:** By default windows blocks ps1 scripts, you can use one of the following  
          1. Use the bat file to run the script (recommended)  
