@@ -1,4 +1,20 @@
 -----------------------------------------------------------------------------------
+3.7.0 (11-27-2019)
+
+Changed Box Art when script Runs
+Some Script Improvements
+Added More things Telemetry Enable/Disable Does in script
+Added an item for Cortana Enable/Disable in script
+Option Added Enable/Disable F1 Help Key
+Option Added Enable/Disable Accessibility Keys
+Option Added Enable/Disable Update for other Microsoft Products
+How the GUI's looks has been updated
+Look of the tabs has been updated
+Tabs are now on left side instead of top
+Changed Name of 'Metro Apps' to 'Windows Apps'
+Fixed bug were Apps were not being Hidden/Unhidden
+
+-----------------------------------------------------------------------------------
 3.6.9 (02-25-2019)
 
 Added ability to see Copyright/License Information from ToS, by inputting L
