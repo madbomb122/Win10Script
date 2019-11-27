@@ -10,8 +10,8 @@
 # Website: https://GitHub.com/Disassembler0/Win10-Initial-Setup-Script/
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
-$Script_Version = '3.6.9'
-$Script_Date = 'Feb-25-2019'
+$Script_Version = '3.7.0'
+$Script_Date = 'Nov-27-2019'
 #$Release_Type = 'Stable'
 ##########
 
@@ -34,7 +34,7 @@ $Copyright =' The MIT License (MIT)
  Copyright (c) 2017 Disassembler                                        
         -Original Basic Version of Script                               
                                                                         
- Copyright (c) 2017-2019 Madbomb122                                     
+ Copyright (c) 2017-2020 Madbomb122                                     
         -Modded + Menu Version of Script                                
                                                                         
  Permission is hereby granted, free of charge, to any person obtaining  
@@ -117,55 +117,19 @@ If(!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::
 	Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $PassedArg" -Verb RunAs ;Exit
 }
 
-$URL_Base = 'https://raw.GitHub.com/madbomb122/Win10Script/master/'
+$MySite = 'https://GitHub.com/madbomb122/Win10Script'
+$URL_Base = $MySite.Replace('GitHub','raw.GitHub')+'/master/'
 $Version_Url = $URL_Base + 'Version/Version.csv'
 $Donate_Url = 'https://www.amazon.com/gp/registry/wishlist/YBAYWBJES5DE/'
-$MySite = 'https://GitHub.com/madbomb122/Win10Script'
 
-#$Script:BuildVer = [Environment]::OSVersion.Version.build
 $Script:Win10Ver = (Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion' -Name ReleaseID).ReleaseId
-If([System.Environment]::Is64BitProcess){ $Script:OSBit = 64 } Else{ $Script:OSBit = 32 }
+$Script:OSBit = If([System.Environment]::Is64BitProcess){ 64 } Else{ 32 }
 
 ##########
 # Pre-Script -End
 ##########
 # Needed Variable -Start
 ##########
-
-$AppsList = @(
-'Microsoft.3DBuilder',
-'Microsoft.Microsoft3DViewer',
-'Microsoft.BingWeather',
-'Microsoft.CommsPhone',
-'Microsoft.windowscommunicationsapps',
-'Microsoft.GetHelp',
-'Microsoft.Getstarted',
-'Microsoft.Messaging',
-'Microsoft.MicrosoftOfficeHub',
-'Microsoft.MovieMoments',
-'4DF9E0F8.Netflix',
-'Microsoft.Office.OneNote',
-'Microsoft.Office.Sway',
-'Microsoft.OneConnect',
-'Microsoft.People',
-'Microsoft.Windows.Photos',
-'Microsoft.SkypeApp',
-'Microsoft.SkypeWiFi',
-'Microsoft.MicrosoftSolitaireCollection',
-'Microsoft.MicrosoftStickyNotes',
-'Microsoft.WindowsSoundRecorder',
-'Microsoft.WindowsAlarms',
-'Microsoft.WindowsCalculator',
-'Microsoft.WindowsCamera',
-'Microsoft.WindowsFeedback',
-'Microsoft.WindowsFeedbackHub',
-'Microsoft.WindowsMaps',
-'Microsoft.WindowsPhone',
-'Microsoft.WindowsStore',
-'Microsoft.Wallet'
-'XboxApps',
-'Microsoft.ZuneMusic',
-'Microsoft.ZuneVideo')
 
 $TasksList = @(
 'Application Experience',
@@ -203,13 +167,17 @@ $TasksList = @(
 'Uploader',
 'XblGameSaveTask',
 'XblGameSaveTaskLogon') #>
-
+<#
 $Xbox_Apps = @(
 'Microsoft.XboxApp',
 'Microsoft.XboxIdentityProvider',
 'Microsoft.XboxSpeechToTextOverlay',
 'Microsoft.XboxGameOverlay',
 'Microsoft.Xbox.TCUI')
+#>
+$Xbox_Apps = @(Get-AppxPackage *xbox*).Name
+
+$AppxOptions=@('Skip','Unhide','Hide','Uninstall')
 
 $colors = @(
 'black',      #0
@@ -229,6 +197,14 @@ $colors = @(
 'white',      #14
 'yellow')     #15
 
+#Unicode Box Codes
+$Tlc = [char]0x2554 # ╔
+$Blc = [char]0x255A # ╚
+$Trc = [char]0x2557 # ╗
+$Brc = [char]0x255D # ╝
+$Sid = [char]0x2551 # ║
+$ToB = [char]0x2550 # ═
+
 $musnotification_files = @("$Env:windir\System32\musnotification.exe","$Env:windir\System32\musnotificationux.exe")
 
 $MLine = '|'.PadRight(53,'-') + '|'
@@ -240,9 +216,11 @@ Function MenuLine{ DisplayOut DisplayOut $MLine -C 14 }
 Function BoxItem([String]$TxtToDisplay) {
 	$TLen = $TxtToDisplay.Length
 	$LLen = $TLen+9
-	DisplayOut "`n".PadRight($LLen,'-') -C 14
-	DisplayOut '-',"   $TxtToDisplay   ",'-' -C 14,6,14
-	DisplayOut ''.PadRight($LLen-1,'-') -C 14
+	$Ttop = "`n$Tlc".PadRight($LLen-1,$ToB) + $Trc
+	$TBot = "$Blc".PadRight($LLen-2,$ToB) + $Brc
+	DisplayOut $Ttop -C 14
+	DisplayOut $Sid,"   $TxtToDisplay   ",$Sid -C 14,13,14
+	DisplayOut $TBot -C 14
 }
 
 Function AnyKeyClose{ Read-Host -Prompt "`nPress Any key to Close..." }
@@ -256,7 +234,7 @@ Function AnyKeyClose{ Read-Host -Prompt "`nPress Any key to Close..." }
 Function UpdateCheck {
 	If(InternetCheck) {
 		$CSV_Ver = Invoke-WebRequest $Version_Url | ConvertFrom-Csv
-		If($Release_Type -eq 'Stable'){ $CSVLine = 0 ;$RT = '' } Else{ $CSVLine = 1 ;$RT = 'Testing/' }
+		$CSVLine,$RT = If($Release_Type -eq 'Stable'){ 0,'' } Else{ 1,'Testing/' }
 		$WebScriptVer = $CSV_Ver[$CSVLine].Version + "." + $CSV_Ver[$CSVLine].MinorVersion
 		If($WebScriptVer -gt $Script_Version){ ScriptUpdateFun $RT }
 	} Else {
@@ -289,7 +267,7 @@ Function ScriptUpdateFun([String]$RT) {
 	If($InternetCheck -eq 1){ $UpArg += '-sic ' }
 	If($CreateRestorePoint -eq 1){ $UpArg += '-crp ' }
 	If($Restart -eq 0){ $UpArg += '-dnr' }
-	If($RunScr){ $UpArg += "-run $TempSetting " } Else{ $UpArg += "-load $TempSetting " }
+	$UpArg += If($RunScr){ "-run $TempSetting " } Else{ "-load $TempSetting " }
 
 	Clear-Host
 	MenuLine -L
@@ -341,8 +319,46 @@ Function DisplayOutLML([String]$Text,[Alias ("C")] [Int]$Color) {
 
 Function ScriptPreStart {
 	SetDefault
+	SetAppxVar
 	If($PassedArg.Length -gt 0){ ArgCheck }
 	If($AcceptToS -eq 1){ TOS } Else{ StartOrGui }
+}
+
+Function SetAppxVar {
+	[System.Collections.ArrayList]$Script:DataGridApps = (0..31)
+	$Script:DataGridApps[0] = [PSCustomObject]@{ AppxName = 'Microsoft.3DBuilder'; CName = '3DBuilder'; VarName = 'APP_3DBuilder'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_3DBuilder]}
+	$Script:DataGridApps[1] = [PSCustomObject]@{ AppxName = 'Microsoft.Microsoft3DViewer'; CName = '3DViewer'; VarName = 'APP_3DViewer'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_3DViewer]}
+	$Script:DataGridApps[2] = [PSCustomObject]@{ AppxName = 'Microsoft.BingWeather'; CName = 'Bing Weather'; VarName = 'APP_BingWeather'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_BingWeather]}
+	$Script:DataGridApps[3] = [PSCustomObject]@{ AppxName = 'Microsoft.CommsPhone'; CName = 'Phone'; VarName = 'APP_CommsPhone'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_CommsPhone]}
+	$Script:DataGridApps[4] = [PSCustomObject]@{ AppxName = 'Microsoft.windowscommunicationsapps'; CName = 'Calendar & Mail'; VarName = 'APP_Communications'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_Communications]}
+	$Script:DataGridApps[5] = [PSCustomObject]@{ AppxName = 'Microsoft.GetHelp'; CName = "Microsoft's Self-Help"; VarName = 'APP_GetHelp'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_GetHelp]}
+	$Script:DataGridApps[6] = [PSCustomObject]@{ AppxName = 'Microsoft.Getstarted'; CName = 'Get Started Link'; VarName = 'APP_Getstarted'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_Getstarted]}
+	$Script:DataGridApps[7] = [PSCustomObject]@{ AppxName = 'Microsoft.Messaging'; CName = 'Messaging'; VarName = 'APP_Messaging'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_Messaging]}
+	$Script:DataGridApps[8] = [PSCustomObject]@{ AppxName = 'Microsoft.MicrosoftOfficeHub'; CName = 'Get Office Link'; VarName = 'APP_MicrosoftOffHub'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_MicrosoftOffHub]}
+	$Script:DataGridApps[9] = [PSCustomObject]@{ AppxName = 'Microsoft.MovieMoments'; CName = 'Movie Moments'; VarName = 'APP_MovieMoments'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_MovieMoments]}
+	$Script:DataGridApps[10] = [PSCustomObject]@{ AppxName = '4DF9E0F8.Netflix'; CName = 'Netflix'; VarName = 'APP_Netflix'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_Netflix]}
+	$Script:DataGridApps[11] = [PSCustomObject]@{ AppxName = 'Microsoft.Office.OneNote'; CName = 'Office OneNote'; VarName = 'APP_OfficeOneNote'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_OfficeOneNote]}
+	$Script:DataGridApps[12] = [PSCustomObject]@{ AppxName = 'Microsoft.Office.Sway'; CName = 'Office Sway'; VarName = 'APP_OfficeSway'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_OfficeSway]}
+	$Script:DataGridApps[13] = [PSCustomObject]@{ AppxName = 'Microsoft.OneConnect'; CName = 'One Connect'; VarName = 'APP_OneConnect'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_OneConnect]}
+	$Script:DataGridApps[14] = [PSCustomObject]@{ AppxName = 'Microsoft.People'; CName = 'People'; VarName = 'APP_People'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_People]}
+	$Script:DataGridApps[15] = [PSCustomObject]@{ AppxName = 'Microsoft.Windows.Photos'; CName = 'Photos'; VarName = 'APP_Photos'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_Photos]}
+	$Script:DataGridApps[16] = [PSCustomObject]@{ AppxName = 'Microsoft.SkypeApp'; CName = 'Skype'; VarName = 'APP_SkypeApp1'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_SkypeApp1]}
+	$Script:DataGridApps[17] = [PSCustomObject]@{ AppxName = 'Microsoft.MicrosoftSolitaireCollection'; CName = 'Microsoft Solitaire'; VarName = 'APP_SolitaireCollect'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_SolitaireCollect]}
+	$Script:DataGridApps[18] = [PSCustomObject]@{ AppxName = 'Microsoft.MicrosoftStickyNotes'; CName = 'Sticky Notes'; VarName = 'APP_StickyNotes'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_StickyNotes]}
+	$Script:DataGridApps[19] = [PSCustomObject]@{ AppxName = 'Microsoft.WindowsSoundRecorder'; CName = 'Voice Recorder'; VarName = 'APP_VoiceRecorder'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_VoiceRecorder]}
+	$Script:DataGridApps[20] = [PSCustomObject]@{ AppxName = 'Microsoft.WindowsAlarms'; CName = 'Alarms and Clock'; VarName = 'APP_WindowsAlarms'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsAlarms]}
+	$Script:DataGridApps[21] = [PSCustomObject]@{ AppxName = 'Microsoft.WindowsCalculator'; CName = 'Calculator'; VarName = 'APP_WindowsCalculator'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsCalculator]}
+	$Script:DataGridApps[22] = [PSCustomObject]@{ AppxName = 'Microsoft.WindowsCamera'; CName = 'Camera'; VarName = 'APP_WindowsCamera'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsCamera]}
+	$Script:DataGridApps[23] = [PSCustomObject]@{ AppxName = 'Microsoft.WindowsFeedback'; CName = 'Windows Feedback'; VarName = 'APP_WindowsFeedbak1'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsFeedbak1]}
+	$Script:DataGridApps[24] = [PSCustomObject]@{ AppxName = 'Microsoft.WindowsFeedbackHub'; CName = 'Windows Feedback Hub'; VarName = 'APP_WindowsFeedbak2'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsFeedbak2]}
+	$Script:DataGridApps[25] = [PSCustomObject]@{ AppxName = 'Microsoft.WindowsMaps'; CName = 'Maps'; VarName = 'APP_WindowsMaps'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsMaps]}
+	$Script:DataGridApps[26] = [PSCustomObject]@{ AppxName = 'Microsoft.WindowsPhone'; CName = 'Phone Companion'; VarName = 'APP_WindowsPhone'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsPhone]}
+	$Script:DataGridApps[27] = [PSCustomObject]@{ AppxName = 'Microsoft.WindowsStore'; CName = 'Microsoft Store'; VarName = 'APP_WindowsStore'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsStore]}
+	$Script:DataGridApps[28] = [PSCustomObject]@{ AppxName = 'Microsoft.Wallet'; CName = 'Stores Credit and Debit Card Information'; VarName = 'APP_WindowsWallet'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsWallet]}
+	$Script:DataGridApps[29] = [PSCustomObject]@{ AppxName = $Xbox_Apps; CName = 'Xbox Apps (All)'; VarName = 'APP_XboxApp'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_XboxApp]}
+	$Script:DataGridApps[30] = [PSCustomObject]@{ AppxName = 'Microsoft.ZuneMusic'; CName = 'Groove Music'; VarName = 'APP_ZuneMusic'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_ZuneMusic]}
+	$Script:DataGridApps[31] = [PSCustomObject]@{ AppxName = 'Microsoft.ZuneVideo'; CName = 'Groove Video'; VarName = 'APP_ZuneVideo'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_ZuneVideo]}
+	If($WPF_dataGrid){ $WPF_dataGrid.ItemsSource = $DataGridApps }
 }
 
 Function PassVal([String]$Pass){ Return $PassedArg[$PassedArg.IndexOf($Pass)+1] }
@@ -441,7 +457,7 @@ Function TOS {
 		$CopyR = $False
 		$Invalid = ShowInvalid $Invalid
 		$TOS = Read-Host "`nDo you Accept? (Y)es/(N)o"
-		If($TOS.ToLower() -In 'n','no'){
+		If($TOS -In 'n','no'){
 			Exit
 		} ElseIf($TOS -In 'y','yes') {
 			$Script:AcceptToS = 'Accepted-Script' ;$TOS = 'Out' ;StartOrGui
@@ -454,21 +470,26 @@ Function TOS {
 }
 
 Function LoadSettingFile([String]$Filename) {
-	(Import-Csv -LiteralPath $Filename -Delimiter ';').ForEach{ Set-Variable $_.Name $_.Value -Scope Script }
-	[System.Collections.ArrayList]$Script:APPS_AppsUnhide = $AppsUnhide.Split(',')
-	[System.Collections.ArrayList]$Script:APPS_AppsHidel = $AppsHide.Split(',')
-	[System.Collections.ArrayList]$Script:APPS_AppsUninstall = $AppsUninstall.Split(',')
+	If($Filename) {
+		(Import-Csv -LiteralPath $Filename -Delimiter ';').ForEach{ Set-Variable $_.Name $_.Value -Scope Script }
+		[System.Collections.ArrayList]$Script:APPS_AppsUnhide = $AppsUnhide.Split(',')
+		[System.Collections.ArrayList]$Script:APPS_AppsHidel = $AppsHide.Split(',')
+		[System.Collections.ArrayList]$Script:APPS_AppsUninstall = $AppsUninstall.Split(',')
+		SetAppxVar
+	}
 }
 
 Function SaveSettingFiles([String]$Filename) {
-	ForEach($temp In $APPS_AppsUnhide){$Script:AppsUnhide += $temp + ','}
-	ForEach($temp In $APPS_AppsHide){$Script:AppsHide += $temp + ','}
-	ForEach($temp In $APPS_Uninstall){$Script:AppsUninstall += $temp + ','}
-	If(Test-Path -LiteralPath $Filename -PathType Leaf) {
-		If($ShowConf -eq 1){ $Conf = ConfirmMenu 2 } Else{ $Conf = $True }
-		If($Conf){ cmpv | Select-Object Name,Value | Export-Csv -LiteralPath $Filename -Encoding 'unicode' -Force -Delimiter ';' }
-	} Else {
-		cmpv | Select-Object Name,Value | Export-Csv -LiteralPath $Filename -Encoding 'unicode' -Force -Delimiter ';'
+	If($Filename) {
+		ForEach($temp In $APPS_AppsUnhide){$Script:AppsUnhide += $temp + ','}
+		ForEach($temp In $APPS_AppsHide){$Script:AppsHide += $temp + ','}
+		ForEach($temp In $APPS_Uninstall){$Script:AppsUninstall += $temp + ','}
+		If(Test-Path -LiteralPath $Filename -PathType Leaf) {
+			If($ShowConf -eq 1){ $Conf = ConfirmMenu 2 } Else{ $Conf = $True }
+			If($Conf){ cmpv | Select-Object Name,Value | Export-Csv -LiteralPath $Filename -Encoding 'unicode' -Force -Delimiter ';' }
+		} Else {
+			cmpv | Select-Object Name,Value | Export-Csv -LiteralPath $Filename -Encoding 'unicode' -Force -Delimiter ';'
+		}
 	}
 }
 
@@ -491,83 +512,48 @@ Function SetComboM([String]$Name,[String]$Item) {
 	$combo =  $(Get-Variable -Name ('WPF_'+$Name+'_Combo') -ValueOnly)
 	[Void] $combo.Items.Add('Skip')
 	ForEach($CmbItm In $Items){ [Void] $combo.Items.Add($CmbItm) }
-	If($Name -eq 'AllMetro') {
-		$WPF_AllMetro_Combo.SelectedIndex = 0
-	} ElseIf($Name -eq 'APP_SkypeApp') {
-		$WPF_APP_SkypeApp_Combo.SelectedIndex = $APP_SkypeApp1
-	} ElseIf($Name -eq 'APP_WindowsFeedbak') {
-		$WPF_APP_WindowsFeedbak_Combo.SelectedIndex = $APP_WindowsFeedbak1
-	} ElseIf($Name -eq 'APP_Zune') {
-		$WPF_APP_Zune_Combo.SelectedIndex = $APP_ZuneMusic
-	} Else {
+	If($Var -NotLike 'APP_*') {
 		SelectComboBoxGen $Name $(Get-Variable -Name $Name -ValueOnly)
 	}
 }
 
-Function RestorePointCBCheck {
-	If($CreateRestorePoint -eq 1) {
-		$WPF_CreateRestorePoint_CB.IsChecked = $True
-		$WPF_RestorePointName_Txt.IsEnabled = $True
-	} Else {
-		$WPF_CreateRestorePoint_CB.IsChecked = $False
-		$WPF_RestorePointName_Txt.IsEnabled = $False
+Function SelectComboBox([Array]$List) {
+	ForEach($Var In $List) {
+		If($Var -NotLike 'APP_*') {
+			SelectComboBoxGen $Var $(Get-Variable -Name $Var -ValueOnly)
+		}
 	}
+}
+Function SelectComboBoxGen([String]$Name,[Int]$Numb){ $(Get-Variable -Name ('WPF_'+$Name+'_Combo') -ValueOnly).SelectedIndex = $Numb }
+
+Function RestorePointCBCheck {
+	$WPF_CreateRestorePoint_CB.IsChecked,$WPF_RestorePointName_Txt = If($CreateRestorePoint -eq 1){ $True,$True } Else{ $False,$False }
 }
 
 Function ConfigGUIitms {
-	If($CreateRestorePoint -eq 1){ $WPF_CreateRestorePoint_CB.IsChecked = $True } Else{ $WPF_CreateRestorePoint_CB.IsChecked = $False }
-	If($VersionCheck -eq 1){ $WPF_VersionCheck_CB.IsChecked = $True } Else{ $WPF_VersionCheck_CB.IsChecked = $False }
-	If($InternetCheck -eq 1){ $WPF_InternetCheck_CB.IsChecked = $True } Else{ $WPF_InternetCheck_CB.IsChecked = $False }
-	If($ShowSkipped -eq 1){ $WPF_ShowSkipped_CB.IsChecked = $True } Else{ $WPF_ShowSkipped_CB.IsChecked = $False }
-	If($Restart -eq 1){ $WPF_Restart_CB.IsChecked = $True } Else{ $WPF_Restart_CB.IsChecked = $False }
+	$WPF_CreateRestorePoint_CB.IsChecked = If($CreateRestorePoint -eq 1){ $True } Else{ $False }
+	$WPF_VersionCheck_CB.IsChecked = If($VersionCheck -eq 1){ $True } Else{ $False }
+	$WPF_InternetCheck_CB.IsChecked = If($InternetCheck -eq 1){ $True } Else{ $False }
+	$WPF_ShowSkipped_CB.IsChecked = If($ShowSkipped -eq 1){$True } Else{ $False }
+	$WPF_Restart_CB.IsChecked = If($Restart -eq 1){ $True } Else{ $False }
 	$WPF_RestorePointName_Txt.Text = $RestorePointName
 	RestorePointCBCheck
 }
 
-Function SelectComboBox([Array]$List,[Int]$Metro) {
-	If($Metro -eq 1) {
-		ForEach($Var In $List) {
-			If($Var -eq 'APP_SkypeApp') {
-				$WPF_APP_SkypeApp_Combo.SelectedIndex = $APP_SkypeApp1
-			} ElseIf($Var -eq 'APP_WindowsFeedbak') {
-				$WPF_APP_WindowsFeedbak_Combo.SelectedIndex = $APP_WindowsFeedbak1
-			} ElseIf($Var -eq 'APP_Zune') {
-				$WPF_APP_Zune_Combo.SelectedIndex = $APP_ZuneMusic
-			} Else {
-				SelectComboBoxGen $Var $(Get-Variable -Name $Var -ValueOnly)
-			}
-		}
-	} Else{ ForEach($Var In $List){ SelectComboBoxGen $Var $(Get-Variable -Name $Var -ValueOnly) } }
-}
-Function SelectComboBoxAllMetro([Int]$Numb){ ForEach($Var In $ListApp){ SelectComboBoxGen $Var $Numb } }
-Function SelectComboBoxGen([String]$Name,[Int]$Numb){ $(Get-Variable -Name ('WPF_'+$Name+'_Combo') -ValueOnly).SelectedIndex = $Numb }
-
-Function AppAraySet([String]$Get) {
-	[System.Collections.ArrayList]$ListTMP = Get-Variable -Name $Get
-	[System.Collections.ArrayList]$List = @()
-	If($Get -eq 'WPF_*_Combo'){
-		ForEach($Var In $ListTMP){ If($Var.Name -NotLike 'WPF_APP_*'){ $List += $Var.Name.Split('_')[1] } }
-		$List.Remove('AllMetro')
-	} Else {
-		ForEach($Var In $ListTMP){ $List += $Var.Name }
-		$List.Remove('APP_SkypeApp1')
-		$List.Remove('APP_SkypeApp2')
-		$List.Remove('APP_WindowsFeedbak1')
-		$List.Remove('APP_WindowsFeedbak2')
-		$List.Remove('APP_ZuneMusic')
-		$List.Remove('APP_ZuneVideo')
-		[Void] $List.Add('APP_SkypeApp')
-		[Void] $List.Add('APP_WindowsFeedbak')
-		[Void] $List.Add('APP_Zune')
-	} Return $List
-}
-
 Function OpenSaveDiaglog([Int]$SorO) {
-	If($SorO -eq 0){ $SOFileDialog = New-Object System.Windows.Forms.OpenFileDialog } Else{ $SOFileDialog = New-Object System.Windows.Forms.SaveFileDialog }
+	$SOFileDialog = If($SorO -eq 0){ New-Object System.Windows.Forms.OpenFileDialog } Else{ New-Object System.Windows.Forms.SaveFileDialog }
 	$SOFileDialog.InitialDirectory = $FileBase
 	$SOFileDialog.Filter = "CSV (*.csv)| *.csv"
 	$SOFileDialog.ShowDialog() | Out-Null
-	If($SorO -eq 0){ LoadSettingFile $SOFileDialog.Filename ;ConfigGUIitms ;SelectComboBox $VarList 0 ;SelectComboBox $ListApp 1 } Else{ GuiItmToVariable ;SaveSettingFiles $SOFileDialog.Filename }
+	If($SorO -eq 0) {
+		LoadSettingFile $SOFileDialog.Filename
+		ConfigGUIitms
+		SelectComboBox $VarList
+		SetAppxVar
+	} Else {
+		GuiItmToVariable
+		SaveSettingFiles $SOFileDialog.Filename
+	}
 }
 
 Function GuiStart {
@@ -576,375 +562,665 @@ Function GuiStart {
 
 [xml]$XAML = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Name="Win10_Script"
-Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Script_Date" Height="405" Width="550" BorderBrush="Black" Background="White">
+Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Script_Date" Height="420" Width="620" BorderBrush="Black" Background="White">
 	<Window.Resources>
 		<Style x:Key="SeparatorStyle1" TargetType="{x:Type Separator}">
 			<Setter Property="SnapsToDevicePixels" Value="True"/>
 			<Setter Property="Margin" Value="0,0,0,0"/>
 			<Setter Property="Template">
-				<Setter.Value> <ControlTemplate TargetType="{x:Type Separator}"><Border Height="24" SnapsToDevicePixels="True" Background="#FF4D4D4D" BorderBrush="#FF4D4D4D" BorderThickness="0,0,0,1"/></ControlTemplate></Setter.Value>
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type Separator}">
+						<Border Height="24" SnapsToDevicePixels="True" Background="#FF4D4D4D" BorderBrush="#FF4D4D4D" BorderThickness="0,0,0,1"/>
+					</ControlTemplate>
+				</Setter.Value>
 			</Setter>
 		</Style>
 		<Style TargetType="{x:Type ToolTip}"><Setter Property="Background" Value="#FFFFFFBF"/></Style>
 	</Window.Resources>
 	<Window.Effect><DropShadowEffect/></Window.Effect>
 	<Grid>
-		<Menu Height="22" VerticalAlignment="Top">
-			<MenuItem Header="Help" Height="22" Width="34" Padding="3,0,0,0">
-				<MenuItem Name="FeedbackButton" Header="Feedback/Bug Report" Height="22" Background="#FFF0F0F0" Padding="-20,0,-40,0"/>
-				<MenuItem Name="FAQButton" Header="FAQ" Height="22" Padding="-20,0,0,0" Background="#FFF0F0F0"/>
-				<MenuItem Name="AboutButton" Header="About" Height="22" Padding="-20,0,0,0" Background="#FFF0F0F0"/>
-				<MenuItem Name="CopyrightButton" Header="Copyright" Height="22" Padding="-20,0,0,0" Background="#FFF0F0F0"/><Separator Height="2" Margin="-30,0,0,0"/>
-				<MenuItem Name="ContactButton" Header="Contact Me" Height="22" Padding="-20,0,0,0" Background="#FFF0F0F0"/>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="20"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="24"/>
+		</Grid.RowDefinitions>
+		<Menu Grid.Row="0" VerticalAlignment="Top">
+			<MenuItem Header="Help">
+				<MenuItem Name="FeedbackButton" Header="Feedback/Bug Report"/>
+				<MenuItem Name="FAQButton" Header="FAQ"/>
+				<MenuItem Name="AboutButton" Header="About"/>
+				<MenuItem Name="CopyrightButton" Header="Copyright"/>
+				<MenuItem Name="ContactButton" Header="Contact Me"/>
 			</MenuItem>
-			<Separator Width="2" Style="{DynamicResource SeparatorStyle1}"/>
-			<MenuItem Name="DonateButton" Header="Donate to Me" Height="24" Width="88" Background="#FFFFAD2F" FontWeight="Bold" Margin="-1,-1,0,0"/>
-			<MenuItem Name="Madbomb122WSButton" Header="Madbomb122's GitHub" Height="24" Width="142" Background="#FFFFDF4F" FontWeight="Bold"/>
+			<MenuItem Name="DonateButton" Header="Donate to Me" Background="#FFFFAD2F" FontWeight="Bold"/>
+			<MenuItem Name="Madbomb122WSButton" Header="Madbomb122's GitHub" Background="#FFFFDF4F" FontWeight="Bold"/>
 		</Menu>
-		<TabControl Name="TabControl" Margin="0,22,0,21">
-			<TabItem Name="Services_Tab" Header="Script Options" Margin="-2,0,2,0">
+		<TabControl Name="TabControl" Grid.Row="1" BorderBrush="Gainsboro" TabStripPlacement="Left">
+			<TabControl.Resources>
+				<Style TargetType="TabItem">
+					<Setter Property="Template">
+						<Setter.Value>
+							<ControlTemplate TargetType="TabItem">
+								<Border Name="Border" BorderThickness="1,1,1,0" BorderBrush="Gainsboro" CornerRadius="4,4,0,0" Margin="2,2">
+									<ContentPresenter x:Name="ContentSite"  VerticalAlignment="Center" HorizontalAlignment="Center" ContentSource="Header" Margin="5,2"/>
+								</Border>
+								<ControlTemplate.Triggers>
+									<Trigger Property="IsSelected" Value="True"><Setter TargetName="Border" Property="Background" Value="LightSkyBlue" /></Trigger>
+									<Trigger Property="IsSelected" Value="False"><Setter TargetName="Border" Property="Background" Value="GhostWhite" /></Trigger>
+								</ControlTemplate.Triggers>
+							</ControlTemplate>
+						</Setter.Value>
+					</Setter>
+				</Style>
+			</TabControl.Resources>
+			<TabItem Name="Options_Tab" Header="Script Options">
 				<Grid Background="#FFE5E5E5">
-					<CheckBox Name="CreateRestorePoint_CB" Content="Create Restore Point:" HorizontalAlignment="Left" Margin="8,10,0,0" VerticalAlignment="Top"/>
-					<TextBox Name="RestorePointName_Txt" HorizontalAlignment="Left" Height="20" Margin="139,9,0,0" TextWrapping="Wrap" Text="Win10 Initial Setup Script" VerticalAlignment="Top" Width="188"/>
-					<CheckBox Name="ShowSkipped_CB" Content="Show Skipped Items" HorizontalAlignment="Left" Margin="8,29,0,0" VerticalAlignment="Top"/>
-					<CheckBox Name="Restart_CB" Content="Restart When Done (Restart is Recommended)" HorizontalAlignment="Left" Margin="8,49,0,0" VerticalAlignment="Top"/>
-					<CheckBox Name="VersionCheck_CB" Content="Check for Update (If update found, will run and use current settings)" HorizontalAlignment="Left" Margin="8,69,0,0" VerticalAlignment="Top"/>
-					<CheckBox Name="InternetCheck_CB" Content="Skip Internet Check" HorizontalAlignment="Left" Margin="8,89,0,0" VerticalAlignment="Top"/>
-					<Button Name="Save_Setting_Button" Content="Save Settings" HorizontalAlignment="Left" Margin="100,113,0,0" VerticalAlignment="Top" Width="77"/>
-					<Button Name="Load_Setting_Button" Content="Load Settings" HorizontalAlignment="Left" Margin="8,113,0,0" VerticalAlignment="Top" Width="77"/>
-					<Button Name="WinDefault_Button" Content="Windows Default*" HorizontalAlignment="Left" Margin="192,113,0,0" VerticalAlignment="Top" Width="100"/>
-					<Button Name="ResetDefault_Button" Content="Reset All Items" HorizontalAlignment="Left" Margin="306,113,0,0" VerticalAlignment="Top" Width="85"/>
-					<Label Content="Notes:&#xD;&#xA;Options with items marked with * means &quot;Windows Default&quot;&#xA;Windows Default Button does not change Metro Apps or OneDrive Install" HorizontalAlignment="Left" Margin="8,141,0,0" VerticalAlignment="Top" FontStyle="Italic"/>
-					<Label Content="Script Version:" HorizontalAlignment="Left" Margin="8,199,0,0" VerticalAlignment="Top" Height="25"/>
-					<TextBox Name="Script_Ver_Txt" HorizontalAlignment="Left" Height="20" Margin="90,203,0,0" TextWrapping="Wrap" Text="$Script_Version ($Script_Date)" VerticalAlignment="Top" Width="124" IsEnabled="False"/>
-					<TextBox Name="Release_Type_Txt" HorizontalAlignment="Left" Height="20" Margin="214,203,0,0" TextWrapping="Wrap" Text="$Release_Type" VerticalAlignment="Top" Width="50" IsEnabled="False"/>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="6*"/>
+						<RowDefinition Height="2*"/>
+						<RowDefinition Height="1.5*"/>
+					</Grid.RowDefinitions>
+					<GroupBox Header="Options" Grid.Row="0" Margin="2">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="2.1*"/>
+								<ColumnDefinition Width="5*"/>
+							</Grid.ColumnDefinitions>
+							<CheckBox Grid.Row="0" Grid.Column="0" Name="CreateRestorePoint_CB" Content="Create Restore Point:" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5"/>
+							<TextBox Grid.Row="0" Grid.Column="1" Name="RestorePointName_Txt" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Win10 Initial Setup Script" VerticalAlignment="Center" Margin="5"/>
+							<CheckBox Grid.Row="1" Grid.Column="0" Name="ShowSkipped_CB" Content="Show Skipped Items" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5"/>
+							<CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Name="Restart_CB" Content="Restart When Done (Restart is Recommended)" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5"/>
+							<CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Name="VersionCheck_CB" Content="Check for Update (If found, will run with current settings)" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5"/>
+							<CheckBox Grid.Row="4" Grid.Column="0" Name="InternetCheck_CB" Content="Skip Internet Check" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5"/>
+						</Grid>
+					</GroupBox>
+					<GroupBox Grid.Row="1" Header="Backup / Restore / Reset" Margin="2">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<Button Grid.Row="0" Grid.Column="0" Name="Save_Setting_Button" Content="Save Settings"/>
+							<Button Grid.Row="0" Grid.Column="1" Name="Load_Setting_Button" Content="Load Settings"/>
+							<Button Grid.Row="0" Grid.Column="2" Name="WinDefault_Button" Content="Windows Default*"/>
+							<Button Grid.Row="0" Grid.Column="3" Name="ResetDefault_Button" Content="Reset All Items"/>
+							<TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" HorizontalAlignment="Left" FontStyle="Italic" TextWrapping="Wrap" Text="Windows Default * / Does not modify Windows Apps or OneDrive Installation"/>
+						</Grid>
+					</GroupBox>
+					<GroupBox Grid.Row="2" Header="Version" Margin="2">
+						<Grid>
+							<TextBlock Name="Script_Ver_Txt" HorizontalAlignment="Left" TextWrapping="Wrap" Text="v.$Script_Version ($Script_Date) -$Release_Type" VerticalAlignment="Top"/>
+						</Grid>
+					</GroupBox>
 				</Grid>
 			</TabItem>
-			<TabItem Name="Privacy_tab" Header="Privacy" Margin="-2,0,2,0">
+			<TabItem Name="Privacy_tab" Header="Privacy">
 				<Grid Background="#FFE5E5E5">
-					<Label Content="Telemetry:" HorizontalAlignment="Left" Margin="67,10,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="Telemetry_Combo" HorizontalAlignment="Left" Margin="128,13,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Wi-Fi Sense:" HorizontalAlignment="Left" Margin="57,37,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="WiFiSense_Combo" HorizontalAlignment="Left" Margin="128,40,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="SmartScreen Filter:" HorizontalAlignment="Left" Margin="21,64,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="SmartScreen_Combo" HorizontalAlignment="Left" Margin="127,67,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Location Tracking:" HorizontalAlignment="Left" Margin="25,91,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="LocationTracking_Combo" HorizontalAlignment="Left" Margin="127,94,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Feedback:" HorizontalAlignment="Left" Margin="67,118,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="Feedback_Combo" HorizontalAlignment="Left" Margin="127,121,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Advertising ID:" HorizontalAlignment="Left" Margin="43,145,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="AdvertisingID_Combo" HorizontalAlignment="Left" Margin="127,148,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Cortana:" HorizontalAlignment="Left" Margin="341,10,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="Cortana_Combo" HorizontalAlignment="Left" Margin="392,13,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Cortana Search:" HorizontalAlignment="Left" Margin="302,37,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="CortanaSearch_Combo" HorizontalAlignment="Left" Margin="392,40,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Error Reporting:" HorizontalAlignment="Left" Margin="301,64,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="ErrorReporting_Combo" HorizontalAlignment="Left" Margin="392,67,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="AutoLogger:" HorizontalAlignment="Left" Margin="320,91,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="AutoLoggerFile_Combo" HorizontalAlignment="Left" Margin="392,94,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Diagnostics Tracking:" HorizontalAlignment="Left" Margin="274,118,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="DiagTrack_Combo" HorizontalAlignment="Left" Margin="392,121,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="WAP Push:" HorizontalAlignment="Left" Margin="329,145,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="WAPPush_Combo" HorizontalAlignment="Left" Margin="392,148,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="App Auto Download:" HorizontalAlignment="Left" Margin="274,172,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="AppAutoDownload_Combo" HorizontalAlignment="Left" Margin="392,175,0,0" VerticalAlignment="Top" Width="72"/>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+					<Grid Grid.Column="0">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="18*"/>
+							<ColumnDefinition Width="20*"/>
+						</Grid.ColumnDefinitions>
+						<Label Content="Telemetry:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="Telemetry_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Wi-Fi Sense:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="WiFiSense_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="SmartScreen Filter:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="SmartScreen_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Location Tracking:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="LocationTracking_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Feedback:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="Feedback_Combo" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Advertising ID:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="AdvertisingID_Combo" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					</Grid>
+					<Grid Grid.Column="1">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="21*"/>
+							<ColumnDefinition Width="20*"/>
+						</Grid.ColumnDefinitions>
+						<Label Content="Cortana:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="Cortana_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Cortana Search:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="CortanaSearch_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Error Reporting:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="ErrorReporting_Combo" Grid.Row="2" Grid.Column="2"  HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="AutoLogger:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="AutoLoggerFile_Combo" Grid.Row="3" Grid.Column="2"  HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Diagnostics Tracking:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="DiagTrack_Combo" Grid.Row="4" Grid.Column="2"  HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="WAP Push:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="WAPPush_Combo" Grid.Row="5" Grid.Column="2"  HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="App Auto Download:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="AppAutoDownload_Combo" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					</Grid>
 				</Grid>
 			</TabItem>
-			<TabItem Name="SrvTweak_Tab" Header="Service Tweaks" Margin="-2,0,2,0">
+			<TabItem Name="SrvTweak_Tab" Header="Service Tweaks">
 				<Grid Background="#FFE5E5E5">
-					<Label Content="UAC Level:" HorizontalAlignment="Left" Margin="79,10,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="UAC_Combo" HorizontalAlignment="Left" Margin="142,13,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Sharing mapped drives:" HorizontalAlignment="Left" Margin="10,37,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="SharingMappedDrives_Combo" HorizontalAlignment="Left" Margin="142,40,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Administrative Shares:" HorizontalAlignment="Left" Margin="18,64,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="AdminShares_Combo" HorizontalAlignment="Left" Margin="142,67,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Firewall:" HorizontalAlignment="Left" Margin="93,91,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="Firewall_Combo" HorizontalAlignment="Left" Margin="142,94,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Windows Defender:" HorizontalAlignment="Left" Margin="31,118,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="WinDefender_Combo" HorizontalAlignment="Left" Margin="142,121,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="HomeGroups:" HorizontalAlignment="Left" Margin="62,145,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="HomeGroups_Combo" HorizontalAlignment="Left" Margin="142,148,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Remote Assistance:" HorizontalAlignment="Left" Margin="34,172,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="RemoteAssistance_Combo" HorizontalAlignment="Left" Margin="142,175,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Remote Desktop w/o &#xD;&#xA;Network Authentication:" HorizontalAlignment="Left" Margin="7,196,0,0" VerticalAlignment="Top" Width="138" Height="39"/>
-					<ComboBox Name="RemoteDesktop_Combo" HorizontalAlignment="Left" Margin="142,205,0,0" VerticalAlignment="Top" Width="72"/>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+					<Grid Grid.Column="0">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="7*"/>
+							<ColumnDefinition Width="5*"/>
+						</Grid.ColumnDefinitions>
+						<Label Content="UAC Level:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="UAC_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Sharing mapped drives:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="SharingMappedDrives_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Administrative Shares:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="AdminShares_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Firewall:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="Firewall_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					</Grid>
+					<Grid Grid.Column="1">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="7*"/>
+							<ColumnDefinition Width="5*"/>
+						</Grid.ColumnDefinitions>
+						<Label Content="Windows Defender:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="WinDefender_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="HomeGroups:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="HomeGroups_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Remote Assistance:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="RemoteAssistance_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Remote Desktop w/o &#xD;&#xA;Network Authentication:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="RemoteDesktop_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					</Grid>
 				</Grid>
 			</TabItem>
-			<TabItem Name="Context_Tab" Header="Context Menu/Start Menu" Margin="-2,0,2,0">
+			<TabItem Name="Context_Tab" Header="Context Menu, &#xD;&#xA;Start Menu">
 				<Grid Background="#FFE5E5E5">
-					<Label Content="Context Menu" HorizontalAlignment="Left" Margin="82,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-					<Label Content="Cast to Device:" HorizontalAlignment="Left" Margin="43,31,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="CastToDevice_Combo" HorizontalAlignment="Left" Margin="128,34,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Previous Versions:" HorizontalAlignment="Left" Margin="26,58,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="PreviousVersions_Combo" HorizontalAlignment="Left" Margin="128,61,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Include in Library:" HorizontalAlignment="Left" Margin="28,84,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="IncludeinLibrary_Combo" HorizontalAlignment="Left" Margin="128,88,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Pin To Start:" HorizontalAlignment="Left" Margin="59,112,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="PinToStart_Combo" HorizontalAlignment="Left" Margin="128,115,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Pin To Quick Access:" HorizontalAlignment="Left" Margin="14,139,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="PinToQuickAccess_Combo" HorizontalAlignment="Left" Margin="128,142,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Share With/Share:" HorizontalAlignment="Left" Margin="26,166,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="ShareWith_Combo" HorizontalAlignment="Left" Margin="128,169,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Send To:" HorizontalAlignment="Left" Margin="76,193,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="SendTo_Combo" HorizontalAlignment="Left" Margin="128,196,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Start Menu" HorizontalAlignment="Left" Margin="352,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-					<Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Margin="254,0,0,-2" Stroke="Black" Width="1"/>
-					<Label Content="Bing Search in Start Menu:" HorizontalAlignment="Left" Margin="293,31,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="StartMenuWebSearch_Combo" HorizontalAlignment="Left" Margin="439,34,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Start Suggestions:" HorizontalAlignment="Left" Margin="337,85,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="StartSuggestions_Combo" HorizontalAlignment="Left" Margin="439,88,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Most Used Apps:" HorizontalAlignment="Left" Margin="342,112,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="MostUsedAppStartMenu_Combo" HorizontalAlignment="Left" Margin="439,115,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Recent Items &amp; Frequent Places:" HorizontalAlignment="Left" Margin="262,58,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="RecentItemsFrequent_Combo" HorizontalAlignment="Left" Margin="439,61,0,0" VerticalAlignment="Top" Width="72"/>
-                    <Label Content="Unpin All Items:" HorizontalAlignment="Left" Margin="349,139,0,0" VerticalAlignment="Top"/>
-                    <ComboBox Name="UnpinItems_Combo" HorizontalAlignment="Left" Margin="439,142,0,0" VerticalAlignment="Top" Width="72"/>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+					<GroupBox Grid.Column="0" Header="Context Menu" Margin="5">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="2*"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<Label Content="Cast to Device:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="CastToDevice_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Previous Versions:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="PreviousVersions_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Include in Library:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="IncludeinLibrary_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Pin To Start:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="PinToStart_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Pin To Quick Access:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="PinToQuickAccess_Combo" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Share With/Share:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="ShareWith_Combo" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Send To:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="SendTo_Combo" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						</Grid>
+					</GroupBox>
+					<GroupBox Grid.Column="1" Header="Start Menu" Margin="5">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="2*"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<Label Content="Bing Search:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="StartMenuWebSearch_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Start Suggestions:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="StartSuggestions_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Most Used Apps:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="MostUsedAppStartMenu_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Recent Items &amp; &#xD;&#xA;Frequent Places:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="RecentItemsFrequent_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Unpin All Items:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="UnpinItems_Combo" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						</Grid>
+					</GroupBox>
 				</Grid>
 			</TabItem>
-			<TabItem Name="TaskBar_Tab" Header="Task Bar" Margin="-3,0,2,0">
+			<TabItem Name="TaskBar_Tab" Header="Task Bar">
 				<Grid Background="#FFE5E5E5">
-					<Label Content="Battery UI Bar:" HorizontalAlignment="Left" Margin="61,10,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="BatteryUIBar_Combo" HorizontalAlignment="Left" Margin="143,13,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Clock UI Bar:" HorizontalAlignment="Left" Margin="69,37,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="ClockUIBar_Combo" HorizontalAlignment="Left" Margin="143,40,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Volume Control Bar:" HorizontalAlignment="Left" Margin="277,118,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="VolumeControlBar_Combo" HorizontalAlignment="Left" Margin="390,121,0,0" VerticalAlignment="Top" Width="120"/>
-					<Label Content="Taskbar Search box:" HorizontalAlignment="Left" Margin="33,64,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="TaskbarSearchBox_Combo" HorizontalAlignment="Left" Margin="143,67,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Task View button:" HorizontalAlignment="Left" Margin="44,91,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="TaskViewButton_Combo" HorizontalAlignment="Left" Margin="143,94,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Taskbar Icon Size:" HorizontalAlignment="Left" Margin="291,37,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="TaskbarIconSize_Combo" HorizontalAlignment="Left" Margin="390,40,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Taskbar Item Grouping:" HorizontalAlignment="Left" Margin="260,64,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="TaskbarGrouping_Combo" HorizontalAlignment="Left" Margin="390,67,0,0" VerticalAlignment="Top" Width="90"/>
-					<Label Content="Tray Icons:" HorizontalAlignment="Left" Margin="328,10,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="TrayIcons_Combo" HorizontalAlignment="Left" Margin="390,13,0,0" VerticalAlignment="Top" Width="97"/>
-					<Label Content="Seconds In Clock:" HorizontalAlignment="Left" Margin="44,118,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="SecondsInClock_Combo" HorizontalAlignment="Left" Margin="143,121,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Last Active Click:" HorizontalAlignment="Left" Margin="49,145,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="LastActiveClick_Combo" HorizontalAlignment="Left" Margin="143,148,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Taskbar on Multi Display:" HorizontalAlignment="Left" Margin="252,91,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="TaskBarOnMultiDisplay_Combo" HorizontalAlignment="Left" Margin="390,94,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Taskbar Button on Multi Display:" HorizontalAlignment="Left" Margin="13,172,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="TaskbarButtOnDisplay_Combo" HorizontalAlignment="Left" Margin="190,175,0,0" VerticalAlignment="Top" Width="197"/>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="2*"/>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="2*"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="*"/>
+					</Grid.RowDefinitions>
+					<Label Content="Battery UI Bar:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<ComboBox Name="BatteryUIBar_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<Label Content="Clock UI Bar:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<ComboBox Name="ClockUIBar_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<Label Content="Volume Control Bar:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<ComboBox Name="VolumeControlBar_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<Label Content="Taskbar Search box:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<ComboBox Name="TaskbarSearchBox_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<Label Content="Task View button:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<ComboBox Name="TaskViewButton_Combo" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<Label Content="Taskbar Icon Size:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<ComboBox Name="TaskbarIconSize_Combo" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<Label Content="Taskbar Item Grouping:" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<ComboBox Name="TaskbarGrouping_Combo" Grid.Row="0" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<Label Content="Tray Icons:" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<ComboBox Name="TrayIcons_Combo" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<Label Content="Seconds In Clock:" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<ComboBox Name="SecondsInClock_Combo" Grid.Row="2" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<Label Content="Last Active Click:" Grid.Row="3" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<ComboBox Name="LastActiveClick_Combo" Grid.Row="3" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<Label Content="Taskbar on Multi Display:" Grid.Row="4" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<ComboBox Name="TaskBarOnMultiDisplay_Combo" Grid.Row="4" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<Label Content="Taskbar Button on Multi Display:" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<ComboBox Name="TaskbarButtOnDisplay_Combo" Grid.Row="6" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 				</Grid>
 			</TabItem>
-			<TabItem Name="Explorer_Tab" Header="Explorer" Margin="-2,0,2,0">
+			<TabItem Name="Explorer_Tab" Header="Explorer">
 				<Grid Background="#FFE5E5E5">
-					<Label Content="Process ID on Title Bar:" HorizontalAlignment="Left" Margin="308,120,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="PidInTitleBar_Combo" HorizontalAlignment="Left" Margin="436,123,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Aero Snap:" HorizontalAlignment="Left" Margin="69,30,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="AeroSnap_Combo" HorizontalAlignment="Left" Margin="133,33,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Aero Shake:" HorizontalAlignment="Left" Margin="63,58,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="AeroShake_Combo" HorizontalAlignment="Left" Margin="133,61,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Known Extensions:" HorizontalAlignment="Left" Margin="331,147,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="KnownExtensions_Combo" HorizontalAlignment="Left" Margin="436,150,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Hidden Files:" HorizontalAlignment="Left" Margin="58,112,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="HiddenFiles_Combo" HorizontalAlignment="Left" Margin="133,115,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="System Files:" HorizontalAlignment="Left" Margin="59,139,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="SystemFiles_Combo" HorizontalAlignment="Left" Margin="133,142,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Default Explorer View:" HorizontalAlignment="Left" Margin="10,193,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="ExplorerOpenLoc_Combo" HorizontalAlignment="Left" Margin="133,196,0,0" VerticalAlignment="Top" Width="102"/>
-					<Label Content="Recent Files in Quick Access:" HorizontalAlignment="Left" Margin="279,11,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="RecentFileQikAcc_Combo" HorizontalAlignment="Left" Margin="436,14,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Frequent folders in Quick_access:" HorizontalAlignment="Left" Margin="259,39,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="FrequentFoldersQikAcc_Combo" HorizontalAlignment="Left" Margin="436,41,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Window Content while Dragging:" HorizontalAlignment="Left" Margin="253,66,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="WinContentWhileDrag_Combo" HorizontalAlignment="Left" Margin="436,69,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Autoplay:" HorizontalAlignment="Left" Margin="76,3,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="Autoplay_Combo" HorizontalAlignment="Left" Margin="133,6,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Autorun:" HorizontalAlignment="Left" Margin="80,85,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="Autorun_Combo" HorizontalAlignment="Left" Margin="133,88,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Search Store for Unkn. Extensions:" HorizontalAlignment="Left" Margin="249,94,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="StoreOpenWith_Combo" HorizontalAlignment="Left" Margin="436,96,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Task Manager Details:" HorizontalAlignment="Left" Margin="315,175,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="TaskManagerDetails_Combo" HorizontalAlignment="Left" Margin="436,177,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Powershell to Cmd:" HorizontalAlignment="Left" Margin="24,220,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="WinXPowerShell_Combo" HorizontalAlignment="Left" Margin="133,223,0,0" VerticalAlignment="Top" Width="127"/>
-					<Label Name="ReopenAppsOnBoot_Txt" Content="Reopen Apps On Boot:" HorizontalAlignment="Left" Margin="309,203,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="ReopenAppsOnBoot_Combo" HorizontalAlignment="Left" Margin="436,205,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Name="TimeLine_Txt" Content="Window Timeline:" HorizontalAlignment="Left" Margin="336,231,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="Timeline_Combo" HorizontalAlignment="Left" Margin="436,233,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Long File Path:" HorizontalAlignment="Left" Margin="49,166,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="LongFilePath_Combo" HorizontalAlignment="Left" Margin="133,169,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="App Hibernation File (Swapfile.sys):" HorizontalAlignment="Left" Margin="6,245,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="AppHibernationFile_Combo" HorizontalAlignment="Left" Margin="197,248,0,0" VerticalAlignment="Top" Width="72"/>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="4*"/>
+						<ColumnDefinition Width="3*"/>
+					</Grid.ColumnDefinitions>
+					<Grid Grid.Column="0">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*" Name="Timeline_Row"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="2*"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+						<Label Content="Recent Files in Quick Access:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="RecentFileQikAcc_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Frequent folders in Quick_access:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="FrequentFoldersQikAcc_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Window Content while Dragging:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="WinContentWhileDrag_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Search Store for Unkn. Extensions:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="StoreOpenWith_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Long File Path:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="LongFilePath_Combo" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Default Explorer View:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="ExplorerOpenLoc_Combo" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Powershell to Cmd:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="WinXPowerShell_Combo" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="App Hibernation File (Swapfile.sys):" Grid.Row="7" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="AppHibernationFile_Combo" Grid.Row="7" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Process ID on Title Bar:" Grid.Row="8" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="PidInTitleBar_Combo" Grid.Row="8" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Accessability Key Prompt:" Grid.Row="9" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="AccessKeyPrmpt_Combo" Grid.Row="9" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Grid.Row="10" Grid.Column="0" Content="Window Timeline:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="Timeline_Combo" Grid.Row="10" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					</Grid>
+					<Grid Grid.Column="1">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*" Name="ReopenAppsOnBoot_Row"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="3*"/>
+							<ColumnDefinition Width="2*"/>
+						</Grid.ColumnDefinitions>
+						<Label Content="Aero Snap:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="AeroSnap_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Aero Shake:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="AeroShake_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Known Extensions:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="KnownExtensions_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Hidden Files:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="HiddenFiles_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="System Files:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="SystemFiles_Combo" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Autoplay:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="Autoplay_Combo" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Autorun:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="Autorun_Combo" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Task Manager Details:" Grid.Row="7" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="TaskManagerDetails_Combo" Grid.Row="7" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="F1 Help Key:" Grid.Row="8" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="F1HelpKey_Combo" Grid.Row="8" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Grid.Row="9" Grid.Column="0" Content="Reopen Apps On Boot:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="ReopenAppsOnBoot_Combo" Grid.Row="9" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					</Grid>
 				</Grid>
 			</TabItem>
-			<TabItem Name="Desktop_Tab" Header="Desktop/This PC" Margin="-2,0,2,0">
+			<TabItem Name="Desktop_Tab" Header="Desktop, This PC">
 				<Grid Background="#FFE5E5E5">
-					<Label Content="Desktop" HorizontalAlignment="Left" Margin="99,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-					<Label Content="This PC Icon:" HorizontalAlignment="Left" Margin="54,31,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="ThisPCOnDesktop_Combo" HorizontalAlignment="Left" Margin="128,34,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Network Icon:" HorizontalAlignment="Left" Margin="47,58,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="NetworkOnDesktop_Combo" HorizontalAlignment="Left" Margin="128,61,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Recycle Bin Icon:" HorizontalAlignment="Left" Margin="34,85,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="RecycleBinOnDesktop_Combo" HorizontalAlignment="Left" Margin="128,88,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Users File Icon:" HorizontalAlignment="Left" Margin="42,112,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="UsersFileOnDesktop_Combo" HorizontalAlignment="Left" Margin="128,115,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Control Panel Icon:" HorizontalAlignment="Left" Margin="21,139,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="ControlPanelOnDesktop_Combo" HorizontalAlignment="Left" Margin="128,142,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Desktop Folder:" HorizontalAlignment="Left" Margin="302,31,0,0" VerticalAlignment="Top"/>
-					<Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Margin="254,0,0,-2" Stroke="Black" Width="1"/>
-					<Label Content="This PC" HorizontalAlignment="Left" Margin="364,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-					<ComboBox Name="DesktopIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,34,0,0" VerticalAlignment="Top" Width="88"/>
-					<Label Content="Documents Folder:" HorizontalAlignment="Left" Margin="285,58,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="DocumentsIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,61,0,0" VerticalAlignment="Top" Width="88"/>
-					<Label Content="Downloads Folder:" HorizontalAlignment="Left" Margin="287,85,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="DownloadsIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,88,0,0" VerticalAlignment="Top" Width="88"/>
-					<Label Content="Music Folder:" HorizontalAlignment="Left" Margin="315,112,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="MusicIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,115,0,0" VerticalAlignment="Top" Width="88"/>
-					<Label Content="Pictures Folder:" HorizontalAlignment="Left" Margin="304,139,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="PicturesIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,142,0,0" VerticalAlignment="Top" Width="88"/>
-					<Label Content="Videos Folder:" HorizontalAlignment="Left" Margin="310,166,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="VideosIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,169,0,0" VerticalAlignment="Top" Width="88"/>
-					<Label Name="ThreeDobjectsIconInThisPC_Txt" Content="3D Objects Folder:" HorizontalAlignment="Left" Margin="288,194,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="ThreeDobjectsIconInThisPC_Combo" HorizontalAlignment="Left" Margin="392,197,0,0" VerticalAlignment="Top" Width="88"/>
-					<Label Content="**Remove may cause problems with a few things" HorizontalAlignment="Left" Margin="255,216,0,0" VerticalAlignment="Top"/>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+					<GroupBox Grid.Column="0" Header="Desktop" Margin="5">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<Label Content="This PC Icon:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="ThisPCOnDesktop_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Network Icon:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="NetworkOnDesktop_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Recycle Bin Icon:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="RecycleBinOnDesktop_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Users File Icon:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="UsersFileOnDesktop_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Control Panel Icon:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="ControlPanelOnDesktop_Combo" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						</Grid>
+					</GroupBox>
+					<GroupBox Grid.Column="1" Header="This PC" Margin="5">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*" Name="ThreeDobjectsIconInThisPC_Row"/>
+								<RowDefinition Height="*"/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<Label Content="Desktop Folder:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="DesktopIconInThisPC_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Documents Folder:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="DocumentsIconInThisPC_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Downloads Folder:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="DownloadsIconInThisPC_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Music Folder:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="MusicIconInThisPC_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Pictures Folder:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="PicturesIconInThisPC_Combo" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Videos Folder:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="VideosIconInThisPC_Combo" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Grid.Row="6" Grid.Column="0" Content="3D Objects Folder:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="ThreeDobjectsIconInThisPC_Combo" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="**Remove may cause problems" Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Grid>
+					</GroupBox>
 				</Grid>
 			</TabItem>
-			<TabItem Name="Misc_Tab" Header="Misc/Photo Viewer/LockScreen" Margin="-2,0,2,0">
+			<TabItem Name="Misc_Tab" Header="Photo Viewer, &#xD;&#xA;LockScreen, Misc">
 				<Grid Background="#FFE5E5E5">
-					<Label Content="Misc" HorizontalAlignment="Left" Margin="109,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-					<Label Content="Action Center:" HorizontalAlignment="Left" Margin="46,31,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="ActionCenter_Combo" HorizontalAlignment="Left" Margin="128,34,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Sticky Key Prompt:" HorizontalAlignment="Left" Margin="23,58,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="StickyKeyPrompt_Combo" HorizontalAlignment="Left" Margin="128,61,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Num Lock on Startup:" HorizontalAlignment="Left" Margin="6,85,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="NumblockOnStart_Combo" HorizontalAlignment="Left" Margin="128,88,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="F8 Boot Menu:" HorizontalAlignment="Left" Margin="44,112,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="F8BootMenu_Combo" HorizontalAlignment="Left" Margin="128,115,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Remote UAC Local &#xD;&#xA;Account Token Filter:" HorizontalAlignment="Left" Margin="11,187,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="RemoteUACAcctToken_Combo" HorizontalAlignment="Left" Margin="128,197,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Hibernate Option:" HorizontalAlignment="Left" Margin="26,139,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="HibernatePower_Combo" HorizontalAlignment="Left" Margin="128,142,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Sleep Option:" HorizontalAlignment="Left" Margin="49,166,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="SleepPower_Combo" HorizontalAlignment="Left" Margin="128,169,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Photo Viewer" HorizontalAlignment="Left" Margin="346,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-					<Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Margin="254,0,0,-2" Stroke="Black" Width="1"/>
-					<Label Content="File Association:" HorizontalAlignment="Left" Margin="301,31,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="PVFileAssociation_Combo" HorizontalAlignment="Left" Margin="392,34,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Add &quot;Open with...&quot;:" HorizontalAlignment="Left" Margin="285,58,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="PVOpenWithMenu_Combo" HorizontalAlignment="Left" Margin="392,61,0,0" VerticalAlignment="Top" Width="72"/>
-					<Rectangle Fill="#FFFFFFFF" Height="1" Margin="254,106,0,0" Stroke="Black" VerticalAlignment="Top"/>
-					<Label Content="Lockscreen" HorizontalAlignment="Left" Margin="352,111,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-					<Label Content="Lockscreen:" HorizontalAlignment="Left" Margin="323,139,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="LockScreen_Combo" HorizontalAlignment="Left" Margin="392,142,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Power Menu:" HorizontalAlignment="Left" Margin="316,166,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="PowerMenuLockScreen_Combo" HorizontalAlignment="Left" Margin="392,169,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Camera:" HorizontalAlignment="Left" Margin="342,193,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="CameraOnLockscreen_Combo" HorizontalAlignment="Left" Margin="392,196,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Name="AccountProtectionWarn_Txt" Content="Account Protection Warning:" HorizontalAlignment="Left" Margin="9,227,0,0" VerticalAlignment="Top" Width="166"/>
-					<ComboBox Name="AccountProtectionWarn_Combo" HorizontalAlignment="Left" Margin="168,229,0,0" VerticalAlignment="Top" Width="72"/>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="2.5*"/>
+						<ColumnDefinition Width="2*"/>
+					</Grid.ColumnDefinitions>
+					<Grid>
+						<Grid Grid.Column="0">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="3*"/>
+								<RowDefinition Height="4*"/>
+							</Grid.RowDefinitions>
+							<GroupBox Grid.Row="0" Header="Photo Viewer" Margin="10">
+								<Grid>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="*"/>
+										<RowDefinition Height="*"/>
+									</Grid.RowDefinitions>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="*"/>
+										<ColumnDefinition Width="*"/>
+									</Grid.ColumnDefinitions>
+									<Label Content="File Association:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+									<ComboBox Name="PVFileAssociation_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+									<Label Content="Add &quot;Open with...&quot;:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+									<ComboBox Name="PVOpenWithMenu_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+								</Grid>
+							</GroupBox>
+							<GroupBox Grid.Row="1" Header="Lockscreen" Margin="5">
+								<Grid>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="*"/>
+										<RowDefinition Height="*"/>
+										<RowDefinition Height="*"/>
+										<RowDefinition Height="*" Name="AccountProtectionWarn_Row"/>
+									</Grid.RowDefinitions>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="5*"/>
+										<ColumnDefinition Width="2*"/>
+									</Grid.ColumnDefinitions>
+									<Label Content="Lockscreen:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+									<ComboBox Name="LockScreen_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+									<Label Content="Power Menu:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+									<ComboBox Name="PowerMenuLockScreen_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+									<Label Content="Camera:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+									<ComboBox Name="CameraOnLockscreen_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+									<Label Content="Account Protection Warning:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+									<ComboBox Name="AccountProtectionWarn_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+								</Grid>
+							</GroupBox>
+						</Grid>
+					</Grid>
+					<GroupBox Grid.Column="1" Header="Misc" Margin="5">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="1.5*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="3*"/>
+								<ColumnDefinition Width="2*"/>
+							</Grid.ColumnDefinitions>
+							<Label Content="Action Center:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="ActionCenter_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Sticky Key Prompt:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="StickyKeyPrompt_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Num Lock on Startup:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="NumblockOnStart_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="F8 Boot Menu:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="F8BootMenu_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Remote UAC Local &#xD;&#xA;Account Token Filter" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="RemoteUACAcctToken_Combo" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Hibernate Option:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="HibernatePower_Combo" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Sleep Option:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="SleepPower_Combo" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						</Grid>
+					</GroupBox>
 				</Grid>
 			</TabItem>
-			<TabItem Name="MetroApp_Tab" Header="Metro App" Margin="-2,0,2,0">
-				<Grid Background="#FFE5E5E5">
-					<Label Content="Set All Metro Apps:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="72,2,0,0"/>
-					<Rectangle Fill="#FFFFFFFF" Height="1" Margin="0,29,0,0" Stroke="Black" VerticalAlignment="Top" HorizontalAlignment="Left" Width="347"/>
-					<ComboBox Name="AllMetro_Combo" HorizontalAlignment="Left" Margin="181,4,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="3DBuilder:" HorizontalAlignment="Left" Margin="32,32,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_3DBuilder_Combo" HorizontalAlignment="Left" Margin="94,35,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="3DViewer:" HorizontalAlignment="Left" Margin="34,56,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_3DViewer_Combo" HorizontalAlignment="Left" Margin="94,59,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="Bing Weather:" HorizontalAlignment="Left" Margin="12,80,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_BingWeather_Combo" HorizontalAlignment="Left" Margin="94,83,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="Phone App:" HorizontalAlignment="Left" Margin="26,104,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_CommsPhone_Combo" HorizontalAlignment="Left" Margin="94,107,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="Calendar &amp; Mail:" HorizontalAlignment="Left" Margin="-1,128,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_Communications_Combo" HorizontalAlignment="Left" Margin="94,131,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="Getting Started:" HorizontalAlignment="Left" Margin="4,152,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_Getstarted_Combo" HorizontalAlignment="Left" Margin="94,155,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="Messaging App:" HorizontalAlignment="Left" Margin="2,176,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_Messaging_Combo" HorizontalAlignment="Left" Margin="94,179,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="Get Office:" HorizontalAlignment="Left" Margin="31,203,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_MicrosoftOffHub_Combo" HorizontalAlignment="Left" Margin="94,203,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="Movie Moments:" HorizontalAlignment="Left" Margin="-2,224,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_MovieMoments_Combo" HorizontalAlignment="Left" Margin="94,227,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="Netflix:" HorizontalAlignment="Left" Margin="225,32,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_Netflix_Combo" HorizontalAlignment="Left" Margin="269,35,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="Office OneNote:" HorizontalAlignment="Left" Margin="173,56,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_OfficeOneNote_Combo" HorizontalAlignment="Left" Margin="269,59,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="Office Sway:" HorizontalAlignment="Left" Margin="198,80,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_OfficeSway_Combo" HorizontalAlignment="Left" Margin="269,83,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="One Connect:" HorizontalAlignment="Left" Margin="190,104,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_OneConnect_Combo" HorizontalAlignment="Left" Margin="269,107,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="People:" HorizontalAlignment="Left" Margin="224,128,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_People_Combo" HorizontalAlignment="Left" Margin="269,131,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="Photos App:" HorizontalAlignment="Left" Margin="198,152,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_Photos_Combo" HorizontalAlignment="Left" Margin="269,155,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="Skype:" HorizontalAlignment="Left" Margin="227,176,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_SkypeApp_Combo" HorizontalAlignment="Left" Margin="269,179,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="Solitaire Collect:" HorizontalAlignment="Left" Margin="177,200,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_SolitaireCollect_Combo" HorizontalAlignment="Left" Margin="269,203,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="Sticky Notes:" HorizontalAlignment="Left" Margin="194,224,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_StickyNotes_Combo" HorizontalAlignment="Left" Margin="269,227,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="Voice Recorder:" HorizontalAlignment="Left" Margin="353,32,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_VoiceRecorder_Combo" HorizontalAlignment="Left" Margin="442,35,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="Alarms &amp; Clock:" HorizontalAlignment="Left" Margin="351,56,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_WindowsAlarms_Combo" HorizontalAlignment="Left" Margin="442,59,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="Calculator:" HorizontalAlignment="Left" Margin="379,80,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_WindowsCalculator_Combo" HorizontalAlignment="Left" Margin="442,83,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="Camera:" HorizontalAlignment="Left" Margin="392,104,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_WindowsCamera_Combo" HorizontalAlignment="Left" Margin="442,107,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="Win. Feedback:" HorizontalAlignment="Left" Margin="355,128,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_WindowsFeedbak_Combo" HorizontalAlignment="Left" Margin="442,131,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="Windows Maps:" HorizontalAlignment="Left" Margin="351,152,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_WindowsMaps_Combo" HorizontalAlignment="Left" Margin="442,155,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="Phone Comp.:" HorizontalAlignment="Left" Margin="361,176,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_WindowsPhone_Combo" HorizontalAlignment="Left" Margin="442,179,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="All Xbox Apps:" HorizontalAlignment="Left" Margin="359,200,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_XboxApp_Combo" HorizontalAlignment="Left" Margin="442,203,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="Groove:" HorizontalAlignment="Left" Margin="394,224,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_Zune_Combo" HorizontalAlignment="Left" Margin="442,227,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="Windows Store:" HorizontalAlignment="Left" Margin="353,8,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_WindowsStore_Combo" HorizontalAlignment="Left" Margin="442,11,0,0" VerticalAlignment="Top" Width="74"/>
-					<Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Margin="171,29,0,-2" Stroke="Black" Width="1"/>
-					<Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Margin="346,0,0,-2" Stroke="Black" Width="1"/>
-					<Label Content="Get Help App:" HorizontalAlignment="Left" Margin="13,248,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_GetHelp_Combo" HorizontalAlignment="Left" Margin="94,251,0,0" VerticalAlignment="Top" Width="74"/>
-					<Label Content="Wallet App:" HorizontalAlignment="Left" Margin="201,248,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="APP_WindowsWallet_Combo" HorizontalAlignment="Left" Margin="269,251,0,0" VerticalAlignment="Top" Width="74"/>
-				</Grid>
+			<TabItem Name="WinApp_Tab" Header="Window App">
+				<DataGrid Name="dataGrid" FrozenColumnCount="2" AutoGenerateColumns="False" AlternationCount="2" HeadersVisibility="Column" CanUserResizeRows="False" CanUserAddRows="False" IsTabStop="True" IsTextSearchEnabled="True" SelectionMode="Extended">
+					<DataGrid.RowStyle>
+						<Style TargetType="{ x:Type DataGridRow }">
+							<Style.Triggers>
+								<Trigger Property="AlternationIndex" Value="0"><Setter Property="Background" Value="White"/></Trigger>
+								<Trigger Property="AlternationIndex" Value="1"><Setter Property="Background" Value="#FFD8D8D8"/></Trigger>
+							</Style.Triggers>
+						</Style>
+					</DataGrid.RowStyle>
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="Display Name" Width="150" Binding="{Binding CName}" CanUserSort="True" IsReadOnly="True"/>
+						<DataGridTemplateColumn Header="Option" Width="80" SortMemberPath="AppSelected" CanUserSort="True">
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<ComboBox ItemsSource="{Binding AppOptions}" Text="{Binding Path=AppSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+						</DataGridTemplateColumn>
+						<DataGridTextColumn Header="Appx Name" Width="180" Binding="{Binding AppxName}" IsReadOnly="True"/>
+					</DataGrid.Columns>
+				</DataGrid>
 			</TabItem>
-			<TabItem Name="Application_Tab" Header="Application/Windows Update" Margin="-2,0,2,0">
+			<TabItem Name="Application_Tab" Header="Application, &#xD;&#xA;Windows Update">
 				<Grid Background="#FFE5E5E5">
-					<Label Content="Application/Feature" HorizontalAlignment="Left" Margin="79,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-					<Label Content="OneDrive:" HorizontalAlignment="Left" Margin="69,31,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="OneDrive_Combo" HorizontalAlignment="Left" Margin="128,34,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="OneDrive Install:" HorizontalAlignment="Left" Margin="34,58,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="OneDriveInstall_Combo" HorizontalAlignment="Left" Margin="128,61,0,0" VerticalAlignment="Top" Width="78"/>
-					<Label Content="Xbox DVR:" HorizontalAlignment="Left" Margin="66,85,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="XboxDVR_Combo" HorizontalAlignment="Left" Margin="128,88,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="MediaPlayer:" HorizontalAlignment="Left" Margin="53,112,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="MediaPlayer_Combo" HorizontalAlignment="Left" Margin="128,115,0,0" VerticalAlignment="Top" Width="78"/>
-					<Label Content="Work Folders:" HorizontalAlignment="Left" Margin="49,139,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="WorkFolders_Combo" HorizontalAlignment="Left" Margin="128,142,0,0" VerticalAlignment="Top" Width="78"/>
-					<Label Name="LinuxSubsystem_Txt" Content="Linux Subsystem:" HorizontalAlignment="Left" Margin="31,193,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="LinuxSubsystem_Combo" HorizontalAlignment="Left" Margin="128,196,0,0" VerticalAlignment="Top" Width="78"/>
-					<Label Content="Windows Update" HorizontalAlignment="Left" Margin="336,4,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-					<Label Content="Check for Update:" HorizontalAlignment="Left" Margin="290,31,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="CheckForWinUpdate_Combo" HorizontalAlignment="Left" Margin="392,34,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Update Check Type:" HorizontalAlignment="Left" Margin="280,58,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="WinUpdateType_Combo" HorizontalAlignment="Left" Margin="392,61,0,0" VerticalAlignment="Top" Width="115"/>
-					<Label Content="Update P2P:" HorizontalAlignment="Left" Margin="320,85,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="WinUpdateDownload_Combo" HorizontalAlignment="Left" Margin="392,88,0,0" VerticalAlignment="Top" Width="83"/>
-					<Label Content="Update MSRT:" HorizontalAlignment="Left" Margin="310,112,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="UpdateMSRT_Combo" HorizontalAlignment="Left" Margin="392,115,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Update Driver:" HorizontalAlignment="Left" Margin="309,139,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="UpdateDriver_Combo" HorizontalAlignment="Left" Margin="392,142,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Restart on Update:" HorizontalAlignment="Left" Margin="287,166,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="RestartOnUpdate_Combo" HorizontalAlignment="Left" Margin="392,169,0,0" VerticalAlignment="Top" Width="72"/>
-					<Rectangle Fill="#FFFFFFFF" HorizontalAlignment="Left" Margin="254,0,0,-2" Stroke="Black" Width="1"/>
-					<Label Content="Update Available Popup:" HorizontalAlignment="Left" Margin="256,193,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="UpdateAvailablePopup_Combo" HorizontalAlignment="Left" Margin="392,196,0,0" VerticalAlignment="Top" Width="72"/>
-					<Label Content="Fax And Scan:" HorizontalAlignment="Left" Margin="49,166,0,0" VerticalAlignment="Top"/>
-					<ComboBox Name="FaxAndScan_Combo" HorizontalAlignment="Left" Margin="128,169,0,0" VerticalAlignment="Top" Width="78"/>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+					<GroupBox Grid.Column="0" Header="Application/Feature" Margin="5">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*" Name="LinuxSubsystem_Row"/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<Label Content="OneDrive:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="OneDrive_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="OneDrive Install:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="OneDriveInstall_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Xbox DVR:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="XboxDVR_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="MediaPlayer:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="MediaPlayer_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Work Folders:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="WorkFolders_Combo" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Fax And Scan:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="FaxAndScan_Combo" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Linux Subsystem:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="LinuxSubsystem_Combo" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						</Grid>
+					</GroupBox>
+					<GroupBox Grid.Column="1" Header="Windows Update" Margin="5">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+								<RowDefinition Height="*"/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="9*"/>
+								<ColumnDefinition Width="5*"/>
+							</Grid.ColumnDefinitions>
+							<Label Content="Check for Update:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="CheckForWinUpdate_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Update Check Type:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="WinUpdateType_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Update P2P:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="WinUpdateDownload_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Update MSRT:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="UpdateMSRT_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Update Driver:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="UpdateDriver_Combo" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Restart on Update:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="RestartOnUpdate_Combo" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Update Available Popup:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="UpdateAvailablePopup_Combo" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Update MS Products:" Grid.Row="7" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="UpdateMSProducts_Combo" Grid.Row="7" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						</Grid>
+					</GroupBox>
 				</Grid>
 			</TabItem>
 		</TabControl>
-		<Button Name="RunScriptButton" Content="Run Script" VerticalAlignment="Bottom" Height="20" FontWeight="Bold"/>
-		<Rectangle Fill="#FFFFFFFF" Height="1" Margin="0,0,0,20" Stroke="Black" VerticalAlignment="Bottom"/>
+		<Button Name="RunScriptButton" Grid.Row="2" Content="Run Script" VerticalAlignment="Bottom" Height="20" FontWeight="Bold"/>
 	</Grid>
 </Window>
 "@
@@ -958,8 +1234,7 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 	[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms') | Out-Null
 
 	$Script:WPFList = Get-Variable -Name 'WPF_*'
-	[System.Collections.ArrayList]$VarList = AppAraySet 'WPF_*_Combo'
-	[System.Collections.ArrayList]$ListApp = AppAraySet 'APP_*'
+	[System.Collections.ArrayList]$VarList = ForEach($Var In (Get-Variable -Name 'WPF_*_Combo')){ $Var.Name.Split('_')[1] }
 
 	$WPF_Madbomb122WSButton.Add_Click{ OpenWebsite 'https://GitHub.com/madbomb122/' }
 	$WPF_FeedbackButton.Add_Click{ OpenWebsite "$MySite/issues" }
@@ -968,14 +1243,15 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 	$WPF_CreateRestorePoint_CB.Add_Click{ $WPF_RestorePointName_Txt.IsEnabled = $WPF_CreateRestorePoint_CB.IsChecked }
 	$WPF_RunScriptButton.Add_Click{ GuiDone }
 	$WPF_WinDefault_Button.Add_Click{ LoadWinDefault ;SelectComboBox $VarList }
-	$WPF_ResetDefault_Button.Add_Click{ SetDefault ;SelectComboBox $VarList ;SelectComboBox $ListApp 1 }
+	$WPF_ResetDefault_Button.Add_Click{ SetDefault ;SelectComboBox $VarList ;SetAppxVar }
 	$WPF_Load_Setting_Button.Add_Click{ OpenSaveDiaglog 0 }
 	$WPF_Save_Setting_Button.Add_Click{ OpenSaveDiaglog 1 }
 	$WPF_AboutButton.Add_Click{ [Windows.Forms.Messagebox]::Show('This script lets you do Various Settings and Tweaks for Windows 10. For manual or Automated use.','About', 'OK') | Out-Null }
 	$WPF_CopyrightButton.Add_Click{ [Windows.Forms.Messagebox]::Show($Copyright,'Copyright', 'OK') | Out-Null }
-	$WPF_AllMetro_Combo.add_SelectionChanged{ SelectComboBoxAllMetro ($WPF_AllMetro_Combo.SelectedIndex) }
 
 $Skip_EnableD_Disable = @(
+'F1HelpKey',
+'AccessKeyPrmpt',
 'Telemetry',
 'WiFiSense',
 'SmartScreen',
@@ -1028,6 +1304,7 @@ $Skip_EnableD_Disable = @(
 'AppHibernationFile')
 
 $Skip_Enable_DisableD = @(
+'UpdateMSProducts',
 'SharingMappedDrives',
 'RemoteDesktop',
 'LastActiveClick',
@@ -1072,14 +1349,14 @@ $Skip_Show_HideD = @(
 $Skip_InstalledD_Uninstall = @('OneDriveInstall','MediaPlayer','WorkFolders','FaxAndScan')
 
 	If($Release_Type -eq 'Testing'){ $Script:Restart = 0 ;$WPF_Restart_CB.IsEnabled = $False ;$WPF_Restart_CB.Content += ' (Disabled in Testing Version)' }
-	If($Win10Ver -lt 1607){ $WPF_LinuxSubsystem_Combo.Visibility = 'Hidden' ;$WPF_LinuxSubsystem_Txt.Visibility = 'Hidden' }
+	If($Win10Ver -lt 1607){ $WPF_LinuxSubsystem_Row.Height = 0 }
 	If($Win10Ver -lt 1709){
-		$WPF_ThreeDobjectsIconInThisPC_Combo.Visibility = 'Hidden' ;$WPF_ThreeDobjectsIconInThisPC_txt.Visibility = 'Hidden'
-		$WPF_ReopenAppsOnBoot_Combo.Visibility = 'Hidden' ;$WPF_ReopenAppsOnBoot_txt.Visibility = 'Hidden'
+		$WPF_ThreeDobjectsIconInThisPC_Row.Height = 0
+		$WPF_ReopenAppsOnBoot_Row.Height = 0
 	}
 	If($Win10Ver -lt 1803){
-		$WPF_AccountProtectionWarn_Combo.Visibility = 'Hidden' ;$WPF_AccountProtectionWarn_Txt.Visibility = 'Hidden'
-		$WPF_Timeline_Combo.Visibility = 'Hidden' ;$WPF_Timeline_Txt.Visibility = 'Hidden'
+		$WPF_AccountProtectionWarn_Row.Height = 0
+		$WPF_Timeline_Row.Height = 0
 	}
 	ForEach($Var In $Skip_EnableD_Disable){ SetCombo $Var 'Enable*,Disable' }
 	ForEach($Var In $Skip_Enable_DisableD){ SetCombo $Var 'Enable,Disable*' }
@@ -1087,9 +1364,6 @@ $Skip_InstalledD_Uninstall = @('OneDriveInstall','MediaPlayer','WorkFolders','Fa
 	ForEach($Var In $Skip_ShowD_Hide){ SetCombo $Var 'Show*,Hide' }
 	ForEach($Var In $Skip_Show_HideD){ SetCombo $Var 'Show,Hide*' }
 	ForEach($Var In $Skip_InstalledD_Uninstall){ SetCombo $Var 'Installed*,Uninstall' }
-
-	SetComboM 'AllMetro' 'Unhide,Hide,Uninstall'
-	ForEach($MetroApp In $ListApp){ SetComboM $MetroApp 'Unhide,Hide,Uninstall' }
 
 	SetCombo 'LinuxSubsystem' 'Installed,Uninstall*'
 	SetCombo 'HibernatePower' 'Enable,Disable'
@@ -1108,9 +1382,11 @@ $Skip_InstalledD_Uninstall = @('OneDriveInstall','MediaPlayer','WorkFolders','Fa
 	SetCombo 'WinUpdateType' 'Notify,Auto DL,Auto DL+Install*,Admin Config'
 	SetCombo 'WinUpdateDownload' 'P2P*,Local Only,Disable'
 
+	$WPF_dataGrid.ItemsSource = $DataGridApps
+
 	ConfigGUIitms
-	If($Release_Type -ne 'Stable'){ $Form.Title += " -$Release_Type)" } Else{ $Form.Title += ')' }
-	Clear-Host
+	$Form.Title += If($Release_Type -ne 'Stable'){ " -$Release_Type)" } Else{ ')' }
+	If($Release_Type -eq 'Stable'){ Clear-Host }
 	DisplayOut 'Displaying GUI Now' -C 14
 	DisplayOut "`nTo exit you can close the GUI or PowerShell Window." -C 14
 	$Form.ShowDialog() | Out-Null
@@ -1124,24 +1400,12 @@ Function GuiDone {
 }
 
 Function GuiItmToVariable {
-	ForEach($Var In $ListApp) {
-		$Value = ($(Get-Variable -Name ('WPF_'+$Var+'_Combo') -ValueOnly).SelectedIndex)
-		If($Var -eq 'APP_SkypeApp') {
-			Set-Variable -Name 'APP_SkypeApp1' -Value $Value -Scope Script ;Set-Variable -Name 'APP_SkypeApp2' -Value $Value -Scope Script
-		} ElseIf($Var -eq 'APP_WindowsFeedbak') {
-			Set-Variable -Name 'APP_WindowsFeedbak1' -Value $Value -Scope Script ;Set-Variable -Name 'APP_WindowsFeedbak2' -Value $Value -Scope Script
-		} ElseIf($Var -eq 'APP_Zune') {
-			Set-Variable -Name 'APP_ZuneMusic' -Value $Value -Scope Script ;Set-Variable -Name 'APP_ZuneVideo' -Value $Value -Scope Script
-		} Else {
-			Set-Variable -Name $Var -Value $Value -Scope Script
-		}
-	}
 	ForEach($Var In $VarList){ Set-Variable -Name $Var -Value ($(Get-Variable -Name ('WPF_'+$Var+'_Combo') -ValueOnly).SelectedIndex) -Scope Script }
-	If($WPF_CreateRestorePoint_CB.IsChecked){ $Script:CreateRestorePoint = 1 } Else{ $Script:CreateRestorePoint = 0 }
-	If($WPF_VersionCheck_CB.IsChecked){ $Script:VersionCheck = 1 } Else{ $Script:VersionCheck = 0 }
-	If($WPF_InternetCheck_CB.IsChecked){ $Script:InternetCheck = 1 } Else{ $Script:InternetCheck = 0 }
-	If($WPF_ShowSkipped_CB.IsChecked){ $Script:ShowSkipped = 1 } Else{ $Script:ShowSkipped = 0 }
-	If($WPF_Restart_CB.IsChecked){ $Script:Restart = 1 } Else { $Script:Restart = 0 }
+	$Script:CreateRestorePoint = If($WPF_CreateRestorePoint_CB.IsChecked){ 1 } Else{ 0 }
+	$Script:VersionCheck = If($WPF_VersionCheck_CB.IsChecked){ 1 } Else{ 0 }
+	$Script:InternetCheck = If($WPF_InternetCheck_CB.IsChecked){ 1 } Else{ 0 }
+	$Script:ShowSkipped = If($WPF_ShowSkipped_CB.IsChecked){ 1 } Else{ 0 }
+	$Script:Restart = If($WPF_Restart_CB.IsChecked){ 1 } Else{ 0 }
 	$Script:RestorePointName = $WPF_RestorePointName_Txt.Text
 }
 
@@ -1167,6 +1431,7 @@ Function LoadWinDefault {
 	$Script:WAPPush = 1
 
 	#Windows Update
+	$Script:UpdateMSProducts = 2
 	$Script:CheckForWinUpdate = 1
 	$Script:WinUpdateType = 3
 	$Script:WinUpdateDownload = 1
@@ -1215,6 +1480,8 @@ Function LoadWinDefault {
 	$Script:RecentItemsFrequent = 1
 
 	#Explorer Items
+	$Script:AccessKeyPrmpt = 1
+	$Script:F1HelpKey = 1
 	$Script:Autoplay = 1
 	$Script:Autorun = 1
 	$Script:PidInTitleBar = 2
@@ -1228,7 +1495,7 @@ Function LoadWinDefault {
 	$Script:FrequentFoldersQikAcc = 1
 	$Script:WinContentWhileDrag = 1
 	$Script:StoreOpenWith = 1
-	If($Win10Ver -ge 1703){ $Script:WinXPowerShell = 1 } Else{ $Script:WinXPowerShell = 2 }
+	$Script:WinXPowerShell = If($Win10Ver -ge 1703){ 1 } Else{ 2 }
 	$Script:TaskManagerDetails = 2
 	$Script:ReopenAppsOnBoot = 1
 	$Script:Timeline = 1
@@ -1301,48 +1568,28 @@ Function RunScript {
 	If(!(Test-Path 'HKU:')){ New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_USERS | Out-Null }
 	$AppxCount = 0
 
-	BoxItem 'Metro App Items'
-	$APPProcess = Get-Variable -Name 'APP_*' -ValueOnly -Scope Script
-	$A = 0
+	BoxItem 'Windows App Items'
+	$APPS_AppsUnhide += ($DataGridApps.Where{$_.AppSelected -eq 'Unhide'}).AppxName
+	$APPS_AppsHide += ($DataGridApps.Where{$_.AppSelected -eq 'Hide'}).AppxName
+	$APPS_AppsUninstall += ($DataGridApps.Where{$_.AppSelected -eq 'Uninstall'}).AppxName
 
-	ForEach($AppV In $APPProcess) {
-		$AP = $AppsList[$A]
-		If($AppV -eq 1) {
-			If($AP -ne 'XboxApps'){
-				[Void]$APPS_AppsUnhide.Add($AP)
-			} Else {
-				ForEach($AppX In $Xbox_Apps){ [Void]$APPS_AppsUnhide.Add($AppX) }
-			}
-		} ElseIf($AppV -eq 2) {
-			If($AP -ne 'XboxApps'){
-				[Void] $APPS_AppsHide.Add($AP)
-			} Else {
-				ForEach($AppX In $Xbox_Apps){ [Void]$APPS_AppsHide.Add($AppX) }
-			}
-		} ElseIf($AppV -eq 3) {
-			If($AP -ne 'XboxApps'){
-				[Void] $APPS_AppsUninstall.Add($AP)
-			} Else {
-				ForEach($AppX In $Xbox_Apps){ [Void]$APPS_AppsUninstall.Add($AppX) }
-			}
-		} $A++
-	}
-
-	$Ai = $APPS_AppsUnhide.Length
 	$Ah = $APPS_AppsHide.Length
 	$Au = $APPS_AppsUninstall.Length
-	If($null -Notin $Ah,$Au){ $AppxPackages = Get-AppxProvisionedPackage -online | select-object PackageName,Displayname }
+	If($Ah -gt 0 -or $Au  -gt 0){ $AppxPackages = Get-AppxProvisionedPackage -online | select-object PackageName,Displayname }
 
-	DisplayOut "List of Apps Being Unhidden...`n------------------" 11 0
-	If($Ai -ne $null) {
+	DisplayOut "---List of Apps Being Unhidden---" -C 11
+	If($APPS_AppsUnhide.Length -gt 0) {
 		ForEach($AppI In $APPS_AppsUnhide) {
 			$AppInst = Get-AppxPackage -AllUsers $AppI
 			If($AppInst -ne $null) {
-				DisplayOut $AppI 11 0
+				DisplayOut $AppI -C 11
 				ForEach($App In $AppInst){
 					$AppxCount++
 					$Job = "Win10Script$AppxCount"
-					Start-Job -Name $Job -ScriptBlock { Add-AppxPackage -DisableDevelopmentMode -Register "$($App.InstallLocation)\AppXManifest.xml" }
+					Start-Job -Name $Job -ScriptBlock {
+						$AppIJob = $using:App
+						Add-AppxPackage -DisableDevelopmentMode -Register "$($AppIJob.InstallLocation)\AppXManifest.xml"
+					}
 				}
 			} Else {
 				DisplayOut "Unable to Unhide $AppI" -C 11
@@ -1351,14 +1598,14 @@ Function RunScript {
 	} Else {
 		DisplayOut 'No Apps being Unhidden' -C 11
 	}
-	DisplayOut "`nList of Apps Being Hiddden...`n-----------------" -C 12
-	If($Ah -ne $null) {
+	DisplayOut "`n---List of Apps Being Hiddden---" -C 12
+	If($Ah -gt 0) {
 		ForEach($AppH In $APPS_AppsHide) {
 			If($AppxPackages.DisplayName.Contains($AppH)) {
-				DisplayOut $AppH 12 0
+				DisplayOut $AppH -C 12
 				$AppxCount++
 				$Job = "Win10Script$AppxCount"
-				Start-Job -Name $Job -ScriptBlock { Get-AppxPackage $AppH | Remove-AppxPackage | Out-null }
+				Start-Job -Name $Job -ScriptBlock { Get-AppxPackage $using:AppH | Remove-AppxPackage | Out-null }
 			} Else {
 				DisplayOut "$AppH Isn't Installed" -C 12
 			}
@@ -1366,11 +1613,11 @@ Function RunScript {
 	} Else {
 		DisplayOut 'No Apps being Hidden' -C 12
 	}
-	DisplayOut "`nList of Apps Being Uninstalled...`n--------------------" -C 14
-	If($Au -ne $null) {
+	DisplayOut "`n---List of Apps Being Uninstalled---" -C 14
+	If($Au -gt 0) {
 		ForEach($AppU In $APPS_AppsUninstall) {
 			If($AppxPackages.DisplayName.Contains($AppU)) {
-				DisplayOut $AppU 14 0
+				DisplayOut $AppU -C 14
 				$PackageFullName = (Get-AppxPackage $AppU).PackageFullName
 				$ProPackageFullName = ($AppxPackages.Where{$_.Displayname -eq $AppU}).PackageName
 				# Alt removal: DISM /Online /Remove-ProvisionedAppxPackage /PackageName:
@@ -1393,14 +1640,49 @@ Function RunScript {
 		If($ShowSkipped -eq 1){ DisplayOut 'Skipping Telemetry...' -C 15 }
 	} ElseIf($Telemetry -eq 1) {
 		DisplayOut 'Enabling Telemetry...' -C 11
-		Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 3
-		Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 3
-		If($OSBit -eq 64){ Set-ItemProperty -Path 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 3 }
+		Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 0
+		Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 0
+		If($OSBit -eq 64){ Set-ItemProperty -Path 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 0 }
+		$Path = CheckSetPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds'
+		Set-ItemProperty -Path $Path -Name 'AllowBuildPreview' -Type DWord -Value 0
+		$Path = CheckSetPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\CurrentVersion\Software Protection Platform'
+		Set-ItemProperty -Path $Path -Name 'NoGenTicket' -Type DWord -Value 1
+		$Path = CheckSetPath 'HKLM:\SOFTWARE\Policies\Microsoft\SQMClient\Windows'
+		Set-ItemProperty -Path $Path -Name 'CEIPEnable' -Type DWord -Value 0
+		$Path = CheckSetPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppCompat'
+		Set-ItemProperty -Path $Path -Name 'AITEnable' -Type DWord -Value 0
+		Set-ItemProperty -Path $Path -Name 'DisableInventory' -Type DWord -Value 1
+		$Path = CheckSetPath 'HKLM:\SOFTWARE\Policies\Microsoft\AppV\CEIP'
+		Set-ItemProperty -Path $Path -Name 'CEIPEnable' -Type DWord -Value 0
+		$Path = CheckSetPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\TabletPC'
+		Set-ItemProperty -Path $Path -Name 'PreventHandwritingDataSharing' -Type DWord -Value 1
+		$Path = CheckSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\TextInput'
+		Set-ItemProperty -Path $Path -Name 'AllowLinguisticDataCollection' -Type DWord -Value 0
+		Disable-ScheduledTask -TaskName "Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser" | Out-Null
+		Disable-ScheduledTask -TaskName "Microsoft\Windows\Application Experience\ProgramDataUpdater" | Out-Null
+		Disable-ScheduledTask -TaskName "Microsoft\Windows\Autochk\Proxy" | Out-Null
+		Disable-ScheduledTask -TaskName "Microsoft\Windows\Customer Experience Improvement Program\Consolidator" | Out-Null
+		Disable-ScheduledTask -TaskName "Microsoft\Windows\Customer Experience Improvement Program\UsbCeip" | Out-Null
+		Disable-ScheduledTask -TaskName "Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector" | Out-Null
 	} ElseIf($Telemetry -eq 2) {
 		DisplayOut 'Disabling Telemetry...' -C 12
 		Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 0
 		Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 0
 		If($OSBit -eq 64){ Set-ItemProperty -Path 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 0 }
+		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds' -Name 'AllowBuildPreview'
+		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\CurrentVersion\Software Protection Platform' -Name 'NoGenTicket'
+		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\SQMClient\Windows' -Name 'CEIPEnable'
+		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppCompat' -Name 'AITEnable'
+		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppCompat' -Name 'DisableInventory'
+		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\AppV\CEIP' -Name 'CEIPEnable'
+		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\TabletPC' -Name 'PreventHandwritingDataSharing'
+		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\TextInput' -Name 'AllowLinguisticDataCollection'
+		Enable-ScheduledTask -TaskName 'Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser' | Out-Null
+		Enable-ScheduledTask -TaskName 'Microsoft\Windows\Application Experience\ProgramDataUpdater' | Out-Null
+		Enable-ScheduledTask -TaskName 'Microsoft\Windows\Autochk\Proxy' | Out-Null
+		Enable-ScheduledTask -TaskName 'Microsoft\Windows\Customer Experience Improvement Program\Consolidator' | Out-Null
+		Enable-ScheduledTask -TaskName 'Microsoft\Windows\Customer Experience Improvement Program\UsbCeip' | Out-Null
+		Enable-ScheduledTask -TaskName 'Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector' | Out-Null
 	}
 
 	If($WiFiSense -eq 0) {
@@ -1505,6 +1787,7 @@ Function RunScript {
 		Set-ItemProperty -Path $Path -Name 'DisableWebSearch' -Type DWord -Value 1
 		$Path = CheckSetPath 'HKCU:\SOFTWARE\Microsoft\Speech_OneCore\Preferences\'
 		Set-ItemProperty -Path $Path -Name 'VoiceActivationEnableAboveLockscreen' -Type DWord -Value 1
+		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\InputPersonalization' -Name 'AllowInputPersonalization'
 	} ElseIf($Cortana -eq 2) {
 		DisplayOut 'Disabling Cortana...' -C 12
 		$Path = CheckSetPath 'HKCU:\SOFTWARE\Microsoft\Personalization\Settings'
@@ -1521,6 +1804,8 @@ Function RunScript {
 		Remove-ItemProperty -Path $Path -Name 'DisableWebSearch'
 		$Path = CheckSetPath 'HKCU:\SOFTWARE\Microsoft\Speech_OneCore\Preferences\'
 		Set-ItemProperty -Path $Path -Name 'VoiceActivationEnableAboveLockscreen' -Type DWord -Value 0
+		$Path = CheckSetPath 'HKLM:\SOFTWARE\Policies\Microsoft\InputPersonalization'
+		Set-ItemProperty -Path $Path -Name 'AllowInputPersonalization' -Type DWord -Value 0
 	}
 
 	If($CortanaSearch -eq 0) {
@@ -1611,6 +1896,16 @@ Function RunScript {
 	}
 
 	BoxItem 'Windows Update Settings'
+	If($UpdateMSProducts -eq 0) {
+		If($ShowSkipped -eq 1){ DisplayOut 'Skipping Updates for other Microsoft products...' -C 15 }
+	} ElseIf($UpdateMSProducts -eq 1) {
+		DisplayOut 'Enabling Updates for other Microsoft products...' -C 11
+		(New-Object -ComObject Microsoft.Update.ServiceManager).AddService2("7971f918-a847-4430-9279-4a52d1efe18d", 7, "") | Out-Null
+	} ElseIf($UpdateMSProducts -eq 2) {
+		DisplayOut 'Disabling Updates for other Microsoft products...' -C 12
+		(New-Object -ComObject Microsoft.Update.ServiceManager).RemoveService("7971f918-a847-4430-9279-4a52d1efe18d") | Out-Null
+	}
+
 	$Path = CheckSetPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate'
 	If($CheckForWinUpdate -eq 0) {
 		If($ShowSkipped -eq 1){ DisplayOut 'Skipping Check for Windows Update...' -C 15 }
@@ -2172,6 +2467,37 @@ Function RunScript {
 	}
 
 	BoxItem 'Explorer Items'
+	If($AccessKeyPrmpt -eq 0) {
+		If($ShowSkipped -eq 1){ DisplayOut 'Skipping Accessibility Keys Prompts...' -C 15 }
+	} ElseIf($AccessKeyPrmpt -eq 1) {
+		DisplayOut 'Enabling Accessibility Keys Prompts...' -C 11
+		$Path = 'HKCU:\Control Panel\Accessibility\'
+		Set-ItemProperty -Path "$Path\StickyKeys" -Name 'Flags' -Type String -Value '510'
+		Set-ItemProperty -Path "$Path\ToggleKeys" -Name 'Flags' -Type String -Value '62'
+		Set-ItemProperty -Path "$Path\Keyboard Response" -Name 'Flags' -Type String -Value '126'
+	} ElseIf($AccessKeyPrmpt -eq 2) {
+		DisplayOut 'Disabling Accessibility Keys Prompts...' -C 12
+		$Path = 'HKCU:\Control Panel\Accessibility\'
+		Set-ItemProperty -Path "$Path\StickyKeys" -Name 'Flags' -Type String -Value '506'
+		Set-ItemProperty -Path "$Path\ToggleKeys" -Name 'Flags' -Type String -Value '58'
+		Set-ItemProperty -Path "$Path\Keyboard Response" -Name 'Flags' -Type String -Value '122'
+	}
+
+	If($F1HelpKey -eq 0) {
+		If($ShowSkipped -eq 1){ DisplayOut 'Skipping F1 Help key...' -C 15 }
+	} ElseIf($F1HelpKey -eq 1) {
+		DisplayOut 'Enabling F1 Help key...' -C 11
+		RemoveSetPath 'HKCU:\Software\Classes\TypeLib\{8cec5860-07a1-11d9-b15e-000d56bfe6ee}\1.0\0'
+	} ElseIf($F1HelpKey -eq 2) {
+		DisplayOut 'Disabling F1 Help key...' -C 12
+		$Path = CheckSetPath 'HKCU:\Software\Classes\TypeLib\{8cec5860-07a1-11d9-b15e-000d56bfe6ee}\1.0\0\win32'
+		Set-ItemProperty -Path $Path -Name '(Default)' -Type 'String' -Value ''
+		If($OSBit -eq 64) {
+			$Path = CheckSetPath 'HKCU:\Software\Classes\TypeLib\{8cec5860-07a1-11d9-b15e-000d56bfe6ee}\1.0\0\win64'
+			Set-ItemProperty -Path $Path -Name '(Default)' -Type 'String' -Value ''
+		}
+	}
+
 	If($PidInTitleBar -eq 0) {
 		If($ShowSkipped -eq 1){ DisplayOut 'Skipping Process ID on Title Bar...' -C 15 }
 	} ElseIf($PidInTitleBar -eq 1) {
@@ -3080,7 +3406,7 @@ $Script:Restart = 1                 #0-Don't Restart, 1-Restart
 #Windows Default for ALL Settings
 $Script:WinDefault = 2              #1-Yes*, 2-No
 # IF 1 is set then Everything Other than the following will use the Default Win Settings
-# ALL Values Above this one, All Metro Apps and OneDriveInstall (Will use what you set)
+# ALL Values Above this one, All Windows Apps and OneDriveInstall (Will use what you set)
 
 #Privacy Settings
 # Function = Option                 #Choices (* Indicates Windows Default)
@@ -3099,6 +3425,7 @@ $Script:WAPPush = 0                 #0-Skip, 1-Enable*, 2-Disable --(type of tex
 
 #Windows Update
 # Function = Option                 #Choices (* Indicates Windows Default)
+$Script:UpdateMSProducts = 0		#0-Skip, 1-Enable, 2-Disable*
 $Script:CheckForWinUpdate = 0       #0-Skip, 1-Enable*, 2-Disable
 $Script:WinUpdateType = 0           #0-Skip, 1-Notify, 2-Auto DL, 3-Auto DL+Install*, 4-Local admin chose --(May not work with Home version)
 $Script:WinUpdateDownload = 0       #0-Skip, 1-P2P*, 2-Local Only, 3-Disable
@@ -3154,6 +3481,8 @@ $Script:UnpinItems = 0              #0-Skip, 1-Unpin
 
 #Explorer Items
 # Function = Option                 #Choices (* Indicates Windows Default)
+$Script:AccessKeyPrmpt = 0          #0-Skip, 1-Enable*, 2-Disable
+$Script:F1HelpKey = 0               #0-Skip, 1-Enable*, 2-Disable
 $Script:Autoplay = 0                #0-Skip, 1-Enable*, 2-Disable
 $Script:Autorun = 0                 #0-Skip, 1-Enable*, 2-Disable
 $Script:PidInTitleBar = 0           #0-Skip, 1-Show, 2-Hide* --(PID = Processor ID)
@@ -3236,7 +3565,7 @@ $Script:LinuxSubsystem = 0          #0-Skip, 1-Installed, 2-Uninstall* (Annivers
 # DISM /Online /Get-ProvisionedAppxPackages | Select-string Packagename
 
 
-# Metro Apps
+# Windows Apps
 # By Default Most of these are installed
 # Function  = Option  # 0-Skip, 1-Unhide, 2- Hide, 3-Uninstall (!!Read Note Above)
 $Script:APP_3DBuilder = 0           # 3DBuilder app
@@ -3256,7 +3585,6 @@ $Script:APP_OneConnect = 0          # One Connect
 $Script:APP_People = 0              # People app
 $Script:APP_Photos = 0              # Photos app
 $Script:APP_SkypeApp1 = 0           # Microsoft.SkypeApp
-$Script:APP_SkypeApp2 = 0           # Microsoft.SkypeWiFi
 $Script:APP_SolitaireCollect = 0    # Microsoft Solitaire
 $Script:APP_StickyNotes = 0         # Sticky Notes app
 $Script:APP_WindowsWallet = 0       # Stores Credit and Debit Card Information
@@ -3269,7 +3597,7 @@ $Script:APP_WindowsFeedbak2 = 0     # Microsoft.WindowsFeedbackHub
 $Script:APP_WindowsMaps = 0         # Maps app
 $Script:APP_WindowsPhone = 0        # Phone Companion app
 $Script:APP_WindowsStore = 0        # Windows Store
-$Script:APP_XboxApp = 0             # Xbox apps (There is a few)
+$Script:APP_XboxApp = 0             # All Xbox apps (There is a few)
 $Script:APP_ZuneMusic = 0           # Groove Music app
 $Script:APP_ZuneVideo = 0           # Groove Video app
 # --------------------------------------------------------------------------
