@@ -34,7 +34,7 @@ $Copyright =' The MIT License (MIT)
  Copyright (c) 2017 Disassembler                                        
         -Original Basic Version of Script                               
                                                                         
- Copyright (c) 2017-2020 Madbomb122                                     
+ Copyright (c) 2017-2021 Madbomb122                                     
         -Modded + Menu Version of Script                                
                                                                         
  Permission is hereby granted, free of charge, to any person obtaining  
