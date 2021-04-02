@@ -1,5 +1,9 @@
 -----------------------------------------------------------------------------------
-3.7.0 (11-27-2019)
+3.7.1 (04-02-2021)
+
+Some Internal Script Changes
+Fixed Disable/Enable entry mixup for Temeletry (thanks to St1ckys)
+More items Disable/Enable Feedback does
 
 Changed Box Art when script Runs
 Some Script Improvements
@@ -13,6 +17,7 @@ Look of the tabs has been updated
 Tabs are now on left side instead of top
 Changed Name of 'Metro Apps' to 'Windows Apps'
 Fixed bug were Apps were not being Hidden/Unhidden
+
 
 -----------------------------------------------------------------------------------
 3.6.9 (02-25-2019)
