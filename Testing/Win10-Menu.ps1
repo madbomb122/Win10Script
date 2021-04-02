@@ -10,8 +10,8 @@
 # Website: https://GitHub.com/Disassembler0/Win10-Initial-Setup-Script/
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
-$Script_Version = '3.7.0'
-$Script_Date = 'Nov-27-2019'
+$Script_Version = '3.7.1'
+$Script_Date = 'Apr-02-2021'
 #$Release_Type = 'Stable'
 ##########
 
@@ -76,7 +76,6 @@ $Copyright =' The MIT License (MIT)
   2. Edit bat file and run
   3. Run the script with one of these switches (space between multiple)
 
-
   Switch          Description of Switch
 -- Basic Switches --
   -atos           Accepts ToS
@@ -103,15 +102,12 @@ $Copyright =' The MIT License (MIT)
 ##########
 
 If([Environment]::OSVersion.Version.Major -ne 10) {
-	Clear-Host
 	Write-Host 'Sorry, this Script supports Windows 10 ONLY.' -ForegroundColor 'cyan' -BackgroundColor 'black'
 	If($Automated -ne 1){ Read-Host -Prompt "`nPress Any key to Close..." } ;Exit
 }
-
 If($Release_Type -eq 'Stable'){ $ErrorActionPreference = 'SilentlyContinue' } Else{ $Release_Type = 'Testing' }
 
 $Script:PassedArg = $args
-$Script:FileBase = $PSScriptRoot + '\'
 
 If(!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
 	Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $PassedArg" -Verb RunAs ;Exit
@@ -121,6 +117,7 @@ $MySite = 'https://GitHub.com/madbomb122/Win10Script'
 $URL_Base = $MySite.Replace('GitHub','raw.GitHub')+'/master/'
 $Version_Url = $URL_Base + 'Version/Version.csv'
 $Donate_Url = 'https://www.amazon.com/gp/registry/wishlist/YBAYWBJES5DE/'
+$FileBase = $(If($psISE -ne $Null){ Split-Path $psISE.CurrentFile.FullPath -Parent } Else{ $PSScriptRoot }) + '\'
 
 $Script:Win10Ver = (Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion' -Name ReleaseID).ReleaseId
 $Script:OSBit = If([System.Environment]::Is64BitProcess){ 64 } Else{ 32 }
@@ -143,7 +140,6 @@ $TasksList = @(
 'QueueReporting',
 'SmartScreenSpecific',
 'UsbCeip')
-
 <#
 'AgentFallBack2016',
 'AitAgent',
@@ -166,16 +162,11 @@ $TasksList = @(
 #'StartupAppTask',
 'Uploader',
 'XblGameSaveTask',
-'XblGameSaveTaskLogon') #>
-<#
-$Xbox_Apps = @(
-'Microsoft.XboxApp',
-'Microsoft.XboxIdentityProvider',
-'Microsoft.XboxSpeechToTextOverlay',
-'Microsoft.XboxGameOverlay',
-'Microsoft.Xbox.TCUI')
+'XblGameSaveTaskLogon')
 #>
+
 $Xbox_Apps = @(Get-AppxPackage *xbox*).Name
+$musnotification_files = @("$Env:windir\System32\musnotification.exe","$Env:windir\System32\musnotificationux.exe")
 
 $AppxOptions=@('Skip','Unhide','Hide','Uninstall')
 
@@ -205,14 +196,6 @@ $Brc = [char]0x255D # ╝
 $Sid = [char]0x2551 # ║
 $ToB = [char]0x2550 # ═
 
-$musnotification_files = @("$Env:windir\System32\musnotification.exe","$Env:windir\System32\musnotificationux.exe")
-
-$MLine = '|'.PadRight(53,'-') + '|'
-$MBLine = '|'.PadRight(53) + '|'
-
-Function MenuBlankLine{ DisplayOut DisplayOut $MBLine -C 14 }
-Function MenuLine{ DisplayOut DisplayOut $MLine -C 14 }
-
 Function BoxItem([String]$TxtToDisplay) {
 	$TLen = $TxtToDisplay.Length
 	$LLen = $TLen+9
@@ -239,20 +222,20 @@ Function UpdateCheck {
 		If($WebScriptVer -gt $Script_Version){ ScriptUpdateFun $RT }
 	} Else {
 		Clear-Host
-		MenuLine
+		DisplayMisc -Line
 		DisplayOutLML (''.PadRight(22)+'Error') -C 13
-		MenuLine
-		MenuBlankLine
+		DisplayMisc -Line
+		DisplayMisc
 		DisplayOutLML 'No Internet connection detected or GitHub.com' -C 2
 		DisplayOutLML 'is currently down.' -C 2
 		DisplayOutLML 'Tested by pinging GitHub.com' -C 2
-		MenuBlankLine
+		DisplayMisc
 		DisplayOutLML 'To skip use one of the following methods' -C 2
 		DisplayOut '|',' 1. Change ','InternetCheck',' in bat file'.PadRight(28),'|' -C 14,2,15,2,14
 		DisplayOut '|',' 2. Change ','InternetCheck',' in bat file'.PadRight(28),'|' -C 14,2,15,2,14
 		DisplayOut '|',' 3. Run Script or Bat file with ','-sic',' switch         ','|' -C 14,2,15,2,14
-		MenuBlankLine
-		MenuLine
+		DisplayMisc
+		DisplayMisc -Line
 		AnyKeyClose
 	}
 }
@@ -270,16 +253,16 @@ Function ScriptUpdateFun([String]$RT) {
 	$UpArg += If($RunScr){ "-run $TempSetting " } Else{ "-load $TempSetting " }
 
 	Clear-Host
-	MenuLine -L
-	MenuBlankLine -L
+	DisplayMisc -Line
+	DisplayMisc
 	DisplayOutLML (''.PadRight(18)+'Update Found!') -C 13 -L
-	MenuBlankLine -L
+	DisplayMisc
 	DisplayOut '|',' Updating from version ',"$Script_Version".PadRight(30),'|' -C 14,15,11,14 -L
-	MenuBlankLine -L
+	DisplayMisc
 	DisplayOut '|',' Downloading version ',"$FullVer".PadRight(31),'|' -C 14,15,11,14 -L
 	DisplayOutLML 'Will run after download is complete.' -C 15 -L
-	MenuBlankLine -L
-	MenuLine -L
+	DisplayMisc
+	DisplayMisc -Line
 
 	(New-Object System.Net.WebClient).DownloadFile($Script_Url, $ScrpFilePath)
 	Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$ScrpFilePath`" $UpArg" -Verb RunAs
@@ -302,62 +285,68 @@ Function ThanksDonate {
 }
 
 Function cmpv{ Compare-Object (Get-Variable -Scope Script) $AutomaticVariables -Property Name -PassThru | Where-Object -Property Name -ne 'AutomaticVariables' | Where-Object { $_ -NotIn $WPFList } }
-Function Openwebsite([String]$Url){ [System.Diagnostics.Process]::Start($Url) }
+Function Openwebsite([String]$Url){ Start-Process $Url }
 Function ShowInvalid([Int]$InvalidA){ If($InvalidA -eq 1){ Write-Host "`nInvalid Input" -ForegroundColor Red -BackgroundColor Black -NoNewline } Return 0 }
 Function CheckSetPath([String]$RPath){ While(!(Test-Path $RPath)){ New-Item -Path $RPath -Force | Out-Null } Return $RPath }
 Function RemoveSetPath([String]$RPath){ If(Test-Path $RPath){ Remove-Item -Path $RPath -Recurse } }
-Function StartOrGui{ If($RunScr -eq $True){ RunScript } ElseIf($AcceptToS -ne 1){ GuiStart } }
+Function StartOrGui{ SetAppxVar ;If($RunScr -eq $True){ RunScript } ElseIf($AcceptToS -ne 1){ GuiStart } }
 
 Function DisplayOut {
-	Param (	[alias ("T")] [String[]]$Text, [alias ("C")] [Int[]]$Color )
+	Param (	[Alias ("T")] [String[]]$Text, [Alias ("C")] [Int[]]$Color )
 	For($i=0 ;$i -lt $Text.Length ;$i++){ Write-Host $Text[$i] -ForegroundColor $colors[$Color[$i]] -BackgroundColor 'Black' -NoNewLine } ;Write-Host
 }
 
-Function DisplayOutLML([String]$Text,[Alias ("C")] [Int]$Color) {
-	DisplayOut '| ',"$Text".PadRight(50),' |' -C 14,$Color,14 -L:$Log
+Function DisplayOutLML {
+	Param (	[Alias('T')] [String]$Text, [Alias('C')] [Int[]]$Color )
+	DisplayOut '| ',"$Text".PadRight(50),' |' -C 14,$Color,14
+}
+
+Function DisplayMisc {
+	Param (	[Switch]$Line, [Int]$Misc = 14 )
+	$txt = If($Line){ '|'.PadRight(53,'-') + '|' } Else{ '|'.PadRight(53) + '|' } #Line or Blank Spaces
+	$Splat = @{ Text = $txt ;Color = $Misc }
+	DisplayOut @Splat
 }
 
 Function ScriptPreStart {
 	SetDefault
-	SetAppxVar
 	If($PassedArg.Length -gt 0){ ArgCheck }
 	If($AcceptToS -eq 1){ TOS } Else{ StartOrGui }
 }
 
 Function SetAppxVar {
-	[System.Collections.ArrayList]$Script:DataGridApps = (0..31)
-	$Script:DataGridApps[0] = [PSCustomObject]@{ AppxName = 'Microsoft.3DBuilder'; CName = '3DBuilder'; VarName = 'APP_3DBuilder'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_3DBuilder]}
-	$Script:DataGridApps[1] = [PSCustomObject]@{ AppxName = 'Microsoft.Microsoft3DViewer'; CName = '3DViewer'; VarName = 'APP_3DViewer'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_3DViewer]}
-	$Script:DataGridApps[2] = [PSCustomObject]@{ AppxName = 'Microsoft.BingWeather'; CName = 'Bing Weather'; VarName = 'APP_BingWeather'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_BingWeather]}
-	$Script:DataGridApps[3] = [PSCustomObject]@{ AppxName = 'Microsoft.CommsPhone'; CName = 'Phone'; VarName = 'APP_CommsPhone'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_CommsPhone]}
-	$Script:DataGridApps[4] = [PSCustomObject]@{ AppxName = 'Microsoft.windowscommunicationsapps'; CName = 'Calendar & Mail'; VarName = 'APP_Communications'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_Communications]}
-	$Script:DataGridApps[5] = [PSCustomObject]@{ AppxName = 'Microsoft.GetHelp'; CName = "Microsoft's Self-Help"; VarName = 'APP_GetHelp'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_GetHelp]}
-	$Script:DataGridApps[6] = [PSCustomObject]@{ AppxName = 'Microsoft.Getstarted'; CName = 'Get Started Link'; VarName = 'APP_Getstarted'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_Getstarted]}
-	$Script:DataGridApps[7] = [PSCustomObject]@{ AppxName = 'Microsoft.Messaging'; CName = 'Messaging'; VarName = 'APP_Messaging'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_Messaging]}
-	$Script:DataGridApps[8] = [PSCustomObject]@{ AppxName = 'Microsoft.MicrosoftOfficeHub'; CName = 'Get Office Link'; VarName = 'APP_MicrosoftOffHub'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_MicrosoftOffHub]}
-	$Script:DataGridApps[9] = [PSCustomObject]@{ AppxName = 'Microsoft.MovieMoments'; CName = 'Movie Moments'; VarName = 'APP_MovieMoments'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_MovieMoments]}
-	$Script:DataGridApps[10] = [PSCustomObject]@{ AppxName = '4DF9E0F8.Netflix'; CName = 'Netflix'; VarName = 'APP_Netflix'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_Netflix]}
-	$Script:DataGridApps[11] = [PSCustomObject]@{ AppxName = 'Microsoft.Office.OneNote'; CName = 'Office OneNote'; VarName = 'APP_OfficeOneNote'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_OfficeOneNote]}
-	$Script:DataGridApps[12] = [PSCustomObject]@{ AppxName = 'Microsoft.Office.Sway'; CName = 'Office Sway'; VarName = 'APP_OfficeSway'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_OfficeSway]}
-	$Script:DataGridApps[13] = [PSCustomObject]@{ AppxName = 'Microsoft.OneConnect'; CName = 'One Connect'; VarName = 'APP_OneConnect'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_OneConnect]}
-	$Script:DataGridApps[14] = [PSCustomObject]@{ AppxName = 'Microsoft.People'; CName = 'People'; VarName = 'APP_People'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_People]}
-	$Script:DataGridApps[15] = [PSCustomObject]@{ AppxName = 'Microsoft.Windows.Photos'; CName = 'Photos'; VarName = 'APP_Photos'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_Photos]}
-	$Script:DataGridApps[16] = [PSCustomObject]@{ AppxName = 'Microsoft.SkypeApp'; CName = 'Skype'; VarName = 'APP_SkypeApp1'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_SkypeApp1]}
-	$Script:DataGridApps[17] = [PSCustomObject]@{ AppxName = 'Microsoft.MicrosoftSolitaireCollection'; CName = 'Microsoft Solitaire'; VarName = 'APP_SolitaireCollect'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_SolitaireCollect]}
-	$Script:DataGridApps[18] = [PSCustomObject]@{ AppxName = 'Microsoft.MicrosoftStickyNotes'; CName = 'Sticky Notes'; VarName = 'APP_StickyNotes'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_StickyNotes]}
-	$Script:DataGridApps[19] = [PSCustomObject]@{ AppxName = 'Microsoft.WindowsSoundRecorder'; CName = 'Voice Recorder'; VarName = 'APP_VoiceRecorder'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_VoiceRecorder]}
-	$Script:DataGridApps[20] = [PSCustomObject]@{ AppxName = 'Microsoft.WindowsAlarms'; CName = 'Alarms and Clock'; VarName = 'APP_WindowsAlarms'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsAlarms]}
-	$Script:DataGridApps[21] = [PSCustomObject]@{ AppxName = 'Microsoft.WindowsCalculator'; CName = 'Calculator'; VarName = 'APP_WindowsCalculator'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsCalculator]}
-	$Script:DataGridApps[22] = [PSCustomObject]@{ AppxName = 'Microsoft.WindowsCamera'; CName = 'Camera'; VarName = 'APP_WindowsCamera'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsCamera]}
-	$Script:DataGridApps[23] = [PSCustomObject]@{ AppxName = 'Microsoft.WindowsFeedback'; CName = 'Windows Feedback'; VarName = 'APP_WindowsFeedbak1'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsFeedbak1]}
-	$Script:DataGridApps[24] = [PSCustomObject]@{ AppxName = 'Microsoft.WindowsFeedbackHub'; CName = 'Windows Feedback Hub'; VarName = 'APP_WindowsFeedbak2'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsFeedbak2]}
-	$Script:DataGridApps[25] = [PSCustomObject]@{ AppxName = 'Microsoft.WindowsMaps'; CName = 'Maps'; VarName = 'APP_WindowsMaps'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsMaps]}
-	$Script:DataGridApps[26] = [PSCustomObject]@{ AppxName = 'Microsoft.WindowsPhone'; CName = 'Phone Companion'; VarName = 'APP_WindowsPhone'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsPhone]}
-	$Script:DataGridApps[27] = [PSCustomObject]@{ AppxName = 'Microsoft.WindowsStore'; CName = 'Microsoft Store'; VarName = 'APP_WindowsStore'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsStore]}
-	$Script:DataGridApps[28] = [PSCustomObject]@{ AppxName = 'Microsoft.Wallet'; CName = 'Stores Credit and Debit Card Information'; VarName = 'APP_WindowsWallet'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsWallet]}
-	$Script:DataGridApps[29] = [PSCustomObject]@{ AppxName = $Xbox_Apps; CName = 'Xbox Apps (All)'; VarName = 'APP_XboxApp'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_XboxApp]}
-	$Script:DataGridApps[30] = [PSCustomObject]@{ AppxName = 'Microsoft.ZuneMusic'; CName = 'Groove Music'; VarName = 'APP_ZuneMusic'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_ZuneMusic]}
-	$Script:DataGridApps[31] = [PSCustomObject]@{ AppxName = 'Microsoft.ZuneVideo'; CName = 'Groove Video'; VarName = 'APP_ZuneVideo'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_ZuneVideo]}
+	$Script:DataGridApps = [PSCustomObject] @{ AppxName = 'Microsoft.3DBuilder'; CName = '3DBuilder'; VarName = 'APP_3DBuilder'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_3DBuilder]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.Microsoft3DViewer'; CName = '3DViewer'; VarName = 'APP_3DViewer'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_3DViewer]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.BingWeather'; CName = 'Bing Weather'; VarName = 'APP_BingWeather'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_BingWeather]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.CommsPhone'; CName = 'Phone'; VarName = 'APP_CommsPhone'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_CommsPhone]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.windowscommunicationsapps'; CName = 'Calendar & Mail'; VarName = 'APP_Communications'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_Communications]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.GetHelp'; CName = "Microsoft's Self-Help"; VarName = 'APP_GetHelp'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_GetHelp]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.Getstarted'; CName = 'Get Started Link'; VarName = 'APP_Getstarted'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_Getstarted]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.Messaging'; CName = 'Messaging'; VarName = 'APP_Messaging'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_Messaging]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.MicrosoftOfficeHub'; CName = 'Get Office Link'; VarName = 'APP_MicrosoftOffHub'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_MicrosoftOffHub]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.MovieMoments'; CName = 'Movie Moments'; VarName = 'APP_MovieMoments'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_MovieMoments]},
+	[PSCustomObject] @{ AppxName = '4DF9E0F8.Netflix'; CName = 'Netflix'; VarName = 'APP_Netflix'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_Netflix]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.Office.OneNote'; CName = 'Office OneNote'; VarName = 'APP_OfficeOneNote'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_OfficeOneNote]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.Office.Sway'; CName = 'Office Sway'; VarName = 'APP_OfficeSway'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_OfficeSway]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.OneConnect'; CName = 'One Connect'; VarName = 'APP_OneConnect'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_OneConnect]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.People'; CName = 'People'; VarName = 'APP_People'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_People]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.Windows.Photos'; CName = 'Photos'; VarName = 'APP_Photos'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_Photos]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.SkypeApp'; CName = 'Skype'; VarName = 'APP_SkypeApp1'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_SkypeApp1]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.MicrosoftSolitaireCollection'; CName = 'Microsoft Solitaire'; VarName = 'APP_SolitaireCollect'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_SolitaireCollect]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.MicrosoftStickyNotes'; CName = 'Sticky Notes'; VarName = 'APP_StickyNotes'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_StickyNotes]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.WindowsSoundRecorder'; CName = 'Voice Recorder'; VarName = 'APP_VoiceRecorder'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_VoiceRecorder]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.WindowsAlarms'; CName = 'Alarms and Clock'; VarName = 'APP_WindowsAlarms'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsAlarms]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.WindowsCalculator'; CName = 'Calculator'; VarName = 'APP_WindowsCalculator'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsCalculator]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.WindowsCamera'; CName = 'Camera'; VarName = 'APP_WindowsCamera'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsCamera]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.WindowsFeedback'; CName = 'Windows Feedback'; VarName = 'APP_WindowsFeedbak1'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsFeedbak1]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.WindowsFeedbackHub'; CName = 'Windows Feedback Hub'; VarName = 'APP_WindowsFeedbak2'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsFeedbak2]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.WindowsMaps'; CName = 'Maps'; VarName = 'APP_WindowsMaps'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsMaps]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.WindowsPhone'; CName = 'Phone Companion'; VarName = 'APP_WindowsPhone'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsPhone]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.WindowsStore'; CName = 'Microsoft Store'; VarName = 'APP_WindowsStore'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsStore]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.Wallet'; CName = 'Stores Credit and Debit Card Information'; VarName = 'APP_WindowsWallet'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_WindowsWallet]},
+	[PSCustomObject] @{ AppxName = $Xbox_Apps; CName = 'Xbox Apps (All)'; VarName = 'APP_XboxApp'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_XboxApp]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.ZuneMusic'; CName = 'Groove Music'; VarName = 'APP_ZuneMusic'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_ZuneMusic]},
+	[PSCustomObject] @{ AppxName = 'Microsoft.ZuneVideo'; CName = 'Groove Video'; VarName = 'APP_ZuneVideo'; AppOptions = $AppxOptions; AppSelected = $AppxOptions[$APP_ZuneVideo]}
 	If($WPF_dataGrid){ $WPF_dataGrid.ItemsSource = $DataGridApps }
 }
 
@@ -418,36 +407,34 @@ Function ShowHelp {
 	Exit
 }
 
-Function TOSLine([Int]$BC){ DisplayOut $MLine -C $BC}
-Function TOSBlankLine([Int]$BC){ DisplayOut $MBLine -C $BC }
 Function ShowCopyright { Clear-Host ;DisplayOut $Copyright -C 14 }
 
 Function TOSDisplay([Switch]$C) {
 	If(!$C){ Clear-Host }
-	$BorderColor = 14
+	$BC = 14
 	If($Release_Type -ne 'Stable') {
-		$BorderColor = 15
-		TOSLine 15
+		$BC = 15
+		DisplayMisc -Line -Misc 15
 		DisplayOut '|'.PadRight(22),'Caution!!!'.PadRight(31),'|' -C 15,13,15
-		TOSBlankLine 15
+		DisplayMisc -Misc 15
 		DisplayOut '|','         This script is still being tested.         ','|' -C 15,14,15
 		DisplayOut '|'.PadRight(17),'USE AT YOUR OWN RISK.'.PadRight(36),'|' -C 15,14,15
-		TOSBlankLine 15
+		DisplayMisc -Misc 15
 	}
-	TOSLine $BorderColor
-	DisplayOut '|'.PadRight(21),'Terms of Use'.PadRight(32),'|' -C $BorderColor,11,$BorderColor
-	TOSLine $BorderColor
-	TOSBlankLine $BorderColor
-	DisplayOut '|',' This program comes with ABSOLUTELY NO WARRANTY.    ','|' -C $BorderColor,2,$BorderColor
-	DisplayOut '|',' This is free software, and you are welcome to      ','|' -C $BorderColor,2,$BorderColor
-	DisplayOut '|',' redistribute it under certain conditions.'.PadRight(52),'|' -C $BorderColor,2,$BorderColor
-	TOSBlankLine $BorderColor
-	DisplayOut '|',' Read License file for full Terms.'.PadRight(52),'|' -C $BorderColor,2,$BorderColor
-	TOSBlankLine $BorderColor
-	DisplayOut '|',' Use the switch ','-copy',' to see License Information or ','|' -C $BorderColor,2,14,2,$BorderColor
-	DisplayOut '|',' enter ','L',' bellow.'.PadRight(44),'|' -C $BorderColor,2,14,2,$BorderColor
-	TOSBlankLine $BorderColor
-	TOSLine $BorderColor
+	DisplayMisc -Line -Misc $BC
+	DisplayOut '|'.PadRight(21),'Terms of Use'.PadRight(32),'|' -C $BC,11,$BC
+	DisplayMisc -Line -Misc $BC
+	DisplayMisc -Misc $BC
+	DisplayOut '|',' This program comes with ABSOLUTELY NO WARRANTY.    ','|' -C $BC,2,$BC
+	DisplayOut '|',' This is free software, and you are welcome to      ','|' -C $BC,2,$BC
+	DisplayOut '|',' redistribute it under certain conditions.'.PadRight(52),'|' -C $BC,2,$BC
+	DisplayMisc -Misc $BC
+	DisplayOut '|',' Read License file for full Terms.'.PadRight(52),'|' -C $BC,2,$BC
+	DisplayMisc -Misc $BC
+	DisplayOut '|',' Use the switch ','-copy',' to see License Information or ','|' -C $BC,2,14,2,$BC
+	DisplayOut '|',' enter ','L',' bellow.'.PadRight(44),'|' -C $BC,2,14,2,$BC
+	DisplayMisc -Misc $BC
+	DisplayMisc -Line -Misc $BC
 }
 
 Function TOS {
@@ -472,18 +459,18 @@ Function TOS {
 Function LoadSettingFile([String]$Filename) {
 	If($Filename) {
 		(Import-Csv -LiteralPath $Filename -Delimiter ';').ForEach{ Set-Variable $_.Name $_.Value -Scope Script }
-		[System.Collections.ArrayList]$Script:APPS_AppsUnhide = $AppsUnhide.Split(',')
-		[System.Collections.ArrayList]$Script:APPS_AppsHidel = $AppsHide.Split(',')
-		[System.Collections.ArrayList]$Script:APPS_AppsUninstall = $AppsUninstall.Split(',')
+		#[System.Collections.ArrayList]$Script:APPS_AppsUnhide = $AppsUnhide.Split(',')
+		#[System.Collections.ArrayList]$Script:APPS_AppsHide = $AppsHide.Split(',')
+		#[System.Collections.ArrayList]$Script:APPS_AppsUninstall = $AppsUninstall.Split(',')
 		SetAppxVar
 	}
 }
 
 Function SaveSettingFiles([String]$Filename) {
 	If($Filename) {
-		ForEach($temp In $APPS_AppsUnhide){$Script:AppsUnhide += $temp + ','}
-		ForEach($temp In $APPS_AppsHide){$Script:AppsHide += $temp + ','}
-		ForEach($temp In $APPS_Uninstall){$Script:AppsUninstall += $temp + ','}
+		#ForEach($temp In $APPS_AppsUnhide){$Script:AppsUnhide += $temp + ','}
+		#ForEach($temp In $APPS_AppsHide){$Script:AppsHide += $temp + ','}
+		#ForEach($temp In $APPS_Uninstall){$Script:AppsUninstall += $temp + ','}
 		If(Test-Path -LiteralPath $Filename -PathType Leaf) {
 			If($ShowConf -eq 1){ $Conf = ConfirmMenu 2 } Else{ $Conf = $True }
 			If($Conf){ cmpv | Select-Object Name,Value | Export-Csv -LiteralPath $Filename -Encoding 'unicode' -Force -Delimiter ';' }
@@ -512,16 +499,12 @@ Function SetComboM([String]$Name,[String]$Item) {
 	$combo =  $(Get-Variable -Name ('WPF_'+$Name+'_Combo') -ValueOnly)
 	[Void] $combo.Items.Add('Skip')
 	ForEach($CmbItm In $Items){ [Void] $combo.Items.Add($CmbItm) }
-	If($Var -NotLike 'APP_*') {
-		SelectComboBoxGen $Name $(Get-Variable -Name $Name -ValueOnly)
-	}
+	If($Var -NotLike 'APP_*'){ SelectComboBoxGen $Name $(Get-Variable -Name $Name -ValueOnly) }
 }
 
 Function SelectComboBox([Array]$List) {
 	ForEach($Var In $List) {
-		If($Var -NotLike 'APP_*') {
-			SelectComboBoxGen $Var $(Get-Variable -Name $Var -ValueOnly)
-		}
+		If($Var -NotLike 'APP_*'){ SelectComboBoxGen $Var $(Get-Variable -Name $Var -ValueOnly) }
 	}
 }
 Function SelectComboBoxGen([String]$Name,[Int]$Numb){ $(Get-Variable -Name ('WPF_'+$Name+'_Combo') -ValueOnly).SelectedIndex = $Numb }
@@ -1124,7 +1107,7 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 				</Grid>
 			</TabItem>
 			<TabItem Name="WinApp_Tab" Header="Window App">
-				<DataGrid Name="dataGrid" FrozenColumnCount="2" AutoGenerateColumns="False" AlternationCount="2" HeadersVisibility="Column" CanUserResizeRows="False" CanUserAddRows="False" IsTabStop="True" IsTextSearchEnabled="True" SelectionMode="Extended">
+				<DataGrid Name="dataGrid" AutoGenerateColumns="False" AlternationCount="2" HeadersVisibility="Column" CanUserAddRows="False" IsTabStop="True" SelectionMode="Extended">
 					<DataGrid.RowStyle>
 						<Style TargetType="{ x:Type DataGridRow }">
 							<Style.Triggers>
@@ -1348,15 +1331,17 @@ $Skip_Show_HideD = @(
 
 $Skip_InstalledD_Uninstall = @('OneDriveInstall','MediaPlayer','WorkFolders','FaxAndScan')
 
-	If($Release_Type -eq 'Testing'){ $Script:Restart = 0 ;$WPF_Restart_CB.IsEnabled = $False ;$WPF_Restart_CB.Content += ' (Disabled in Testing Version)' }
+	If($Release_Type -eq 'Testing'){
+		$Script:Restart = 0
+		$WPF_Restart_CB.IsEnabled = $False
+		$WPF_Restart_CB.Content += ' (Disabled in Testing Version)'
+	}
 	If($Win10Ver -lt 1607){ $WPF_LinuxSubsystem_Row.Height = 0 }
 	If($Win10Ver -lt 1709){
-		$WPF_ThreeDobjectsIconInThisPC_Row.Height = 0
-		$WPF_ReopenAppsOnBoot_Row.Height = 0
+		$WPF_ThreeDobjectsIconInThisPC_Row, $WPF_ReopenAppsOnBoot_Row | Foreach-Object{ $_.Height = 0 }
 	}
 	If($Win10Ver -lt 1803){
-		$WPF_AccountProtectionWarn_Row.Height = 0
-		$WPF_Timeline_Row.Height = 0
+		$WPF_AccountProtectionWarn_Row, $WPF_Timeline_Row | Foreach-Object{ $_.Height = 0 }
 	}
 	ForEach($Var In $Skip_EnableD_Disable){ SetCombo $Var 'Enable*,Disable' }
 	ForEach($Var In $Skip_Enable_DisableD){ SetCombo $Var 'Enable,Disable*' }
@@ -1588,7 +1573,8 @@ Function RunScript {
 					$Job = "Win10Script$AppxCount"
 					Start-Job -Name $Job -ScriptBlock {
 						$AppIJob = $using:App
-						Add-AppxPackage -DisableDevelopmentMode -Register "$($AppIJob.InstallLocation)\AppXManifest.xml"
+						$TempIJob = $($AppIJob.InstallLocation)
+						Add-AppxPackage -DisableDevelopmentMode -Register "$TempIJob\AppXManifest.xml"
 					}
 				}
 			} Else {
@@ -1636,10 +1622,35 @@ Function RunScript {
 	}
 
 	BoxItem 'Privacy Settings'
+	$TelemetryTask = @(
+	'Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser',
+	'Microsoft\Windows\Application Experience\ProgramDataUpdater',
+	'Microsoft\Windows\Autochk\Proxy',
+	'Microsoft\Windows\Customer Experience Improvement Program\Consolidator',
+	'Microsoft\Windows\Customer Experience Improvement Program\UsbCeip',
+	'Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector',
+	'Microsoft\Office\Office ClickToRun Service Monitor',
+	'Microsoft\Office\OfficeTelemetryAgentFallBack2016',
+	'Microsoft\Office\OfficeTelemetryAgentLogOn2016')
+
 	If($Telemetry -eq 0) {
 		If($ShowSkipped -eq 1){ DisplayOut 'Skipping Telemetry...' -C 15 }
 	} ElseIf($Telemetry -eq 1) {
 		DisplayOut 'Enabling Telemetry...' -C 11
+		Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 0
+		Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 0
+		If($OSBit -eq 64){ Set-ItemProperty -Path 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 0 }
+		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds' -Name 'AllowBuildPreview'
+		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\CurrentVersion\Software Protection Platform' -Name 'NoGenTicket'
+		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\SQMClient\Windows' -Name 'CEIPEnable'
+		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppCompat' -Name 'AITEnable'
+		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppCompat' -Name 'DisableInventory'
+		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\AppV\CEIP' -Name 'CEIPEnable'
+		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\TabletPC' -Name 'PreventHandwritingDataSharing'
+		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\TextInput' -Name 'AllowLinguisticDataCollection'
+		Foreach($task in $TelemetryTask){ Enable-ScheduledTask -TaskName $task | Out-Null }
+	} ElseIf($Telemetry -eq 2) {
+		DisplayOut 'Disabling Telemetry...' -C 12
 		Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 0
 		Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 0
 		If($OSBit -eq 64){ Set-ItemProperty -Path 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 0 }
@@ -1658,31 +1669,7 @@ Function RunScript {
 		Set-ItemProperty -Path $Path -Name 'PreventHandwritingDataSharing' -Type DWord -Value 1
 		$Path = CheckSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\TextInput'
 		Set-ItemProperty -Path $Path -Name 'AllowLinguisticDataCollection' -Type DWord -Value 0
-		Disable-ScheduledTask -TaskName "Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser" | Out-Null
-		Disable-ScheduledTask -TaskName "Microsoft\Windows\Application Experience\ProgramDataUpdater" | Out-Null
-		Disable-ScheduledTask -TaskName "Microsoft\Windows\Autochk\Proxy" | Out-Null
-		Disable-ScheduledTask -TaskName "Microsoft\Windows\Customer Experience Improvement Program\Consolidator" | Out-Null
-		Disable-ScheduledTask -TaskName "Microsoft\Windows\Customer Experience Improvement Program\UsbCeip" | Out-Null
-		Disable-ScheduledTask -TaskName "Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector" | Out-Null
-	} ElseIf($Telemetry -eq 2) {
-		DisplayOut 'Disabling Telemetry...' -C 12
-		Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 0
-		Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 0
-		If($OSBit -eq 64){ Set-ItemProperty -Path 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\DataCollection' -Name 'AllowTelemetry' -Type DWord -Value 0 }
-		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\PreviewBuilds' -Name 'AllowBuildPreview'
-		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\CurrentVersion\Software Protection Platform' -Name 'NoGenTicket'
-		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\SQMClient\Windows' -Name 'CEIPEnable'
-		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppCompat' -Name 'AITEnable'
-		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppCompat' -Name 'DisableInventory'
-		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\AppV\CEIP' -Name 'CEIPEnable'
-		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\TabletPC' -Name 'PreventHandwritingDataSharing'
-		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\TextInput' -Name 'AllowLinguisticDataCollection'
-		Enable-ScheduledTask -TaskName 'Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser' | Out-Null
-		Enable-ScheduledTask -TaskName 'Microsoft\Windows\Application Experience\ProgramDataUpdater' | Out-Null
-		Enable-ScheduledTask -TaskName 'Microsoft\Windows\Autochk\Proxy' | Out-Null
-		Enable-ScheduledTask -TaskName 'Microsoft\Windows\Customer Experience Improvement Program\Consolidator' | Out-Null
-		Enable-ScheduledTask -TaskName 'Microsoft\Windows\Customer Experience Improvement Program\UsbCeip' | Out-Null
-		Enable-ScheduledTask -TaskName 'Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector' | Out-Null
+		Foreach($task in $TelemetryTask){ Disable-ScheduledTask -TaskName $task | Out-Null }
 	}
 
 	If($WiFiSense -eq 0) {
@@ -1750,10 +1737,16 @@ Function RunScript {
 	} ElseIf($Feedback -eq 1) {
 		DisplayOut 'Enabling Feedback...' -C 11
 		Remove-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Siuf\Rules' -Name 'NumberOfSIUFInPeriod'
+		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection' -Name 'DoNotShowFeedbackNotifications'
+		Enable-ScheduledTask -TaskName 'Microsoft\Windows\Feedback\Siuf\DmClient' | Out-Null
+		Enable-ScheduledTask -TaskName 'Microsoft\Windows\Feedback\Siuf\DmClientOnScenarioDownload' | Out-Null
 	} ElseIf($Feedback -eq 2) {
 		DisplayOut 'Disabling Feedback...' -C 12
 		$Path = CheckSetPath 'HKCU:\SOFTWARE\Microsoft\Siuf\Rules'
 		Set-ItemProperty -Path $Path -Name 'NumberOfSIUFInPeriod' -Type DWord -Value 0
+		Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection' -Name 'DoNotShowFeedbackNotifications' -Type DWord -Value 1
+		Disable-ScheduledTask -TaskName 'Microsoft\Windows\Feedback\Siuf\DmClient' | Out-Null 
+		Disable-ScheduledTask -TaskName 'Microsoft\Windows\Feedback\Siuf\DmClientOnScenarioDownload' | Out-Null 
 	}
 
 	If($AdvertisingID -eq 0) {
@@ -1788,6 +1781,7 @@ Function RunScript {
 		$Path = CheckSetPath 'HKCU:\SOFTWARE\Microsoft\Speech_OneCore\Preferences\'
 		Set-ItemProperty -Path $Path -Name 'VoiceActivationEnableAboveLockscreen' -Type DWord -Value 1
 		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\InputPersonalization' -Name 'AllowInputPersonalization'
+		Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowCortanaButton" -Type DWord -Value 0
 	} ElseIf($Cortana -eq 2) {
 		DisplayOut 'Disabling Cortana...' -C 12
 		$Path = CheckSetPath 'HKCU:\SOFTWARE\Microsoft\Personalization\Settings'
@@ -1806,6 +1800,7 @@ Function RunScript {
 		Set-ItemProperty -Path $Path -Name 'VoiceActivationEnableAboveLockscreen' -Type DWord -Value 0
 		$Path = CheckSetPath 'HKLM:\SOFTWARE\Policies\Microsoft\InputPersonalization'
 		Set-ItemProperty -Path $Path -Name 'AllowInputPersonalization' -Type DWord -Value 0
+		Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowCortanaButton" -Type DWord -Value 1
 	}
 
 	If($CortanaSearch -eq 0) {
@@ -2002,13 +1997,16 @@ Function RunScript {
 		If($ShowSkipped -eq 1){ DisplayOut 'Skipping Driver Update Through Windows Update...' -C 15 }
 	} ElseIf($UpdateDriver -eq 1) {
 		DisplayOut 'Enabling Driver Update Through Windows Update...' -C 11
-		Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching' -Name 'SearchOrderConfig' -Type DWord -Value 1
+		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching' -Name 'SearchOrderConfig'
 		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate' -Name 'ExcludeWUDriversInQualityUpdate'
+		Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Device Metadata' -Name 'PreventDeviceMetadataFromNetwork'
 	} ElseIf($UpdateDriver -eq 2) {
 		DisplayOut 'Disabling Driver Update Through Windows Update...' -C 12
 		Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching' -Name 'SearchOrderConfig' -Type DWord -Value 0
 		$Path = CheckSetPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate'
 		Set-ItemProperty -Path $Path -Name 'ExcludeWUDriversInQualityUpdate' -Type DWord -Value 1
+		$Path = CheckSetPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Device Metadata'
+		Set-ItemProperty -Path $Path -Name 'PreventDeviceMetadataFromNetwork' -Type DWord -Value 1
 	}
 
 	If($UpdateAvailablePopup -eq 0) {
@@ -2413,13 +2411,15 @@ Function RunScript {
 	 	Set-ItemProperty -Path $Path -Name 'SilentInstalledAppsEnabled' -Type DWord -Value 1
 		Set-ItemProperty -Path $Path -Name 'SystemPaneSuggestionsEnabled' -Type DWord -Value 1
 		Set-ItemProperty -Path $Path -Name 'Start_TrackProgs' -Type DWord -Value 1
+		Set-ItemProperty -Path $Path -Name 'SubscribedContent-314559Enabled' -Type DWord -Value 1
 		Set-ItemProperty -Path $Path -Name 'SubscribedContent-310093Enabled' -Type DWord -Value 1
 		Set-ItemProperty -Path $Path -Name 'SubscribedContent-338387Enabled' -Type DWord -Value 1
 		Set-ItemProperty -Path $Path -Name 'SubscribedContent-338388Enabled' -Type DWord -Value 1
 		Set-ItemProperty -Path $Path -Name 'SubscribedContent-338389Enabled' -Type DWord -Value 1
 		Set-ItemProperty -Path $Path -Name 'SubscribedContent-338393Enabled' -Type DWord -Value 1
-		Set-ItemProperty -Path $Path -Name 'SubscribedContent-358398Enabled' -Type DWord -Value 1
+		Set-ItemProperty -Path $Path -Name 'SubscribedContent-353694Enabled' -Type DWord -Value 1
 		Set-ItemProperty -Path $Path -Name 'SubscribedContent-353696Enabled' -Type DWord -Value 1
+		Set-ItemProperty -Path $Path -Name 'SubscribedContent-358398Enabled' -Type DWord -Value 1
 	} ElseIf($StartSuggestions -eq 2) {
 		DisplayOut 'Disabling Start Menu Suggestions...' -C 12
 		$Path = CheckSetPath 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager'
@@ -2430,13 +2430,15 @@ Function RunScript {
 	 	Set-ItemProperty -Path $Path -Name 'SilentInstalledAppsEnabled' -Type DWord -Value 0
 		Set-ItemProperty -Path $Path -Name 'SystemPaneSuggestionsEnabled' -Type DWord -Value 0
 		Set-ItemProperty -Path $Path -Name 'Start_TrackProgs' -Type DWord -Value 0
+		Set-ItemProperty -Path $Path -Name 'SubscribedContent-314559Enabled' -Type DWord -Value 0
 		Set-ItemProperty -Path $Path -Name 'SubscribedContent-310093Enabled' -Type DWord -Value 0
 		Set-ItemProperty -Path $Path -Name 'SubscribedContent-338387Enabled' -Type DWord -Value 0
 		Set-ItemProperty -Path $Path -Name 'SubscribedContent-338388Enabled' -Type DWord -Value 0
 		Set-ItemProperty -Path $Path -Name 'SubscribedContent-338389Enabled' -Type DWord -Value 0
 		Set-ItemProperty -Path $Path -Name 'SubscribedContent-338393Enabled' -Type DWord -Value 0
-		Set-ItemProperty -Path $Path -Name 'SubscribedContent-358398Enabled' -Type DWord -Value 0
+		Set-ItemProperty -Path $Path -Name 'SubscribedContent-353694Enabled' -Type DWord -Value 0
 		Set-ItemProperty -Path $Path -Name 'SubscribedContent-353696Enabled' -Type DWord -Value 0
+		Set-ItemProperty -Path $Path -Name 'SubscribedContent-358398Enabled' -Type DWord -Value 0
 		If($Win10Ver -ge 1803) {
 			$key = Get-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount\*windows.data.placeholdertilecollection\Current"
 			Set-ItemProperty -Path $key.PSPath -Name "Data" -Type Binary -Value $key.Data[0..15]
@@ -3173,10 +3175,12 @@ Function RunScript {
 	} ElseIf($HibernatePower -eq 1) {
 		DisplayOut 'Enabling Hibernate Option...' -C 11
 		Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Power' -Name 'HibernateEnabled' -Type DWord -Value 1
+		Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings' -Name 'ShowHibernateOption' -Type DWord -Value 1
 		powercfg /HIBERNATE ON
 	} ElseIf($HibernatePower -eq 2) {
 		DisplayOut 'Disabling Hibernate Option...' -C 12
 		Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Power' -Name 'HibernateEnabled' -Type DWord -Value 0
+		Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings' -Name 'ShowHibernateOption' -Type DWord -Value 0
 		powercfg /HIBERNATE OFF
 	}
 
@@ -3186,9 +3190,13 @@ Function RunScript {
 		DisplayOut 'Enabling Sleep Option...' -C 11
 		$Path = CheckSetPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings'
 		Set-ItemProperty -Path $Path -Name 'ShowSleepOption' -Type DWord -Value 1
+		powercfg /SETACVALUEINDEX SCHEME_CURRENT SUB_BUTTONS SBUTTONACTION 1
+		powercfg /SETDCVALUEINDEX SCHEME_CURRENT SUB_BUTTONS SBUTTONACTION 1
 	} ElseIf($SleepPower -eq 2) {
 		DisplayOut 'Disabling Sleep Option...' -C 12
 		Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings' -Name 'ShowSleepOption' -Type DWord -Value 0
+		powercfg /SETACVALUEINDEX SCHEME_CURRENT SUB_BUTTONS SBUTTONACTION 0
+		powercfg /SETDCVALUEINDEX SCHEME_CURRENT SUB_BUTTONS SBUTTONACTION 0
 	}
 
 	If($UnpinItems -eq 0) {
@@ -3364,11 +3372,6 @@ Function RunScript {
 # when exporting shows ALL defined after this point
 [System.Collections.ArrayList]$Script:WPFList = @()
 $AutomaticVariables = Get-Variable -Scope Script
-
-# DO NOT TOUCH THESE
-$Script:AppsUnhide = ''
-$Script:AppsHide = ''
-$Script:AppsUninstall = ''
 
 Function SetDefault {
 #--------------------------------------------------------------------------
