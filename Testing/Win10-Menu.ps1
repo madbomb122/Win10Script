@@ -10,8 +10,8 @@
 # Website: https://GitHub.com/Disassembler0/Win10-Initial-Setup-Script/
 # Version: 2.0, 2017-01-08 (Version Copied)
 #
-$Script_Version = '3.7.1'
-$Script_Date = 'Apr-02-2021'
+$Script_Version = '3.7.2'
+$Script_Date = 'Jul-31-2021'
 #$Release_Type = 'Stable'
 ##########
 
@@ -545,7 +545,7 @@ Function GuiStart {
 
 [xml]$XAML = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Name="Win10_Script"
-Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Script_Date" Height="420" Width="620" BorderBrush="Black" Background="White">
+Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Script_Date" Height="420" Width="660" BorderBrush="Black" Background="White">
 	<Window.Resources>
 		<Style x:Key="SeparatorStyle1" TargetType="{x:Type Separator}">
 			<Setter Property="SnapsToDevicePixels" Value="True"/>
@@ -575,8 +575,8 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 				<MenuItem Name="CopyrightButton" Header="Copyright"/>
 				<MenuItem Name="ContactButton" Header="Contact Me"/>
 			</MenuItem>
-			<MenuItem Name="DonateButton" Header="Donate to Me" Background="#FFFFAD2F" FontWeight="Bold"/>
-			<MenuItem Name="Madbomb122WSButton" Header="Madbomb122's GitHub" Background="#FFFFDF4F" FontWeight="Bold"/>
+			<MenuItem Name="DonateButton" Background="#FFFFAD2F" FontWeight="Bold" Header="Donate to Me"/>
+			<MenuItem Name="Madbomb122WSButton" Background="#FFFFDF4F" FontWeight="Bold" Header="Madbomb122's GitHub"/>
 		</Menu>
 		<TabControl Name="TabControl" Grid.Row="1" BorderBrush="Gainsboro" TabStripPlacement="Left">
 			<TabControl.Resources>
@@ -584,8 +584,8 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 					<Setter Property="Template">
 						<Setter.Value>
 							<ControlTemplate TargetType="TabItem">
-								<Border Name="Border" BorderThickness="1,1,1,0" BorderBrush="Gainsboro" CornerRadius="4,4,0,0" Margin="2,2">
-									<ContentPresenter x:Name="ContentSite"  VerticalAlignment="Center" HorizontalAlignment="Center" ContentSource="Header" Margin="5,2"/>
+								<Border Name="Border" Margin="2,2" BorderBrush="Gainsboro" BorderThickness="1,1,1,0" CornerRadius="4,4,0,0">
+									<ContentPresenter x:Name="ContentSite" HorizontalAlignment="Center" Margin="5,2" VerticalAlignment="Center" ContentSource="Header"/>
 								</Border>
 								<ControlTemplate.Triggers>
 									<Trigger Property="IsSelected" Value="True"><Setter TargetName="Border" Property="Background" Value="LightSkyBlue" /></Trigger>
@@ -616,15 +616,15 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 								<ColumnDefinition Width="2.1*"/>
 								<ColumnDefinition Width="5*"/>
 							</Grid.ColumnDefinitions>
-							<CheckBox Grid.Row="0" Grid.Column="0" Name="CreateRestorePoint_CB" Content="Create Restore Point:" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5"/>
-							<TextBox Grid.Row="0" Grid.Column="1" Name="RestorePointName_Txt" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Win10 Initial Setup Script" VerticalAlignment="Center" Margin="5"/>
-							<CheckBox Grid.Row="1" Grid.Column="0" Name="ShowSkipped_CB" Content="Show Skipped Items" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5"/>
-							<CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Name="Restart_CB" Content="Restart When Done (Restart is Recommended)" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5"/>
-							<CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Name="VersionCheck_CB" Content="Check for Update (If found, will run with current settings)" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5"/>
-							<CheckBox Grid.Row="4" Grid.Column="0" Name="InternetCheck_CB" Content="Skip Internet Check" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5"/>
+							<CheckBox Name="CreateRestorePoint_CB" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Center" Content="Create Restore Point:"/>
+							<TextBox Name="RestorePointName_Txt" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Center" Text="Win10 Initial Setup Script" TextWrapping="Wrap"/>
+							<CheckBox Name="ShowSkipped_CB" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Center" Content="Show Skipped Items"/>
+							<CheckBox Name="Restart_CB" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Center" Content="Restart When Done (Restart is Recommended)"/>
+							<CheckBox Name="VersionCheck_CB" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Center" Content="Check for Update (If found, will run with current settings)"/>
+							<CheckBox Name="InternetCheck_CB" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Center" Content="Skip Internet Check"/>
 						</Grid>
 					</GroupBox>
-					<GroupBox Grid.Row="1" Header="Backup / Restore / Reset" Margin="2">
+					<GroupBox Header="Backup / Restore / Reset" Grid.Row="1" Margin="2">
 						<Grid>
 							<Grid.RowDefinitions>
 								<RowDefinition Height="*"/>
@@ -636,16 +636,16 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 								<ColumnDefinition Width="*"/>
 								<ColumnDefinition Width="*"/>
 							</Grid.ColumnDefinitions>
-							<Button Grid.Row="0" Grid.Column="0" Name="Save_Setting_Button" Content="Save Settings"/>
-							<Button Grid.Row="0" Grid.Column="1" Name="Load_Setting_Button" Content="Load Settings"/>
-							<Button Grid.Row="0" Grid.Column="2" Name="WinDefault_Button" Content="Windows Default*"/>
-							<Button Grid.Row="0" Grid.Column="3" Name="ResetDefault_Button" Content="Reset All Items"/>
-							<TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" HorizontalAlignment="Left" FontStyle="Italic" TextWrapping="Wrap" Text="Windows Default * / Does not modify Windows Apps or OneDrive Installation"/>
+							<Button Name="Save_Setting_Button" Content="Save Settings" Grid.Column="0" Grid.Row="0"/>
+							<Button Name="Load_Setting_Button" Content="Load Settings" Grid.Column="1" Grid.Row="0"/>
+							<Button Name="WinDefault_Button" Content="Windows Default*" Grid.Column="2" Grid.Row="0"/>
+							<Button Name="ResetDefault_Button" Content="Reset All Items" Grid.Column="3" Grid.Row="0"/>
+							<TextBlock Text="Windows Default * / Does not modify Windows Apps or OneDrive Installation" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="1" HorizontalAlignment="Left" FontStyle="Italic" TextWrapping="Wrap"/>
 						</Grid>
 					</GroupBox>
-					<GroupBox Grid.Row="2" Header="Version" Margin="2">
+					<GroupBox Header="Version" Grid.Row="2" Margin="2">
 						<Grid>
-							<TextBlock Name="Script_Ver_Txt" HorizontalAlignment="Left" TextWrapping="Wrap" Text="v.$Script_Version ($Script_Date) -$Release_Type" VerticalAlignment="Top"/>
+							<TextBlock Name="Script_Ver_Txt" Text="v.$Script_Version ($Script_Date) -$Release_Type" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top"/>
 						</Grid>
 					</GroupBox>
 				</Grid>
@@ -669,18 +669,18 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 							<ColumnDefinition Width="18*"/>
 							<ColumnDefinition Width="20*"/>
 						</Grid.ColumnDefinitions>
-						<Label Content="Telemetry:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="Telemetry_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Wi-Fi Sense:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="WiFiSense_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="SmartScreen Filter:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="SmartScreen_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Location Tracking:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="LocationTracking_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Feedback:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="Feedback_Combo" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Advertising ID:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="AdvertisingID_Combo" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Telemetry:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="Telemetry_Combo" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Wi-Fi Sense:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="WiFiSense_Combo" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="SmartScreen Filter:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="SmartScreen_Combo" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Location Tracking:" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="LocationTracking_Combo" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Feedback:" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="Feedback_Combo" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Advertising ID:" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="AdvertisingID_Combo" Grid.Column="1" Grid.Row="5" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 					</Grid>
 					<Grid Grid.Column="1">
 						<Grid.RowDefinitions>
@@ -696,20 +696,20 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 							<ColumnDefinition Width="21*"/>
 							<ColumnDefinition Width="20*"/>
 						</Grid.ColumnDefinitions>
-						<Label Content="Cortana:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="Cortana_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Cortana Search:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="CortanaSearch_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Error Reporting:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="ErrorReporting_Combo" Grid.Row="2" Grid.Column="2"  HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="AutoLogger:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="AutoLoggerFile_Combo" Grid.Row="3" Grid.Column="2"  HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Diagnostics Tracking:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="DiagTrack_Combo" Grid.Row="4" Grid.Column="2"  HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="WAP Push:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="WAPPush_Combo" Grid.Row="5" Grid.Column="2"  HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="App Auto Download:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="AppAutoDownload_Combo" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Cortana:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="Cortana_Combo" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Cortana Search:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="CortanaSearch_Combo" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Error Reporting:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="ErrorReporting_Combo" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="AutoLogger:" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="AutoLoggerFile_Combo" Grid.Column="2" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Diagnostics Tracking:" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="DiagTrack_Combo" Grid.Column="2" Grid.Row="4" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="WAP Push:" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="WAPPush_Combo" Grid.Column="2" Grid.Row="5" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="App Auto Download:" Grid.Column="0" Grid.Row="6" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="AppAutoDownload_Combo" Grid.Column="1" Grid.Row="6" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 					</Grid>
 				</Grid>
 			</TabItem>
@@ -730,14 +730,14 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 							<ColumnDefinition Width="7*"/>
 							<ColumnDefinition Width="5*"/>
 						</Grid.ColumnDefinitions>
-						<Label Content="UAC Level:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="UAC_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Sharing mapped drives:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="SharingMappedDrives_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Administrative Shares:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="AdminShares_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Firewall:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="Firewall_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="UAC Level:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="UAC_Combo" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Sharing mapped drives:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="SharingMappedDrives_Combo" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Administrative Shares:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="AdminShares_Combo" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Firewall:" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="Firewall_Combo" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 					</Grid>
 					<Grid Grid.Column="1">
 						<Grid.RowDefinitions>
@@ -750,14 +750,14 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 							<ColumnDefinition Width="7*"/>
 							<ColumnDefinition Width="5*"/>
 						</Grid.ColumnDefinitions>
-						<Label Content="Windows Defender:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="WinDefender_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="HomeGroups:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="HomeGroups_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Remote Assistance:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="RemoteAssistance_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Remote Desktop w/o &#xD;&#xA;Network Authentication:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="RemoteDesktop_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Windows Defender:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="WinDefender_Combo" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="HomeGroups:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="HomeGroups_Combo" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Remote Assistance:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="RemoteAssistance_Combo" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Remote Desktop w/o Network Authentication:" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="RemoteDesktop_Combo" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 					</Grid>
 				</Grid>
 			</TabItem>
@@ -767,7 +767,7 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 						<ColumnDefinition Width="*"/>
 						<ColumnDefinition Width="*"/>
 					</Grid.ColumnDefinitions>
-					<GroupBox Grid.Column="0" Header="Context Menu" Margin="5">
+					<GroupBox Header="Context Menu" Grid.Column="0" Margin="5">
 						<Grid>
 							<Grid.RowDefinitions>
 								<RowDefinition Height="*"/>
@@ -782,23 +782,23 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 								<ColumnDefinition Width="2*"/>
 								<ColumnDefinition Width="*"/>
 							</Grid.ColumnDefinitions>
-							<Label Content="Cast to Device:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="CastToDevice_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Previous Versions:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="PreviousVersions_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Include in Library:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="IncludeinLibrary_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Pin To Start:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="PinToStart_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Pin To Quick Access:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="PinToQuickAccess_Combo" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Share With/Share:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="ShareWith_Combo" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Send To:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="SendTo_Combo" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Cast to Device:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="CastToDevice_Combo" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Previous Versions:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="PreviousVersions_Combo" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Include in Library:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="IncludeinLibrary_Combo" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Pin To Start:" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="PinToStart_Combo" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Pin To Quick Access:" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="PinToQuickAccess_Combo" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Share With/Share:" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="ShareWith_Combo" Grid.Column="1" Grid.Row="5" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Send To:" Grid.Column="0" Grid.Row="6" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="SendTo_Combo" Grid.Column="1" Grid.Row="6" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 						</Grid>
 					</GroupBox>
-					<GroupBox Grid.Column="1" Header="Start Menu" Margin="5">
+					<GroupBox Header="Start Menu" Grid.Column="1" Margin="5">
 						<Grid>
 							<Grid.RowDefinitions>
 								<RowDefinition Height="*"/>
@@ -808,19 +808,19 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 								<RowDefinition Height="*"/>
 							</Grid.RowDefinitions>
 							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="2*"/>
+								<ColumnDefinition Width="*"/>
 								<ColumnDefinition Width="*"/>
 							</Grid.ColumnDefinitions>
-							<Label Content="Bing Search:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="StartMenuWebSearch_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Start Suggestions:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="StartSuggestions_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Most Used Apps:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="MostUsedAppStartMenu_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Recent Items &amp; &#xD;&#xA;Frequent Places:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="RecentItemsFrequent_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Unpin All Items:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="UnpinItems_Combo" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Bing Search:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="StartMenuWebSearch_Combo" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Start Suggestions:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="StartSuggestions_Combo" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Most Used Apps:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="MostUsedAppStartMenu_Combo" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Recent Items/Frequent Places:" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="RecentItemsFrequent_Combo" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Unpin All Items:" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="UnpinItems_Combo" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 						</Grid>
 					</GroupBox>
 				</Grid>
@@ -842,30 +842,30 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 						<RowDefinition Height="*"/>
 						<RowDefinition Height="*"/>
 					</Grid.RowDefinitions>
-					<Label Content="Battery UI Bar:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-					<ComboBox Name="BatteryUIBar_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-					<Label Content="Clock UI Bar:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-					<ComboBox Name="ClockUIBar_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-					<Label Content="Volume Control Bar:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-					<ComboBox Name="VolumeControlBar_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-					<Label Content="Taskbar Search box:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-					<ComboBox Name="TaskbarSearchBox_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-					<Label Content="Task View button:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-					<ComboBox Name="TaskViewButton_Combo" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-					<Label Content="Taskbar Icon Size:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-					<ComboBox Name="TaskbarIconSize_Combo" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-					<Label Content="Taskbar Item Grouping:" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-					<ComboBox Name="TaskbarGrouping_Combo" Grid.Row="0" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-					<Label Content="Tray Icons:" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-					<ComboBox Name="TrayIcons_Combo" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-					<Label Content="Seconds In Clock:" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-					<ComboBox Name="SecondsInClock_Combo" Grid.Row="2" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-					<Label Content="Last Active Click:" Grid.Row="3" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-					<ComboBox Name="LastActiveClick_Combo" Grid.Row="3" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-					<Label Content="Taskbar on Multi Display:" Grid.Row="4" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-					<ComboBox Name="TaskBarOnMultiDisplay_Combo" Grid.Row="4" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-					<Label Content="Taskbar Button on Multi Display:" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-					<ComboBox Name="TaskbarButtOnDisplay_Combo" Grid.Row="6" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<Label Content="Battery UI Bar:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<ComboBox Name="BatteryUIBar_Combo" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<Label Content="Clock UI Bar:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<ComboBox Name="ClockUIBar_Combo" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<Label Content="Volume Control Bar:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<ComboBox Name="VolumeControlBar_Combo" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<Label Content="Taskbar Search box:" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<ComboBox Name="TaskbarSearchBox_Combo" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<Label Content="Task View button:" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<ComboBox Name="TaskViewButton_Combo" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<Label Content="Taskbar Icon Size:" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<ComboBox Name="TaskbarIconSize_Combo" Grid.Column="1" Grid.Row="5" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<Label Content="Taskbar Item Grouping:" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<ComboBox Name="TaskbarGrouping_Combo" Grid.Column="3" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<Label Content="Tray Icons:" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<ComboBox Name="TrayIcons_Combo" Grid.Column="3" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<Label Content="Seconds In Clock:" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<ComboBox Name="SecondsInClock_Combo" Grid.Column="3" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<Label Content="Last Active Click:" Grid.Column="2" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<ComboBox Name="LastActiveClick_Combo" Grid.Column="3" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<Label Content="Taskbar on Multi Display:" Grid.Column="2" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<ComboBox Name="TaskBarOnMultiDisplay_Combo" Grid.Column="3" Grid.Row="4" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+					<Label Content="Taskbar Button on Multi Display:" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="6" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+					<ComboBox Name="TaskbarButtOnDisplay_Combo" Grid.Column="2" Grid.Row="6" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 				</Grid>
 			</TabItem>
 			<TabItem Name="Explorer_Tab" Header="Explorer">
@@ -886,34 +886,34 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 							<RowDefinition Height="*"/>
 							<RowDefinition Height="*"/>
 							<RowDefinition Height="*"/>
-							<RowDefinition Height="*" Name="Timeline_Row"/>
+							<RowDefinition Name="Timeline_Row" Height="*"/>
 						</Grid.RowDefinitions>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="2*"/>
 							<ColumnDefinition Width="*"/>
 						</Grid.ColumnDefinitions>
-						<Label Content="Recent Files in Quick Access:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="RecentFileQikAcc_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Frequent folders in Quick_access:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="FrequentFoldersQikAcc_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Window Content while Dragging:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="WinContentWhileDrag_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Search Store for Unkn. Extensions:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="StoreOpenWith_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Long File Path:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="LongFilePath_Combo" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Default Explorer View:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="ExplorerOpenLoc_Combo" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Powershell to Cmd:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="WinXPowerShell_Combo" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="App Hibernation File (Swapfile.sys):" Grid.Row="7" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="AppHibernationFile_Combo" Grid.Row="7" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Process ID on Title Bar:" Grid.Row="8" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="PidInTitleBar_Combo" Grid.Row="8" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Accessability Key Prompt:" Grid.Row="9" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="AccessKeyPrmpt_Combo" Grid.Row="9" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Grid.Row="10" Grid.Column="0" Content="Window Timeline:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="Timeline_Combo" Grid.Row="10" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Recent Files in Quick Access:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="RecentFileQikAcc_Combo" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Frequent folders in Quick_access:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="FrequentFoldersQikAcc_Combo" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Window Content while Dragging:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="WinContentWhileDrag_Combo" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Search Store for Unkn. Extensions:" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="StoreOpenWith_Combo" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Long File Path:" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="LongFilePath_Combo" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Default Explorer View:" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="ExplorerOpenLoc_Combo" Grid.Column="1" Grid.Row="5" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Powershell to Cmd:" Grid.Column="0" Grid.Row="6" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="WinXPowerShell_Combo" Grid.Column="1" Grid.Row="6" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="App Hibernation File (Swapfile.sys):" Grid.Column="0" Grid.Row="7" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="AppHibernationFile_Combo" Grid.Column="1" Grid.Row="7" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Process ID on Title Bar:" Grid.Column="0" Grid.Row="8" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="PidInTitleBar_Combo" Grid.Column="1" Grid.Row="8" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Accessability Key Prompt:" Grid.Column="0" Grid.Row="9" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="AccessKeyPrmpt_Combo" Grid.Column="1" Grid.Row="9" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Window Timeline:" Grid.Column="0" Grid.Row="10" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="Timeline_Combo" Grid.Column="1" Grid.Row="10" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 					</Grid>
 					<Grid Grid.Column="1">
 						<Grid.RowDefinitions>
@@ -926,32 +926,32 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 							<RowDefinition Height="*"/>
 							<RowDefinition Height="*"/>
 							<RowDefinition Height="*"/>
-							<RowDefinition Height="*" Name="ReopenAppsOnBoot_Row"/>
+							<RowDefinition Name="ReopenAppsOnBoot_Row" Height="*"/>
 						</Grid.RowDefinitions>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="3*"/>
 							<ColumnDefinition Width="2*"/>
 						</Grid.ColumnDefinitions>
-						<Label Content="Aero Snap:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="AeroSnap_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Aero Shake:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="AeroShake_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Known Extensions:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="KnownExtensions_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Hidden Files:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="HiddenFiles_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="System Files:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="SystemFiles_Combo" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Autoplay:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="Autoplay_Combo" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Autorun:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="Autorun_Combo" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="Task Manager Details:" Grid.Row="7" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="TaskManagerDetails_Combo" Grid.Row="7" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Content="F1 Help Key:" Grid.Row="8" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="F1HelpKey_Combo" Grid.Row="8" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-						<Label Grid.Row="9" Grid.Column="0" Content="Reopen Apps On Boot:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-						<ComboBox Name="ReopenAppsOnBoot_Combo" Grid.Row="9" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Aero Snap:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="AeroSnap_Combo" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Aero Shake:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="AeroShake_Combo" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Known Extensions:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="KnownExtensions_Combo" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Hidden Files:" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="HiddenFiles_Combo" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="System Files:" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="SystemFiles_Combo" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Autoplay:" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="Autoplay_Combo" Grid.Column="1" Grid.Row="5" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Autorun:" Grid.Column="0" Grid.Row="6" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="Autorun_Combo" Grid.Column="1" Grid.Row="6" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Task Manager Details:" Grid.Column="0" Grid.Row="7" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="TaskManagerDetails_Combo" Grid.Column="1" Grid.Row="7" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="F1 Help Key:" Grid.Column="0" Grid.Row="8" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="F1HelpKey_Combo" Grid.Column="1" Grid.Row="8" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+						<Label Content="Reopen Apps On Boot:" Grid.Column="0" Grid.Row="9" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+						<ComboBox Name="ReopenAppsOnBoot_Combo" Grid.Column="1" Grid.Row="9" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 					</Grid>
 				</Grid>
 			</TabItem>
@@ -961,7 +961,7 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 						<ColumnDefinition Width="*"/>
 						<ColumnDefinition Width="*"/>
 					</Grid.ColumnDefinitions>
-					<GroupBox Grid.Column="0" Header="Desktop" Margin="5">
+					<GroupBox Header="Desktop" Grid.Column="0" Margin="5">
 						<Grid>
 							<Grid.RowDefinitions>
 								<RowDefinition Height="*"/>
@@ -974,19 +974,19 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 								<ColumnDefinition Width="*"/>
 								<ColumnDefinition Width="*"/>
 							</Grid.ColumnDefinitions>
-							<Label Content="This PC Icon:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="ThisPCOnDesktop_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Network Icon:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="NetworkOnDesktop_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Recycle Bin Icon:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="RecycleBinOnDesktop_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Users File Icon:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="UsersFileOnDesktop_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Control Panel Icon:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="ControlPanelOnDesktop_Combo" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="This PC Icon:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="ThisPCOnDesktop_Combo" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Network Icon:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="NetworkOnDesktop_Combo" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Recycle Bin Icon:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="RecycleBinOnDesktop_Combo" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Users File Icon:" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="UsersFileOnDesktop_Combo" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Control Panel Icon:" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="ControlPanelOnDesktop_Combo" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 						</Grid>
 					</GroupBox>
-					<GroupBox Grid.Column="1" Header="This PC" Margin="5">
+					<GroupBox Header="This PC" Grid.Column="1" Margin="5">
 						<Grid>
 							<Grid.RowDefinitions>
 								<RowDefinition Height="*"/>
@@ -995,28 +995,28 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 								<RowDefinition Height="*"/>
 								<RowDefinition Height="*"/>
 								<RowDefinition Height="*"/>
-								<RowDefinition Height="*" Name="ThreeDobjectsIconInThisPC_Row"/>
+								<RowDefinition Name="ThreeDobjectsIconInThisPC_Row" Height="*"/>
 								<RowDefinition Height="*"/>
 							</Grid.RowDefinitions>
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="*"/>
 								<ColumnDefinition Width="*"/>
 							</Grid.ColumnDefinitions>
-							<Label Content="Desktop Folder:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="DesktopIconInThisPC_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Documents Folder:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="DocumentsIconInThisPC_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Downloads Folder:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="DownloadsIconInThisPC_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Music Folder:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="MusicIconInThisPC_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Pictures Folder:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="PicturesIconInThisPC_Combo" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Videos Folder:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="VideosIconInThisPC_Combo" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Grid.Row="6" Grid.Column="0" Content="3D Objects Folder:" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="ThreeDobjectsIconInThisPC_Combo" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="**Remove may cause problems" Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+							<Label Content="Desktop Folder:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="DesktopIconInThisPC_Combo" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Documents Folder:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="DocumentsIconInThisPC_Combo" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Downloads Folder:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="DownloadsIconInThisPC_Combo" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Music Folder:" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="MusicIconInThisPC_Combo" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Pictures Folder:" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="PicturesIconInThisPC_Combo" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Videos Folder:" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="VideosIconInThisPC_Combo" Grid.Column="1" Grid.Row="5" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="3D Objects Folder:" Grid.Column="0" Grid.Row="6" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="ThreeDobjectsIconInThisPC_Combo" Grid.Column="1" Grid.Row="6" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="**Remove may cause problems" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="7" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 						</Grid>
 					</GroupBox>
 				</Grid>
@@ -1030,10 +1030,10 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 					<Grid>
 						<Grid Grid.Column="0">
 							<Grid.RowDefinitions>
-								<RowDefinition Height="3*"/>
+								<RowDefinition Height="2*"/>
 								<RowDefinition Height="4*"/>
 							</Grid.RowDefinitions>
-							<GroupBox Grid.Row="0" Header="Photo Viewer" Margin="10">
+							<GroupBox Header="Photo Viewer" Grid.Row="0" Margin="10">
 								<Grid>
 									<Grid.RowDefinitions>
 										<RowDefinition Height="*"/>
@@ -1043,39 +1043,43 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 										<ColumnDefinition Width="*"/>
 										<ColumnDefinition Width="*"/>
 									</Grid.ColumnDefinitions>
-									<Label Content="File Association:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-									<ComboBox Name="PVFileAssociation_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-									<Label Content="Add &quot;Open with...&quot;:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-									<ComboBox Name="PVOpenWithMenu_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+									<Label Content="File Association:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+									<ComboBox Name="PVFileAssociation_Combo" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+									<Label Content="Add Open with...:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+									<ComboBox Name="PVOpenWithMenu_Combo" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 								</Grid>
 							</GroupBox>
-							<GroupBox Grid.Row="1" Header="Lockscreen" Margin="5">
+							<GroupBox Header="Lockscreen" Grid.Row="1" Margin="5">
 								<Grid>
 									<Grid.RowDefinitions>
 										<RowDefinition Height="*"/>
 										<RowDefinition Height="*"/>
 										<RowDefinition Height="*"/>
-										<RowDefinition Height="*" Name="AccountProtectionWarn_Row"/>
+										<RowDefinition Height="*"/>
+										<RowDefinition Height="*"/>
 									</Grid.RowDefinitions>
 									<Grid.ColumnDefinitions>
 										<ColumnDefinition Width="5*"/>
 										<ColumnDefinition Width="2*"/>
 									</Grid.ColumnDefinitions>
-									<Label Content="Lockscreen:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-									<ComboBox Name="LockScreen_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-									<Label Content="Power Menu:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-									<ComboBox Name="PowerMenuLockScreen_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-									<Label Content="Camera:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-									<ComboBox Name="CameraOnLockscreen_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-									<Label Content="Account Protection Warning:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-									<ComboBox Name="AccountProtectionWarn_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+									<Label Content="Lockscreen:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+									<ComboBox Name="Lockscreen_Combo" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+									<Label Content="Lockscreen Prompt Password:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+									<ComboBox Name="LockscreenPassword_Combo" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+									<Label Content="Power Menu:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+									<ComboBox Name="PowerMenuLockScreen_Combo" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+									<Label Content="Camera:" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+									<ComboBox Name="CameraOnLockscreen_Combo" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+									<Label Content="Account Protection Warning:" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+									<ComboBox Name="AccountProtectionWarn_Combo" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 								</Grid>
 							</GroupBox>
 						</Grid>
 					</Grid>
-					<GroupBox Grid.Column="1" Header="Misc" Margin="5">
+					<GroupBox Header="Misc" Grid.Column="1" Margin="5">
 						<Grid>
 							<Grid.RowDefinitions>
+								<RowDefinition Height="*"/>
 								<RowDefinition Height="*"/>
 								<RowDefinition Height="*"/>
 								<RowDefinition Height="*"/>
@@ -1088,26 +1092,28 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 								<ColumnDefinition Width="3*"/>
 								<ColumnDefinition Width="2*"/>
 							</Grid.ColumnDefinitions>
-							<Label Content="Action Center:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="ActionCenter_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Sticky Key Prompt:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="StickyKeyPrompt_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Num Lock on Startup:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="NumblockOnStart_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="F8 Boot Menu:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="F8BootMenu_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Remote UAC Local &#xD;&#xA;Account Token Filter" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="RemoteUACAcctToken_Combo" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Hibernate Option:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="HibernatePower_Combo" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Sleep Option:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="SleepPower_Combo" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="ScreenSaver:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="ScreenSaver_Combo" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Action Center:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="ActionCenter_Combo" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Sticky Key Prompt:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="StickyKeyPrompt_Combo" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Num Lock on Startup:" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="NumblockOnStart_Combo" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="F8 Boot Menu:" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="F8BootMenu_Combo" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Remote UAC Local &#xD;&#xA;Account Token Filter" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="RemoteUACAcctToken_Combo" Grid.Column="1" Grid.Row="5" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Hibernate Option:" Grid.Column="0" Grid.Row="6" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="HibernatePower_Combo" Grid.Column="1" Grid.Row="6" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Sleep Option:" Grid.Column="0" Grid.Row="7" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="SleepPower_Combo" Grid.Column="1" Grid.Row="7" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 						</Grid>
 					</GroupBox>
 				</Grid>
 			</TabItem>
 			<TabItem Name="WinApp_Tab" Header="Window App">
-				<DataGrid Name="dataGrid" AutoGenerateColumns="False" AlternationCount="2" HeadersVisibility="Column" CanUserAddRows="False" IsTabStop="True" SelectionMode="Extended">
+				<DataGrid Name="dataGrid" AlternationCount="2" AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column" IsTabStop="True" SelectionMode="Extended">
 					<DataGrid.RowStyle>
 						<Style TargetType="{ x:Type DataGridRow }">
 							<Style.Triggers>
@@ -1118,7 +1124,7 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 					</DataGrid.RowStyle>
 					<DataGrid.Columns>
 						<DataGridTextColumn Header="Display Name" Width="150" Binding="{Binding CName}" CanUserSort="True" IsReadOnly="True"/>
-						<DataGridTemplateColumn Header="Option" Width="80" SortMemberPath="AppSelected" CanUserSort="True">
+						<DataGridTemplateColumn Width="80" CanUserSort="True" Header="Option" SortMemberPath="AppSelected">
 							<DataGridTemplateColumn.CellTemplate>
 								<DataTemplate>
 									<ComboBox ItemsSource="{Binding AppOptions}" Text="{Binding Path=AppSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
@@ -1135,7 +1141,7 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 						<ColumnDefinition Width="*"/>
 						<ColumnDefinition Width="*"/>
 					</Grid.ColumnDefinitions>
-					<GroupBox Grid.Column="0" Header="Application/Feature" Margin="5">
+					<GroupBox Grid.Column="0" Margin="5" Header="Application/Feature">
 						<Grid>
 							<Grid.RowDefinitions>
 								<RowDefinition Height="*"/>
@@ -1144,29 +1150,29 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 								<RowDefinition Height="*"/>
 								<RowDefinition Height="*"/>
 								<RowDefinition Height="*"/>
-								<RowDefinition Height="*" Name="LinuxSubsystem_Row"/>
+								<RowDefinition Name="LinuxSubsystem_Row" Height="*"/>
 							</Grid.RowDefinitions>
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="*"/>
 								<ColumnDefinition Width="*"/>
 							</Grid.ColumnDefinitions>
-							<Label Content="OneDrive:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="OneDrive_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="OneDrive Install:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="OneDriveInstall_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Xbox DVR:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="XboxDVR_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="MediaPlayer:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="MediaPlayer_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Work Folders:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="WorkFolders_Combo" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Fax And Scan:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="FaxAndScan_Combo" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Linux Subsystem:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="LinuxSubsystem_Combo" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="OneDrive:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="OneDrive_Combo" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="OneDrive Install:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="OneDriveInstall_Combo" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Xbox DVR:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="XboxDVR_Combo" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="MediaPlayer:" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="MediaPlayer_Combo" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Work Folders:" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="WorkFolders_Combo" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Fax And Scan:" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="FaxAndScan_Combo" Grid.Column="1" Grid.Row="5" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Linux Subsystem:" Grid.Column="0" Grid.Row="6" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="LinuxSubsystem_Combo" Grid.Column="1" Grid.Row="6" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 						</Grid>
 					</GroupBox>
-					<GroupBox Grid.Column="1" Header="Windows Update" Margin="5">
+					<GroupBox Header="Windows Update" Grid.Column="1" Margin="5">
 						<Grid>
 							<Grid.RowDefinitions>
 								<RowDefinition Height="*"/>
@@ -1182,28 +1188,28 @@ Title="Windows 10 Settings/Tweaks Script By: Madbomb122 (v.$Script_Version -$Scr
 								<ColumnDefinition Width="9*"/>
 								<ColumnDefinition Width="5*"/>
 							</Grid.ColumnDefinitions>
-							<Label Content="Check for Update:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="CheckForWinUpdate_Combo" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Update Check Type:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="WinUpdateType_Combo" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Update P2P:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="WinUpdateDownload_Combo" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Update MSRT:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="UpdateMSRT_Combo" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Update Driver:" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="UpdateDriver_Combo" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Restart on Update:" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="RestartOnUpdate_Combo" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Update Available Popup:" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="UpdateAvailablePopup_Combo" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-							<Label Content="Update MS Products:" Grid.Row="7" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-							<ComboBox Name="UpdateMSProducts_Combo" Grid.Row="7" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Check for Update:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="CheckForWinUpdate_Combo" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Update Check Type:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="WinUpdateType_Combo" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Update P2P:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="WinUpdateDownload_Combo" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Update MSRT:" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="UpdateMSRT_Combo" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Update Driver:" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="UpdateDriver_Combo" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Restart on Update:" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="RestartOnUpdate_Combo" Grid.Column="1" Grid.Row="5" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Update Available Popup:" Grid.Column="0" Grid.Row="6" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="UpdateAvailablePopup_Combo" Grid.Column="1" Grid.Row="6" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+							<Label Content="Update MS Products:" Grid.Column="0" Grid.Row="7" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<ComboBox Name="UpdateMSProducts_Combo" Grid.Column="1" Grid.Row="7" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 						</Grid>
 					</GroupBox>
 				</Grid>
 			</TabItem>
 		</TabControl>
-		<Button Name="RunScriptButton" Grid.Row="2" Content="Run Script" VerticalAlignment="Bottom" Height="20" FontWeight="Bold"/>
+		<Button Name="RunScriptButton" Content="Run Script" Height="20" Grid.Row="2" VerticalAlignment="Bottom" FontWeight="Bold"/>
 	</Grid>
 </Window>
 "@
@@ -1276,6 +1282,8 @@ $Skip_EnableD_Disable = @(
 'AeroShake',
 'StoreOpenWith',
 'LockScreen',
+'LockScreenPassword',
+'ScreenSaver',
 'CameraOnLockScreen',
 'ActionCenter',
 'AccountProtectionWarn',
@@ -1505,10 +1513,12 @@ Function LoadWinDefault {
 
 	#Lock Screen
 	$Script:LockScreen = 1
+	$Script:ScreenSaver = 1
 	$Script:PowerMenuLockScreen = 1
 	$Script:CameraOnLockScreen = 1
 
 	#Misc items
+	$Script:LockscreenPassword = 1
 	$Script:AccountProtectionWarn = 1
 	$Script:ActionCenter = 1
 	$Script:StickyKeyPrompt = 1
@@ -3082,6 +3092,22 @@ Function RunScript {
 		}
 	}
 
+	If($LockscreenPassword -eq 0) {
+		If($ShowSkipped -eq 1){ DisplayOut 'Skipping Lock Screen Password...' -C 15 }
+	} ElseIf($LockscreenPassword -eq 1) {
+		DisplayOut 'Enabling Lock Screen Password...' -C 11
+		$Path = CheckSetPath 'HKLM:\Software\Policies\Microsoft\Windows\Control Panel\Desktop'
+		Set-ItemProperty -Path  $Path -Name 'ScreenSaverIsSecure' -Type DWord -Value 1
+		$Path = CheckSetPath 'HKCU:\Software\Policies\Microsoft\Windows\Control Panel\Desktop'
+		Set-ItemProperty -Path  $Path -Name 'ScreenSaverIsSecure' -Type DWord -Value 1
+	} ElseIf($LockscreenPassword -eq 2) {
+		DisplayOut 'Disabling Lock Screen Password...' -C 12
+		$Path = CheckSetPath 'HKLM:\Software\Policies\Microsoft\Windows\Control Panel\Desktop'
+		Set-ItemProperty -Path  $Path -Name 'ScreenSaverIsSecure' -Type DWord -Value 0
+		$Path = CheckSetPath 'HKCU:\Software\Policies\Microsoft\Windows\Control Panel\Desktop'
+		Set-ItemProperty -Path  $Path -Name 'ScreenSaverIsSecure' -Type DWord -Value 0
+	}
+	
 	If($PowerMenuLockScreen -eq 0) {
 		If($ShowSkipped -eq 1){ DisplayOut 'Skipping Power Menu on Lock Screen...' -C 15 }
 	} ElseIf($PowerMenuLockScreen -eq 1) {
@@ -3104,6 +3130,18 @@ Function RunScript {
 	}
 
 	BoxItem 'Misc Items'
+	If($ScreenSaver -eq 0) {
+		If($ShowSkipped -eq 1){ DisplayOut 'Skipping ScreenSaver...' -C 15 }
+	} ElseIf($ScreenSaver -eq 1) {
+		DisplayOut 'Enabling ScreenSaver...' -C 11
+		$Path = CheckSetPath 'HKCU:\Control Panel\Desktop'
+		Set-ItemProperty -Path  $Path -Name 'ScreenSaveActive' -Type DWord -Value 1
+	} ElseIf($ScreenSaver -eq 2) {
+		DisplayOut 'Disabling ScreenSaver...' -C 12
+		$Path = CheckSetPath 'HKCU:\Control Panel\Desktop'
+		Set-ItemProperty -Path  $Path -Name 'ScreenSaveActive' -Type DWord -Value 0
+	}
+
 	If($Win10Ver -ge 1803) {
 		If($AccountProtectionWarn -eq 0) {
 			If($ShowSkipped -eq 1){ DisplayOut 'Skipping Account Protection Warning...' -C 15 }
@@ -3225,6 +3263,12 @@ Function RunScript {
 	} ElseIf($DisableVariousTasks -eq 2) {
 		DisplayOut "`nDisableing Various Scheduled Tasks...`n------------------" -C 12
 		ForEach($TaskN in $TasksList){ Get-ScheduledTask -TaskName $TaskN | Disable-ScheduledTask }
+	}
+
+	If(($ScreenSaverWaitTime -as [double]) -ne $null -and ($ScreenSaverWaitTime % 2) -In 0,1) {
+		DisplayOut 'Setting ScreenSaver Wait Time to ',"$ScreenSaverWaitTime Seconds" -C 11,14
+		$Path = CheckSetPath 'HKLM:\Software\Policies\Microsoft\Windows'
+		Set-ItemProperty -Path  $Path -Name 'ScreenSaveTimeout' -Type DWord -Value $ScreenSaverWaitTime
 	}
 
 	BoxItem 'Application/Feature Items'
@@ -3528,11 +3572,13 @@ $Script:ControlPanelOnDesktop = 0   #0-Skip, 1-Show, 2-Hide*
 #Lock Screen
 # Function = Option                 #Choices (* Indicates Windows Default)
 $Script:LockScreen = 0              #0-Skip, 1-Enable*, 2-Disable
+$Script:LockscreenPassword = 0      #0-Skip, 1-Enable*, 2-Disable
 $Script:PowerMenuLockScreen = 0     #0-Skip, 1-Show*, 2-Hide
 $Script:CameraOnLockScreen = 0      #0-Skip, 1-Enable*, 2-Disable
 
 #Misc items
 # Function = Option                 #Choices (* Indicates Windows Default)
+$Script:ScreenSaver = 0             #0-Skip, 1-Enable*, 2-Disable
 $Script:AccountProtectionWarn = 0   #0-Skip, 1-Enable*, 2-Disable
 $Script:ActionCenter = 0            #0-Skip, 1-Enable*, 2-Disable
 $Script:StickyKeyPrompt = 0         #0-Skip, 1-Enable*, 2-Disable
@@ -3541,7 +3587,6 @@ $Script:F8BootMenu = 0              #0-Skip, 1-Enable, 2-Disable*
 $Script:RemoteUACAcctToken = 0      #0-Skip, 1-Enable, 2-Disable*
 $Script:HibernatePower = 0          #0-Skip, 1-Enable, 2-Disable --(Hibernate Power Option)
 $Script:SleepPower = 0              #0-Skip, 1-Enable*, 2-Disable --(Sleep Power Option)
-$Script:DisableVariousTasks = 0     #0-Skip, 1-Enable*, 2-Disable some scheduled tasks (This is NOT show in GUI)
 
 # Photo Viewer Settings
 # Function = Option                 #Choices (* Indicates Windows Default)
@@ -3603,6 +3648,12 @@ $Script:APP_WindowsStore = 0        # Windows Store
 $Script:APP_XboxApp = 0             # All Xbox apps (There is a few)
 $Script:APP_ZuneMusic = 0           # Groove Music app
 $Script:APP_ZuneVideo = 0           # Groove Video app
+
+#These Items are NOT shown in GUI
+#These items must be set here or set in a loaded config file
+$Script:ScreenSaverWaitTime = "NC"  #Change "NC" to a number in seconds for the time
+$Script:DisableVariousTasks = 0     #0-Skip, 1-Enable, 2-Disable some scheduled tasks... This is Experimental
+#to see the scheduled tasks search for $TasksList (near top of script)
 # --------------------------------------------------------------------------
 ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ## !!                                            !!
