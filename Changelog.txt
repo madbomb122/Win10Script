@@ -1,5 +1,10 @@
 -----------------------------------------------------------------------------------
-3.7.1 (04-02-2021)
+3.7.2 (07-31-2021)
+
+Option Added Enable/Disable ScreenSaver
+Option Added Enable/Disable LockScreen Password
+Option Added ScreenSaver Wait Time (Configured in script/config file ONLY)
+Some Internal Script Changes (XML part)
 
 Some Internal Script Changes
 Fixed Disable/Enable entry mixup for Temeletry (thanks to St1ckys)
